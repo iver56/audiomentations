@@ -8,6 +8,7 @@ class BasicTransform:
     def __call__(self, samples, sample_rate):
         if random.random() < self.p:
             return self.apply(samples, sample_rate)
+        return samples
 
     def apply(self, samples, sample_rate):
         raise NotImplementedError

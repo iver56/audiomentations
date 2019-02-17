@@ -15,7 +15,7 @@ import numpy as np
 SAMPLE_RATE = 16000
 
 augmenter = Compose([
-    AddGaussianNoise(p=0.1)
+    AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.006, p=0.1)
 ])
 
 samples = np.zeros((20,), dtype=np.float32)

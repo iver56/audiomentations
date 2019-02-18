@@ -12,7 +12,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/iver56/audiomentations",
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(exclude=["demo", "tests"]),
     install_requires=["numpy>=1.13.0", "librosa>=0.6.1"],
     classifiers=[
         "Programming Language :: Python :: 3",

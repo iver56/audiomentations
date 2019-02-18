@@ -5,7 +5,7 @@ with open("README.md", "r") as readme_file:
 
 setup(
     name="audiomentations",
-    version="0.1.0",
+    version="0.2.0",
     author="Iver Jordal",
     description="A library for audio data augmentation. Inspired by albumentations.",
     license="MIT",

@@ -21,3 +21,13 @@ augmenter = Compose([
 samples = np.zeros((20,), dtype=np.float32)
 samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
 ```
+
+# Development
+
+## Code style
+
+Format the code with `black`
+
+## Run tests
+
+`nosetests`

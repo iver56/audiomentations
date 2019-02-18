@@ -13,12 +13,13 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/iver56/audiomentations",
     packages=find_packages(exclude=["tests"]),
-    install_requires=["numpy>=1.13.0"],
+    install_requires=["numpy>=1.13.0", "librosa>=0.6.1"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
     ],
 )

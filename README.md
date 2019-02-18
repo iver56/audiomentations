@@ -6,6 +6,8 @@ A python library for doing audio data augmentation
 
 # Setup
 
+![PyPI version](https://img.shields.io/pypi/v/audiomentations.svg?style=flat)
+
 `pip install audiomentations`
 
 # Usage example

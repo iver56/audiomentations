@@ -14,7 +14,7 @@ A python library for doing audio data augmentation
 # Usage example
 
 ```python
-from audiomentations import Compose, AddGaussianNoise, TimeStretch
+from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift
 import numpy as np
 
 SAMPLE_RATE = 16000
@@ -22,6 +22,7 @@ SAMPLE_RATE = 16000
 augmenter = Compose([
     AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
     TimeStretch(min_rate=0.8, max_rate=1.25, p=0.5),
+    PitchShift(min_semitones=-4, max_semitones=4, p=0.5),
 ])
 
 samples = np.zeros((20,), dtype=np.float32)

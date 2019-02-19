@@ -38,3 +38,7 @@ Format the code with `black`
 ## Run tests
 
 `nosetests`
+
+## Generate demo sounds for empirical evaluation
+
+`python -m demo.demo`

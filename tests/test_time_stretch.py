@@ -1,7 +1,8 @@
 import unittest
+
 import numpy as np
 
-from audiomentations.augmentations.transforms import AddGaussianNoise, TimeStretch
+from audiomentations.augmentations.transforms import TimeStretch
 from audiomentations.core.composition import Compose
 
 

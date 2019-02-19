@@ -14,7 +14,7 @@ class AddGaussianNoise(BasicTransform):
         self.max_amplitude = max_amplitude
 
     def apply(self, samples, sample_rate):
-        noise = np.random.randn(len(samples))
+        noise = np.random.randn(len(samples)).astype(np.float32)
         amplitude = random.uniform(self.min_amplitude, self.max_amplitude)
         samples = samples + amplitude * noise
         return samples

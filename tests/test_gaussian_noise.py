@@ -15,4 +15,5 @@ class TestGaussianNoise(unittest.TestCase):
         ])
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
+        self.assertEqual(samples.dtype, np.float32)
         self.assertNotAlmostEqual(float(np.sum(np.abs(samples))), 0.0)

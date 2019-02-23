@@ -8,6 +8,7 @@ from audiomentations.core.transforms_interface import BasicTransform
 
 class AddGaussianNoise(BasicTransform):
     """Add gaussian noise to the samples"""
+
     def __init__(self, min_amplitude=0.001, max_amplitude=0.015, p=0.5):
         super().__init__(p)
         self.min_amplitude = min_amplitude
@@ -22,6 +23,7 @@ class AddGaussianNoise(BasicTransform):
 
 class TimeStretch(BasicTransform):
     """Time stretch the signal without changing the pitch"""
+
     def __init__(self, min_rate=0.8, max_rate=1.25, leave_length_unchanged=True, p=0.5):
         super().__init__(p)
         assert min_rate > 0.1
@@ -51,6 +53,7 @@ class TimeStretch(BasicTransform):
 
 class PitchShift(BasicTransform):
     """Pitch shift the sound up or down without changing the tempo"""
+
     def __init__(self, min_semitones=-4, max_semitones=4, p=0.5):
         super().__init__(p)
         assert min_semitones >= -12
@@ -65,3 +68,30 @@ class PitchShift(BasicTransform):
             samples, sample_rate, n_steps=num_semitones
         )
         return pitch_shifted_samples
+
+
+class Shift(BasicTransform):
+    """
+    Shift the samples forwards or backwards. Samples that roll beyond the first or last position
+    are re-introduced at the last or first.
+    """
+
+    def __init__(self, min_amount=-0.5, max_amount=0.5, p=0.5):
+        """
+
+        :param min_amount: float, fraction of total sound length
+        :param max_amount: float, fraction of total sound length
+        :param p:
+        """
+        super().__init__(p)
+        assert min_amount >= -1
+        assert max_amount <= 1
+        self.min_amount = min_amount
+        self.max_amount = max_amount
+
+    def apply(self, samples, sample_rate):
+        num_places_to_shift = int(
+            round(random.uniform(self.min_amount, self.max_amount) * len(samples))
+        )
+        shifted_samples = np.roll(samples, num_places_to_shift)
+        return shifted_samples

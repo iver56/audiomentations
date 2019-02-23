@@ -76,22 +76,21 @@ class Shift(BasicTransform):
     are re-introduced at the last or first.
     """
 
-    def __init__(self, min_amount=-0.5, max_amount=0.5, p=0.5):
+    def __init__(self, min_fraction=-0.5, max_fraction=0.5, p=0.5):
         """
-
-        :param min_amount: float, fraction of total sound length
-        :param max_amount: float, fraction of total sound length
+        :param min_fraction: float, fraction of total sound length
+        :param max_fraction: float, fraction of total sound length
         :param p:
         """
         super().__init__(p)
-        assert min_amount >= -1
-        assert max_amount <= 1
-        self.min_amount = min_amount
-        self.max_amount = max_amount
+        assert min_fraction >= -1
+        assert max_fraction <= 1
+        self.min_fraction = min_fraction
+        self.max_fraction = max_fraction
 
     def apply(self, samples, sample_rate):
         num_places_to_shift = int(
-            round(random.uniform(self.min_amount, self.max_amount) * len(samples))
+            round(random.uniform(self.min_fraction, self.max_fraction) * len(samples))
         )
         shifted_samples = np.roll(samples, num_places_to_shift)
         return shifted_samples

@@ -2,7 +2,7 @@
 
 ![Build status](https://codeship.com/projects/d192b290-158e-0137-8d9a-32050e1fba78/status?branch=master)
 
-A python library for doing audio data augmentation
+A Python library for audio data augmentation. Inspired by albumentations. Useful for machine learning.
 
 # Setup
 

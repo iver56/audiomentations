@@ -17,9 +17,10 @@ def load_wav_file(sound_file_path):
             "Unexpected sample rate {} (expected {})".format(sample_rate, SAMPLE_RATE)
         )
 
-    assert sound_np.dtype == np.int16
+    if sound_np.dtype != np.float32:
+        assert sound_np.dtype == np.int16
+        sound_np = sound_np / 32767  # ends up roughly between -1 and 1
 
-    sound_np = sound_np / 32767  # ends up roughly between -1 and 1
     return sound_np
 
 

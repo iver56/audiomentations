@@ -94,3 +94,19 @@ class Shift(BasicTransform):
         )
         shifted_samples = np.roll(samples, num_places_to_shift)
         return shifted_samples
+
+
+class Normalize(BasicTransform):
+    """
+    Apply a constant amount of gain, so that highest signal level present in the sound becomes
+    0 dBFS, i.e. the loudest level allowed if all samples must be between -1 and 1. Also known
+    as peak normalization.
+    """
+
+    def __init__(self, p=0.5):
+        super().__init__(p)
+
+    def apply(self, samples, sample_rate):
+        max_amplitude = np.amax(np.abs(samples))
+        normalized_samples = samples / max_amplitude
+        return normalized_samples

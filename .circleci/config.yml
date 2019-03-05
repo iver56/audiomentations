@@ -2,7 +2,9 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.0.4
 jobs:
   build:
     docker:
@@ -30,13 +32,16 @@ jobs:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
-      # run tests
+      # Run tests and measure code coverage
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            nosetests
+            nosetests --with-coverage --cover-package=audiomentations --cover-xml
 
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
+      - codecov/upload:
+          file: coverage.xml

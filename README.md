@@ -1,6 +1,6 @@
 # Audiomentations
 
-![Build status](https://codeship.com/projects/d192b290-158e-0137-8d9a-32050e1fba78/status?branch=master) [![codecov](https://codecov.io/gh/iver56/audiomentations/branch/master/graph/badge.svg)](https://codecov.io/gh/iver56/audiomentations)
+![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg) ![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)
 
 A Python library for audio data augmentation. Inspired by albumentations. Useful for machine learning.
 

@@ -36,9 +36,9 @@ samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
 
 Format the code with `black`
 
-## Run tests
+## Run tests and measure code coverage
 
-`nosetests`
+`nosetests --with-coverage --cover-package=audiomentations`
 
 ## Generate demo sounds for empirical evaluation
 

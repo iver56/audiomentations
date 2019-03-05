@@ -37,7 +37,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            nosetests --with-coverage --cover-package=audiomentations --cover-xml
+            pytest
 
       - store_artifacts:
           path: test-reports

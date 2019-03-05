@@ -38,7 +38,7 @@ Format the code with `black`
 
 ## Run tests and measure code coverage
 
-`nosetests --with-coverage --cover-package=audiomentations`
+`pytest`
 
 ## Generate demo sounds for empirical evaluation
 

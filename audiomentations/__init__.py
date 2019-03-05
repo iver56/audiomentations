@@ -1,4 +1,4 @@
-__version__ = '0.1'
+__version__ = "0.1"
 
 from .core.composition import *
 from .core.transforms_interface import *

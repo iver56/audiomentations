@@ -2,7 +2,7 @@
 
 ![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg) ![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)
 
-A Python library for audio data augmentation. Inspired by albumentations. Useful for machine learning.
+A Python library for audio data augmentation. Inspired by [albumentations](https://github.com/albu/albumentations). Useful for machine learning.
 
 # Setup
 

@@ -1,13 +1,13 @@
 # Audiomentations
 
-![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg) ![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)
+[![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg)](https://circleci.com/gh/iver56/audiomentations) [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations)
 
 A Python library for audio data augmentation. Inspired by [albumentations](https://github.com/albu/albumentations). Useful for machine learning.
 
 # Setup
 
-![PyPI version](https://img.shields.io/pypi/v/audiomentations.svg?style=flat)
-![Number of downloads from PyPI per month](https://img.shields.io/pypi/dm/audiomentations.svg?style=flat)
+[![PyPI version](https://img.shields.io/pypi/v/audiomentations.svg?style=flat)](https://pypi.org/project/albumentations/)
+[![Number of downloads from PyPI per month](https://img.shields.io/pypi/dm/audiomentations.svg?style=flat)](https://pypi.org/project/albumentations/)
 
 `pip install audiomentations`
 

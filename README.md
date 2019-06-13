@@ -32,6 +32,8 @@ samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
 
 # Development
 
+Install the dependencies specified in `requirements.txt`
+
 ## Code style
 
 Format the code with `black`

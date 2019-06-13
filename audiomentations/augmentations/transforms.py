@@ -1,14 +1,100 @@
 import random
-
-import librosa
+from scipy.signal import butter, lfilter
+import librosa, os
+import pandas as pd
 import numpy as np
 
 from audiomentations.core.transforms_interface import BasicTransform
 
+def read_dir(noise_dir):
+    return pd.Series(os.listdir(noise_dir)).apply(lambda x: os.path.join(noise_dir, x)).tolist()
+
+
+class AddImpulseResponse(BasicTransform):
+    """Add Impulse Response to the samples.
+    Impulse Response represented as a wav file in ir_path
+    """
+    def __init__(self, ir_path="/tmp/ir", p=0.5):
+        super().__init__(p)
+        self.ir_files = read_dir(ir_path)
+
+    def __apply_ir(self, input_signal, sr, ir_filename):
+        # Создан на основе http://tulrich.com/recording/ir_capture/
+        ir, sr2 = librosa.load(ir_filename, sr)
+        if sr != sr2:
+            raise ("recording sample rate %s must match Impulse Response signal "
+                   "sample rate %s!" % (sr, sr2))
+        signal_ir = np.convolve(input_signal, ir)
+        max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
+        scale = 0.5 / max_value
+        signal_ir *= scale
+        return signal_ir
+
+    def apply(self, samples, sample_rate):
+        ir_filename = random.choice(self.ir_files)
+        samples = self.__apply_ir(samples, sample_rate, ir_filename)
+        return samples
+
+
+class FrequencyMask(BasicTransform):
+    """Mask some frequency band on the spectrogram. Inspired by https://arxiv.org/pdf/1904.08779.pdf """
+
+    def __init__(self, min_frequency_band=0.0, max_frequency_band=0.5, p=0.5):
+        super().__init__(p)
+        self.min_frequency_band = min_frequency_band
+        self.max_frequency_band = max_frequency_band
+
+    def __butter_bandstop(self, lowcut, highcut, fs, order=5):
+        nyq = 0.5 * fs
+        low = lowcut / nyq
+        high = highcut / nyq
+        b, a = butter(order, [low, high], btype='bandstop')
+        return b, a
+
+    def __butter_bandstop_filter(self, data, lowcut, highcut, fs, order=5):
+        b, a = self.__butter_bandstop(lowcut, highcut, fs, order=order)
+        y = lfilter(b, a, data)
+        return y
+
+    def apply(self, samples, sample_rate):
+        band_width = random.randint(self.min_frequency_band * sample_rate // 2, self.max_frequency_band * sample_rate // 2)
+        freq_start = random.randint(16, sample_rate / 2 - band_width)
+        samples = self.__butter_bandstop_filter(samples, freq_start, freq_start + band_width, sample_rate, order=6)
+        return samples
+
+
+class TimeMask(BasicTransform):
+    """Mask some time band on the spectrogram. Inspired by https://arxiv.org/pdf/1904.08779.pdf """
+
+    def __init__(self, min_band_part = 0.0, max_band_part=0.5, p=0.5):
+        super().__init__(p)
+        self.min_band_part = min_band_part
+        self.max_band_part = max_band_part
+
+    def apply(self, samples, sample_rate):
+        new_samples = samples.copy()
+        _t = random.randint(new_samples.shape[0] * self.min_band_part, new_samples.shape[0] * self.max_band_part)
+        _t0 = random.randint(0, new_samples.shape[0] - _t)
+        new_samples[_t0: _t0 + _t] = 0
+        return new_samples
+
+
+class AddGaussian(BasicTransform):
+    """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR) """
+    def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
+        super().__init__(p)
+        self.min_SNR = min_SNR
+        self.max_SNR = max_SNR
+
+    def apply(self, samples, sample_rate):
+        mean, std = np.mean(samples), np.std(samples)
+        noise_std = random.uniform(self.min_SNR * std, self.max_SNR * std)
+        noise = np.random.normal(mean, noise_std, size=len(samples))
+        return samples + noise
+
 
 class AddGaussianNoise(BasicTransform):
     """Add gaussian noise to the samples"""
-
     def __init__(self, min_amplitude=0.001, max_amplitude=0.015, p=0.5):
         super().__init__(p)
         self.min_amplitude = min_amplitude
@@ -110,3 +196,17 @@ class Normalize(BasicTransform):
         max_amplitude = np.amax(np.abs(samples))
         normalized_samples = samples / max_amplitude
         return normalized_samples
+
+class Trim(BasicTransform):
+    """
+    Apply librosa.effects.trim
+    """
+
+    def __init__(self, top_db=20, p=1.0):
+        super().__init__(p)
+        self.top_db = top_db
+
+    def apply(self, samples, sample_rate):
+        samples, lens = librosa.effects.trim(samples, top_db=self.top_db)
+        return samples
+

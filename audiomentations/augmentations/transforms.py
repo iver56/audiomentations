@@ -1,13 +1,10 @@
 import random
 from scipy.signal import butter, lfilter
-import librosa, os
-import pandas as pd
+import librosa
 import numpy as np
 
 from audiomentations.core.transforms_interface import BasicTransform
-
-def read_dir(noise_dir):
-    return pd.Series(os.listdir(noise_dir)).apply(lambda x: os.path.join(noise_dir, x)).tolist()
+from audiomentations.core.utils import read_dir
 
 
 class AddImpulseResponse(BasicTransform):

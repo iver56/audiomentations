@@ -6,6 +6,12 @@ class Compose:
         self.transforms = transforms
         self.p = p
 
+        name_list = []
+        for transform in self.transforms:
+            name_list.append(type(transform).__name__)
+        self.__name__ = '_'.join(name_list)
+
+
     def __call__(self, samples, sample_rate):
         if random.random() < self.p:
             for transform in self.transforms:

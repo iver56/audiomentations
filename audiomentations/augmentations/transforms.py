@@ -76,7 +76,7 @@ class TimeMask(BasicTransform):
         return new_samples
 
 
-class AddGaussian(BasicTransform):
+class AddGaussianSNR(BasicTransform):
     """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR) """
     def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
         super().__init__(p)

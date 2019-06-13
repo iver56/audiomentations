@@ -45,3 +45,7 @@ Format the code with `black`
 ## Generate demo sounds for empirical evaluation
 
 `python -m demo.demo`
+
+# Alternatives
+
+* [muda](https://github.com/bmcfee/muda)

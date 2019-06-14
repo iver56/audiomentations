@@ -35,6 +35,10 @@ def load_wav_file(sound_file_path):
 
 
 if __name__ == "__main__":
+    """
+    For each transformation, apply it to an example sound and write the transformed sounds to
+    an output folder.
+    """
     current_dir = os.path.dirname(__file__)
     output_dir = os.path.join(current_dir, "output")
     os.makedirs(output_dir, exist_ok=True)

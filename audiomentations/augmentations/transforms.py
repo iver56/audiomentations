@@ -26,9 +26,11 @@ class AddImpulseResponse(BasicTransform):
     def __apply_ir(self, input_signal, sr, ir_filename):
         ir, sr2 = librosa.load(ir_filename, sr)
         if sr != sr2:
-            raise (
-                "recording sample rate %s must match Impulse Response signal "
-                "sample rate %s!" % (sr, sr2)
+            # This will typically not happen, as librosa should automatically resample the
+            # impulse response sound to the desired sample rate
+            raise Exception(
+                "Recording sample rate {} did not match Impulse Response signal"
+                " sample rate {}!".format(sr, sr2)
             )
         signal_ir = np.convolve(input_signal, ir)
         max_value = max(np.amax(signal_ir), -np.amin(signal_ir))

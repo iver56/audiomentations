@@ -1,3 +1,4 @@
+audioread==2.1.6
 black
 coverage==4.5.2
 librosa>=0.6.1

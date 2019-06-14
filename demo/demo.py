@@ -34,20 +34,21 @@ def load_wav_file(sound_file_path):
     return sound_np
 
 
+DEMO_DIR = os.path.dirname(__file__)
+
 if __name__ == "__main__":
     """
     For each transformation, apply it to an example sound and write the transformed sounds to
     an output folder.
     """
-    current_dir = os.path.dirname(__file__)
-    output_dir = os.path.join(current_dir, "output")
+    output_dir = os.path.join(DEMO_DIR, "output")
     os.makedirs(output_dir, exist_ok=True)
 
-    samples = load_wav_file(os.path.join(current_dir, "acoustic_guitar_0.wav"))
+    samples = load_wav_file(os.path.join(DEMO_DIR, "acoustic_guitar_0.wav"))
 
     # AddImpulseResponse
     augmenter = Compose(
-        [AddImpulseResponse(p=1.0, ir_path=os.path.join(current_dir, "ir"))]
+        [AddImpulseResponse(p=1.0, ir_path=os.path.join(DEMO_DIR, "ir"))]
     )
     output_file_path = os.path.join(
         output_dir, "AddImpulseResponse_{:03d}.wav".format(0)

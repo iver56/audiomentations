@@ -15,6 +15,11 @@ class AddImpulseResponse(BasicTransform):
     """
 
     def __init__(self, ir_path="/tmp/ir", p=0.5):
+        """
+        :param ir_path: Path to a folder that contains one or more wav files of impulse
+        responses. No other files should reside in this folder. Must be str or a Path instance.
+        :param p:
+        """
         super().__init__(p)
         self.ir_files = read_dir(ir_path)
 
@@ -41,6 +46,11 @@ class FrequencyMask(BasicTransform):
     """Mask some frequency band on the spectrogram. Inspired by https://arxiv.org/pdf/1904.08779.pdf """
 
     def __init__(self, min_frequency_band=0.0, max_frequency_band=0.5, p=0.5):
+        """
+        :param min_frequency_band: Minimum bandwidth, float
+        :param max_frequency_band: Maximum bandwidth, float
+        :param p:
+        """
         super().__init__(p)
         self.min_frequency_band = min_frequency_band
         self.max_frequency_band = max_frequency_band
@@ -73,6 +83,13 @@ class TimeMask(BasicTransform):
     """Mask some time band on the spectrogram. Inspired by https://arxiv.org/pdf/1904.08779.pdf """
 
     def __init__(self, min_band_part=0.0, max_band_part=0.5, p=0.5):
+        """
+        :param min_band_part: Minimum length of the silent part as a fraction of the
+            total sound length. Float.
+        :param max_band_part: Maximum length of the silent part as a fraction of the
+            total sound length. Float.
+        :param p:
+        """
         super().__init__(p)
         self.min_band_part = min_band_part
         self.max_band_part = max_band_part
@@ -92,6 +109,12 @@ class AddGaussianSNR(BasicTransform):
     """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR) """
 
     def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
+        """
+
+        :param min_SNR: Minimum signal-to-noise ratio
+        :param max_SNR: Maximum signal-to-noise ratio
+        :param p:
+        """
         super().__init__(p)
         self.min_SNR = min_SNR
         self.max_SNR = max_SNR

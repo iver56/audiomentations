@@ -9,9 +9,9 @@ from audiomentations.core.utils import read_dir
 
 
 class AddImpulseResponse(BasicTransform):
-    """Add Impulse Response to the samples.
-    Created using http://tulrich.com/recording/ir_capture/
-    Impulse Response represented as a wav file in ir_path
+    """Convolve the audio with a random impulse response.
+    Impulse responses can be created using http://tulrich.com/recording/ir_capture/
+    Impulse responses are represented as a wav files in the given ir_path
     """
 
     def __init__(self, ir_path="/tmp/ir", p=0.5):

@@ -5,9 +5,10 @@ with open("README.md", "r") as readme_file:
 
 setup(
     name="audiomentations",
-    version="0.6.0",
+    version="0.7.0",
     author="Iver Jordal",
-    description="A Python library for audio data augmentation. Inspired by albumentations. Useful for machine learning.",
+    description="A Python library for audio data augmentation. Inspired by albumentations."
+    " Useful for machine learning.",
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",

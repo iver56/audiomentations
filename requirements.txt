@@ -3,8 +3,8 @@ black
 coverage==4.5.2
 librosa>=0.6.1
 numpy>=1.13.0
-pytest==4.3.0
-pytest-cov==2.6.1
+pytest==4.6.3
+pytest-cov==2.7.1
 scipy>=1.0.0,<2
 tqdm==4.31.1
 twine

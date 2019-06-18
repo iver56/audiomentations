@@ -39,9 +39,5 @@ jobs:
             . venv/bin/activate
             pytest
 
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
-
       - codecov/upload:
           file: coverage.xml

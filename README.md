@@ -30,6 +30,8 @@ samples = np.zeros((20,), dtype=np.float32)
 samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
 ```
 
+Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see which transforms you can apply.
+
 # Development
 
 Install the dependencies specified in `requirements.txt`

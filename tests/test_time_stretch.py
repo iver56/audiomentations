@@ -11,7 +11,11 @@ class TestTimeStretch(unittest.TestCase):
         samples = np.zeros((20,), dtype=np.float32)
         sample_rate = 16000
         augmenter = Compose(
-            [TimeStretch(min_rate=0.8, max_rate=0.9, leave_length_unchanged=False, p=1.0)]
+            [
+                TimeStretch(
+                    min_rate=0.8, max_rate=0.9, leave_length_unchanged=False, p=1.0
+                )
+            ]
         )
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
@@ -22,7 +26,11 @@ class TestTimeStretch(unittest.TestCase):
         samples = np.zeros((20,), dtype=np.float32)
         sample_rate = 16000
         augmenter = Compose(
-            [TimeStretch(min_rate=0.8, max_rate=0.9, leave_length_unchanged=True, p=1.0)]
+            [
+                TimeStretch(
+                    min_rate=0.8, max_rate=0.9, leave_length_unchanged=True, p=1.0
+                )
+            ]
         )
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 

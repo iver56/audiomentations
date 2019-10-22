@@ -22,12 +22,15 @@ class TestShift(unittest.TestCase):
         self.assertEqual(forward_shifted_samples.dtype, np.float32)
         self.assertEqual(len(forward_shifted_samples), 4)
 
-        backward_augmenter = Compose([Shift(min_fraction=-0.25, max_fraction=-0.25, p=1.0)])
+        backward_augmenter = Compose(
+            [Shift(min_fraction=-0.25, max_fraction=-0.25, p=1.0)]
+        )
         backward_shifted_samples = backward_augmenter(
             samples=samples, sample_rate=sample_rate
         )
         assert_almost_equal(
-            backward_shifted_samples, np.array([0.5, 0.25, 0.125, 1.0], dtype=np.float32)
+            backward_shifted_samples,
+            np.array([0.5, 0.25, 0.125, 1.0], dtype=np.float32),
         )
         self.assertEqual(backward_shifted_samples.dtype, np.float32)
         self.assertEqual(len(backward_shifted_samples), 4)

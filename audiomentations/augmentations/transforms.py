@@ -271,3 +271,17 @@ class Resample(BasicTransform):
             samples, orig_sr=sample_rate, target_sr=target_sample_rate
         )
         return samples
+
+
+class Downsample(Resample):
+    """
+    Downsample signal using librosa.core.resample
+    """
+
+    def __init__(self, min_sample_rate=8000, p=0.5):
+        # Set max_sample_rate to min_sample_rate + 1 to avoid assertion error
+        super().__init__(min_sample_rate, min_sample_rate + 1, p)
+
+    def apply(self, samples, sample_rate):
+        self.max_sample_rate = sample_rate - 1
+        return super().apply(samples, sample_rate)

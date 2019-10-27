@@ -14,6 +14,8 @@ from audiomentations import (
     FrequencyMask,
     TimeMask,
     AddGaussianSNR,
+    Resample,
+    Downsample,
 )
 
 SAMPLE_RATE = 16000
@@ -118,3 +120,17 @@ if __name__ == "__main__":
     output_file_path = os.path.join(output_dir, "Normalize_{:03d}.wav".format(0))
     augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
     wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
+
+    # Resample
+    augmenter = Compose([Resample(p=1.0)])
+    for i in range(5):
+        output_file_path = os.path.join(output_dir, "Resample_{:03d}.wav".format(i))
+        augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
+        wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
+
+    # Downsample
+    augmenter = Compose([Downsample(p=1.0)])
+    for i in range(5):
+        output_file_path = os.path.join(output_dir, "Downsample_{:03d}.wav".format(i))
+        augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
+        wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)

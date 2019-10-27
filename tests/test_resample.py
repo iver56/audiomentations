@@ -12,13 +12,13 @@ class TestResample(unittest.TestCase):
         samples = np.zeros((512,), dtype=np.float32)
         sample_rate = 16000
         augmenter = Compose(
-            [Resample(min_sample_rate=8000, max_sample_rate=64000, p=1.0)]
+            [Resample(min_sample_rate=8000, max_sample_rate=44100, p=1.0)]
         )
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         self.assertEqual(samples.dtype, np.float32)
         self.assertLessEqual(
-            len(samples), math.ceil(len(samples) * 64000 / sample_rate)
+            len(samples), math.ceil(len(samples) * 44100 / sample_rate)
         )
         self.assertGreaterEqual(
             len(samples), math.ceil(len(samples) * 8000 / sample_rate)

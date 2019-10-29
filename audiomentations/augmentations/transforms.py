@@ -274,3 +274,27 @@ class Resample(BasicTransform):
             samples, orig_sr=sample_rate, target_sr=target_sample_rate
         )
         return samples
+
+
+class Distortion(BasicTransform):
+    """Distort signal by clipping the signal at a threshold"""
+
+    def __init__(self, percentile_cut_off=40, p=0.5):
+        """
+
+        :param percentile_cut_off: int, Total percent of values to clip.
+            Higher percentage is more distortion.
+        :param p:
+        """
+        super().__init__(p)
+        assert percentile_cut_off < 100
+        self.percent_cut_off = percentile_cut_off
+
+    def apply(self, samples, sample_rate):
+        random_percent_cut_off = random.randint(0, self.percent_cut_off)
+        lower_percentile = int(random_percent_cut_off / 2)
+        lower_cut_off, upper_cut_off = np.percentile(
+            samples, [lower_percentile, 100 - lower_percentile]
+        )
+        samples = np.clip(samples, lower_cut_off, upper_cut_off)
+        return samples

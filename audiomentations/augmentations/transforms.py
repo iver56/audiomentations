@@ -246,3 +246,31 @@ class Trim(BasicTransform):
     def apply(self, samples, sample_rate):
         samples, lens = librosa.effects.trim(samples, top_db=self.top_db)
         return samples
+
+
+class Resample(BasicTransform):
+    """
+    Resample signal using librosa.core.resample
+
+    To do downsampling only set both minimum and maximum sampling rate lower than original
+    sampling rate and vice versa to do upsampling only.
+    """
+
+    def __init__(self, min_sample_rate=8000, max_sample_rate=44100, p=0.5):
+        """
+        :param min_sample_rate: int, Minimum sample rate
+        :param max_sample_rate: int, Maximum sample rate
+        :param p:
+        """
+        super().__init__(p)
+        assert min_sample_rate <= max_sample_rate
+        self.min_sample_rate = min_sample_rate
+        self.max_sample_rate = max_sample_rate
+
+    def apply(self, samples, sample_rate):
+        target_sample_rate = random.randint(self.min_sample_rate, self.max_sample_rate)
+
+        samples = librosa.core.resample(
+            samples, orig_sr=sample_rate, target_sr=target_sample_rate
+        )
+        return samples

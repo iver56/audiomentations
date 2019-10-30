@@ -107,6 +107,40 @@ class TimeMask(BasicTransform):
         return new_samples
 
 
+class SmoothFadeTimeMask(BasicTransform):
+    """Mask some time band on the spectrogram with fade in and fade out.
+
+    Same transformation as TimeMask but with linear smoothing"""
+
+    def __init__(self, min_band_part=0.0, max_band_part=0.5, p=0.5):
+        """
+        :param min_band_part: Minimum length of the silent part as a fraction of the
+            total sound length. Float.
+        :param max_band_part: Maximum length of the silent part as a fraction of the
+            total sound length. Float.
+        :param p:
+        """
+        super().__init__(p)
+        self.min_band_part = min_band_part
+        self.max_band_part = max_band_part
+
+    def apply(self, samples, sample_rate):
+        new_samples = samples.copy()
+        _t = random.randint(
+            int(new_samples.shape[0] * self.min_band_part),
+            int(new_samples.shape[0] * self.max_band_part),
+        )
+        _t0 = random.randint(0, new_samples.shape[0] - _t)
+        # fade length is 10 ms or 10% of silent part if silent part is less than 10 ms
+        fade_length = min(int(sample_rate * 0.01), int(_t * 0.1))
+        linear_fade_in = np.linspace(0, 1, num=fade_length)
+        linear_fade_out = np.linspace(1, 0, num=fade_length)
+        new_samples[_t0 : _t0 + fade_length] *= linear_fade_out
+        new_samples[_t0 + _t - fade_length : _t0 + _t] *= linear_fade_in
+        new_samples[_t0 + fade_length : _t0 + _t - fade_length] = 0
+        return new_samples
+
+
 class AddGaussianSNR(BasicTransform):
     """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR) """
 

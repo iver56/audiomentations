@@ -277,24 +277,33 @@ class Resample(BasicTransform):
 
 
 class ClippingDistortion(BasicTransform):
-    """Distort signal by clipping the signal at a threshold"""
+    """Distort signal by clipping a random percentage of points
 
-    def __init__(self, percentile_cut_off=40, p=0.5):
+    The percentage of points that will ble clipped is drawn from a uniform distribution between
+    the two input parameters min_percentile_threshold and max_percentile_threshold. If for instance
+    30% is drawn, the samples are clipped if they're below the 15th or above the 85th percentile.
+    """
+
+    def __init__(self, min_percentile_threshold=0, max_percentile_threshold=40, p=0.5):
         """
-
-        :param percentile_cut_off: int, Total percent of values to clip.
-            Higher percentage is more distortion.
+        :param min_percentile_threshold: int, A lower bound on the total percent of samples that will be clipped
+        :param max_percentile_threshold: int, A upper bound on the total percent of samples that will be clipped
         :param p:
         """
         super().__init__(p)
-        assert percentile_cut_off < 100
-        self.percent_cut_off = percentile_cut_off
+        assert min_percentile_threshold <= max_percentile_threshold
+        assert 0 <= min_percentile_threshold <= 100
+        assert 0 <= max_percentile_threshold <= 100
+        self.min_percentile_threshold = max_percentile_threshold
+        self.max_percentile_threshold = max_percentile_threshold
 
     def apply(self, samples, sample_rate):
-        random_percent_cut_off = random.randint(0, self.percent_cut_off)
-        lower_percentile = int(random_percent_cut_off / 2)
-        lower_cut_off, upper_cut_off = np.percentile(
-            samples, [lower_percentile, 100 - lower_percentile]
+        percentile_threshold = random.randint(
+            self.min_percentile_threshold, self.max_percentile_threshold
         )
-        samples = np.clip(samples, lower_cut_off, upper_cut_off)
+        lower_percentile_threshold = int(percentile_threshold / 2)
+        lower_threshold, upper_threshold = np.percentile(
+            samples, [lower_percentile_threshold, 100 - lower_percentile_threshold]
+        )
+        samples = np.clip(samples, lower_threshold, upper_threshold)
         return samples

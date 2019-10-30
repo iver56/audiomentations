@@ -11,7 +11,13 @@ class TestDistortion(unittest.TestCase):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000
-        augmenter = Compose([ClippingDistortion(percentile_cut_off=40, p=1.0)])
+        augmenter = Compose(
+            [
+                ClippingDistortion(
+                    min_percentile_threshold=0, max_percentile_threshold=40, p=1.0
+                )
+            ]
+        )
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         self.assertEqual(samples_out.dtype, np.float32)

@@ -274,3 +274,36 @@ class Resample(BasicTransform):
             samples, orig_sr=sample_rate, target_sr=target_sample_rate
         )
         return samples
+
+
+class ClippingDistortion(BasicTransform):
+    """Distort signal by clipping a random percentage of points
+
+    The percentage of points that will ble clipped is drawn from a uniform distribution between
+    the two input parameters min_percentile_threshold and max_percentile_threshold. If for instance
+    30% is drawn, the samples are clipped if they're below the 15th or above the 85th percentile.
+    """
+
+    def __init__(self, min_percentile_threshold=0, max_percentile_threshold=40, p=0.5):
+        """
+        :param min_percentile_threshold: int, A lower bound on the total percent of samples that will be clipped
+        :param max_percentile_threshold: int, A upper bound on the total percent of samples that will be clipped
+        :param p:
+        """
+        super().__init__(p)
+        assert min_percentile_threshold <= max_percentile_threshold
+        assert 0 <= min_percentile_threshold <= 100
+        assert 0 <= max_percentile_threshold <= 100
+        self.min_percentile_threshold = max_percentile_threshold
+        self.max_percentile_threshold = max_percentile_threshold
+
+    def apply(self, samples, sample_rate):
+        percentile_threshold = random.randint(
+            self.min_percentile_threshold, self.max_percentile_threshold
+        )
+        lower_percentile_threshold = int(percentile_threshold / 2)
+        lower_threshold, upper_threshold = np.percentile(
+            samples, [lower_percentile_threshold, 100 - lower_percentile_threshold]
+        )
+        samples = np.clip(samples, lower_threshold, upper_threshold)
+        return samples

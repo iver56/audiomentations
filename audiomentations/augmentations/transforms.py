@@ -276,7 +276,7 @@ class Resample(BasicTransform):
         return samples
 
 
-class Distortion(BasicTransform):
+class ClippingDistortion(BasicTransform):
     """Distort signal by clipping the signal at a threshold"""
 
     def __init__(self, percentile_cut_off=40, p=0.5):

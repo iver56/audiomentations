@@ -15,7 +15,7 @@ from audiomentations import (
     TimeMask,
     AddGaussianSNR,
     Resample,
-    Distortion,
+    ClippingDistortion,
 )
 
 SAMPLE_RATE = 16000
@@ -128,9 +128,11 @@ if __name__ == "__main__":
         augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
         wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
 
-    # Distort
-    augmenter = Compose([Distortion(p=1.0)])
+    # ClippingDistortion
+    augmenter = Compose([ClippingDistortion(p=1.0)])
     for i in range(5):
-        output_file_path = os.path.join(output_dir, "Distortion_{:03d}.wav".format(i))
+        output_file_path = os.path.join(
+            output_dir, "ClippingDistortion_{:03d}.wav".format(i)
+        )
         augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
         wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)

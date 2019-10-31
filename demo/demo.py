@@ -13,7 +13,6 @@ from audiomentations import (
     AddImpulseResponse,
     FrequencyMask,
     TimeMask,
-    SmoothFadeTimeMask,
     AddGaussianSNR,
     Resample,
     ClippingDistortion,
@@ -72,15 +71,6 @@ if __name__ == "__main__":
     augmenter = Compose([TimeMask(p=1.0)])
     for i in range(5):
         output_file_path = os.path.join(output_dir, "TimeMask_{:03d}.wav".format(i))
-        augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
-        wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
-
-    # SmoothFadeTimeMask
-    augmenter = Compose([SmoothFadeTimeMask(p=1.0)])
-    for i in range(5):
-        output_file_path = os.path.join(
-            output_dir, "SmoothFadeTimeMask_{:03d}.wav".format(i)
-        )
         augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
         wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
 

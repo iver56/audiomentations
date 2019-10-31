@@ -84,17 +84,19 @@ class FrequencyMask(BasicTransform):
 class TimeMask(BasicTransform):
     """Mask some time band on the spectrogram. Inspired by https://arxiv.org/pdf/1904.08779.pdf """
 
-    def __init__(self, min_band_part=0.0, max_band_part=0.5, p=0.5):
+    def __init__(self, min_band_part=0.0, max_band_part=0.5, fade=False, p=0.5):
         """
         :param min_band_part: Minimum length of the silent part as a fraction of the
             total sound length. Float.
         :param max_band_part: Maximum length of the silent part as a fraction of the
             total sound length. Float.
+        :param fade: Bool, Add linear fade in and fade out of the silent part.
         :param p:
         """
         super().__init__(p)
         self.min_band_part = min_band_part
         self.max_band_part = max_band_part
+        self.fade = fade
 
     def apply(self, samples, sample_rate):
         new_samples = samples.copy()
@@ -103,41 +105,12 @@ class TimeMask(BasicTransform):
             int(new_samples.shape[0] * self.max_band_part),
         )
         _t0 = random.randint(0, new_samples.shape[0] - _t)
-        new_samples[_t0 : _t0 + _t] = 0
-        return new_samples
-
-
-class SmoothFadeTimeMask(BasicTransform):
-    """Mask some time band on the spectrogram with fade in and fade out.
-
-    Same transformation as TimeMask but with linear smoothing"""
-
-    def __init__(self, min_band_part=0.0, max_band_part=0.5, p=0.5):
-        """
-        :param min_band_part: Minimum length of the silent part as a fraction of the
-            total sound length. Float.
-        :param max_band_part: Maximum length of the silent part as a fraction of the
-            total sound length. Float.
-        :param p:
-        """
-        super().__init__(p)
-        self.min_band_part = min_band_part
-        self.max_band_part = max_band_part
-
-    def apply(self, samples, sample_rate):
-        new_samples = samples.copy()
-        _t = random.randint(
-            int(new_samples.shape[0] * self.min_band_part),
-            int(new_samples.shape[0] * self.max_band_part),
-        )
-        _t0 = random.randint(0, new_samples.shape[0] - _t)
-        # fade length is 10 ms or 10% of silent part if silent part is less than 10 ms
-        fade_length = min(int(sample_rate * 0.01), int(_t * 0.1))
-        linear_fade_in = np.linspace(0, 1, num=fade_length)
-        linear_fade_out = np.linspace(1, 0, num=fade_length)
-        new_samples[_t0 : _t0 + fade_length] *= linear_fade_out
-        new_samples[_t0 + _t - fade_length : _t0 + _t] *= linear_fade_in
-        new_samples[_t0 + fade_length : _t0 + _t - fade_length] = 0
+        mask = np.zeros(_t)
+        if self.fade:
+            fade_length = min(int(sample_rate * 0.01), int(_t * 0.1))
+            mask[0:fade_length] = np.linspace(1, 0, num=fade_length)
+            mask[-fade_length:] = np.linspace(0, 1, num=fade_length)
+        new_samples[_t0 : _t0 + _t] *= mask
         return new_samples
 
 

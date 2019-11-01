@@ -84,17 +84,19 @@ class FrequencyMask(BasicTransform):
 class TimeMask(BasicTransform):
     """Mask some time band on the spectrogram. Inspired by https://arxiv.org/pdf/1904.08779.pdf """
 
-    def __init__(self, min_band_part=0.0, max_band_part=0.5, p=0.5):
+    def __init__(self, min_band_part=0.0, max_band_part=0.5, fade=False, p=0.5):
         """
         :param min_band_part: Minimum length of the silent part as a fraction of the
             total sound length. Float.
         :param max_band_part: Maximum length of the silent part as a fraction of the
             total sound length. Float.
+        :param fade: Bool, Add linear fade in and fade out of the silent part.
         :param p:
         """
         super().__init__(p)
         self.min_band_part = min_band_part
         self.max_band_part = max_band_part
+        self.fade = fade
 
     def apply(self, samples, sample_rate):
         new_samples = samples.copy()
@@ -103,7 +105,12 @@ class TimeMask(BasicTransform):
             int(new_samples.shape[0] * self.max_band_part),
         )
         _t0 = random.randint(0, new_samples.shape[0] - _t)
-        new_samples[_t0 : _t0 + _t] = 0
+        mask = np.zeros(_t)
+        if self.fade:
+            fade_length = min(int(sample_rate * 0.01), int(_t * 0.1))
+            mask[0:fade_length] = np.linspace(1, 0, num=fade_length)
+            mask[-fade_length:] = np.linspace(0, 1, num=fade_length)
+        new_samples[_t0 : _t0 + _t] *= mask
         return new_samples
 
 

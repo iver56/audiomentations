@@ -35,9 +35,10 @@ class AddImpulseResponse(BasicTransform):
     def __load_ir(file_path, sample_rate):
         return librosa.load(file_path, sample_rate)
 
-    def randomize_parameters(self):
-        super().randomize_parameters()
-        self.parameters["ir_file_path"] = random.choice(self.ir_files)
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["ir_file_path"] = random.choice(self.ir_files)
 
     def apply(self, samples, sample_rate):
         ir, sample_rate2 = self.__load_ir(self.parameters["ir_file_path"], sample_rate)
@@ -84,15 +85,16 @@ class FrequencyMask(BasicTransform):
         y = lfilter(b, a, data).astype(np.float32)
         return y
 
-    def randomize_parameters(self):
-        super().randomize_parameters()
-        self.parameters["bandwidth"] = random.randint(
-            self.min_frequency_band * self.sample_rate // 2,
-            self.max_frequency_band * self.sample_rate // 2,
-        )
-        self.parameters["freq_start"] = random.randint(
-            16, self.sample_rate / 2 - self.parameters["bandwidth"]
-        )
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["bandwidth"] = random.randint(
+                self.min_frequency_band * sample_rate // 2,
+                self.max_frequency_band * sample_rate // 2,
+            )
+            self.parameters["freq_start"] = random.randint(
+                16, sample_rate / 2 - self.parameters["bandwidth"]
+            )
 
     def apply(self, samples, sample_rate):
         bandwidth = self.parameters["bandwidth"]
@@ -123,13 +125,22 @@ class TimeMask(BasicTransform):
         self.max_band_part = max_band_part
         self.fade = fade
 
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            num_samples = samples.shape[0]
+            self.parameters["t"] = random.randint(
+                int(num_samples * self.min_band_part),
+                int(num_samples * self.max_band_part),
+            )
+            self.parameters["t0"] = random.randint(
+                0, num_samples - self.parameters["t"]
+            )
+
     def apply(self, samples, sample_rate):
         new_samples = samples.copy()
-        t = random.randint(
-            int(new_samples.shape[0] * self.min_band_part),
-            int(new_samples.shape[0] * self.max_band_part),
-        )
-        t0 = random.randint(0, new_samples.shape[0] - t)
+        t = self.parameters["t"]
+        t0 = self.parameters["t0"]
         mask = np.zeros(t)
         if self.fade:
             fade_length = min(int(sample_rate * 0.01), int(t * 0.1))
@@ -140,11 +151,10 @@ class TimeMask(BasicTransform):
 
 
 class AddGaussianSNR(BasicTransform):
-    """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR) """
+    """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR)"""
 
     def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
         """
-
         :param min_SNR: Minimum signal-to-noise ratio
         :param max_SNR: Maximum signal-to-noise ratio
         :param p:
@@ -153,10 +163,19 @@ class AddGaussianSNR(BasicTransform):
         self.min_SNR = min_SNR
         self.max_SNR = max_SNR
 
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["mean"] = np.mean(samples)
+            self.parameters["std"] = np.std(samples)
+
     def apply(self, samples, sample_rate):
-        mean, std = np.mean(samples), np.std(samples)
-        noise_std = random.uniform(self.min_SNR * std, self.max_SNR * std)
-        noise = np.random.normal(mean, noise_std, size=len(samples)).astype(np.float32)
+        noise_std = random.uniform(
+            self.min_SNR * self.parameters["std"], self.max_SNR * self.parameters["std"]
+        )
+        noise = np.random.normal(
+            self.parameters["mean"], noise_std, size=len(samples)
+        ).astype(np.float32)
         return samples + noise
 
 
@@ -168,10 +187,16 @@ class AddGaussianNoise(BasicTransform):
         self.min_amplitude = min_amplitude
         self.max_amplitude = max_amplitude
 
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["amplitude"] = random.uniform(
+                self.min_amplitude, self.max_amplitude
+            )
+
     def apply(self, samples, sample_rate):
         noise = np.random.randn(len(samples)).astype(np.float32)
-        amplitude = random.uniform(self.min_amplitude, self.max_amplitude)
-        samples = samples + amplitude * noise
+        samples = samples + self.parameters["amplitude"] * noise
         return samples
 
 

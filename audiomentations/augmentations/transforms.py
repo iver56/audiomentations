@@ -380,7 +380,7 @@ class ClippingDistortion(BasicTransform):
         assert min_percentile_threshold <= max_percentile_threshold
         assert 0 <= min_percentile_threshold <= 100
         assert 0 <= max_percentile_threshold <= 100
-        self.min_percentile_threshold = max_percentile_threshold
+        self.min_percentile_threshold = min_percentile_threshold
         self.max_percentile_threshold = max_percentile_threshold
 
     def randomize_parameters(self, samples, sample_rate):

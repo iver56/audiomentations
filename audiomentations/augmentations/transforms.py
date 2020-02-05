@@ -212,13 +212,19 @@ class TimeStretch(BasicTransform):
         self.max_rate = max_rate
         self.leave_length_unchanged = leave_length_unchanged
 
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            """
+            If rate > 1, then the signal is sped up.
+            If rate < 1, then the signal is slowed down.
+            """
+            self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
+
     def apply(self, samples, sample_rate):
-        """
-        If `rate > 1`, then the signal is sped up.
-        If `rate < 1`, then the signal is slowed down.
-        """
-        rate = random.uniform(self.min_rate, self.max_rate)
-        time_stretched_samples = librosa.effects.time_stretch(samples, rate)
+        time_stretched_samples = librosa.effects.time_stretch(
+            samples, self.parameters["rate"]
+        )
         if self.leave_length_unchanged:
             # Apply zero padding if the time stretched audio is not long enough to fill the
             # whole space, or crop the time stretched audio if it ended up too long.
@@ -241,10 +247,16 @@ class PitchShift(BasicTransform):
         self.min_semitones = min_semitones
         self.max_semitones = max_semitones
 
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["num_semitones"] = random.uniform(
+                self.min_semitones, self.max_semitones
+            )
+
     def apply(self, samples, sample_rate):
-        num_semitones = random.uniform(self.min_semitones, self.max_semitones)
         pitch_shifted_samples = librosa.effects.pitch_shift(
-            samples, sample_rate, n_steps=num_semitones
+            samples, sample_rate, n_steps=self.parameters["num_semitones"]
         )
         return pitch_shifted_samples
 
@@ -267,11 +279,17 @@ class Shift(BasicTransform):
         self.min_fraction = min_fraction
         self.max_fraction = max_fraction
 
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["num_places_to_shift"] = int(
+                round(
+                    random.uniform(self.min_fraction, self.max_fraction) * len(samples)
+                )
+            )
+
     def apply(self, samples, sample_rate):
-        num_places_to_shift = int(
-            round(random.uniform(self.min_fraction, self.max_fraction) * len(samples))
-        )
-        shifted_samples = np.roll(samples, num_places_to_shift)
+        shifted_samples = np.roll(samples, self.parameters["num_places_to_shift"])
         return shifted_samples
 
 
@@ -285,9 +303,13 @@ class Normalize(BasicTransform):
     def __init__(self, p=0.5):
         super().__init__(p)
 
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["max_amplitude"] = np.amax(np.abs(samples))
+
     def apply(self, samples, sample_rate):
-        max_amplitude = np.amax(np.abs(samples))
-        normalized_samples = samples / max_amplitude
+        normalized_samples = samples / self.parameters["max_amplitude"]
         return normalized_samples
 
 
@@ -324,11 +346,18 @@ class Resample(BasicTransform):
         self.min_sample_rate = min_sample_rate
         self.max_sample_rate = max_sample_rate
 
-    def apply(self, samples, sample_rate):
-        target_sample_rate = random.randint(self.min_sample_rate, self.max_sample_rate)
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["target_sample_rate"] = random.randint(
+                self.min_sample_rate, self.max_sample_rate
+            )
 
+    def apply(self, samples, sample_rate):
         samples = librosa.core.resample(
-            samples, orig_sr=sample_rate, target_sr=target_sample_rate
+            samples,
+            orig_sr=sample_rate,
+            target_sr=self.parameters["target_sample_rate"],
         )
         return samples
 
@@ -354,11 +383,15 @@ class ClippingDistortion(BasicTransform):
         self.min_percentile_threshold = max_percentile_threshold
         self.max_percentile_threshold = max_percentile_threshold
 
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["percentile_threshold"] = random.randint(
+                self.min_percentile_threshold, self.max_percentile_threshold
+            )
+
     def apply(self, samples, sample_rate):
-        percentile_threshold = random.randint(
-            self.min_percentile_threshold, self.max_percentile_threshold
-        )
-        lower_percentile_threshold = int(percentile_threshold / 2)
+        lower_percentile_threshold = int(self.parameters["percentile_threshold"] / 2)
         lower_threshold, upper_threshold = np.percentile(
             samples, [lower_percentile_threshold, 100 - lower_percentile_threshold]
         )

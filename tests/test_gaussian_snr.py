@@ -25,5 +25,4 @@ class TestGaussianSNR(unittest.TestCase):
         transform = AddGaussianSNR(min_SNR=0.5, max_SNR=1.0, p=1.0)
         samples = np.random.normal(0, 1, size=1024).astype(np.float32)
         transform.randomize_parameters(samples, sample_rate=16000)
-        json_serialized_parameters = json.dumps(transform.serialize_parameters())
-        print(json_serialized_parameters)
+        json.dumps(transform.serialize_parameters())

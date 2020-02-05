@@ -7,7 +7,7 @@ from audiomentations.core.composition import Compose
 
 
 class TestFrequencyMask(unittest.TestCase):
-    def test_dynamic_length(self):
+    def test_apply_frequency_mask(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000

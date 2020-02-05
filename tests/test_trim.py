@@ -7,7 +7,7 @@ from audiomentations.core.composition import Compose
 
 
 class TestTrim(unittest.TestCase):
-    def test_dynamic_length(self):
+    def test_trim(self):
         sample_len = 1024
         samples1 = np.zeros((sample_len,), dtype=np.float32)
         samples2 = np.random.normal(0, 1, size=sample_len).astype(np.float32)

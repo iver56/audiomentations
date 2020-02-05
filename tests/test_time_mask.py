@@ -7,7 +7,7 @@ from audiomentations.core.composition import Compose
 
 
 class TestTimeMask(unittest.TestCase):
-    def test_dynamic_length(self):
+    def test_apply_time_mask(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000
@@ -21,7 +21,7 @@ class TestTimeMask(unittest.TestCase):
         std_out = np.mean(np.abs(samples_out))
         self.assertLess(std_out, std_in)
 
-    def test_dynamic_length_with_fade(self):
+    def test_apply_time_mask_with_fade(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000
@@ -37,7 +37,7 @@ class TestTimeMask(unittest.TestCase):
         std_out = np.mean(np.abs(samples_out))
         self.assertLess(std_out, std_in)
 
-    def test_dynamic_length_with_fade_short_signal(self):
+    def test_apply_time_mask_with_fade_short_signal(self):
         sample_len = 100
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000

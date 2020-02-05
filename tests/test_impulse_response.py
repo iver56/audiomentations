@@ -9,7 +9,7 @@ from demo.demo import DEMO_DIR
 
 
 class TestImpulseResponse(unittest.TestCase):
-    def test_dynamic_length(self):
+    def test_apply_impulse_response(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000

@@ -1,4 +1,5 @@
 import random
+import uuid
 
 
 class BasicTransform:
@@ -7,6 +8,7 @@ class BasicTransform:
         self.p = p
         self.parameters = {"should_apply": None}
         self.input_sample_rate = None
+        self.id = "{}_{}".format(self.__class__.__name__, uuid.uuid4())
 
     def __call__(self, samples, sample_rate):
         self.sample_rate = sample_rate

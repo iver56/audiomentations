@@ -5,7 +5,7 @@ from pathlib import Path
 
 import librosa
 import numpy as np
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter, convolve
 
 from audiomentations.core.transforms_interface import BasicTransform
 from audiomentations.core.utils import read_dir
@@ -50,7 +50,7 @@ class AddImpulseResponse(BasicTransform):
                 "Recording sample rate {} did not match Impulse Response signal"
                 " sample rate {}!".format(sample_rate, sample_rate2)
             )
-        signal_ir = np.convolve(samples, ir)
+        signal_ir = convolve(samples, ir)
         max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
         scale = 0.5 / max_value
         signal_ir *= scale

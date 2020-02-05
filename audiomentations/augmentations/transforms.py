@@ -25,7 +25,9 @@ class AddImpulseResponse(BasicTransform):
         super().__init__(p)
         self.ir_files = read_dir(ir_path)
         self.ir_files = [
-            p for p in self.ir_files if Path(p).suffix.lower() in {".mp3", ".ogg", ".wav"}
+            p
+            for p in self.ir_files
+            if Path(p).suffix.lower() in {".mp3", ".ogg", ".wav"}
         ]
 
     @staticmethod
@@ -33,8 +35,12 @@ class AddImpulseResponse(BasicTransform):
     def __load_ir(file_path, sample_rate):
         return librosa.load(file_path, sample_rate)
 
-    def __apply_ir(self, input_signal, sample_rate, ir_filename):
-        ir, sample_rate2 = self.__load_ir(ir_filename, sample_rate)
+    def randomize_parameters(self):
+        super().randomize_parameters()
+        self.parameters["ir_file_path"] = random.choice(self.ir_files)
+
+    def apply(self, samples, sample_rate):
+        ir, sample_rate2 = self.__load_ir(self.parameters["ir_file_path"], sample_rate)
         if sample_rate != sample_rate2:
             # This will typically not happen, as librosa should automatically resample the
             # impulse response sound to the desired sample rate
@@ -42,20 +48,19 @@ class AddImpulseResponse(BasicTransform):
                 "Recording sample rate {} did not match Impulse Response signal"
                 " sample rate {}!".format(sample_rate, sample_rate2)
             )
-        signal_ir = np.convolve(input_signal, ir)
+        signal_ir = np.convolve(samples, ir)
         max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
         scale = 0.5 / max_value
         signal_ir *= scale
-        return signal_ir
 
-    def apply(self, samples, sample_rate):
-        ir_filename = random.choice(self.ir_files)
-        samples = self.__apply_ir(samples, sample_rate, ir_filename)
-        return samples
+        return signal_ir
 
 
 class FrequencyMask(BasicTransform):
-    """Mask some frequency band on the spectrogram. Inspired by https://arxiv.org/pdf/1904.08779.pdf """
+    """
+    Mask some frequency band on the spectrogram.
+    Inspired by https://arxiv.org/pdf/1904.08779.pdf
+    """
 
     def __init__(self, min_frequency_band=0.0, max_frequency_band=0.5, p=0.5):
         """
@@ -79,20 +84,30 @@ class FrequencyMask(BasicTransform):
         y = lfilter(b, a, data).astype(np.float32)
         return y
 
-    def apply(self, samples, sample_rate):
-        band_width = random.randint(
-            self.min_frequency_band * sample_rate // 2,
-            self.max_frequency_band * sample_rate // 2,
+    def randomize_parameters(self):
+        super().randomize_parameters()
+        self.parameters["bandwidth"] = random.randint(
+            self.min_frequency_band * self.sample_rate // 2,
+            self.max_frequency_band * self.sample_rate // 2,
         )
-        freq_start = random.randint(16, sample_rate / 2 - band_width)
+        self.parameters["freq_start"] = random.randint(
+            16, self.sample_rate / 2 - self.parameters["bandwidth"]
+        )
+
+    def apply(self, samples, sample_rate):
+        bandwidth = self.parameters["bandwidth"]
+        freq_start = self.parameters["freq_start"]
         samples = self.__butter_bandstop_filter(
-            samples, freq_start, freq_start + band_width, sample_rate, order=6
+            samples, freq_start, freq_start + bandwidth, sample_rate, order=6
         )
         return samples
 
 
 class TimeMask(BasicTransform):
-    """Mask some time band on the spectrogram. Inspired by https://arxiv.org/pdf/1904.08779.pdf """
+    """
+    Mask some time band on the spectrogram.
+    Inspired by https://arxiv.org/pdf/1904.08779.pdf
+    """
 
     def __init__(self, min_band_part=0.0, max_band_part=0.5, fade=False, p=0.5):
         """
@@ -110,17 +125,17 @@ class TimeMask(BasicTransform):
 
     def apply(self, samples, sample_rate):
         new_samples = samples.copy()
-        _t = random.randint(
+        t = random.randint(
             int(new_samples.shape[0] * self.min_band_part),
             int(new_samples.shape[0] * self.max_band_part),
         )
-        _t0 = random.randint(0, new_samples.shape[0] - _t)
-        mask = np.zeros(_t)
+        t0 = random.randint(0, new_samples.shape[0] - t)
+        mask = np.zeros(t)
         if self.fade:
-            fade_length = min(int(sample_rate * 0.01), int(_t * 0.1))
+            fade_length = min(int(sample_rate * 0.01), int(t * 0.1))
             mask[0:fade_length] = np.linspace(1, 0, num=fade_length)
             mask[-fade_length:] = np.linspace(0, 1, num=fade_length)
-        new_samples[_t0 : _t0 + _t] *= mask
+        new_samples[t0 : t0 + t] *= mask
         return new_samples
 
 

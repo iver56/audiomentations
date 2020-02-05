@@ -1,5 +1,6 @@
 import functools
 import random
+from copy import deepcopy
 from pathlib import Path
 
 import librosa
@@ -177,6 +178,12 @@ class AddGaussianSNR(BasicTransform):
             self.parameters["mean"], noise_std, size=len(samples)
         ).astype(np.float32)
         return samples + noise
+
+    def serialize_parameters(self):
+        serialized_parameters = deepcopy(self.parameters)
+        serialized_parameters["mean"] = float(serialized_parameters["mean"])
+        serialized_parameters["std"] = float(serialized_parameters["std"])
+        return serialized_parameters
 
 
 class AddGaussianNoise(BasicTransform):

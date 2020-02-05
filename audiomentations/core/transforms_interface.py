@@ -22,3 +22,7 @@ class BasicTransform:
 
     def apply(self, samples, sample_rate):
         raise NotImplementedError
+
+    def serialize_parameters(self):
+        """Return the parameters as a JSON-serializable dict."""
+        return self.parameters

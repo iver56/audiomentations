@@ -270,14 +270,17 @@ class PitchShift(BasicTransform):
 
 class Shift(BasicTransform):
     """
-    Shift the samples forwards or backwards. Samples that roll beyond the first or last position
-    are re-introduced at the last or first.
+    Shift the samples forwards or backwards.
     """
 
-    def __init__(self, min_fraction=-0.5, max_fraction=0.5, p=0.5):
+    def __init__(self, min_fraction=-0.5, max_fraction=0.5, rollover=True, p=0.5):
         """
         :param min_fraction: float, fraction of total sound length
         :param max_fraction: float, fraction of total sound length
+        :param rollover: When set to True, samples that roll beyond the first or last position
+            are re-introduced at the last or first. When set to False, samples that roll beyond
+            the first or last position are discarded. In other words, rollover=False results in
+            an empty space (with zeroes).
         :param p:
         """
         super().__init__(p)
@@ -285,6 +288,7 @@ class Shift(BasicTransform):
         assert max_fraction <= 1
         self.min_fraction = min_fraction
         self.max_fraction = max_fraction
+        self.rollover = rollover
 
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
@@ -296,7 +300,13 @@ class Shift(BasicTransform):
             )
 
     def apply(self, samples, sample_rate):
-        shifted_samples = np.roll(samples, self.parameters["num_places_to_shift"])
+        num_places_to_shift = self.parameters["num_places_to_shift"]
+        shifted_samples = np.roll(samples, num_places_to_shift)
+        if not self.rollover:
+            if num_places_to_shift > 0:
+                shifted_samples[:num_places_to_shift] = 0.0
+            elif num_places_to_shift < 0:
+                shifted_samples[num_places_to_shift:] = 0.0
         return shifted_samples
 
 

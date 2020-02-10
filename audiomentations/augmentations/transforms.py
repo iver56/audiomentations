@@ -168,22 +168,20 @@ class AddGaussianSNR(BasicTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["mean"] = np.mean(samples)
-            self.parameters["std"] = np.std(samples)
+            std = np.std(samples)
+            self.parameters["noise_std"] = random.uniform(
+                self.min_SNR * std, self.max_SNR * std
+            )
 
     def apply(self, samples, sample_rate):
-        noise_std = random.uniform(
-            self.min_SNR * self.parameters["std"], self.max_SNR * self.parameters["std"]
-        )
         noise = np.random.normal(
-            self.parameters["mean"], noise_std, size=len(samples)
+            0.0, self.parameters["noise_std"], size=len(samples)
         ).astype(np.float32)
         return samples + noise
 
     def serialize_parameters(self):
         serialized_parameters = deepcopy(self.parameters)
-        serialized_parameters["mean"] = float(serialized_parameters["mean"])
-        serialized_parameters["std"] = float(serialized_parameters["std"])
+        serialized_parameters["noise_std"] = float(serialized_parameters["noise_std"])
         return serialized_parameters
 
 

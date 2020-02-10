@@ -8,7 +8,11 @@ import numpy as np
 from scipy.signal import butter, lfilter, convolve
 
 from audiomentations.core.transforms_interface import BasicTransform
-from audiomentations.core.utils import read_dir
+from audiomentations.core.utils import (
+    read_dir,
+    calculate_rms,
+    calculate_desired_noise_rms,
+)
 
 
 class AddImpulseResponse(BasicTransform):
@@ -413,3 +417,95 @@ class ClippingDistortion(BasicTransform):
         )
         samples = np.clip(samples, lower_threshold, upper_threshold)
         return samples
+
+
+class AddBackgroundNoise(BasicTransform):
+    """Mix in another sound, e.g. a background noise. Useful if your original sound is clean and
+    you want to simulate an environment where background noise is present.
+
+    Can also be used for mixup, as in https://arxiv.org/pdf/1710.09412.pdf
+
+    A folder of (background noise) sounds to be mixed in must be specified. These sounds should
+    ideally be at least as long as the input sounds to be transformed. Otherwise, the background
+    sound will be repeated, which may sound unnatural.
+    """
+
+    def __init__(self, sounds_path=None, min_snr=3, max_snr=30, p=0.5):
+        """
+        :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
+            files can be flac, mp3, ogg or wav.
+        :param min_snr: Minimum signal-to-noise ratio in dB
+        :param max_snr: Maximum signal-to-noise ratio in dB
+        :param p:
+        """
+        super().__init__(p)
+        self.sound_file_paths = read_dir(sounds_path)
+        self.sound_file_paths = [
+            p
+            for p in self.sound_file_paths
+            if Path(p).suffix.lower() in {".flac", ".mp3", ".ogg", ".wav"}
+        ]
+        assert len(self.sound_file_paths) > 0
+        self.min_snr = min_snr
+        self.max_snr = max_snr
+
+    @staticmethod
+    @functools.lru_cache(maxsize=2)
+    def __load_sound(file_path, sample_rate):
+        return librosa.load(file_path, sample_rate)
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["snr"] = random.uniform(self.min_snr, self.max_snr)
+            self.parameters["noise_file_path"] = random.choice(self.sound_file_paths)
+
+            num_samples = len(samples)
+            noise_sound, _ = self.__load_sound(
+                self.parameters["noise_file_path"], sample_rate
+            )
+
+            num_noise_samples = len(noise_sound)
+            min_noise_offset = 0
+            max_noise_offset = max(0, num_noise_samples - num_samples - 1)
+            self.parameters["noise_start_index"] = random.randint(
+                min_noise_offset, max_noise_offset
+            )
+            self.parameters["noise_end_index"] = (
+                self.parameters["noise_start_index"] + num_samples
+            )
+
+    def apply(self, samples, sample_rate):
+        noise_sound, _ = self.__load_sound(
+            self.parameters["noise_file_path"], sample_rate
+        )
+        noise_sound = noise_sound[
+            self.parameters["noise_start_index"] : self.parameters["noise_end_index"]
+        ]
+
+        clean_rms = calculate_rms(samples)
+        noise_rms = calculate_rms(noise_sound)
+        desired_noise_rms = calculate_desired_noise_rms(
+            clean_rms, self.parameters["snr"]
+        )
+
+        # Adjust the noise to match the desired noise RMS
+        noise_sound = noise_sound * (desired_noise_rms / noise_rms)
+
+        # Repeat the sound if it shorter than the input sound
+        num_samples = len(samples)
+        while len(noise_sound) < num_samples:
+            noise_sound = np.concatenate(
+                (noise_sound, noise_sound)
+            )
+
+        if len(noise_sound) > num_samples:
+            noise_sound = noise_sound[0:num_samples]
+
+        # Return a mix of the input sound and the background noise sound
+        return samples + noise_sound
+
+    def serialize_parameters(self):
+        serialized_parameters = deepcopy(self.parameters)
+        serialized_parameters["snr"] = float(serialized_parameters["snr"])
+        return serialized_parameters

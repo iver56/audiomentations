@@ -16,6 +16,7 @@ from audiomentations import (
     AddGaussianSNR,
     Resample,
     ClippingDistortion,
+    AddBackgroundNoise,
 )
 
 SAMPLE_RATE = 16000
@@ -116,9 +117,13 @@ if __name__ == "__main__":
         wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
 
     # Shift without rollover
-    augmenter = Compose([Shift(min_fraction=-0.5, max_fraction=0.5, rollover=False, p=1.0)])
+    augmenter = Compose(
+        [Shift(min_fraction=-0.5, max_fraction=0.5, rollover=False, p=1.0)]
+    )
     for i in range(5):
-        output_file_path = os.path.join(output_dir, "ShiftWithoutRollover_{:03d}.wav".format(i))
+        output_file_path = os.path.join(
+            output_dir, "ShiftWithoutRollover_{:03d}.wav".format(i)
+        )
         augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
         wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
 
@@ -140,6 +145,21 @@ if __name__ == "__main__":
     for i in range(5):
         output_file_path = os.path.join(
             output_dir, "ClippingDistortion_{:03d}.wav".format(i)
+        )
+        augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
+        wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
+
+    # AddBackgroundNoise
+    augmenter = Compose(
+        [
+            AddBackgroundNoise(
+                sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
+            )
+        ]
+    )
+    for i in range(5):
+        output_file_path = os.path.join(
+            output_dir, "AddBackgroundNoise_{:03d}.wav".format(i)
         )
         augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
         wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)

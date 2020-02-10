@@ -21,3 +21,19 @@ class Compose:
                 samples = transform(samples, sample_rate)
 
         return samples
+
+    def freeze_parameters(self):
+        """
+        Mark all parameters as frozen, i.e. do not randomize them for each call. This can be
+        useful if you want to apply an effect chain with the exact same parameters to multiple
+        sounds.
+        """
+        for transform in self.transforms:
+            transform.freeze_parameters = True
+
+    def unfreeze_parameters(self):
+        """
+        Unmark all parameters as frozen, i.e. let them be randomized for each call.
+        """
+        for transform in self.transforms:
+            transform.freeze_parameters = False

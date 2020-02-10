@@ -20,7 +20,7 @@ class AddImpulseResponse(BasicTransform):
     def __init__(self, ir_path="/tmp/ir", p=0.5):
         """
         :param ir_path: Path to a folder that contains one or more wav files of impulse
-        responses. No other files should reside in this folder. Must be str or a Path instance.
+        responses. Must be str or a Path instance.
         :param p:
         """
         super().__init__(p)
@@ -28,8 +28,9 @@ class AddImpulseResponse(BasicTransform):
         self.ir_files = [
             p
             for p in self.ir_files
-            if Path(p).suffix.lower() in {".mp3", ".ogg", ".wav"}
+            if Path(p).suffix.lower() in {".flac", ".mp3", ".ogg", ".wav"}
         ]
+        assert len(self.ir_files) > 0
 
     @staticmethod
     @functools.lru_cache(maxsize=128)

@@ -528,9 +528,26 @@ class AddShortNoises(BasicTransform):
         """
         :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
             files can be flac, mp3, ogg or wav.
-        :param min_snr_in_db: Minimum signal-to-noise ratio in dB
-        :param max_snr_in_db: Maximum signal-to-noise ratio in dB
-        :param p:
+        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. A lower value means the added
+            sounds/noises will be louder.
+        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. A lower value means the added
+            sounds/noises will be louder.
+        :param min_time_between_sounds: Minimum pause time between the added sounds/noises
+        :param max_time_between_sounds: Maximum pause time between the added sounds/noises
+        :param burst_probability: The probability of adding an extra sound/noise that overlaps
+        :param min_pause_factor_during_burst: Min value of how far into the current sound (as
+            fraction) the burst sound should start playing. The value must be greater than 0.
+        :param max_pause_factor_during_burst: Max value of how far into the current sound (as
+            fraction) the burst sound should start playing. The value must be greater than 0.
+        :param min_fade_in_time: Min sound/noise fade in time in seconds. Use a value larger
+            than 0 to avoid a "click" at the start of the sound/noise.
+        :param max_fade_in_time: Min sound/noise fade out time in seconds. Use a value larger
+            than 0 to avoid a "click" at the start of the sound/noise.
+        :param min_fade_out_time: Min sound/noise fade out time in seconds. Use a value larger
+            than 0 to avoid a "click" at the end of the sound/noise.
+        :param max_fade_out_time: Max sound/noise fade out time in seconds. Use a value larger
+            than 0 to avoid a "click" at the end of the sound/noise.
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
         self.sound_file_paths = read_dir(sounds_path)

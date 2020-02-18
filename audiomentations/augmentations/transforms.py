@@ -683,9 +683,9 @@ class AddShortNoises(BasicTransform):
 
             # Apply fade in and fade out
             noise_gain = np.ones_like(noise_samples)
-            fade_in_time_in_samples = sound_params["fade_in_time"] * sample_rate
+            fade_in_time_in_samples = int(sound_params["fade_in_time"] * sample_rate)
             fade_in_mask = np.linspace(0.0, 1.0, num=fade_in_time_in_samples)
-            fade_out_time_in_samples = sound_params["fade_out_time"] * sample_rate
+            fade_out_time_in_samples = int(sound_params["fade_out_time"] * sample_rate)
             fade_out_mask = np.linspace(1.0, 0.0, num=fade_out_time_in_samples)
             noise_gain[: fade_in_mask.shape[0]] = fade_in_mask
             noise_gain[-fade_out_mask.shape[0] :] = np.minimum(

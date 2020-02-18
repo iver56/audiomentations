@@ -17,8 +17,8 @@ class TestAddBackgroundNoise(unittest.TestCase):
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    min_snr=15,
-                    max_snr=35,
+                    min_snr_in_db=15,
+                    max_snr_in_db=35,
                     p=1.0,
                 )
             ]
@@ -33,8 +33,8 @@ class TestAddBackgroundNoise(unittest.TestCase):
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    min_snr=15,
-                    max_snr=35,
+                    min_snr_in_db=15,
+                    max_snr_in_db=35,
                     p=1.0,
                 )
             ]

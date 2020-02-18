@@ -20,8 +20,8 @@ class TestCompose(unittest.TestCase):
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    min_snr=15,
-                    max_snr=35,
+                    min_snr_in_db=15,
+                    max_snr_in_db=35,
                     p=1.0,
                 ),
                 ClippingDistortion(p=0.5),

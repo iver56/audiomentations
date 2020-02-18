@@ -425,12 +425,12 @@ class AddBackgroundNoise(BasicTransform):
     sound will be repeated, which may sound unnatural.
     """
 
-    def __init__(self, sounds_path=None, min_snr=3, max_snr=30, p=0.5):
+    def __init__(self, sounds_path=None, min_snr_in_db=3, max_snr_in_db=30, p=0.5):
         """
         :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
             files can be flac, mp3, ogg or wav.
-        :param min_snr: Minimum signal-to-noise ratio in dB
-        :param max_snr: Maximum signal-to-noise ratio in dB
+        :param min_snr_in_db: Minimum signal-to-noise ratio in dB
+        :param max_snr_in_db: Maximum signal-to-noise ratio in dB
         :param p:
         """
         super().__init__(p)
@@ -441,8 +441,8 @@ class AddBackgroundNoise(BasicTransform):
             if Path(p).suffix.lower() in {".flac", ".mp3", ".ogg", ".wav"}
         ]
         assert len(self.sound_file_paths) > 0
-        self.min_snr = min_snr
-        self.max_snr = max_snr
+        self.min_snr_in_db = min_snr_in_db
+        self.max_snr_in_db = max_snr_in_db
 
     @staticmethod
     @functools.lru_cache(maxsize=2)
@@ -452,7 +452,9 @@ class AddBackgroundNoise(BasicTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["snr"] = random.uniform(self.min_snr, self.max_snr)
+            self.parameters["snr_in_db"] = random.uniform(
+                self.min_snr_in_db, self.max_snr_in_db
+            )
             self.parameters["noise_file_path"] = random.choice(self.sound_file_paths)
 
             num_samples = len(samples)
@@ -481,7 +483,7 @@ class AddBackgroundNoise(BasicTransform):
         clean_rms = calculate_rms(samples)
         noise_rms = calculate_rms(noise_sound)
         desired_noise_rms = calculate_desired_noise_rms(
-            clean_rms, self.parameters["snr"]
+            clean_rms, self.parameters["snr_in_db"]
         )
 
         # Adjust the noise to match the desired noise RMS
@@ -490,9 +492,7 @@ class AddBackgroundNoise(BasicTransform):
         # Repeat the sound if it shorter than the input sound
         num_samples = len(samples)
         while len(noise_sound) < num_samples:
-            noise_sound = np.concatenate(
-                (noise_sound, noise_sound)
-            )
+            noise_sound = np.concatenate((noise_sound, noise_sound))
 
         if len(noise_sound) > num_samples:
             noise_sound = noise_sound[0:num_samples]

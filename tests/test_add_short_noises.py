@@ -3,6 +3,7 @@ import os
 import unittest
 
 import numpy as np
+from numpy.testing import assert_array_equal
 
 from audiomentations import calculate_rms
 from audiomentations.augmentations.transforms import AddShortNoises
@@ -13,7 +14,7 @@ from demo.demo import DEMO_DIR
 class TestAddShortNoises(unittest.TestCase):
     def test_add_short_noises(self):
         sample_rate = 16000
-        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 10 * sample_rate)).astype(
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
             np.float32
         )
         rms_before = calculate_rms(samples)
@@ -41,3 +42,25 @@ class TestAddShortNoises(unittest.TestCase):
         samples = np.random.normal(0, 1, size=1024).astype(np.float32)
         transform.randomize_parameters(samples, sample_rate=16000)
         json.dumps(transform.serialize_parameters())
+
+    def test_frozen_parameters(self):
+        sample_rate = 16000
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
+            np.float32
+        )
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=8.0,
+                    p=1.0,
+                )
+            ]
+        )
+        samples_out1 = augmenter(samples=samples, sample_rate=sample_rate)
+
+        augmenter.freeze_parameters()
+        samples_out2 = augmenter(samples, sample_rate)
+
+        assert_array_equal(samples_out1, samples_out2)

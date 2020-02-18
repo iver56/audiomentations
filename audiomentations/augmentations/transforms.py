@@ -183,11 +183,6 @@ class AddGaussianSNR(BasicTransform):
         ).astype(np.float32)
         return samples + noise
 
-    def serialize_parameters(self):
-        serialized_parameters = deepcopy(self.parameters)
-        serialized_parameters["noise_std"] = float(serialized_parameters["noise_std"])
-        return serialized_parameters
-
 
 class AddGaussianNoise(BasicTransform):
     """Add gaussian noise to the samples"""
@@ -504,8 +499,3 @@ class AddBackgroundNoise(BasicTransform):
 
         # Return a mix of the input sound and the background noise sound
         return samples + noise_sound
-
-    def serialize_parameters(self):
-        serialized_parameters = deepcopy(self.parameters)
-        serialized_parameters["snr"] = float(serialized_parameters["snr"])
-        return serialized_parameters

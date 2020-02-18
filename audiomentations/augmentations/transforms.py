@@ -499,3 +499,227 @@ class AddBackgroundNoise(BasicTransform):
 
         # Return a mix of the input sound and the background noise sound
         return samples + noise_sound
+
+
+class AddShortNoises(BasicTransform):
+    """Mix in various (bursts of overlapping) sounds with random pauses between. Useful if your
+    original sound is clean and you want to simulate an environment where short noises sometimes
+    occur.
+
+    A folder of (noise) sounds to be mixed in must be specified.
+    """
+
+    def __init__(
+        self,
+        sounds_path=None,
+        min_snr_in_db=0,
+        max_snr_in_db=25,
+        min_time_between_sounds=8.0,
+        max_time_between_sounds=24.0,
+        burst_probability=0.2,
+        min_pause_factor_during_burst=0.01,
+        max_pause_factor_during_burst=0.95,
+        min_fade_in_time=0.005,
+        max_fade_in_time=0.08,
+        min_fade_out_time=0.01,
+        max_fade_out_time=0.1,
+        p=0.5,
+    ):
+        """
+        :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
+            files can be flac, mp3, ogg or wav.
+        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. A lower value means the added
+            sounds/noises will be louder.
+        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. A lower value means the added
+            sounds/noises will be louder.
+        :param min_time_between_sounds: Minimum pause time between the added sounds/noises
+        :param max_time_between_sounds: Maximum pause time between the added sounds/noises
+        :param burst_probability: The probability of adding an extra sound/noise that overlaps
+        :param min_pause_factor_during_burst: Min value of how far into the current sound (as
+            fraction) the burst sound should start playing. The value must be greater than 0.
+        :param max_pause_factor_during_burst: Max value of how far into the current sound (as
+            fraction) the burst sound should start playing. The value must be greater than 0.
+        :param min_fade_in_time: Min sound/noise fade in time in seconds. Use a value larger
+            than 0 to avoid a "click" at the start of the sound/noise.
+        :param max_fade_in_time: Min sound/noise fade out time in seconds. Use a value larger
+            than 0 to avoid a "click" at the start of the sound/noise.
+        :param min_fade_out_time: Min sound/noise fade out time in seconds. Use a value larger
+            than 0 to avoid a "click" at the end of the sound/noise.
+        :param max_fade_out_time: Max sound/noise fade out time in seconds. Use a value larger
+            than 0 to avoid a "click" at the end of the sound/noise.
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+        self.sound_file_paths = read_dir(sounds_path)
+        self.sound_file_paths = [
+            p
+            for p in self.sound_file_paths
+            if Path(p).suffix.lower() in {".flac", ".mp3", ".ogg", ".wav"}
+        ]
+        assert len(self.sound_file_paths) > 0
+        assert min_snr_in_db <= max_snr_in_db
+        assert min_time_between_sounds <= max_time_between_sounds
+        assert 0.0 < burst_probability <= 1.0
+        if burst_probability == 1.0:
+            assert (
+                min_pause_factor_during_burst > 0.0
+            )  # or else an infinite loop will occur
+        assert 0.0 < min_pause_factor_during_burst <= 1.0
+        assert max_pause_factor_during_burst > 0.0
+        assert max_pause_factor_during_burst >= min_pause_factor_during_burst
+        assert min_fade_in_time >= 0.0
+        assert max_fade_in_time >= 0.0
+        assert min_fade_in_time <= max_fade_in_time
+        assert min_fade_out_time >= 0.0
+        assert max_fade_out_time >= 0.0
+        assert min_fade_out_time <= max_fade_out_time
+
+        self.min_snr_in_db = min_snr_in_db
+        self.max_snr_in_db = max_snr_in_db
+        self.min_time_between_sounds = min_time_between_sounds
+        self.max_time_between_sounds = max_time_between_sounds
+        self.burst_probability = burst_probability
+        self.min_pause_factor_during_burst = min_pause_factor_during_burst
+        self.max_pause_factor_during_burst = max_pause_factor_during_burst
+        self.min_fade_in_time = min_fade_in_time
+        self.max_fade_in_time = max_fade_in_time
+        self.min_fade_out_time = min_fade_out_time
+        self.max_fade_out_time = max_fade_out_time
+
+    @staticmethod
+    @functools.lru_cache(maxsize=64)
+    def __load_sound(file_path, sample_rate):
+        return librosa.load(file_path, sample_rate)
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            input_sound_duration = len(samples) / sample_rate
+
+            current_time = 0
+            global_offset = random.uniform(
+                -self.max_time_between_sounds, self.max_time_between_sounds
+            )
+            current_time += global_offset
+            sounds = []
+            while current_time < input_sound_duration:
+                sound_file_path = random.choice(self.sound_file_paths)
+                sound, _ = self.__load_sound(sound_file_path, sample_rate)
+                sound_duration = len(sound) / sample_rate
+
+                sounds.append(
+                    {
+                        "fade_in_time": random.uniform(
+                            self.min_fade_in_time, self.max_fade_in_time
+                        ),
+                        "start": current_time,
+                        "end": current_time + sound_duration,
+                        "fade_out_time": random.uniform(
+                            self.min_fade_out_time, self.max_fade_out_time
+                        ),
+                        "file_path": sound_file_path,
+                        "snr_in_db": random.uniform(
+                            self.min_snr_in_db, self.max_snr_in_db
+                        ),
+                    }
+                )
+
+                # burst mode - add overlapping sounds
+                while (
+                    random.random() < self.burst_probability
+                    and current_time < input_sound_duration
+                ):
+                    pause_factor = random.uniform(
+                        self.min_pause_factor_during_burst,
+                        self.max_pause_factor_during_burst,
+                    )
+                    pause_time = pause_factor * sound_duration
+                    current_time = sounds[-1]["start"] + pause_time
+
+                    if current_time >= input_sound_duration:
+                        break
+
+                    sound_file_path = random.choice(self.sound_file_paths)
+                    sound, _ = self.__load_sound(sound_file_path, sample_rate)
+                    sound_duration = len(sound) / sample_rate
+                    sounds.append(
+                        {
+                            "fade_in_time": random.uniform(
+                                self.min_fade_in_time, self.max_fade_in_time
+                            ),
+                            "start": current_time,
+                            "end": current_time + sound_duration,
+                            "fade_out_time": random.uniform(
+                                self.min_fade_out_time, self.max_fade_out_time
+                            ),
+                            "file_path": sound_file_path,
+                            "snr_in_db": random.uniform(
+                                self.min_snr_in_db, self.max_snr_in_db
+                            ),
+                        }
+                    )
+
+                # wait until the last sound is done
+                current_time += sound_duration
+
+                # then add a pause
+                pause_duration = random.uniform(
+                    self.min_time_between_sounds, self.max_time_between_sounds
+                )
+                current_time += pause_duration
+
+            self.parameters["sounds"] = sounds
+
+    def apply(self, samples, sample_rate):
+        num_samples = len(samples) - 1
+        noise_placeholder = np.zeros_like(samples)
+        for sound_params in self.parameters["sounds"]:
+            if sound_params["end"] < 0:
+                # Skip a sound if it ended before the start of the input sound
+                continue
+
+            noise_samples, _ = self.__load_sound(sound_params["file_path"], sample_rate)
+            num_noise_samples = len(noise_samples)
+
+            # Apply fade in and fade out
+            noise_gain = np.ones_like(noise_samples)
+            fade_in_time_in_samples = int(sound_params["fade_in_time"] * sample_rate)
+            fade_in_mask = np.linspace(0.0, 1.0, num=fade_in_time_in_samples)
+            fade_out_time_in_samples = int(sound_params["fade_out_time"] * sample_rate)
+            fade_out_mask = np.linspace(1.0, 0.0, num=fade_out_time_in_samples)
+            noise_gain[: fade_in_mask.shape[0]] = fade_in_mask
+            noise_gain[-fade_out_mask.shape[0] :] = np.minimum(
+                noise_gain[-fade_out_mask.shape[0] :], fade_out_mask
+            )
+            noise_samples = noise_samples * noise_gain
+
+            start_sample_index = int(sound_params["start"] * sample_rate)
+            end_sample_index = start_sample_index + num_noise_samples
+
+            if start_sample_index < 0:
+                # crop noise_samples: shave off a chunk in the beginning
+                num_samples_to_shave_off = abs(start_sample_index)
+                noise_samples = noise_samples[num_samples_to_shave_off:]
+                start_sample_index = 0
+
+            if end_sample_index > num_samples:
+                # crop noise_samples: shave off a chunk in the end
+                num_samples_to_shave_off = end_sample_index - num_samples
+                noise_samples = noise_samples[
+                    : num_noise_samples - num_samples_to_shave_off
+                ]
+                end_sample_index = num_samples
+
+            clean_rms = calculate_rms(samples[start_sample_index:end_sample_index])
+            noise_rms = calculate_rms(noise_samples)
+            desired_noise_rms = calculate_desired_noise_rms(
+                clean_rms, sound_params["snr_in_db"]
+            )
+
+            # Adjust the noise to match the desired noise RMS
+            noise_samples = noise_samples * (desired_noise_rms / noise_rms)
+
+            noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+
+        # Return a mix of the input sound and the added sounds
+        return samples + noise_placeholder

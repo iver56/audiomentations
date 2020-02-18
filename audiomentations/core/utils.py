@@ -20,7 +20,7 @@ def calculate_desired_noise_rms(clean_rms, snr):
 
     Based on https://github.com/Sato-Kunihiko/audio-SNR/blob/8d2c933b6c0afe6f1203251f4877e7a1068a6130/create_mixed_audio_file.py#L20
     :param clean_rms: Root Mean Square (RMS) - a value between 0.0 and 1.0
-    :param snr: Signal-to-Noise (SNR) Ratio in dB - typically somewhere between 0 and 80
+    :param snr: Signal-to-Noise (SNR) Ratio in dB - typically somewhere between -20 and 60
     :return:
     """
     a = float(snr) / 20

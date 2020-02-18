@@ -17,7 +17,7 @@ from audiomentations import (
     Resample,
     ClippingDistortion,
     AddBackgroundNoise,
-)
+    AddShortNoises)
 
 SAMPLE_RATE = 16000
 CHANNELS = 1
@@ -160,6 +160,33 @@ if __name__ == "__main__":
     for i in range(5):
         output_file_path = os.path.join(
             output_dir, "AddBackgroundNoise_{:03d}.wav".format(i)
+        )
+        augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
+        wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
+
+    # AddShortNoises
+    augmenter = Compose(
+        [
+            AddShortNoises(
+                sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                min_snr_in_db=0,
+                max_snr_in_db=8,
+                min_time_between_sounds=2.0,
+                max_time_between_sounds=4.0,
+                burst_probability=0.4,
+                min_pause_factor_during_burst=0.01,
+                max_pause_factor_during_burst=0.95,
+                min_fade_in_time=0.005,
+                max_fade_in_time=0.08,
+                min_fade_out_time=0.01,
+                max_fade_out_time=0.1,
+                p=1.0,
+            )
+        ]
+    )
+    for i in range(5):
+        output_file_path = os.path.join(
+            output_dir, "AddShortNoises_{:03d}.wav".format(i)
         )
         augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
         wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)

@@ -609,16 +609,24 @@ class AddShortNoises(BasicTransform):
                 sound, _ = self.__load_sound(sound_file_path, sample_rate)
                 sound_duration = len(sound) / sample_rate
 
+                # Ensure that the fade time is not longer than the duration of the sound
+                fade_in_time = min(
+                    sound_duration,
+                    random.uniform(self.min_fade_in_time, self.max_fade_in_time),
+                )
+                fade_out_time = min(
+                    sound_duration,
+                    random.uniform(
+                        self.min_fade_out_time, self.max_fade_out_time
+                    )
+                )
+
                 sounds.append(
                     {
-                        "fade_in_time": random.uniform(
-                            self.min_fade_in_time, self.max_fade_in_time
-                        ),
+                        "fade_in_time": fade_in_time,
                         "start": current_time,
                         "end": current_time + sound_duration,
-                        "fade_out_time": random.uniform(
-                            self.min_fade_out_time, self.max_fade_out_time
-                        ),
+                        "fade_out_time": fade_out_time,
                         "file_path": sound_file_path,
                         "snr_in_db": random.uniform(
                             self.min_snr_in_db, self.max_snr_in_db
@@ -644,16 +652,24 @@ class AddShortNoises(BasicTransform):
                     sound_file_path = random.choice(self.sound_file_paths)
                     sound, _ = self.__load_sound(sound_file_path, sample_rate)
                     sound_duration = len(sound) / sample_rate
+
+                    fade_in_time = min(
+                        sound_duration,
+                        random.uniform(self.min_fade_in_time, self.max_fade_in_time),
+                    )
+                    fade_out_time = min(
+                        sound_duration,
+                        random.uniform(
+                            self.min_fade_out_time, self.max_fade_out_time
+                        )
+                    )
+
                     sounds.append(
                         {
-                            "fade_in_time": random.uniform(
-                                self.min_fade_in_time, self.max_fade_in_time
-                            ),
+                            "fade_in_time": fade_in_time,
                             "start": current_time,
                             "end": current_time + sound_duration,
-                            "fade_out_time": random.uniform(
-                                self.min_fade_out_time, self.max_fade_out_time
-                            ),
+                            "fade_out_time": fade_out_time,
                             "file_path": sound_file_path,
                             "snr_in_db": random.uniform(
                                 self.min_snr_in_db, self.max_snr_in_db

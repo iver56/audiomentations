@@ -92,6 +92,34 @@ class TestAddShortNoises(unittest.TestCase):
         self.assertEqual(samples_out.dtype, np.float32)
         self.assertEqual(samples_out.shape, samples.shape)
 
+    def test_too_long_fade_time(self):
+        """Check that a too long fade time does not result in an exception."""
+        sample_rate = 16000
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
+            np.float32
+        )
+        rms_before = calculate_rms(samples)
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=8.0,
+                    min_fade_in_time=0.9,
+                    max_fade_in_time=0.99,
+                    min_fade_out_time=0.9,
+                    max_fade_out_time=0.99,
+                    p=1.0,
+                )
+            ]
+        )
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        self.assertEqual(samples_out.dtype, np.float32)
+        self.assertEqual(samples_out.shape, samples.shape)
+
+        rms_after = calculate_rms(samples_out)
+        self.assertGreater(rms_after, rms_before)
+
     def test_serialize_parameters(self):
         transform = AddShortNoises(
             sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0

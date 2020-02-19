@@ -40,9 +40,7 @@ class TestAddShortNoises(unittest.TestCase):
         Verify correct behavior when the input sound is shorter than the added noise sounds.
         """
         sample_rate = 16000
-        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 500)).astype(
-            np.float32
-        )
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 500)).astype(np.float32)
         rms_before = calculate_rms(samples)
         augmenter = Compose(
             [
@@ -60,6 +58,39 @@ class TestAddShortNoises(unittest.TestCase):
 
         rms_after = calculate_rms(samples_out)
         self.assertGreater(rms_after, rms_before)
+
+    def test_add_silence(self):
+        """Check that AddShortNoises does not crash if a noise is completely silent."""
+        sample_rate = 44100
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 6000)).astype(np.float32)
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "silence"),
+                    min_time_between_sounds=0.001,
+                    max_time_between_sounds=0.002,
+                    p=1.0,
+                )
+            ]
+        )
+        augmenter.transforms[0].parameters = {
+            "should_apply": True,
+            "sounds": [
+                {
+                    "fade_in_time": 0.04257633246838298,
+                    "start": -0.00013191289693534575,
+                    "end": 0.8071696744046519,
+                    "fade_out_time": 0.07119110196424423,
+                    "file_path": os.path.join(DEMO_DIR, "silence", "silence.wav"),
+                    "snr_in_db": 19.040001423519563,
+                }
+            ],
+        }
+        augmenter.freeze_parameters()
+
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        self.assertEqual(samples_out.dtype, np.float32)
+        self.assertEqual(samples_out.shape, samples.shape)
 
     def test_serialize_parameters(self):
         transform = AddShortNoises(

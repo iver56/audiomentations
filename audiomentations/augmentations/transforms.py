@@ -673,7 +673,7 @@ class AddShortNoises(BasicTransform):
             self.parameters["sounds"] = sounds
 
     def apply(self, samples, sample_rate):
-        num_samples = len(samples) - 1
+        num_samples = len(samples)
         noise_placeholder = np.zeros_like(samples)
         for sound_params in self.parameters["sounds"]:
             if sound_params["end"] < 0:
@@ -681,7 +681,6 @@ class AddShortNoises(BasicTransform):
                 continue
 
             noise_samples, _ = self.__load_sound(sound_params["file_path"], sample_rate)
-            num_noise_samples = len(noise_samples)
 
             # Apply fade in and fade out
             noise_gain = np.ones_like(noise_samples)
@@ -696,7 +695,7 @@ class AddShortNoises(BasicTransform):
             noise_samples = noise_samples * noise_gain
 
             start_sample_index = int(sound_params["start"] * sample_rate)
-            end_sample_index = start_sample_index + num_noise_samples
+            end_sample_index = start_sample_index + len(noise_samples)
 
             if start_sample_index < 0:
                 # crop noise_samples: shave off a chunk in the beginning
@@ -708,20 +707,21 @@ class AddShortNoises(BasicTransform):
                 # crop noise_samples: shave off a chunk in the end
                 num_samples_to_shave_off = end_sample_index - num_samples
                 noise_samples = noise_samples[
-                    : num_noise_samples - num_samples_to_shave_off
+                    : len(noise_samples) - num_samples_to_shave_off
                 ]
                 end_sample_index = num_samples
 
             clean_rms = calculate_rms(samples[start_sample_index:end_sample_index])
             noise_rms = calculate_rms(noise_samples)
-            desired_noise_rms = calculate_desired_noise_rms(
-                clean_rms, sound_params["snr_in_db"]
-            )
+            if noise_rms > 0:
+                desired_noise_rms = calculate_desired_noise_rms(
+                    clean_rms, sound_params["snr_in_db"]
+                )
 
-            # Adjust the noise to match the desired noise RMS
-            noise_samples = noise_samples * (desired_noise_rms / noise_rms)
+                # Adjust the noise to match the desired noise RMS
+                noise_samples = noise_samples * (desired_noise_rms / (noise_rms))
 
-            noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+                noise_placeholder[start_sample_index:end_sample_index] += noise_samples
 
         # Return a mix of the input sound and the added sounds
         return samples + noise_placeholder

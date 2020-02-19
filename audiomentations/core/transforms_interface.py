@@ -13,7 +13,7 @@ class BasicTransform:
     def __call__(self, samples, sample_rate):
         if not self.freeze_parameters:
             self.randomize_parameters(samples, sample_rate)
-        if self.parameters["should_apply"]:
+        if self.parameters["should_apply"] and len(samples) > 0:
             return self.apply(samples, sample_rate)
         return samples
 

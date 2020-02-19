@@ -1,5 +1,4 @@
 import random
-import uuid
 
 
 class BasicTransform:
@@ -7,7 +6,6 @@ class BasicTransform:
         assert 0 <= p <= 1
         self.p = p
         self.parameters = {"should_apply": None}
-        self.id = "{}_{}".format(self.__class__.__name__, uuid.uuid4())
         self.freeze_parameters = False
 
     def __call__(self, samples, sample_rate):

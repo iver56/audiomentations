@@ -387,8 +387,10 @@ class ClippingDistortion(BasicTransform):
 
     def __init__(self, min_percentile_threshold=0, max_percentile_threshold=40, p=0.5):
         """
-        :param min_percentile_threshold: int, A lower bound on the total percent of samples that will be clipped
-        :param max_percentile_threshold: int, A upper bound on the total percent of samples that will be clipped
+        :param min_percentile_threshold: int, A lower bound on the total percent of samples that
+            will be clipped
+        :param max_percentile_threshold: int, A upper bound on the total percent of samples that
+            will be clipped
         :param p:
         """
         super().__init__(p)
@@ -513,12 +515,12 @@ class AddShortNoises(BasicTransform):
         self,
         sounds_path=None,
         min_snr_in_db=0,
-        max_snr_in_db=25,
-        min_time_between_sounds=8.0,
-        max_time_between_sounds=24.0,
+        max_snr_in_db=24,
+        min_time_between_sounds=6.0,
+        max_time_between_sounds=20.0,
         burst_probability=0.2,
-        min_pause_factor_during_burst=0.01,
-        max_pause_factor_during_burst=0.95,
+        min_pause_factor_during_burst=0.1,
+        max_pause_factor_during_burst=1.1,
         min_fade_in_time=0.005,
         max_fade_in_time=0.08,
         min_fade_out_time=0.01,

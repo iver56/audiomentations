@@ -29,11 +29,11 @@ class Compose:
         sounds.
         """
         for transform in self.transforms:
-            transform.are_parameters_frozen = True
+            transform.freeze_parameters()
 
     def unfreeze_parameters(self):
         """
         Unmark all parameters as frozen, i.e. let them be randomized for each call.
         """
         for transform in self.transforms:
-            transform.are_parameters_frozen = False
+            transform.unfreeze_parameters()

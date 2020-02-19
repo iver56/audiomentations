@@ -6,10 +6,10 @@ class BasicTransform:
         assert 0 <= p <= 1
         self.p = p
         self.parameters = {"should_apply": None}
-        self.freeze_parameters = False
+        self.are_parameters_frozen = False
 
     def __call__(self, samples, sample_rate):
-        if not self.freeze_parameters:
+        if not self.are_parameters_frozen:
             self.randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"] and len(samples) > 0:
             return self.apply(samples, sample_rate)

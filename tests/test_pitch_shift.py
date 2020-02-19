@@ -32,7 +32,7 @@ class TestPitchShift(unittest.TestCase):
 
         augmenter.transforms[0].min_semitones = -12
         augmenter.transforms[0].max_semitones = -1
-        augmenter.transforms[0].freeze_parameters = True
+        augmenter.transforms[0].are_parameters_frozen = True
         second_samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         self.assertEqual(first_parameters, augmenter.transforms[0].parameters)

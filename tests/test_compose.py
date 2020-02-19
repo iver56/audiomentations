@@ -30,11 +30,11 @@ class TestCompose(unittest.TestCase):
         perturbed_samples1 = augmenter(samples=samples, sample_rate=sample_rate)
         augmenter.freeze_parameters()
         for transform in augmenter.transforms:
-            self.assertTrue(transform.freeze_parameters)
+            self.assertTrue(transform.are_parameters_frozen)
         perturbed_samples2 = augmenter(samples=samples, sample_rate=sample_rate)
 
         assert_array_equal(perturbed_samples1, perturbed_samples2)
 
         augmenter.unfreeze_parameters()
         for transform in augmenter.transforms:
-            self.assertFalse(transform.freeze_parameters)
+            self.assertFalse(transform.are_parameters_frozen)

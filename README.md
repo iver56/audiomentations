@@ -53,3 +53,4 @@ Format the code with `black`
 
 * [spec_augment](https://github.com/zcaceres/spec_augment)
 * [muda](https://github.com/bmcfee/muda)
+* [nlpaug](https://github.com/makcedward/nlpaug)

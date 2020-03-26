@@ -1,10 +1,33 @@
 import math
 import os
+from pathlib import Path
 
 
-def read_dir(path):
-    ir_list = os.listdir(path)
-    return [os.path.join(path, ir) for ir in ir_list]
+def get_file_paths(
+    root_path,
+    filename_endings=(".flac", ".mp3", ".ogg", ".wav"),
+    traverse_subdirectories=True,
+):
+    """Return a list of paths to all files with the given in a directory
+    Also traverses subdirectories by default.
+    """
+    file_paths = []
+
+    for root, dirs, filenames in os.walk(root_path):
+        filenames = sorted(filenames)
+        for filename in filenames:
+            input_path = os.path.abspath(root)
+            file_path = os.path.join(input_path, filename)
+
+            for ending in filename_endings:
+                if filename.endswith(ending):
+                    file_paths.append(Path(file_path))
+                    break
+        if not traverse_subdirectories:
+            # prevent descending into subfolders
+            break
+
+    return file_paths
 
 
 def calculate_rms(samples):

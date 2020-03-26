@@ -1,7 +1,5 @@
 import functools
 import random
-from copy import deepcopy
-from pathlib import Path
 
 import librosa
 import numpy as np
@@ -9,9 +7,9 @@ from scipy.signal import butter, lfilter, convolve
 
 from audiomentations.core.transforms_interface import BasicTransform
 from audiomentations.core.utils import (
-    read_dir,
     calculate_rms,
     calculate_desired_noise_rms,
+    get_file_paths,
 )
 
 
@@ -28,12 +26,8 @@ class AddImpulseResponse(BasicTransform):
         :param p:
         """
         super().__init__(p)
-        self.ir_files = read_dir(ir_path)
-        self.ir_files = [
-            p
-            for p in self.ir_files
-            if Path(p).suffix.lower() in {".flac", ".mp3", ".ogg", ".wav"}
-        ]
+        self.ir_files = get_file_paths(ir_path)
+        self.ir_files = [str(p) for p in self.ir_files]
         assert len(self.ir_files) > 0
 
     @staticmethod
@@ -436,12 +430,8 @@ class AddBackgroundNoise(BasicTransform):
         :param p:
         """
         super().__init__(p)
-        self.sound_file_paths = read_dir(sounds_path)
-        self.sound_file_paths = [
-            p
-            for p in self.sound_file_paths
-            if Path(p).suffix.lower() in {".flac", ".mp3", ".ogg", ".wav"}
-        ]
+        self.sound_file_paths = get_file_paths(sounds_path)
+        self.sound_file_paths = [str(p) for p in self.sound_file_paths]
         assert len(self.sound_file_paths) > 0
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
@@ -552,12 +542,8 @@ class AddShortNoises(BasicTransform):
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        self.sound_file_paths = read_dir(sounds_path)
-        self.sound_file_paths = [
-            p
-            for p in self.sound_file_paths
-            if Path(p).suffix.lower() in {".flac", ".mp3", ".ogg", ".wav"}
-        ]
+        self.sound_file_paths = get_file_paths(sounds_path)
+        self.sound_file_paths = [str(p) for p in self.sound_file_paths]
         assert len(self.sound_file_paths) > 0
         assert min_snr_in_db <= max_snr_in_db
         assert min_time_between_sounds <= max_time_between_sounds
@@ -616,9 +602,7 @@ class AddShortNoises(BasicTransform):
                 )
                 fade_out_time = min(
                     sound_duration,
-                    random.uniform(
-                        self.min_fade_out_time, self.max_fade_out_time
-                    )
+                    random.uniform(self.min_fade_out_time, self.max_fade_out_time),
                 )
 
                 sounds.append(
@@ -659,9 +643,7 @@ class AddShortNoises(BasicTransform):
                     )
                     fade_out_time = min(
                         sound_duration,
-                        random.uniform(
-                            self.min_fade_out_time, self.max_fade_out_time
-                        )
+                        random.uniform(self.min_fade_out_time, self.max_fade_out_time),
                     )
 
                     sounds.append(

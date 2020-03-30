@@ -5,7 +5,7 @@ from pathlib import Path
 
 def get_file_paths(
     root_path,
-    filename_endings=(".flac", ".mp3", ".ogg", ".wav"),
+    filename_endings=(".aiff", ".flac", ".mp3", ".ogg", ".wav"),
     traverse_subdirectories=True,
 ):
     """Return a list of paths to all files with the given in a directory

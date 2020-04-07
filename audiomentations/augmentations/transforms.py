@@ -2,6 +2,7 @@ import functools
 import os
 import random
 import tempfile
+import uuid
 
 import librosa
 import numpy as np
@@ -861,7 +862,9 @@ class Mp3Compression(BasicTransform):
         )
 
         tmp_dir = tempfile.gettempdir()
-        tmp_file_path = os.path.join(tmp_dir, "tmp_compressed_audio_file.mp3")
+        tmp_file_path = os.path.join(
+            tmp_dir, "tmp_compressed_{}.mp3".format(str(uuid.uuid4())[0:12])
+        )
 
         bitrate_string = "{}k".format(self.parameters["bitrate"])
         file_handle = audio_segment.export(tmp_file_path, bitrate=bitrate_string)

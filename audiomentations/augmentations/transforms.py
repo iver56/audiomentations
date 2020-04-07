@@ -1,5 +1,6 @@
 import functools
 import random
+import tempfile
 
 import librosa
 import numpy as np
@@ -717,9 +718,49 @@ class AddShortNoises(BasicTransform):
                 )
 
                 # Adjust the noise to match the desired noise RMS
-                noise_samples = noise_samples * (desired_noise_rms / (noise_rms))
+                noise_samples = noise_samples * (desired_noise_rms / noise_rms)
 
                 noise_placeholder[start_sample_index:end_sample_index] += noise_samples
 
         # Return a mix of the input sound and the added sounds
         return samples + noise_placeholder
+
+
+class VorbisCompression(BasicTransform):
+    """Compress the audio using the Vorbis encoder to lower the quality.
+
+    This transform depends on PySoundFile.
+    """
+
+    def __init__(self, min_bitrate=32, max_bitrate=96, p=0.5):
+        """
+        :param min_bitrate: Minimum bitrate in kbps
+        :param max_bitrate: Maximum bitrate in kbps
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+        self.min_bitrate = min_bitrate
+        self.max_bitrate = max_bitrate
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["bitrate"] = random.randint(
+                self.min_bitrate, self.max_bitrate
+            )
+
+    def apply(self, samples, sample_rate):
+        import soundfile as sf
+
+        with tempfile.SpooledTemporaryFile() as tmp_file_like_object:
+            sf.write(
+                tmp_file_like_object,
+                samples,
+                sample_rate,
+                format="ogg",
+                subtype="vorbis",
+            )
+
+        # TODO: decode the compressed audio and return it
+
+        return samples

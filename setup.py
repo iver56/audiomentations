@@ -35,6 +35,7 @@ setup(
     url="https://github.com/iver56/audiomentations",
     packages=find_packages(exclude=["demo", "tests"]),
     install_requires=["numpy>=1.13.0", "librosa>=0.6.1,<=0.7.2", "scipy>=1.0.0,<2"],
+    extras_require={"extras": ["soundfile>=0.9.0,<1"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

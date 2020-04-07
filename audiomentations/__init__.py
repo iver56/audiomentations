@@ -16,6 +16,7 @@ from .augmentations.transforms import (
     AddShortNoises,
     PolarityInversion,
     Gain,
+    Mp3Compression,
 )
 
 __version__ = "0.11.0"

@@ -1,5 +1,7 @@
 import functools
+import os
 import random
+import tempfile
 
 import librosa
 import numpy as np
@@ -12,6 +14,7 @@ from audiomentations.core.utils import (
     get_file_paths,
     convert_decibels_to_amplitude_ratio,
     load_sound_file,
+    convert_float_samples_to_int16,
 )
 
 
@@ -725,7 +728,7 @@ class AddShortNoises(BasicTransform):
                 )
 
                 # Adjust the noise to match the desired noise RMS
-                noise_samples = noise_samples * (desired_noise_rms / (noise_rms))
+                noise_samples = noise_samples * (desired_noise_rms / noise_rms)
 
                 noise_placeholder[start_sample_index:end_sample_index] += noise_samples
 
@@ -789,3 +792,83 @@ class Gain(BasicTransform):
 
     def apply(self, samples, sample_rate):
         return samples * self.parameters["amplitude_ratio"]
+
+
+class Mp3Compression(BasicTransform):
+    """Compress the audio using the LAME MP3 encoder to lower the audio quality.
+
+    This transform depends on pydub and ffmpeg.
+
+    Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 hz).
+
+    Warning: This transform writes to disk, so it may be slow
+    """
+
+    SUPPORTED_BITRATES = [
+        8,
+        16,
+        24,
+        32,
+        40,
+        48,
+        56,
+        64,
+        80,
+        96,
+        112,
+        128,
+        144,
+        160,
+        192,
+        224,
+        256,
+        320,
+    ]
+
+    def __init__(self, min_bitrate=8, max_bitrate=64, p=0.5):
+        """
+        :param min_bitrate: Minimum bitrate in kbps
+        :param max_bitrate: Maximum bitrate in kbps
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+        self.min_bitrate = min_bitrate
+        self.max_bitrate = max_bitrate
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            bitrate_choices = [
+                bitrate
+                for bitrate in self.SUPPORTED_BITRATES
+                if self.min_bitrate <= bitrate <= self.max_bitrate
+            ]
+            self.parameters["bitrate"] = random.choice(bitrate_choices)
+
+    def apply(self, samples, sample_rate):
+        import pydub
+
+        assert len(samples.shape) == 1
+        assert samples.dtype == np.float32
+
+        int_samples = convert_float_samples_to_int16(samples)
+
+        audio_segment = pydub.AudioSegment(
+            int_samples.tobytes(),
+            frame_rate=sample_rate,
+            sample_width=int_samples.dtype.itemsize,
+            channels=1,
+        )
+
+        tmp_dir = tempfile.gettempdir()
+        tmp_file_path = os.path.join(tmp_dir, "tmp_compressed_audio_file.mp3")
+
+        bitrate_string = "{}k".format(self.parameters["bitrate"])
+        file_handle = audio_segment.export(tmp_file_path, bitrate=bitrate_string)
+        file_handle.close()
+
+        degraded_samples, _ = librosa.load(tmp_file_path, sample_rate)
+
+        os.unlink(tmp_file_path)
+
+        return degraded_samples

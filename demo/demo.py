@@ -22,6 +22,7 @@ from audiomentations import (
     AddShortNoises,
     PolarityInversion,
     Gain,
+    Mp3Compression,
 )
 
 SAMPLE_RATE = 16000
@@ -151,6 +152,7 @@ if __name__ == "__main__":
         },
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 1},
+        {"instance": Mp3Compression(p=1.0), "num_runs": 5},
     ]
 
     execution_times = {}

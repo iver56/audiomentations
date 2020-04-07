@@ -12,6 +12,12 @@ A Python library for audio data augmentation. Inspired by [albumentations](https
 
 `pip install audiomentations`
 
+## Optional requirements
+
+The `Mp3Compression` transform depends on `pydub` and `ffmpeg`. The `pydub` dependency can be
+installed by running `pip install audiomentations[extras]`. `ffmpeg` can be installed via
+`conda` or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
+
 # Usage example
 
 ```python

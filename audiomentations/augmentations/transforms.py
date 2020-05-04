@@ -3,7 +3,7 @@ import random
 
 import librosa
 import numpy as np
-from scipy.signal import butter, lfilter, convolve
+from scipy.signal import butter, sosfilt, convolve
 
 from audiomentations.core.transforms_interface import BasicTransform
 from audiomentations.core.utils import (
@@ -77,12 +77,12 @@ class FrequencyMask(BasicTransform):
         nyq = 0.5 * fs
         low = lowcut / nyq
         high = highcut / nyq
-        b, a = butter(order, [low, high], btype="bandstop")
-        return b, a
+        sos = butter(order, [low, high], btype="bandstop", output="sos")
+        return sos
 
     def __butter_bandstop_filter(self, data, lowcut, highcut, fs, order=5):
-        b, a = self.__butter_bandstop(lowcut, highcut, fs, order=order)
-        y = lfilter(b, a, data).astype(np.float32)
+        sos = self.__butter_bandstop(lowcut, highcut, fs, order=order)
+        y = sosfilt(sos, data).astype(np.float32)
         return y
 
     def randomize_parameters(self, samples, sample_rate):
@@ -93,7 +93,7 @@ class FrequencyMask(BasicTransform):
                 self.max_frequency_band * sample_rate // 2,
             )
             self.parameters["freq_start"] = random.randint(
-                16, sample_rate / 2 - self.parameters["bandwidth"]
+                16, sample_rate // 2 - self.parameters["bandwidth"] - 1
             )
 
     def apply(self, samples, sample_rate):

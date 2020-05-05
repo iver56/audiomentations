@@ -33,6 +33,76 @@ samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
 
 Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see which transforms you can apply.
 
+# Version history
+
+## v0.10.0 (2020-05-05)
+
+* Breaking change: AddImpulseResponse, AddBackgroundNoise and AddShortNoises now include subfolders when searching for files. This is useful when your sound files are organized in subfolders.
+* AddImpulseResponse, AddBackgroundNoise and AddShortNoises now support aiff files in addition to flac, mp3, ogg and wav
+* Fix filter instability bug in FrequencyMask. Thanks to kvilouras.
+
+## v0.9.0 (2020-02-20)
+
+* Disregard non-audio files when looking for impulse response files
+* Remember randomized/chosen effect parameters. This allows for freezing the parameters and applying the same effect to multiple sounds. Use transform.freeze_parameters() and transform.unfreeze_parameters() for this.
+* Fix a bug in ClippingDistortion where the min_percentile_threshold was not respected as expected.
+* Implement transform.serialize_parameters(). Useful for when you want to store metadata on how a sound was perturbed.
+* Switch to a faster convolve implementation. This makes AddImpulseResponse significantly faster.
+* Add a rollover parameter to Shift. This allows for introducing silence instead of a wrapped part of the sound.
+* Expand supported range of librosa versions
+* Add support for flac in AddImpulseResponse
+* Implement AddBackgroundNoise transform. Useful for when you want to add background noise to all of your sound. You need to give it a folder of background noises to choose from.
+* Implement AddShortNoises. Useful for when you want to add (bursts of) short noise sounds to your input audio.
+* Improve handling of empty input
+
+## v0.8.0 (2020-01-28)
+
+* Add shuffle parameter in Composer
+* Add Resample transformation
+* Add ClippingDistortion transformation
+* Add SmoothFadeTimeMask as alternative to TimeMask
+
+Thanks to askskro
+
+## v0.7.0 (2020-01-14)
+
+Add new transforms:
+
+* AddImpulseResponse
+* FrequencyMask
+* TimeMask
+* AddGaussianSNR
+
+Thanks to karpnv
+
+## v0.6.0 (2019-05-27)
+
+* Implement peak normalization
+
+## v0.5.0 (2019-02-23)
+
+* Implement Shift transform
+* Ensure p is within bounds
+
+## v0.4.0 (2019-02-19)
+
+* Implement PitchShift transform
+* Fix output dtype of AddGaussianNoise
+
+## v0.3.0 (2019-02-19)
+
+Implement `leave_length_unchanged` in TimeStretch
+
+## v0.2.0 (2019-02-18)
+
+* Add TimeStretch transform
+* Parametrize AddGaussianNoise
+
+## v0.1.0 (2019-02-15)
+
+Initial release. Includes only one transform: AddGaussianNoise
+
+
 # Development
 
 Install the dependencies specified in `requirements.txt`

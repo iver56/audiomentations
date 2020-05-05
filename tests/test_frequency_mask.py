@@ -35,7 +35,7 @@ class TestFrequencyMask(unittest.TestCase):
 
         sample_rate = 16000
         augmenter = Compose(
-            [FrequencyMask(min_frequency_band=0.3, max_frequency_band=0.5, p=1.0)]
+            [FrequencyMask(p=1.0)]
         )
 
         augmenter.transforms[0].randomize_parameters(samples_in, sample_rate)

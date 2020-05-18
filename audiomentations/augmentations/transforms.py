@@ -1,8 +1,10 @@
 import functools
 import os
 import random
+import sys
 import tempfile
 import uuid
+import soundfile as sf
 
 import librosa
 import numpy as np
@@ -847,28 +849,40 @@ class Mp3Compression(BasicTransform):
             self.parameters["bitrate"] = random.choice(bitrate_choices)
 
     def apply(self, samples, sample_rate):
-        import pydub
-
         assert len(samples.shape) == 1
         assert samples.dtype == np.float32
 
         int_samples = convert_float_samples_to_int16(samples)
 
-        audio_segment = pydub.AudioSegment(
-            int_samples.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=int_samples.dtype.itemsize,
-            channels=1,
-        )
+        try:
+            import lameenc
+        except ImportError:
+            print(
+                "Failed to call the lame encoder. Maybe it is not installed? "
+                "To install the lameenc dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` instead of"
+                " `pip install audiomentations`",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
+        encoder = lameenc.Encoder()
+        encoder.set_bit_rate(self.parameters["bitrate"])
+        encoder.set_in_sample_rate(sample_rate)
+        encoder.set_channels(1)
+        encoder.set_quality(7)  # 2 = highest, 7 = fastest
+        encoder.silence()
+
+        mp3_data = encoder.encode(int_samples.tobytes())
+        mp3_data += encoder.flush()
+
+        # Write a temporary MP3 file that will then be decoded
         tmp_dir = tempfile.gettempdir()
         tmp_file_path = os.path.join(
             tmp_dir, "tmp_compressed_{}.mp3".format(str(uuid.uuid4())[0:12])
         )
-
-        bitrate_string = "{}k".format(self.parameters["bitrate"])
-        file_handle = audio_segment.export(tmp_file_path, bitrate=bitrate_string)
-        file_handle.close()
+        with open(tmp_file_path, "wb") as f:
+            f.write(mp3_data)
 
         degraded_samples, _ = librosa.load(tmp_file_path, sample_rate)
 

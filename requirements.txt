@@ -1,6 +1,7 @@
 audioread==2.1.8
 black
 coverage==4.5.2
+lameenc==1.2.2
 librosa>=0.6.1,<=0.8.0
 numba>=0.48,<0.50
 numpy>=1.13.0

@@ -800,11 +800,15 @@ class Gain(BasicTransform):
 class Mp3Compression(BasicTransform):
     """Compress the audio using the LAME MP3 encoder to lower the audio quality.
 
-    This transform depends on pydub and ffmpeg.
+    This transform depends on lameenc.
 
     Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 hz).
 
-    Warning: This transform writes to disk, so it may be slow
+    Note that the output may be slightly longer than the input due to the fact that the LAME
+    encoder inserts some silence at the beginning of the audio.
+
+    Warning: This transform writes to disk, so it may be slow. Ideally, the work should be done
+    in memory. Contributions are welcome!
     """
 
     SUPPORTED_BITRATES = [

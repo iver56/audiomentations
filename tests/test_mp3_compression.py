@@ -15,4 +15,4 @@ class TestMp3Compression(unittest.TestCase):
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(len(samples_out), sample_len)
+        self.assertGreaterEqual(len(samples_out), sample_len)

@@ -1,6 +1,7 @@
-import math
 import os
 from pathlib import Path
+
+import numpy as np
 
 
 def get_file_paths(
@@ -31,9 +32,8 @@ def get_file_paths(
 
 
 def calculate_rms(samples):
-    """Given a numpy array of audio samples, return its RMS power level."""
-    chunk = pow(abs(samples), 2)
-    return math.sqrt(chunk.mean())
+    """Given a numpy array of audio samples, return its Root Mean Square (RMS)."""
+    return np.sqrt(np.mean(np.square(samples), axis=-1))
 
 
 def calculate_desired_noise_rms(clean_rms, snr):

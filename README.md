@@ -125,3 +125,5 @@ Format the code with `black`
 * [muda](https://github.com/bmcfee/muda)
 * [nlpaug](https://github.com/makcedward/nlpaug)
 * [python-audio-effects](https://github.com/carlthome/python-audio-effects)
+* [audio_degrader](https://github.com/emilio-molina/audio_degrader)
+* [WavAugment](https://github.com/facebookresearch/WavAugment)

@@ -318,7 +318,10 @@ class Normalize(BasicTransform):
             self.parameters["max_amplitude"] = np.amax(np.abs(samples))
 
     def apply(self, samples, sample_rate):
-        normalized_samples = samples / self.parameters["max_amplitude"]
+        if self.parameters["max_amplitude"] > 0:
+            normalized_samples = samples / self.parameters["max_amplitude"]
+        else:
+            normalized_samples = samples
         return normalized_samples
 
 

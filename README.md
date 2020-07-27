@@ -35,6 +35,12 @@ Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/au
 
 # Version history
 
+## v0.10.1 (2020-07-27)
+
+* Improve the performance of `AddBackgroundNoise` and `AddShortNoises` by optimizing the implementation of `calculate_rms`.
+* Improve compatibility of output files written by the demo script. Thanks to xwJohn.
+* Fix division by zero bug in `Normalize`. Thanks to ZFTurbo.
+
 ## v0.10.0 (2020-05-05)
 
 * Breaking change: AddImpulseResponse, AddBackgroundNoise and AddShortNoises now include subfolders when searching for files. This is useful when your sound files are organized in subfolders.

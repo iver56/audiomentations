@@ -17,7 +17,9 @@ from audiomentations import (
     Resample,
     ClippingDistortion,
     AddBackgroundNoise,
-    AddShortNoises)
+    AddShortNoises,
+    PolarityInversion,
+)
 
 SAMPLE_RATE = 16000
 CHANNELS = 1
@@ -190,3 +192,11 @@ if __name__ == "__main__":
         )
         augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
         wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
+
+    # PolarityInversion
+    augmenter = Compose([PolarityInversion(p=1.0)])
+    output_file_path = os.path.join(
+        output_dir, "PolarityInversion_{:03d}.wav".format(0)
+    )
+    augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
+    wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)

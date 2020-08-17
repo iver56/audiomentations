@@ -775,12 +775,9 @@ class Gain(BasicTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["gain_in_db"] = random.uniform(
-                self.min_gain_in_db, self.max_gain_in_db
+            self.parameters["amplitude_ratio"] = convert_decibels_to_amplitude_ratio(
+                random.uniform(self.min_gain_in_db, self.max_gain_in_db)
             )
 
     def apply(self, samples, sample_rate):
-        amplitude_ratio = convert_decibels_to_amplitude_ratio(
-            self.parameters["gain_in_db"]
-        )
-        return samples * amplitude_ratio
+        return samples * self.parameters["amplitude_ratio"]

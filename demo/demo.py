@@ -19,7 +19,7 @@ from audiomentations import (
     AddBackgroundNoise,
     AddShortNoises,
     PolarityInversion,
-)
+    Gain)
 
 SAMPLE_RATE = 16000
 CHANNELS = 1
@@ -202,3 +202,20 @@ if __name__ == "__main__":
     )
     augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
     wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
+
+    # Gain
+    augmenter = Compose(
+        [
+            Gain(
+                min_gain_in_db=-6,
+                max_gain_in_db=6,
+                p=1.0,
+            )
+        ]
+    )
+    for i in range(5):
+        output_file_path = os.path.join(
+            output_dir, "Gain_{:03d}.wav".format(i)
+        )
+        augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
+        wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)

@@ -10,6 +10,7 @@ from audiomentations.core.utils import (
     calculate_rms,
     calculate_desired_noise_rms,
     get_file_paths,
+    convert_decibels_to_amplitude_ratio,
 )
 
 
@@ -750,3 +751,36 @@ class PolarityInversion(BasicTransform):
 
     def apply(self, samples, sample_rate):
         return -samples
+
+
+class Gain(BasicTransform):
+    """
+    Multiply the audio by a random amplitude factor to reduce or increase the volume. This
+    technique can help a model become somewhat invariant to the overall gain of the input audio.
+
+    Warning: This transform can return samples outside the [-1, 1] range, which may lead to
+    clipping or wrap distortion, depending on what you do with the audio in a later stage.
+    See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
+    """
+
+    def __init__(self, min_gain_in_db=-12, max_gain_in_db=12, p=0.5):
+        """
+        :param p:
+        """
+        super().__init__(p)
+        assert min_gain_in_db <= max_gain_in_db
+        self.min_gain_in_db = min_gain_in_db
+        self.max_gain_in_db = max_gain_in_db
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["gain_in_db"] = random.uniform(
+                self.min_gain_in_db, self.max_gain_in_db
+            )
+
+    def apply(self, samples, sample_rate):
+        amplitude_ratio = convert_decibels_to_amplitude_ratio(
+            self.parameters["gain_in_db"]
+        )
+        return samples * amplitude_ratio

@@ -49,3 +49,7 @@ def calculate_desired_noise_rms(clean_rms, snr):
     a = float(snr) / 20
     noise_rms = clean_rms / (10 ** a)
     return noise_rms
+
+
+def convert_decibels_to_amplitude_ratio(decibels):
+    return 10 ** (decibels / 20)

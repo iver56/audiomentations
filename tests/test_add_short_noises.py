@@ -5,9 +5,9 @@ import unittest
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from audiomentations import calculate_rms
 from audiomentations.augmentations.transforms import AddShortNoises
 from audiomentations.core.composition import Compose
+from audiomentations.core.utils import calculate_rms
 from demo.demo import DEMO_DIR
 
 

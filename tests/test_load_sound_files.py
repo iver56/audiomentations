@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations import load_sound_file
+from audiomentations.core.utils import load_sound_file
 from demo.demo import DEMO_DIR
 
 

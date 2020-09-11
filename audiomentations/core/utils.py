@@ -1,12 +1,13 @@
 import os
 from pathlib import Path
 
+import librosa
 import numpy as np
 
 
 def get_file_paths(
     root_path,
-    filename_endings=(".aiff", ".flac", ".mp3", ".ogg", ".wav"),
+    filename_endings=(".aiff", ".flac", ".mp3", ".ogg", ".opus", ".wav"),
     traverse_subdirectories=True,
 ):
     """Return a list of paths to all files with the given in a directory
@@ -53,3 +54,7 @@ def calculate_desired_noise_rms(clean_rms, snr):
 
 def convert_decibels_to_amplitude_ratio(decibels):
     return 10 ** (decibels / 20)
+
+
+def load_sound_file(file_path, sample_rate):
+    return librosa.load(file_path, sample_rate)

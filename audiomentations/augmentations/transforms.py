@@ -11,6 +11,7 @@ from audiomentations.core.utils import (
     calculate_desired_noise_rms,
     get_file_paths,
     convert_decibels_to_amplitude_ratio,
+    load_sound_file,
 )
 
 
@@ -34,7 +35,7 @@ class AddImpulseResponse(BasicTransform):
     @staticmethod
     @functools.lru_cache(maxsize=128)
     def __load_ir(file_path, sample_rate):
-        return librosa.load(file_path, sample_rate)
+        return load_sound_file(file_path, sample_rate)
 
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
@@ -442,8 +443,8 @@ class AddBackgroundNoise(BasicTransform):
 
     @staticmethod
     @functools.lru_cache(maxsize=2)
-    def __load_sound(file_path, sample_rate):
-        return librosa.load(file_path, sample_rate)
+    def _load_sound(file_path, sample_rate):
+        return load_sound_file(file_path, sample_rate)
 
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
@@ -454,7 +455,7 @@ class AddBackgroundNoise(BasicTransform):
             self.parameters["noise_file_path"] = random.choice(self.sound_file_paths)
 
             num_samples = len(samples)
-            noise_sound, _ = self.__load_sound(
+            noise_sound, _ = self._load_sound(
                 self.parameters["noise_file_path"], sample_rate
             )
 
@@ -469,7 +470,7 @@ class AddBackgroundNoise(BasicTransform):
             )
 
     def apply(self, samples, sample_rate):
-        noise_sound, _ = self.__load_sound(
+        noise_sound, _ = self._load_sound(
             self.parameters["noise_file_path"], sample_rate
         )
         noise_sound = noise_sound[
@@ -581,7 +582,7 @@ class AddShortNoises(BasicTransform):
     @staticmethod
     @functools.lru_cache(maxsize=64)
     def __load_sound(file_path, sample_rate):
-        return librosa.load(file_path, sample_rate)
+        return load_sound_file(file_path, sample_rate)
 
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)

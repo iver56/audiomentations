@@ -13,7 +13,11 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "background_noises", "hens.ogg"), sample_rate=None
         )
         self.assertEqual(samples.dtype, np.float32)
-        self.assertEqual(samples.shape, (443328,))
+        self.assertEqual(len(samples.shape), 1)
+
+        # Apparently, the exact duration may vary slightly based on which decoder is used
+        self.assertGreaterEqual(samples.shape[0], 442575)
+        self.assertLessEqual(samples.shape[0], 443328)
         max_value = np.amax(samples)
         self.assertGreater(max_value, 0.02)
         self.assertLess(max_value, 1.0)

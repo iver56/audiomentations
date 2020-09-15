@@ -137,3 +137,4 @@ Format the code with `black`
 * [python-audio-effects](https://github.com/carlthome/python-audio-effects)
 * [audio_degrader](https://github.com/emilio-molina/audio_degrader)
 * [WavAugment](https://github.com/facebookresearch/WavAugment)
+* [pydiogment](https://github.com/SuperKogito/pydiogment)

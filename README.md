@@ -247,3 +247,9 @@ Format the code with `black`
 * [audio_degrader](https://github.com/emilio-molina/audio_degrader)
 * [WavAugment](https://github.com/facebookresearch/WavAugment)
 * [pydiogment](https://github.com/SuperKogito/pydiogment)
+
+# Acknowledgements
+
+Thanks to [Nomono](https://nomono.co/) for backing audiomentations.
+
+Thanks to [all contributors](https://github.com/iver56/audiomentations/graphs/contributors) who help improving audiomentations.

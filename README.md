@@ -33,6 +33,14 @@ samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
 
 Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see which transforms you can apply.
 
+# Known limitations
+
+* Only float32 (i.e. values between -1 and 1) _mono_ audio is supported. Multichannel audio may be supported later. See also [#55](https://github.com/iver56/audiomentations/issues/55)
+* The code runs on CPU, not GPU. A GPU version is in the planning phase as of late 2020. See also [#44](https://github.com/iver56/audiomentations/issues/44)
+* Multiprocessing is not officially supported yet. See also [#46](https://github.com/iver56/audiomentations/issues/46)
+
+Contributions are welcome!
+
 # Version history
 
 ## v0.11.0 (2020-08-27)

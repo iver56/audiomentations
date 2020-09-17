@@ -31,7 +31,108 @@ samples = np.zeros((20,), dtype=np.float32)
 samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
 ```
 
-Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see which transforms you can apply.
+Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see the transforms you can apply, and what arguments they have.
+
+# Transforms
+
+## `AddBackgroundNoise`
+
+Mix in another sound, e.g. a background noise. Useful if your original sound is clean and
+you want to simulate an environment where background noise is present.
+
+Can also be used for mixup, as in https://arxiv.org/pdf/1710.09412.pdf
+
+A folder of (background noise) sounds to be mixed in must be specified. These sounds should
+ideally be at least as long as the input sounds to be transformed. Otherwise, the background
+sound will be repeated, which may sound unnatural.
+
+Note that the gain of the added noise is relative to the amount of signal in the input. This
+implies that if the input is completely silent, no noise will be added.
+
+## `AddGaussianNoise`
+
+Add gaussian noise to the samples
+
+## `AddGaussianSNR`
+
+Add gaussian noise to the samples with random Signal to Noise Ratio (SNR)
+
+## `AddImpulseResponse`
+
+Convolve the audio with a random impulse response.
+Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
+
+Impulse responses are represented as wav files in the given ir_path.
+
+## `AddShortNoises`
+
+Mix in various (bursts of overlapping) sounds with random pauses between. Useful if your
+original sound is clean and you want to simulate an environment where short noises sometimes
+occur.
+
+A folder of (noise) sounds to be mixed in must be specified.
+
+## `ClippingDistortion`
+
+Distort signal by clipping a random percentage of points
+
+The percentage of points that will ble clipped is drawn from a uniform distribution between
+the two input parameters min_percentile_threshold and max_percentile_threshold. If for instance
+30% is drawn, the samples are clipped if they're below the 15th or above the 85th percentile.
+
+## `FrequencyMask`
+
+Mask some frequency band on the spectrogram.
+Inspired by https://arxiv.org/pdf/1904.08779.pdf
+
+## `Gain`
+
+Multiply the audio by a random amplitude factor to reduce or increase the volume. This
+technique can help a model become somewhat invariant to the overall gain of the input audio.
+
+Warning: This transform can return samples outside the [-1, 1] range, which may lead to
+clipping or wrap distortion, depending on what you do with the audio in a later stage.
+See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
+
+## `Normalize`
+
+Apply a constant amount of gain, so that highest signal level present in the sound becomes
+0 dBFS, i.e. the loudest level allowed if all samples must be between -1 and 1. Also known
+as peak normalization.
+
+## `PitchShift`
+
+Pitch shift the sound up or down without changing the tempo
+
+## `PolarityInversion`
+
+Flip the audio samples upside-down, reversing their polarity. In other words, multiply the
+waveform by -1, so negative values become positive, and vice versa. The result will sound
+the same compared to the original when played back in isolation. However, when mixed with
+other audio sources, the result may be different. This waveform inversion technique
+is sometimes used for audio cancellation or obtaining the difference between two waveforms.
+However, in the context of audio data augmentation, this transform can be useful when
+training phase-aware machine learning models.
+
+## `Resample`
+
+Resample signal using librosa.core.resample
+
+To do downsampling only set both minimum and maximum sampling rate lower than original
+sampling rate and vice versa to do upsampling only.
+
+## `Shift`
+
+Shift the samples forwards or backwards, with or without rollover
+
+## `TimeMask`
+
+Make a randomly chosen part of the audio silent.
+Inspired by https://arxiv.org/pdf/1904.08779.pdf
+
+## `TimeStretch`
+
+Time stretch the signal without changing the pitch
 
 # Known limitations
 

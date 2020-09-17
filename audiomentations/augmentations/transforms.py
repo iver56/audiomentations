@@ -17,7 +17,7 @@ from audiomentations.core.utils import (
 
 class AddImpulseResponse(BasicTransform):
     """Convolve the audio with a random impulse response.
-    Impulse responses can be created using http://tulrich.com/recording/ir_capture/
+    Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
     Impulse responses are represented as wav files in the given ir_path.
     """
 
@@ -109,7 +109,7 @@ class FrequencyMask(BasicTransform):
 
 class TimeMask(BasicTransform):
     """
-    Mask some time band on the spectrogram.
+    Make a randomly chosen part of the audio silent.
     Inspired by https://arxiv.org/pdf/1904.08779.pdf
     """
 
@@ -264,7 +264,7 @@ class PitchShift(BasicTransform):
 
 class Shift(BasicTransform):
     """
-    Shift the samples forwards or backwards.
+    Shift the samples forwards or backwards, with or without rollover
     """
 
     def __init__(self, min_fraction=-0.5, max_fraction=0.5, rollover=True, p=0.5):

@@ -4,7 +4,7 @@ import time
 
 import numpy as np
 from scipy.io import wavfile
-import pprint
+
 from audiomentations import (
     Compose,
     AddGaussianNoise,

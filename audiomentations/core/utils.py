@@ -5,9 +5,12 @@ import librosa
 import numpy as np
 
 
+AUDIO_FILENAME_ENDINGS = (".aiff", ".flac", ".mp3", ".ogg", ".opus", ".wav")
+
+
 def get_file_paths(
     root_path,
-    filename_endings=(".aiff", ".flac", ".mp3", ".ogg", ".opus", ".wav"),
+    filename_endings=AUDIO_FILENAME_ENDINGS,
     traverse_subdirectories=True,
 ):
     """Return a list of paths to all files with the given in a directory
@@ -21,10 +24,8 @@ def get_file_paths(
             input_path = os.path.abspath(root)
             file_path = os.path.join(input_path, filename)
 
-            for ending in filename_endings:
-                if filename.endswith(ending):
-                    file_paths.append(Path(file_path))
-                    break
+            if filename.endswith(filename_endings):
+                file_paths.append(Path(file_path))
         if not traverse_subdirectories:
             # prevent descending into subfolders
             break

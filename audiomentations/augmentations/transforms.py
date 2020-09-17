@@ -424,6 +424,9 @@ class AddBackgroundNoise(BasicTransform):
     A folder of (background noise) sounds to be mixed in must be specified. These sounds should
     ideally be at least as long as the input sounds to be transformed. Otherwise, the background
     sound will be repeated, which may sound unnatural.
+
+    Note that the gain of the added noise is relative to the amount of signal in the input. This
+    implies that if the input is completely silent, no noise will be added.
     """
 
     def __init__(self, sounds_path=None, min_snr_in_db=3, max_snr_in_db=30, p=0.5):

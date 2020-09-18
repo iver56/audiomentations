@@ -7,6 +7,7 @@ from numpy.testing import assert_array_equal
 
 from audiomentations.augmentations.transforms import AddShortNoises
 from audiomentations.core.composition import Compose
+from audiomentations.core.transforms_interface import MultichannelAudioNotSupportedException
 from audiomentations.core.utils import calculate_rms
 from demo.demo import DEMO_DIR
 
@@ -149,3 +150,26 @@ class TestAddShortNoises(unittest.TestCase):
         samples_out2 = augmenter(samples, sample_rate)
 
         assert_array_equal(samples_out1, samples_out2)
+
+    def test_multichannel_audio_not_supported_yet(self):
+        sample_rate = 16000
+        samples_chn0 = np.sin(np.linspace(0, 440 * 2 * np.pi, 2 * sample_rate)).astype(
+            np.float32
+        )
+        samples_chn1 = np.sin(np.linspace(0, 440 * 2 * np.pi, 2 * sample_rate)).astype(
+            np.float32
+        )
+        samples = np.vstack((samples_chn0, samples_chn1))
+
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=8.0,
+                    p=1.0,
+                )
+            ]
+        )
+        with self.assertRaises(MultichannelAudioNotSupportedException):
+            samples_out = augmenter(samples=samples, sample_rate=sample_rate)

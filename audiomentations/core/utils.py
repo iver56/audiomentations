@@ -1,4 +1,5 @@
 import os
+import warnings
 from pathlib import Path
 
 import librosa
@@ -59,3 +60,12 @@ def convert_decibels_to_amplitude_ratio(decibels):
 
 def load_sound_file(file_path, sample_rate):
     return librosa.load(file_path, sample_rate)
+
+
+def is_multichannel(samples):
+    """
+
+    :param samples:
+    :return:
+    """
+    return len(samples.shape) > 1

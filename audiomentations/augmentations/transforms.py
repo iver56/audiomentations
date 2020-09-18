@@ -744,6 +744,8 @@ class PolarityInversion(BasicTransform):
     training phase-aware machine learning models.
     """
 
+    supports_multichannel = True
+
     def __init__(self, p=0.5):
         """
         :param p:
@@ -766,6 +768,8 @@ class Gain(BasicTransform):
     clipping or wrap distortion, depending on what you do with the audio in a later stage.
     See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
     """
+
+    supports_multichannel = True
 
     def __init__(self, min_gain_in_db=-12, max_gain_in_db=12, p=0.5):
         """

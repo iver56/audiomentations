@@ -1,7 +1,16 @@
 import random
+import warnings
+
+from audiomentations.core.utils import is_multichannel
+
+
+class MultichannelAudioNotSupportedException(Exception):
+    pass
 
 
 class BasicTransform:
+    supports_multichannel = False
+
     def __init__(self, p=0.5):
         assert 0 <= p <= 1
         self.p = p
@@ -12,6 +21,19 @@ class BasicTransform:
         if not self.are_parameters_frozen:
             self.randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"] and len(samples) > 0:
+            if is_multichannel(samples):
+                if samples.shape[0] > samples.shape[1]:
+                    warnings.warn(
+                        "Multichannel audio must have channels first, not channels last. In"
+                        " other words, the shape must be (channels, samples), not"
+                        " (samples, channels)"
+                    )
+                if not self.supports_multichannel:
+                    raise MultichannelAudioNotSupportedException(
+                        "{} only supports mono audio, not multichannel audio".format(
+                            self.__class__.__name__
+                        )
+                    )
             return self.apply(samples, sample_rate)
         return samples
 

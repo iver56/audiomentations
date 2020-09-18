@@ -37,3 +37,18 @@ class TestLoadSoundFiles(unittest.TestCase):
         max_value = np.amax(samples)
         self.assertGreater(max_value, 0.3)
         self.assertLess(max_value, 1.0)
+
+    def test_load_mono_m4a(self):
+        samples, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "testing.m4a"), sample_rate=None
+        )
+        self.assertEqual(sample_rate, 44100)
+        self.assertEqual(samples.dtype, np.float32)
+        self.assertEqual(len(samples.shape), 1)
+
+        self.assertGreaterEqual(samples.shape[0], 141312)
+        self.assertLessEqual(samples.shape[0], 141312)
+
+        max_value = np.amax(samples)
+        self.assertGreater(max_value, 0.1)
+        self.assertLess(max_value, 1.0)

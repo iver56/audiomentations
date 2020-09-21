@@ -25,7 +25,6 @@ from audiomentations import (
 )
 
 SAMPLE_RATE = 16000
-CHANNELS = 1
 DEMO_DIR = os.path.dirname(__file__)
 
 

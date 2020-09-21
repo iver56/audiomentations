@@ -4,8 +4,8 @@ coverage==4.5.2
 librosa>=0.6.1,<=0.7.2
 numba>=0.48,<0.50
 numpy>=1.13.0
-pytest==4.6.3
-pytest-cov==2.7.1
+pytest==5.3.4
+pytest-cov==2.8.1
 scipy>=1.0.0,<2
 tqdm==4.31.1
 twine

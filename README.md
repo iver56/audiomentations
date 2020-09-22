@@ -137,7 +137,7 @@ Time stretch the signal without changing the pitch
 # Known limitations
 
 * Mainly only float32 (i.e. values between -1 and 1) _mono_ audio is supported. Only a few of the transforms support multichannel audio. See also [#55](https://github.com/iver56/audiomentations/issues/55)
-* The code runs on CPU, not GPU. A GPU version is in the planning phase as of late 2020. See also [#44](https://github.com/iver56/audiomentations/issues/44)
+* The code runs on CPU, not GPU. For a GPU-compatible version, check out [pytorch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)
 * Multiprocessing is not officially supported yet. See also [#46](https://github.com/iver56/audiomentations/issues/46)
 * Python <= 3.5 is not officially supported, since [Python 3.5 has reached end-of-life](https://devguide.python.org/#status-of-python-branches)
 

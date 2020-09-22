@@ -241,14 +241,14 @@ Format the code with `black`
 
 # Alternatives
 
-* [audio_degrader](https://github.com/emilio-molina/audio_degrader) ![Github stars](https://img.shields.io/github/stars/emilio-molina/audio_degrader)
-* [muda](https://github.com/bmcfee/muda) ![Github stars](https://img.shields.io/github/stars/bmcfee/muda)
-* [nlpaug](https://github.com/makcedward/nlpaug) ![Github stars](https://img.shields.io/github/stars/makcedward/nlpaug)
-* [pydiogment](https://github.com/SuperKogito/pydiogment) ![Github stars](https://img.shields.io/github/stars/SuperKogito/pydiogment)
-* [python-audio-effects](https://github.com/carlthome/python-audio-effects) ![Github stars](https://img.shields.io/github/stars/carlthome/python-audio-effects)
-* [spec_augment](https://github.com/zcaceres/spec_augment) ![Github stars](https://img.shields.io/github/stars/zcaceres/spec_augment)
-* [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations) ![Github stars](https://img.shields.io/github/stars/asteroid-team/torch-audiomentations)
-* [WavAugment](https://github.com/facebookresearch/WavAugment) ![Github stars](https://img.shields.io/github/stars/facebookresearch/WavAugment)
+* [audio_degrader ![Github stars](https://img.shields.io/github/stars/emilio-molina/audio_degrader)](https://github.com/emilio-molina/audio_degrader)
+* [muda ![Github stars](https://img.shields.io/github/stars/bmcfee/muda)](https://github.com/bmcfee/muda)
+* [nlpaug ![Github stars](https://img.shields.io/github/stars/makcedward/nlpaug)](https://github.com/makcedward/nlpaug)
+* [pydiogment ![Github stars](https://img.shields.io/github/stars/SuperKogito/pydiogment)](https://github.com/SuperKogito/pydiogment)
+* [python-audio-effects ![Github stars](https://img.shields.io/github/stars/carlthome/python-audio-effects)](https://github.com/carlthome/python-audio-effects)
+* [spec_augment ![Github stars](https://img.shields.io/github/stars/zcaceres/spec_augment)](https://github.com/zcaceres/spec_augment)
+* [torch-audiomentations ![Github stars](https://img.shields.io/github/stars/asteroid-team/torch-audiomentations)](https://github.com/asteroid-team/torch-audiomentations)
+* [WavAugment ![Github stars](https://img.shields.io/github/stars/facebookresearch/WavAugment)](https://github.com/facebookresearch/WavAugment)
 
 # Acknowledgements
 

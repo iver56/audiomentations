@@ -248,6 +248,7 @@ Format the code with `black`
 * [audio_degrader](https://github.com/emilio-molina/audio_degrader)
 * [WavAugment](https://github.com/facebookresearch/WavAugment)
 * [pydiogment](https://github.com/SuperKogito/pydiogment)
+* [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)
 
 # Acknowledgements
 

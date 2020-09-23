@@ -151,7 +151,7 @@ if __name__ == "__main__":
             "num_runs": 5,
         },
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
-        {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 1},
+        {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
         {
             "instance": Mp3Compression(backend="pydub", p=1.0),
             "num_runs": 5,

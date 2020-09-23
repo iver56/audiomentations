@@ -69,3 +69,10 @@ def is_multichannel(samples):
     :return:
     """
     return len(samples.shape) > 1
+
+
+def convert_float_samples_to_int16(y):
+    """Convert floating-point numpy array of audio samples to int16."""
+    if not issubclass(y.dtype.type, np.floating):
+        raise ValueError("input samples not floating-point")
+    return (y * np.iinfo(np.int16).max).astype(np.int16)

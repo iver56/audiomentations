@@ -22,6 +22,7 @@ from audiomentations import (
     AddShortNoises,
     PolarityInversion,
     Gain,
+    Mp3Compression,
 )
 
 SAMPLE_RATE = 16000
@@ -151,6 +152,16 @@ if __name__ == "__main__":
         },
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 1},
+        {
+            "instance": Mp3Compression(backend="pydub", p=1.0),
+            "num_runs": 5,
+            "name": "Mp3CompressionPydub",
+        },
+        {
+            "instance": Mp3Compression(backend="lameenc", p=1.0),
+            "num_runs": 5,
+            "name": "Mp3CompressionLameenc",
+        },
     ]
 
     execution_times = {}
@@ -182,4 +193,6 @@ if __name__ == "__main__":
                 )
             )
         else:
-            print("{:<32} {:.3f} s".format(run_name, np.mean(execution_times[run_name])))
+            print(
+                "{:<32} {:.3f} s".format(run_name, np.mean(execution_times[run_name]))
+            )

@@ -12,6 +12,12 @@ A Python library for audio data augmentation. Inspired by [albumentations](https
 
 `pip install audiomentations`
 
+## Optional requirements
+
+If you want to use the `Mp3Compression` transform, you need to install additional dependencies that are optional.
+
+Run `pip install audiomentations[extras]`. Then install `ffmpeg`, via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
+
 # Usage example
 
 ```python
@@ -93,6 +99,18 @@ technique can help a model become somewhat invariant to the overall gain of the 
 Warning: This transform can return samples outside the [-1, 1] range, which may lead to
 clipping or wrap distortion, depending on what you do with the audio in a later stage.
 See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
+
+## `Mp3Compression`
+
+Compress the audio using an MP3 encoder to lower the audio quality. This may help machine
+learning models deal with compressed, low-quality audio.
+
+This transform depends on either lameenc or pydub/ffmpeg.
+
+Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 hz).
+
+Note: When using the lameenc backend, the output may be slightly longer than the input due
+to the fact that the LAME encoder inserts some silence at the beginning of the audio.
 
 ## `Normalize`
 

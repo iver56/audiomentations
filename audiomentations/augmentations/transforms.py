@@ -832,15 +832,24 @@ class Mp3Compression(BasicTransform):
         320,
     ]
 
-    def __init__(self, min_bitrate=8, max_bitrate=64, p=0.5):
+    def __init__(self, min_bitrate=8, max_bitrate=64, backend="pydub", p=0.5):
         """
         :param min_bitrate: Minimum bitrate in kbps
         :param max_bitrate: Maximum bitrate in kbps
+        :param backend: "pydub" or "lameenc".
+            Pydub may use ffmpeg under the hood.
+                Pros: Seems to avoid introducing latency in the output.
+                Cons: Slower than lameenc.
+            lameenc:
+                Pros: You can set the quality parameter in addition to bitrate.
+                Cons: Seems to introduce some silence at the start of the audio.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
         self.min_bitrate = min_bitrate
         self.max_bitrate = max_bitrate
+        assert backend in ("pydub", "lameenc")
+        self.backend = backend
 
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
@@ -853,22 +862,30 @@ class Mp3Compression(BasicTransform):
             self.parameters["bitrate"] = random.choice(bitrate_choices)
 
     def apply(self, samples, sample_rate):
-        assert len(samples.shape) == 1
-        assert samples.dtype == np.float32
+        if self.backend == "lameenc":
+            return self.apply_lameenc(samples, sample_rate)
+        elif self.backend == "pydub":
+            return self.apply_pydub(samples, sample_rate)
+        else:
+            raise Exception("Backend {} not recognized".format(self.backend))
 
-        int_samples = convert_float_samples_to_int16(samples)
-
+    def apply_lameenc(self, samples, sample_rate):
         try:
             import lameenc
         except ImportError:
             print(
-                "Failed to call the lame encoder. Maybe it is not installed? "
-                "To install the lameenc dependency of audiomentations,"
+                "Failed to import the lame encoder. Maybe it is not installed? "
+                "To install the optional lameenc dependency of audiomentations,"
                 " do `pip install audiomentations[extras]` instead of"
                 " `pip install audiomentations`",
                 file=sys.stderr,
             )
-            sys.exit(1)
+            raise
+
+        assert len(samples.shape) == 1
+        assert samples.dtype == np.float32
+
+        int_samples = convert_float_samples_to_int16(samples)
 
         encoder = lameenc.Encoder()
         encoder.set_bit_rate(self.parameters["bitrate"])
@@ -887,6 +904,46 @@ class Mp3Compression(BasicTransform):
         )
         with open(tmp_file_path, "wb") as f:
             f.write(mp3_data)
+
+        degraded_samples, _ = librosa.load(tmp_file_path, sample_rate)
+
+        os.unlink(tmp_file_path)
+
+        return degraded_samples
+
+    def apply_pydub(self, samples, sample_rate):
+        try:
+            import pydub
+        except ImportError:
+            print(
+                "Failed to import pydub. Maybe it is not installed? "
+                "To install the optional pydub dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` instead of"
+                " `pip install audiomentations`",
+                file=sys.stderr,
+            )
+            raise
+
+        assert len(samples.shape) == 1
+        assert samples.dtype == np.float32
+
+        int_samples = convert_float_samples_to_int16(samples)
+
+        audio_segment = pydub.AudioSegment(
+            int_samples.tobytes(),
+            frame_rate=sample_rate,
+            sample_width=int_samples.dtype.itemsize,
+            channels=1,
+        )
+
+        tmp_dir = tempfile.gettempdir()
+        tmp_file_path = os.path.join(
+            tmp_dir, "tmp_compressed_{}.mp3".format(str(uuid.uuid4())[0:12])
+        )
+
+        bitrate_string = "{}k".format(self.parameters["bitrate"])
+        file_handle = audio_segment.export(tmp_file_path, bitrate=bitrate_string)
+        file_handle.close()
 
         degraded_samples, _ = librosa.load(tmp_file_path, sample_rate)
 

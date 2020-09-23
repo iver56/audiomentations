@@ -188,11 +188,22 @@ Time stretch the signal without changing the pitch
 * Mainly only float32 (i.e. values between -1 and 1) _mono_ audio is supported. Only a few of the transforms support multichannel audio. See also [#55](https://github.com/iver56/audiomentations/issues/55)
 * The code runs on CPU, not GPU. For a GPU-compatible version, check out [pytorch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)
 * Multiprocessing is not officially supported yet. See also [#46](https://github.com/iver56/audiomentations/issues/46)
-* Python <= 3.5 is not officially supported, since [Python 3.5 has reached end-of-life](https://devguide.python.org/#status-of-python-branches)
 
 Contributions are welcome!
 
 # Version history
+
+## v0.12.0 (2020-09-23)
+
+* Implement `Mp3Compression`
+* Python <= 3.5 is no longer officially supported, since [Python 3.5 has reached end-of-life](https://devguide.python.org/#status-of-python-branches)
+* Expand range of supported `librosa` versions
+* Officially support multichannel audio in `Gain` and `PolarityInversion`
+* Add m4a and opus to the list of recognized audio filename extensions
+* Breaking change: Internal util functions are no longer exposed directly. If you were doing
+    e.g. `from audiomentations import calculate_rms`, now you have to do
+    `from audiomentations.core.utils import calculate_rms`
+
 
 ## v0.11.0 (2020-08-27)
 

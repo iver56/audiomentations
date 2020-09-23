@@ -43,6 +43,8 @@ Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/au
 
 ## `AddBackgroundNoise`
 
+_Added in v0.9.0_
+
 Mix in another sound, e.g. a background noise. Useful if your original sound is clean and
 you want to simulate an environment where background noise is present.
 
@@ -57,13 +59,19 @@ implies that if the input is completely silent, no noise will be added.
 
 ## `AddGaussianNoise`
 
+_Added in v0.1.0_
+
 Add gaussian noise to the samples
 
 ## `AddGaussianSNR`
 
+_Added in v0.7.0_
+
 Add gaussian noise to the samples with random Signal to Noise Ratio (SNR)
 
 ## `AddImpulseResponse`
+
+_Added in v0.7.0_ 
 
 Convolve the audio with a random impulse response.
 Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
@@ -71,6 +79,8 @@ Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capt
 Impulse responses are represented as wav files in the given ir_path.
 
 ## `AddShortNoises`
+
+_Added in v0.9.0_
 
 Mix in various (bursts of overlapping) sounds with random pauses between. Useful if your
 original sound is clean and you want to simulate an environment where short noises sometimes
@@ -80,6 +90,8 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `ClippingDistortion`
 
+_Added in v0.8.0_
+
 Distort signal by clipping a random percentage of points
 
 The percentage of points that will ble clipped is drawn from a uniform distribution between
@@ -88,10 +100,13 @@ the two input parameters min_percentile_threshold and max_percentile_threshold. 
 
 ## `FrequencyMask`
 
+_Added in v0.7.0_
+
 Mask some frequency band on the spectrogram.
 Inspired by https://arxiv.org/pdf/1904.08779.pdf
 
 ## `Gain`
+_Added in v0.11.0_
 
 Multiply the audio by a random amplitude factor to reduce or increase the volume. This
 technique can help a model become somewhat invariant to the overall gain of the input audio.
@@ -101,6 +116,8 @@ clipping or wrap distortion, depending on what you do with the audio in a later 
 See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
 ## `Mp3Compression`
+
+_Added in v0.12.0_
 
 Compress the audio using an MP3 encoder to lower the audio quality. This may help machine
 learning models deal with compressed, low-quality audio.
@@ -114,15 +131,21 @@ to the fact that the LAME encoder inserts some silence at the beginning of the a
 
 ## `Normalize`
 
+_Added in v0.6.0_
+
 Apply a constant amount of gain, so that highest signal level present in the sound becomes
 0 dBFS, i.e. the loudest level allowed if all samples must be between -1 and 1. Also known
 as peak normalization.
 
 ## `PitchShift`
 
+_Added in v0.4.0_
+
 Pitch shift the sound up or down without changing the tempo
 
 ## `PolarityInversion`
+
+_Added in v0.11.0_
 
 Flip the audio samples upside-down, reversing their polarity. In other words, multiply the
 waveform by -1, so negative values become positive, and vice versa. The result will sound
@@ -134,6 +157,8 @@ training phase-aware machine learning models.
 
 ## `Resample`
 
+_Added in v0.8.0_
+
 Resample signal using librosa.core.resample
 
 To do downsampling only set both minimum and maximum sampling rate lower than original
@@ -141,14 +166,20 @@ sampling rate and vice versa to do upsampling only.
 
 ## `Shift`
 
+_Added in v0.5.0_
+
 Shift the samples forwards or backwards, with or without rollover
 
 ## `TimeMask`
+
+_Added in v0.7.0_
 
 Make a randomly chosen part of the audio silent.
 Inspired by https://arxiv.org/pdf/1904.08779.pdf
 
 ## `TimeStretch`
+
+_Added in v0.2.0_
 
 Time stretch the signal without changing the pitch
 
@@ -198,7 +229,7 @@ Contributions are welcome!
 * Add shuffle parameter in `Composer`
 * Add `Resample` transformation
 * Add `ClippingDistortion` transformation
-* Add `SmoothFadeTimeMask` as alternative to `TimeMask`
+* Add `fade` parameter to `TimeMask`
 
 Thanks to askskro
 

@@ -1,4 +1,3 @@
-from .core.composition import Compose
 from .augmentations.transforms import (
     AddImpulseResponse,
     FrequencyMask,
@@ -18,5 +17,6 @@ from .augmentations.transforms import (
     Gain,
     Mp3Compression,
 )
+from .core.composition import Compose
 
 __version__ = "0.11.0"

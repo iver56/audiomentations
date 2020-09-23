@@ -100,6 +100,18 @@ Warning: This transform can return samples outside the [-1, 1] range, which may 
 clipping or wrap distortion, depending on what you do with the audio in a later stage.
 See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
+## `Mp3Compression`
+
+Compress the audio using an MP3 encoder to lower the audio quality. This may help machine
+learning models deal with compressed, low-quality audio.
+
+This transform depends on either lameenc or pydub/ffmpeg.
+
+Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 hz).
+
+Note: When using the lameenc backend, the output may be slightly longer than the input due
+to the fact that the LAME encoder inserts some silence at the beginning of the audio.
+
 ## `Normalize`
 
 Apply a constant amount of gain, so that highest signal level present in the sound becomes

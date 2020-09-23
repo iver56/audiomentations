@@ -833,7 +833,9 @@ class Mp3Compression(BasicTransform):
         320,
     ]
 
-    def __init__(self, min_bitrate=8, max_bitrate=64, backend="pydub", p=0.5):
+    def __init__(
+        self, min_bitrate: int = 8, max_bitrate: int = 64, backend: str = "pydub", p=0.5
+    ):
         """
         :param min_bitrate: Minimum bitrate in kbps
         :param max_bitrate: Maximum bitrate in kbps
@@ -847,6 +849,9 @@ class Mp3Compression(BasicTransform):
         :param p: The probability of applying this transform
         """
         super().__init__(p)
+        assert self.SUPPORTED_BITRATES[0] <= min_bitrate <= self.SUPPORTED_BITRATES[-1]
+        assert self.SUPPORTED_BITRATES[0] <= max_bitrate <= self.SUPPORTED_BITRATES[-1]
+        assert min_bitrate <= max_bitrate
         self.min_bitrate = min_bitrate
         self.max_bitrate = max_bitrate
         assert backend in ("pydub", "lameenc")

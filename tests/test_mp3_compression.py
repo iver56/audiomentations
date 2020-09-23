@@ -58,3 +58,13 @@ class TestMp3Compression(unittest.TestCase):
         self.assertEqual(samples_out.dtype, np.float32)
         self.assertGreaterEqual(len(samples_out), sample_len)
         self.assertLess(len(samples_out), sample_len + 2500)
+
+    def test_invalid_argument_combination(self):
+        with self.assertRaises(AssertionError):
+            _ = Mp3Compression(min_bitrate=400, max_bitrate=800)
+
+        with self.assertRaises(AssertionError):
+            _ = Mp3Compression(min_bitrate=2, max_bitrate=4)
+
+        with self.assertRaises(AssertionError):
+            _ = Mp3Compression(min_bitrate=64, max_bitrate=8)

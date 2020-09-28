@@ -38,9 +38,9 @@ def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto"):
                     )
                 else:
                     warnings.warn(
-                        "You loading a 24-bit wav file, and librosa is not very fast at doing"
-                        " that. Install wavio for a performance boost. To install the optional"
-                        " wavio dependency of audiomentations,"
+                        "You are loading a 24-bit wav file, and librosa is not very fast at"
+                        " doing that. Install wavio for a performance boost. To install the"
+                        " optional wavio dependency of audiomentations,"
                         " do `pip install audiomentations[extras]` instead of"
                         " `pip install audiomentations`"
                     )

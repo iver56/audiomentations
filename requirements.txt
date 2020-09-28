@@ -11,3 +11,4 @@ pytest-cov==2.8.1
 scipy>=1.0.0,<2
 tqdm==4.31.1
 twine
+wavio==0.0.4

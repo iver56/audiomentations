@@ -1,10 +1,7 @@
 import os
-import warnings
 from pathlib import Path
 
-import librosa
 import numpy as np
-
 
 AUDIO_FILENAME_ENDINGS = (".aiff", ".flac", ".m4a", ".mp3", ".ogg", ".opus", ".wav")
 
@@ -56,10 +53,6 @@ def calculate_desired_noise_rms(clean_rms, snr):
 
 def convert_decibels_to_amplitude_ratio(decibels):
     return 10 ** (decibels / 20)
-
-
-def load_sound_file(file_path, sample_rate):
-    return librosa.load(file_path, sample_rate)
 
 
 def is_multichannel(samples):

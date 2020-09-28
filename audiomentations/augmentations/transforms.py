@@ -4,19 +4,18 @@ import random
 import sys
 import tempfile
 import uuid
-import soundfile as sf
 
 import librosa
 import numpy as np
 from scipy.signal import butter, sosfilt, convolve
 
+from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BasicTransform
 from audiomentations.core.utils import (
     calculate_rms,
     calculate_desired_noise_rms,
     get_file_paths,
     convert_decibels_to_amplitude_ratio,
-    load_sound_file,
     convert_float_samples_to_int16,
 )
 

@@ -3,7 +3,9 @@ import unittest
 from audiomentations.core.utils import (
     calculate_desired_noise_rms,
     convert_decibels_to_amplitude_ratio,
+    get_file_paths,
 )
+from demo.demo import DEMO_DIR
 
 
 class TestUtils(unittest.TestCase):
@@ -17,3 +19,12 @@ class TestUtils(unittest.TestCase):
 
         amplitude_ratio = convert_decibels_to_amplitude_ratio(decibels=6)
         self.assertAlmostEqual(amplitude_ratio, 1.9952623149688795)
+
+    def test_get_file_paths_uppercase_extension(self):
+        file_paths = get_file_paths(DEMO_DIR, traverse_subdirectories=False)
+        found_it = False
+        for file_path in file_paths:
+            if file_path.name == "stereo_24bit.WAV":
+                found_it = True
+                break
+        self.assertTrue(found_it)

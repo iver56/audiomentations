@@ -22,7 +22,7 @@ def get_file_paths(
             input_path = os.path.abspath(root)
             file_path = os.path.join(input_path, filename)
 
-            if filename.endswith(filename_endings):
+            if filename.lower().endswith(filename_endings):
                 file_paths.append(Path(file_path))
         if not traverse_subdirectories:
             # prevent descending into subfolders

@@ -112,7 +112,7 @@ class TestLoadSoundFiles(unittest.TestCase):
 
     def test_load_stereo_signed_24_bit_wav(self):
         samples, sample_rate = load_sound_file(
-            os.path.join(DEMO_DIR, "stereo_24bit.wav"), sample_rate=None
+            os.path.join(DEMO_DIR, "stereo_24bit.WAV"), sample_rate=None
         )
         self.assertEqual(sample_rate, 16000)
         self.assertEqual(samples.dtype, np.float32)

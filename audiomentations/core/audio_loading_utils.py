@@ -61,6 +61,11 @@ def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto"):
         samples = librosa.resample(
             samples, actual_sample_rate, sample_rate, res_type=resample_type
         )
+        warnings.warn(
+            "{} had to be resampled from {} hz to {} hz. This hurt execution time.".format(
+                str(file_path), actual_sample_rate, sample_rate
+            )
+        )
 
     actual_sample_rate = actual_sample_rate if sample_rate is None else sample_rate
 
@@ -92,8 +97,14 @@ def load_wav_file(file_path, sample_rate, mono=True, resample_type="kaiser_best"
             resample_type = (
                 "kaiser_fast" if actual_sample_rate < sample_rate else "kaiser_best"
             )
+
         samples = librosa.resample(
             samples, actual_sample_rate, sample_rate, res_type=resample_type
+        )
+        warnings.warn(
+            "{} had to be resampled from {} hz to {} hz. This hurt execution time.".format(
+                str(file_path), actual_sample_rate, sample_rate
+            )
         )
 
     actual_sample_rate = actual_sample_rate if sample_rate is None else sample_rate
@@ -136,6 +147,11 @@ def load_wav_file_with_wavio(
             )
         samples = librosa.resample(
             samples, actual_sample_rate, sample_rate, res_type=resample_type
+        )
+        warnings.warn(
+            "{} had to be resampled from {} hz to {} hz. This hurt execution time.".format(
+                str(file_path), actual_sample_rate, sample_rate
+            )
         )
 
     actual_sample_rate = actual_sample_rate if sample_rate is None else sample_rate

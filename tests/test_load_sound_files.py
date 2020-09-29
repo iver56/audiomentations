@@ -1,10 +1,14 @@
 import math
 import os
 import unittest
+import warnings
 
 import numpy as np
 
-from audiomentations.core.audio_loading_utils import load_sound_file, load_wav_file_with_wavio
+from audiomentations.core.audio_loading_utils import (
+    load_sound_file,
+    load_wav_file_with_wavio,
+)
 from demo.demo import DEMO_DIR
 
 
@@ -139,9 +143,20 @@ class TestLoadSoundFiles(unittest.TestCase):
         self.assertLess(max_value, 1.0)
 
     def test_load_mono_ms_adpcm_and_resample(self):
-        samples, sample_rate = load_sound_file(
-            os.path.join(DEMO_DIR, "ms_adpcm.wav"), sample_rate=16000
-        )
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+
+            samples, sample_rate = load_sound_file(
+                os.path.join(DEMO_DIR, "ms_adpcm.wav"), sample_rate=16000
+            )
+
+            assert len(w) == 1
+            assert (
+                "resampled from 11024 hz to 16000 hz. This hurt execution time"
+                in str(w[-1].message)
+            )
+
         self.assertEqual(sample_rate, 16000)
         self.assertEqual(samples.dtype, np.float32)
         self.assertEqual(len(samples.shape), 1)

@@ -197,7 +197,7 @@ Contributions are welcome!
 
 ## v0.12.1 (2020-09-28)
 
-* Speed up AddBackgroundNoise, AddShortNoises and AddImpulseResponse by loading wav files with scipy or wavio instead of librosa.
+* Speed up `AddBackgroundNoise`, `AddShortNoises` and `AddImpulseResponse` by loading wav files with scipy or wavio instead of librosa.
 
 ## v0.12.0 (2020-09-23)
 

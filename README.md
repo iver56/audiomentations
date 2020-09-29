@@ -18,6 +18,8 @@ If you want to use the `Mp3Compression` transform, you need to install additiona
 
 Run `pip install audiomentations[extras]`. Then install `ffmpeg`, via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
 
+If you are using `AddBackgroundNoise`, `AddShortNoises` or `AddImpulseResponse` along with 24-bit wav files, you should install `wavio`, which is included in the list of dependencies you get when running `pip install audiomentations[extras]`.
+
 # Usage example
 
 ```python

@@ -1,14 +1,17 @@
 import random
 import warnings
 
-from audiomentations.core.utils import is_multichannel
+from audiomentations.core.utils import (
+    is_waveform_multichannel,
+    is_spectrogram_multichannel,
+)
 
 
 class MultichannelAudioNotSupportedException(Exception):
     pass
 
 
-class BasicTransform:
+class BaseTransform:
     supports_multichannel = False
 
     def __init__(self, p=0.5):
@@ -21,7 +24,7 @@ class BasicTransform:
         if not self.are_parameters_frozen:
             self.randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"] and len(samples) > 0:
-            if is_multichannel(samples):
+            if self.is_multichannel(samples):
                 if samples.shape[0] > samples.shape[1]:
                     warnings.warn(
                         "Multichannel audio must have channels first, not channels last. In"
@@ -59,3 +62,13 @@ class BasicTransform:
         Unmark all parameters as frozen, i.e. let them be randomized for each call.
         """
         self.are_parameters_frozen = False
+
+
+class BaseWaveformTransform(BaseTransform):
+    def is_multichannel(self, samples):
+        return is_waveform_multichannel(samples)
+
+
+class BaseSpectrogramTransform(BaseTransform):
+    def is_multichannel(self, samples):
+        return is_spectrogram_multichannel(samples)

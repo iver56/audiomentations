@@ -4,9 +4,7 @@ import unittest
 import librosa
 import numpy as np
 
-from audiomentations.augmentations.spectrogram_transforms import (
-    SpecChannelShuffle,
-)
+from audiomentations.augmentations.spectrogram_transforms import SpecChannelShuffle
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import MonoAudioNotSupportedException
 from demo.demo import DEMO_DIR
@@ -83,3 +81,10 @@ class TestSpecChannelShuffle(unittest.TestCase):
         transform = SpecChannelShuffle(p=1.0)
         with self.assertRaises(MonoAudioNotSupportedException):
             augmented_spectrogram = transform(magnitude_spectrogram)
+
+    def test_empty_spectrogram(self):
+        spec = np.zeros(shape=(0, 0), dtype=np.float32)
+        transform = SpecChannelShuffle(p=1.0)
+        augmented_spectrogram = transform(spec)
+
+        np.testing.assert_array_equal(spec, augmented_spectrogram)

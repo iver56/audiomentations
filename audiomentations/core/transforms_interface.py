@@ -11,7 +11,12 @@ class MultichannelAudioNotSupportedException(Exception):
     pass
 
 
+class MonoAudioNotSupportedException(Exception):
+    pass
+
+
 class BaseTransform:
+    supports_mono = True
     supports_multichannel = False
 
     def __init__(self, p=0.5):
@@ -62,6 +67,12 @@ class BaseWaveformTransform(BaseTransform):
                             self.__class__.__name__
                         )
                     )
+            elif not self.supports_mono:
+                raise MonoAudioNotSupportedException(
+                    "{} only supports multichannel audio, not mono audio".format(
+                        self.__class__.__name__
+                    )
+                )
             return self.apply(samples, sample_rate)
         return samples
 
@@ -97,6 +108,13 @@ class BaseSpectrogramTransform(BaseTransform):
                             self.__class__.__name__
                         )
                     )
+            elif not self.supports_mono:
+                raise MonoAudioNotSupportedException(
+                    "{} only supports multichannel audio, not mono audio".format(
+                        self.__class__.__name__
+                    )
+                )
+
             return self.apply(magnitude_spectrogram)
         return magnitude_spectrogram
 

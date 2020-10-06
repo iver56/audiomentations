@@ -55,10 +55,10 @@ class TestSpecFrequencyMask(unittest.TestCase):
         )
         assert samples.shape[0] == 2
         magnitude_spectrogram_chn0 = librosa.feature.melspectrogram(
-            y=samples[0, :], sr=sample_rate
+            y=np.asfortranarray(samples[0, :]), sr=sample_rate
         )
         magnitude_spectrogram_chn1 = librosa.feature.melspectrogram(
-            y=samples[1, :], sr=sample_rate
+            y=np.asfortranarray(samples[1, :]), sr=sample_rate
         )
         multichannel_magnitude_spectrogram = np.zeros(
             shape=(
@@ -148,10 +148,10 @@ class TestSpecFrequencyMask(unittest.TestCase):
         )
         assert samples.shape[0] == 2
         magnitude_spectrogram_chn0 = librosa.feature.melspectrogram(
-            y=samples[0, :], sr=sample_rate
+            y=np.asfortranarray(samples[0, :]), sr=sample_rate
         )
         magnitude_spectrogram_chn1 = librosa.feature.melspectrogram(
-            y=samples[1, :], sr=sample_rate
+            y=np.asfortranarray(samples[1, :]), sr=sample_rate
         )
         multichannel_magnitude_spectrogram = np.zeros(
             shape=(

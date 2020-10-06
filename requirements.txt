@@ -3,6 +3,7 @@ black
 coverage==4.5.2
 lameenc==1.2.2
 librosa>=0.6.1,<=0.8.0
+matplotlib>=3.0.0,<4
 numba>=0.48,<0.50
 numpy>=1.13.0
 pydub==0.23.1

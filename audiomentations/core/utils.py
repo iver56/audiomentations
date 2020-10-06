@@ -7,9 +7,7 @@ AUDIO_FILENAME_ENDINGS = (".aiff", ".flac", ".m4a", ".mp3", ".ogg", ".opus", ".w
 
 
 def get_file_paths(
-    root_path,
-    filename_endings=AUDIO_FILENAME_ENDINGS,
-    traverse_subdirectories=True,
+    root_path, filename_endings=AUDIO_FILENAME_ENDINGS, traverse_subdirectories=True
 ):
     """Return a list of paths to all files with the given in a directory
     Also traverses subdirectories by default.
@@ -55,13 +53,24 @@ def convert_decibels_to_amplitude_ratio(decibels):
     return 10 ** (decibels / 20)
 
 
-def is_multichannel(samples):
+def is_waveform_multichannel(samples):
     """
+    Return bool that answers the question: Is the given ndarray a multichannel waveform or not?
 
-    :param samples:
+    :param samples: numpy ndarray
     :return:
     """
     return len(samples.shape) > 1
+
+
+def is_spectrogram_multichannel(spectrogram):
+    """
+    Return bool that answers the question: Is the given ndarray a multichannel spectrogram?
+
+    :param samples: numpy ndarray
+    :return:
+    """
+    return len(spectrogram.shape) > 2
 
 
 def convert_float_samples_to_int16(y):

@@ -10,7 +10,7 @@ import numpy as np
 from scipy.signal import butter, sosfilt, convolve
 
 from audiomentations.core.audio_loading_utils import load_sound_file
-from audiomentations.core.transforms_interface import BasicTransform
+from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
     calculate_rms,
     calculate_desired_noise_rms,
@@ -20,7 +20,7 @@ from audiomentations.core.utils import (
 )
 
 
-class AddImpulseResponse(BasicTransform):
+class AddImpulseResponse(BaseWaveformTransform):
     """Convolve the audio with a random impulse response.
     Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
     Impulse responses are represented as wav files in the given ir_path.
@@ -64,7 +64,7 @@ class AddImpulseResponse(BasicTransform):
         return signal_ir
 
 
-class FrequencyMask(BasicTransform):
+class FrequencyMask(BaseWaveformTransform):
     """
     Mask some frequency band on the spectrogram.
     Inspired by https://arxiv.org/pdf/1904.08779.pdf
@@ -112,7 +112,7 @@ class FrequencyMask(BasicTransform):
         return samples
 
 
-class TimeMask(BasicTransform):
+class TimeMask(BaseWaveformTransform):
     """
     Make a randomly chosen part of the audio silent.
     Inspired by https://arxiv.org/pdf/1904.08779.pdf
@@ -157,7 +157,7 @@ class TimeMask(BasicTransform):
         return new_samples
 
 
-class AddGaussianSNR(BasicTransform):
+class AddGaussianSNR(BaseWaveformTransform):
     """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR)"""
 
     def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
@@ -185,7 +185,7 @@ class AddGaussianSNR(BasicTransform):
         return samples + noise
 
 
-class AddGaussianNoise(BasicTransform):
+class AddGaussianNoise(BaseWaveformTransform):
     """Add gaussian noise to the samples"""
 
     def __init__(self, min_amplitude=0.001, max_amplitude=0.015, p=0.5):
@@ -206,7 +206,7 @@ class AddGaussianNoise(BasicTransform):
         return samples
 
 
-class TimeStretch(BasicTransform):
+class TimeStretch(BaseWaveformTransform):
     """Time stretch the signal without changing the pitch"""
 
     def __init__(self, min_rate=0.8, max_rate=1.25, leave_length_unchanged=True, p=0.5):
@@ -242,7 +242,7 @@ class TimeStretch(BasicTransform):
         return time_stretched_samples
 
 
-class PitchShift(BasicTransform):
+class PitchShift(BaseWaveformTransform):
     """Pitch shift the sound up or down without changing the tempo"""
 
     def __init__(self, min_semitones=-4, max_semitones=4, p=0.5):
@@ -267,7 +267,7 @@ class PitchShift(BasicTransform):
         return pitch_shifted_samples
 
 
-class Shift(BasicTransform):
+class Shift(BaseWaveformTransform):
     """
     Shift the samples forwards or backwards, with or without rollover
     """
@@ -309,7 +309,7 @@ class Shift(BasicTransform):
         return shifted_samples
 
 
-class Normalize(BasicTransform):
+class Normalize(BaseWaveformTransform):
     """
     Apply a constant amount of gain, so that highest signal level present in the sound becomes
     0 dBFS, i.e. the loudest level allowed if all samples must be between -1 and 1. Also known
@@ -332,7 +332,7 @@ class Normalize(BasicTransform):
         return normalized_samples
 
 
-class Trim(BasicTransform):
+class Trim(BaseWaveformTransform):
     """
     Trim leading and trailing silence from an audio signal using librosa.effects.trim
     """
@@ -346,7 +346,7 @@ class Trim(BasicTransform):
         return samples
 
 
-class Resample(BasicTransform):
+class Resample(BaseWaveformTransform):
     """
     Resample signal using librosa.core.resample
 
@@ -381,7 +381,7 @@ class Resample(BasicTransform):
         return samples
 
 
-class ClippingDistortion(BasicTransform):
+class ClippingDistortion(BaseWaveformTransform):
     """Distort signal by clipping a random percentage of points
 
     The percentage of points that will ble clipped is drawn from a uniform distribution between
@@ -420,7 +420,7 @@ class ClippingDistortion(BasicTransform):
         return samples
 
 
-class AddBackgroundNoise(BasicTransform):
+class AddBackgroundNoise(BaseWaveformTransform):
     """Mix in another sound, e.g. a background noise. Useful if your original sound is clean and
     you want to simulate an environment where background noise is present.
 
@@ -506,7 +506,7 @@ class AddBackgroundNoise(BasicTransform):
         return samples + noise_sound
 
 
-class AddShortNoises(BasicTransform):
+class AddShortNoises(BaseWaveformTransform):
     """Mix in various (bursts of overlapping) sounds with random pauses between. Useful if your
     original sound is clean and you want to simulate an environment where short noises sometimes
     occur.
@@ -738,7 +738,7 @@ class AddShortNoises(BasicTransform):
         return samples + noise_placeholder
 
 
-class PolarityInversion(BasicTransform):
+class PolarityInversion(BaseWaveformTransform):
     """
     Flip the audio samples upside-down, reversing their polarity. In other words, multiply the
     waveform by -1, so negative values become positive, and vice versa. The result will sound
@@ -764,7 +764,7 @@ class PolarityInversion(BasicTransform):
         return -samples
 
 
-class Gain(BasicTransform):
+class Gain(BaseWaveformTransform):
     """
     Multiply the audio by a random amplitude factor to reduce or increase the volume. This
     technique can help a model become somewhat invariant to the overall gain of the input audio.
@@ -796,7 +796,7 @@ class Gain(BasicTransform):
         return samples * self.parameters["amplitude_ratio"]
 
 
-class Mp3Compression(BasicTransform):
+class Mp3Compression(BaseWaveformTransform):
     """Compress the audio using an MP3 encoder to lower the audio quality.
     This may help machine learning models deal with compressed, low-quality audio.
 

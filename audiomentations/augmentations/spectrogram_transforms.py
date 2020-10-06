@@ -12,6 +12,8 @@ class SpecFrequencyMask(BaseSpectrogramTransform):
     (e.g. zero).
     """
 
+    supports_multichannel = True
+
     def __init__(
         self,
         min_mask_fraction: float = 0.03,

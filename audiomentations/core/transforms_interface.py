@@ -20,6 +20,31 @@ class BaseTransform:
         self.parameters = {"should_apply": None}
         self.are_parameters_frozen = False
 
+    def serialize_parameters(self):
+        """Return the parameters as a JSON-serializable dict."""
+        return self.parameters
+
+    def freeze_parameters(self):
+        """
+        Mark all parameters as frozen, i.e. do not randomize them for each call. This can be
+        useful if you want to apply an effect with the exact same parameters to multiple sounds.
+        """
+        self.are_parameters_frozen = True
+
+    def unfreeze_parameters(self):
+        """
+        Unmark all parameters as frozen, i.e. let them be randomized for each call.
+        """
+        self.are_parameters_frozen = False
+
+
+class BaseWaveformTransform(BaseTransform):
+    def apply(self, samples, sample_rate):
+        raise NotImplementedError
+
+    def is_multichannel(self, samples):
+        return is_waveform_multichannel(samples)
+
     def __call__(self, samples, sample_rate):
         if not self.are_parameters_frozen:
             self.randomize_parameters(samples, sample_rate)
@@ -43,32 +68,37 @@ class BaseTransform:
     def randomize_parameters(self, samples, sample_rate):
         self.parameters["should_apply"] = random.random() < self.p
 
-    def apply(self, samples, sample_rate):
-        raise NotImplementedError
-
-    def serialize_parameters(self):
-        """Return the parameters as a JSON-serializable dict."""
-        return self.parameters
-
-    def freeze_parameters(self):
-        """
-        Mark all parameters as frozen, i.e. do not randomize them for each call. This can be
-        useful if you want to apply an effect with the exact same parameters to multiple sounds.
-        """
-        self.are_parameters_frozen = True
-
-    def unfreeze_parameters(self):
-        """
-        Unmark all parameters as frozen, i.e. let them be randomized for each call.
-        """
-        self.are_parameters_frozen = False
-
-
-class BaseWaveformTransform(BaseTransform):
-    def is_multichannel(self, samples):
-        return is_waveform_multichannel(samples)
-
 
 class BaseSpectrogramTransform(BaseTransform):
+    def apply(self, magnitude_spectrogram):
+        raise NotImplementedError
+
     def is_multichannel(self, samples):
         return is_spectrogram_multichannel(samples)
+
+    def __call__(self, magnitude_spectrogram):
+        if not self.are_parameters_frozen:
+            self.randomize_parameters(magnitude_spectrogram)
+        if (
+            self.parameters["should_apply"]
+            and magnitude_spectrogram.shape[0] > 0
+            and magnitude_spectrogram.shape[1] > 0
+        ):
+            if self.is_multichannel(magnitude_spectrogram):
+                """
+                if magnitude_spectrogram.shape[0] > magnitude_spectrogram.shape[1]:
+                    warnings.warn(
+                        "Multichannel audio must have channels first, not channels last"
+                    )
+                """
+                if not self.supports_multichannel:
+                    raise MultichannelAudioNotSupportedException(
+                        "{} only supports mono audio, not multichannel audio".format(
+                            self.__class__.__name__
+                        )
+                    )
+            return self.apply(magnitude_spectrogram)
+        return magnitude_spectrogram
+
+    def randomize_parameters(self, magnitude_spectrogram):
+        self.parameters["should_apply"] = random.random() < self.p

@@ -2,7 +2,6 @@ import os
 import unittest
 
 import librosa
-import matplotlib.pyplot as plt
 import numpy as np
 
 from audiomentations.augmentations.spectrogram_transforms import SpecFrequencyMask
@@ -19,6 +18,8 @@ def plot_matrix(matrix, output_image_path=None, vmin=None, vmax=None, title=None
     :param matrix: 2D numpy array
     :return:
     """
+    import matplotlib.pyplot as plt
+
     fig = plt.figure()
     ax = fig.add_subplot(111)
     if title is not None:

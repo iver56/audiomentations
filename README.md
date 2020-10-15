@@ -216,6 +216,14 @@ Contributions are welcome!
 
 # Version history
 
+## v0.13.0 (not released yet)
+
+* Show a warning if a waveform had to be resampled after loading it. This is because resampling
+is slow. Ideally, files on disk should already have the desired sample rate.
+* Correctly find audio files with upper case filename extensions
+* Lay the foundation for spectrogram transforms. Implement `SpecChannelShuffle` and
+`SpecFrequencyMask`.
+
 ## v0.12.1 (2020-09-28)
 
 * Speed up `AddBackgroundNoise`, `AddShortNoises` and `AddImpulseResponse` by loading wav files with scipy or wavio instead of librosa.

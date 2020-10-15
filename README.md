@@ -44,7 +44,7 @@ augmented_samples = augment(samples=samples, sample_rate=SAMPLE_RATE)
 
 Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see the transforms you can apply, and what arguments they have.
 
-# Transforms
+# Waveform transforms
 
 ## `AddBackgroundNoise`
 
@@ -187,6 +187,24 @@ Inspired by https://arxiv.org/pdf/1904.08779.pdf
 _Added in v0.2.0_
 
 Time stretch the signal without changing the pitch
+
+# Spectrogram transforms
+
+## SpecChannelShuffle
+
+_To be added in v0.13.0_
+
+Shuffle the channels of a multichannel spectrogram. This can help combat positional bias.
+
+## SpecFrequencyMask
+
+_To be added in v0.13.0_
+
+Mask a set of frequencies in a spectrogram, à la Google AI SpecAugment. This type of data
+augmentation has proved to make speech recognition models more robust.
+
+The masked frequencies can be replaced with either the mean of the original values or a
+given constant (e.g. zero).
 
 # Known limitations
 

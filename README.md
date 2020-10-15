@@ -336,6 +336,7 @@ Format the code with `black`
 
 # Alternatives
 
+* [audio-degradation-toolbox ![Github stars](https://img.shields.io/github/stars/sevagh/audio-degradation-toolbox)](https://github.com/sevagh/audio-degradation-toolbox)
 * [audio_degrader ![Github stars](https://img.shields.io/github/stars/emilio-molina/audio_degrader)](https://github.com/emilio-molina/audio_degrader)
 * [muda ![Github stars](https://img.shields.io/github/stars/bmcfee/muda)](https://github.com/bmcfee/muda)
 * [nlpaug ![Github stars](https://img.shields.io/github/stars/makcedward/nlpaug)](https://github.com/makcedward/nlpaug)

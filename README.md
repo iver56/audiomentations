@@ -336,16 +336,18 @@ Format the code with `black`
 
 # Alternatives
 
-* [audio-degradation-toolbox ![Github stars](https://img.shields.io/github/stars/sevagh/audio-degradation-toolbox)](https://github.com/sevagh/audio-degradation-toolbox)
-* [audio_degrader ![Github stars](https://img.shields.io/github/stars/emilio-molina/audio_degrader)](https://github.com/emilio-molina/audio_degrader)
-* [muda ![Github stars](https://img.shields.io/github/stars/bmcfee/muda)](https://github.com/bmcfee/muda)
-* [nlpaug ![Github stars](https://img.shields.io/github/stars/makcedward/nlpaug)](https://github.com/makcedward/nlpaug)
-* [pydiogment ![Github stars](https://img.shields.io/github/stars/SuperKogito/pydiogment)](https://github.com/SuperKogito/pydiogment)
-* [python-audio-effects ![Github stars](https://img.shields.io/github/stars/carlthome/python-audio-effects)](https://github.com/carlthome/python-audio-effects)
-* [sigment ![Github stars](https://img.shields.io/github/stars/eonu/sigment)](https://github.com/eonu/sigment)
-* [spec_augment ![Github stars](https://img.shields.io/github/stars/zcaceres/spec_augment)](https://github.com/zcaceres/spec_augment)
-* [torch-audiomentations ![Github stars](https://img.shields.io/github/stars/asteroid-team/torch-audiomentations)](https://github.com/asteroid-team/torch-audiomentations)
-* [WavAugment ![Github stars](https://img.shields.io/github/stars/facebookresearch/WavAugment)](https://github.com/facebookresearch/WavAugment)
+| Name | Github stars | License |
+| ---- | ---------- | ------- |
+| [audio-degradation-toolbox](https://github.com/sevagh/audio-degradation-toolbox) | ![Github stars](https://img.shields.io/github/stars/sevagh/audio-degradation-toolbox) | ![License](https://img.shields.io/github/license/sevagh/audio-degradation-toolbox) |
+| [audio_degrader](https://github.com/emilio-molina/audio_degrader) | ![Github stars](https://img.shields.io/github/stars/emilio-molina/audio_degrader) | ![License](https://img.shields.io/github/license/emilio-molina/audio_degrader) |
+| [muda](https://github.com/bmcfee/muda) | ![Github stars](https://img.shields.io/github/stars/bmcfee/muda) | ![License](https://img.shields.io/github/license/bmcfee/muda) |
+| [nlpaug](https://github.com/makcedward/nlpaug) | ![Github stars](https://img.shields.io/github/stars/makcedward/nlpaug) | ![License](https://img.shields.io/github/license/makcedward/nlpaug) |
+| [pydiogment](https://github.com/SuperKogito/pydiogment) | ![Github stars](https://img.shields.io/github/stars/SuperKogito/pydiogment) | ![License](https://img.shields.io/github/license/SuperKogito/pydiogment) |
+| [python-audio-effects](https://github.com/carlthome/python-audio-effects) | ![Github stars](https://img.shields.io/github/stars/carlthome/python-audio-effects) | ![License](https://img.shields.io/github/license/carlthome/python-audio-effects) |
+| [sigment](https://github.com/eonu/sigment) | ![Github stars](https://img.shields.io/github/stars/eonu/sigment) | ![License](https://img.shields.io/github/license/eonu/sigment) |
+| [spec_augment](https://github.com/zcaceres/spec_augment) | ![Github stars](https://img.shields.io/github/stars/zcaceres/spec_augment) | ![License](https://img.shields.io/github/license/zcaceres/spec_augment) |
+| [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations) | ![Github stars](https://img.shields.io/github/stars/asteroid-team/torch-audiomentations) | ![License](https://img.shields.io/github/license/asteroid-team/torch-audiomentations) |
+| [WavAugment](https://github.com/facebookresearch/WavAugment) | ![Github stars](https://img.shields.io/github/stars/facebookresearch/WavAugment) | ![License](https://img.shields.io/github/license/facebookresearch/WavAugment) |
 
 # Acknowledgements
 

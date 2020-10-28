@@ -336,7 +336,7 @@ Format the code with `black`
 
 # Alternatives
 
-Audiomentations isn't the only python libraries that can do various types of audio data
+Audiomentations isn't the only python library that can do various types of audio data
 augmentation/degradation! Here's an overview:
 
 | Name | Github stars | License | Last commit | GPU support? |

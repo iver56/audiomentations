@@ -491,6 +491,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
             clean_rms, self.parameters["snr_in_db"]
         )
 
+        if noise_rms < 1e-9:
+            return samples
+
         # Adjust the noise to match the desired noise RMS
         noise_sound = noise_sound * (desired_noise_rms / noise_rms)
 

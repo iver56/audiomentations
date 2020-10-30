@@ -4,6 +4,7 @@ import random
 import sys
 import tempfile
 import uuid
+import warnings
 
 import librosa
 import numpy as np
@@ -485,14 +486,18 @@ class AddBackgroundNoise(BaseWaveformTransform):
             self.parameters["noise_start_index"] : self.parameters["noise_end_index"]
         ]
 
-        clean_rms = calculate_rms(samples)
         noise_rms = calculate_rms(noise_sound)
+        if noise_rms < 1e-9:
+            warnings.warn(
+                "The file {} is too silent to be added as noise. Returning the input"
+                " unchanged.".format(self.parameters["noise_file_path"])
+            )
+            return samples
+
+        clean_rms = calculate_rms(samples)
         desired_noise_rms = calculate_desired_noise_rms(
             clean_rms, self.parameters["snr_in_db"]
         )
-
-        if noise_rms < 1e-9:
-            return samples
 
         # Adjust the noise to match the desired noise RMS
         noise_sound = noise_sound * (desired_noise_rms / noise_rms)

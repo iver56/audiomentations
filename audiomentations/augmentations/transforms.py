@@ -27,19 +27,22 @@ class AddImpulseResponse(BaseWaveformTransform):
     Impulse responses are represented as wav files in the given ir_path.
     """
 
-    def __init__(self, ir_path="/tmp/ir", p=0.5):
+    def __init__(self, ir_path="/tmp/ir", p=0.5, lru_cache_size=128):
         """
         :param ir_path: Path to a folder that contains one or more wav files of impulse
         responses. Must be str or a Path instance.
         :param p:
+        :param lru_cache_size: Maximum size of the LRU cache for storing impuls files 
+        in memory.
         """
         super().__init__(p)
         self.ir_files = get_file_paths(ir_path)
         self.ir_files = [str(p) for p in self.ir_files]
         assert len(self.ir_files) > 0
+        self.__load_ir = functools.lru_cache(
+            maxsize=lru_cache_size)(AddImpulseResponse.__load_ir)
 
     @staticmethod
-    @functools.lru_cache(maxsize=128)
     def __load_ir(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 
@@ -61,7 +64,6 @@ class AddImpulseResponse(BaseWaveformTransform):
         max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
         scale = 0.5 / max_value
         signal_ir *= scale
-
         return signal_ir
 
 
@@ -435,13 +437,14 @@ class AddBackgroundNoise(BaseWaveformTransform):
     implies that if the input is completely silent, no noise will be added.
     """
 
-    def __init__(self, sounds_path=None, min_snr_in_db=3, max_snr_in_db=30, p=0.5):
+    def __init__(self, sounds_path=None, min_snr_in_db=3, max_snr_in_db=30, p=0.5, lru_cache_size=2):
         """
         :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
             files can be flac, mp3, ogg or wav.
         :param min_snr_in_db: Minimum signal-to-noise ratio in dB
         :param max_snr_in_db: Maximum signal-to-noise ratio in dB
         :param p:
+        :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
         super().__init__(p)
         self.sound_file_paths = get_file_paths(sounds_path)
@@ -449,9 +452,10 @@ class AddBackgroundNoise(BaseWaveformTransform):
         assert len(self.sound_file_paths) > 0
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
+        self._load_sound = functools.lru_cache(
+            maxsize=lru_cache_size)(AddBackgroundNoise._load_sound)
 
     @staticmethod
-    @functools.lru_cache(maxsize=2)
     def _load_sound(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 
@@ -537,6 +541,7 @@ class AddShortNoises(BaseWaveformTransform):
         min_fade_out_time=0.01,
         max_fade_out_time=0.1,
         p=0.5,
+        lru_cache_size=64
     ):
         """
         :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
@@ -561,6 +566,7 @@ class AddShortNoises(BaseWaveformTransform):
         :param max_fade_out_time: Max sound/noise fade out time in seconds. Use a value larger
             than 0 to avoid a "click" at the end of the sound/noise.
         :param p: The probability of applying this transform
+        :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
         super().__init__(p)
         self.sound_file_paths = get_file_paths(sounds_path)
@@ -594,9 +600,10 @@ class AddShortNoises(BaseWaveformTransform):
         self.max_fade_in_time = max_fade_in_time
         self.min_fade_out_time = min_fade_out_time
         self.max_fade_out_time = max_fade_out_time
+        self._load_sound = functools.lru_cache(
+            maxsize=lru_cache_size)(AddShortNoises.__load_sound)
 
     @staticmethod
-    @functools.lru_cache(maxsize=64)
     def __load_sound(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 

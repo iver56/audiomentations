@@ -222,9 +222,11 @@ Contributions are welcome!
 
 * Show a warning if a waveform had to be resampled after loading it. This is because resampling
 is slow. Ideally, files on disk should already have the desired sample rate.
-* Correctly find audio files with upper case filename extensions
+* Correctly find audio files with upper case filename extensions.
 * Lay the foundation for spectrogram transforms. Implement `SpecChannelShuffle` and
 `SpecFrequencyMask`.
+* Fix a bug where AddBackgroundNoise crashed when trying to add digital silence to an input. Thanks to juheeuu.
+* Configurable LRU cache for transforms that use external sound files. Thanks to alumae.
 
 ## v0.12.1 (2020-09-28)
 

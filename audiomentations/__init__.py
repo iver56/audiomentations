@@ -1,3 +1,4 @@
+from .augmentations.spectrogram_transforms import SpecFrequencyMask, SpecChannelShuffle
 from .augmentations.transforms import (
     AddImpulseResponse,
     FrequencyMask,

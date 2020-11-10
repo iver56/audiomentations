@@ -43,7 +43,7 @@ class TestSpecChannelShuffle(unittest.TestCase):
             image = (7 + np.log10(multichannel_magnitude_spectrogram + 0.0000001)) / 8
             plot_matrix(image, title="before")
 
-        # Make the shuffled channels do not equal the original order
+        # Make sure the shuffled channels do not equal the original order
         transform = SpecChannelShuffle(p=1.0)
         for _ in range(100000):
             transform.randomize_parameters(multichannel_magnitude_spectrogram)

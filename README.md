@@ -227,6 +227,7 @@ is slow. Ideally, files on disk should already have the desired sample rate.
 `SpecFrequencyMask`.
 * Fix a bug where AddBackgroundNoise crashed when trying to add digital silence to an input. Thanks to juheeuu.
 * Configurable LRU cache for transforms that use external sound files. Thanks to alumae.
+* Officially add multichannel support to `Normalize`
 
 ## v0.12.1 (2020-09-28)
 

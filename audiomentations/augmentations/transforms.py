@@ -319,6 +319,8 @@ class Normalize(BaseWaveformTransform):
     as peak normalization.
     """
 
+    supports_multichannel = True
+
     def __init__(self, p=0.5):
         super().__init__(p)
 

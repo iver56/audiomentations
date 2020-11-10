@@ -20,4 +20,4 @@ from .augmentations.transforms import (
 )
 from .core.composition import Compose
 
-__version__ = "0.12.1"
+__version__ = "0.13.0"

@@ -196,13 +196,13 @@ Time stretch the signal without changing the pitch
 
 ## `SpecChannelShuffle`
 
-_To be added in v0.13.0_
+_Added in v0.13.0_
 
 Shuffle the channels of a multichannel spectrogram. This can help combat positional bias.
 
 ## `SpecFrequencyMask`
 
-_To be added in v0.13.0_
+_Added in v0.13.0_
 
 Mask a set of frequencies in a spectrogram, à la Google AI SpecAugment. This type of data
 augmentation has proved to make speech recognition models more robust.
@@ -220,7 +220,7 @@ Contributions are welcome!
 
 # Version history
 
-## v0.13.0 (not released yet)
+## v0.13.0 (2020-11-10)
 
 * Show a warning if a waveform had to be resampled after loading it. This is because resampling
 is slow. Ideally, files on disk should already have the desired sample rate.

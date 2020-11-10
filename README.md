@@ -44,7 +44,9 @@ samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32
 augmented_samples = augment(samples=samples, sample_rate=SAMPLE_RATE)
 ```
 
-Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see the transforms you can apply, and what arguments they have.
+Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see the waveform transforms you can apply, and what arguments they have.
+
+See [audiomentations/augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/spectrogram_transforms.py) for spectrogram transforms. 
 
 # Waveform transforms
 
@@ -192,13 +194,13 @@ Time stretch the signal without changing the pitch
 
 # Spectrogram transforms
 
-## SpecChannelShuffle
+## `SpecChannelShuffle`
 
 _To be added in v0.13.0_
 
 Shuffle the channels of a multichannel spectrogram. This can help combat positional bias.
 
-## SpecFrequencyMask
+## `SpecFrequencyMask`
 
 _To be added in v0.13.0_
 

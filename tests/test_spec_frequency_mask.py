@@ -4,7 +4,7 @@ import unittest
 import librosa
 import numpy as np
 
-from audiomentations.augmentations.spectrogram_transforms import SpecFrequencyMask
+from audiomentations import SpecFrequencyMask
 from audiomentations.core.audio_loading_utils import load_sound_file
 from demo.demo import DEMO_DIR
 from .utils import plot_matrix

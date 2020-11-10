@@ -4,7 +4,7 @@ import unittest
 import librosa
 import numpy as np
 
-from audiomentations.augmentations.spectrogram_transforms import SpecChannelShuffle
+from audiomentations import SpecChannelShuffle
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import MonoAudioNotSupportedException
 from demo.demo import DEMO_DIR

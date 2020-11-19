@@ -17,6 +17,7 @@ from .augmentations.transforms import (
     PolarityInversion,
     Gain,
     Mp3Compression,
+    LoudnessNormalization,
 )
 from .core.composition import Compose
 

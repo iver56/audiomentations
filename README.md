@@ -16,11 +16,17 @@ Need a Pytorch alternative with GPU support? Check out [torch-audiomentations](h
 
 ## Optional requirements
 
-If you want to use the `Mp3Compression` transform, you need to install additional dependencies that are optional.
+Some features have extra dependencies. Extra python package dependencies can be installed by running
 
-Run `pip install audiomentations[extras]`. Then install `ffmpeg`, via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
+`pip install audiomentations[extras]`
 
-If you are using `AddBackgroundNoise`, `AddShortNoises` or `AddImpulseResponse` along with 24-bit wav files, you should install `wavio`, which is included in the list of dependencies you get when running `pip install audiomentations[extras]`.
+| Feature | Extra dependencies |
+| ------- | ---------------- |
+| Load 24-bit wav files fast | `wavio` |
+| `LoudnessNormalization` | `pyloudnorm` |
+| `Mp3Compression` | Either [`ffmpeg` and `pydub`] or `lameenc` |
+
+Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
 
 # Usage example
 

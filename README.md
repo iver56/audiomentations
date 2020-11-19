@@ -144,6 +144,13 @@ Note that bitrates below 32 kbps are only supported for low sample rates (up to 
 Note: When using the lameenc backend, the output may be slightly longer than the input due
 to the fact that the LAME encoder inserts some silence at the beginning of the audio.
 
+## `LoudnessNormalization`
+
+_To be added in v0.14.0_
+
+Apply a constant amount of gain to match a specific loudness. This is an implementation of
+ITU-R BS.1770-4.
+
 ## `Normalize`
 
 _Added in v0.6.0_
@@ -225,6 +232,10 @@ given constant (e.g. zero).
 Contributions are welcome!
 
 # Version history
+
+## v0.14.0 (TBA)
+
+* Implement `LoudnessNormalization`
 
 ## v0.13.0 (2020-11-10)
 

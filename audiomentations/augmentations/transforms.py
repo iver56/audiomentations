@@ -39,8 +39,9 @@ class AddImpulseResponse(BaseWaveformTransform):
         self.ir_files = get_file_paths(ir_path)
         self.ir_files = [str(p) for p in self.ir_files]
         assert len(self.ir_files) > 0
-        self.__load_ir = functools.lru_cache(
-            maxsize=lru_cache_size)(AddImpulseResponse.__load_ir)
+        self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(
+            AddImpulseResponse.__load_ir
+        )
 
     @staticmethod
     def __load_ir(file_path, sample_rate):
@@ -337,6 +338,70 @@ class Normalize(BaseWaveformTransform):
         return normalized_samples
 
 
+class LoudnessNormalization(BaseWaveformTransform):
+    """
+    Apply a constant amount of gain to match a specific loudness. This is an implementation of
+    ITU-R BS.1770-4.
+    See also:
+        https://github.com/csteinmetz1/pyloudnorm
+        https://en.wikipedia.org/wiki/Audio_normalization
+    """
+
+    supports_multichannel = True
+
+    def __init__(self, min_lufs_in_db=-31, max_lufs_in_db=-13, p=0.5):
+        super().__init__(p)
+        # For an explanation on LUFS, see https://en.wikipedia.org/wiki/LUFS
+        self.min_lufs_in_db = min_lufs_in_db
+        self.max_lufs_in_db = max_lufs_in_db
+
+    def randomize_parameters(self, samples, sample_rate):
+        try:
+            import pyloudnorm
+        except ImportError:
+            print(
+                "Failed to import pyloudnorm. Maybe it is not installed? "
+                "To install the optional pyloudnorm dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` or simply "
+                " `pip install pyloudnorm`",
+                file=sys.stderr,
+            )
+            raise
+
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            meter = pyloudnorm.Meter(sample_rate)  # create BS.1770 meter
+            # transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
+            self.parameters["loudness"] = meter.integrated_loudness(samples.transpose())
+            self.parameters["lufs_in_db"] = float(
+                random.uniform(self.min_lufs_in_db, self.max_lufs_in_db)
+            )
+
+    def apply(self, samples, sample_rate):
+        try:
+            import pyloudnorm
+        except ImportError:
+            print(
+                "Failed to import pyloudnorm. Maybe it is not installed? "
+                "To install the optional pyloudnorm dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` or simply "
+                " `pip install pyloudnorm`",
+                file=sys.stderr,
+            )
+            raise
+
+        # Guard against digital silence
+        if self.parameters["loudness"] > float("-inf"):
+            # transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
+            return pyloudnorm.normalize.loudness(
+                samples.transpose(),
+                self.parameters["loudness"],
+                self.parameters["lufs_in_db"],
+            ).transpose()
+        else:
+            return samples
+
+
 class Trim(BaseWaveformTransform):
     """
     Trim leading and trailing silence from an audio signal using librosa.effects.trim
@@ -439,7 +504,14 @@ class AddBackgroundNoise(BaseWaveformTransform):
     implies that if the input is completely silent, no noise will be added.
     """
 
-    def __init__(self, sounds_path=None, min_snr_in_db=3, max_snr_in_db=30, p=0.5, lru_cache_size=2):
+    def __init__(
+        self,
+        sounds_path=None,
+        min_snr_in_db=3,
+        max_snr_in_db=30,
+        p=0.5,
+        lru_cache_size=2,
+    ):
         """
         :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
             files can be flac, mp3, ogg or wav.
@@ -454,8 +526,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
         assert len(self.sound_file_paths) > 0
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
-        self._load_sound = functools.lru_cache(
-            maxsize=lru_cache_size)(AddBackgroundNoise._load_sound)
+        self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
+            AddBackgroundNoise._load_sound
+        )
 
     @staticmethod
     def _load_sound(file_path, sample_rate):
@@ -543,7 +616,7 @@ class AddShortNoises(BaseWaveformTransform):
         min_fade_out_time=0.01,
         max_fade_out_time=0.1,
         p=0.5,
-        lru_cache_size=64
+        lru_cache_size=64,
     ):
         """
         :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
@@ -602,8 +675,9 @@ class AddShortNoises(BaseWaveformTransform):
         self.max_fade_in_time = max_fade_in_time
         self.min_fade_out_time = min_fade_out_time
         self.max_fade_out_time = max_fade_out_time
-        self._load_sound = functools.lru_cache(
-            maxsize=lru_cache_size)(AddShortNoises.__load_sound)
+        self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
+            AddShortNoises.__load_sound
+        )
 
     @staticmethod
     def __load_sound(file_path, sample_rate):

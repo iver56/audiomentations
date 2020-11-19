@@ -23,6 +23,7 @@ from audiomentations import (
     PolarityInversion,
     Gain,
     Mp3Compression,
+    LoudnessNormalization,
 )
 
 SAMPLE_RATE = 16000
@@ -98,39 +99,21 @@ if __name__ == "__main__":
 
     transforms = [
         {
-            "instance": AddImpulseResponse(p=1.0, ir_path=os.path.join(DEMO_DIR, "ir")),
-            "num_runs": 1,
+            "instance": AddBackgroundNoise(
+                sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
+            ),
+            "num_runs": 5,
         },
-        {"instance": FrequencyMask(p=1.0), "num_runs": 5},
-        {"instance": TimeMask(p=1.0), "num_runs": 5},
-        {"instance": AddGaussianSNR(p=1.0), "num_runs": 5},
         {
             "instance": AddGaussianNoise(
                 min_amplitude=0.001, max_amplitude=0.015, p=1.0
             ),
             "num_runs": 5,
         },
-        {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
+        {"instance": AddGaussianSNR(p=1.0), "num_runs": 5},
         {
-            "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
-            "num_runs": 5,
-        },
-        {"instance": Shift(min_fraction=-0.5, max_fraction=0.5, p=1.0), "num_runs": 5},
-        {
-            "instance": Shift(
-                min_fraction=-0.5, max_fraction=0.5, rollover=False, p=1.0
-            ),
-            "num_runs": 5,
-            "name": "ShiftWithoutRollover",
-        },
-        {"instance": Normalize(p=1.0), "num_runs": 1},
-        {"instance": Resample(p=1.0), "num_runs": 5},
-        {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
-        {
-            "instance": AddBackgroundNoise(
-                sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
-            ),
-            "num_runs": 5,
+            "instance": AddImpulseResponse(p=1.0, ir_path=os.path.join(DEMO_DIR, "ir")),
+            "num_runs": 1,
         },
         {
             "instance": AddShortNoises(
@@ -150,18 +133,37 @@ if __name__ == "__main__":
             ),
             "num_runs": 5,
         },
-        {"instance": PolarityInversion(p=1.0), "num_runs": 1},
+        {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
+        {"instance": FrequencyMask(p=1.0), "num_runs": 5},
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
         {
-            "instance": Mp3Compression(backend="pydub", p=1.0),
+            "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
             "num_runs": 5,
-            "name": "Mp3CompressionPydub",
         },
+        {"instance": LoudnessNormalization(p=1.0), "num_runs": 5},
         {
             "instance": Mp3Compression(backend="lameenc", p=1.0),
             "num_runs": 5,
             "name": "Mp3CompressionLameenc",
         },
+        {
+            "instance": Mp3Compression(backend="pydub", p=1.0),
+            "num_runs": 5,
+            "name": "Mp3CompressionPydub",
+        },
+        {"instance": Normalize(p=1.0), "num_runs": 1},
+        {"instance": PolarityInversion(p=1.0), "num_runs": 1},
+        {"instance": Resample(p=1.0), "num_runs": 5},
+        {"instance": Shift(min_fraction=-0.5, max_fraction=0.5, p=1.0), "num_runs": 5},
+        {
+            "instance": Shift(
+                min_fraction=-0.5, max_fraction=0.5, rollover=False, p=1.0
+            ),
+            "num_runs": 5,
+            "name": "ShiftWithoutRollover",
+        },
+        {"instance": TimeMask(p=1.0), "num_runs": 5},
+        {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
     ]
 
     execution_times = {}

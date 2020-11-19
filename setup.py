@@ -35,7 +35,14 @@ setup(
     url="https://github.com/iver56/audiomentations",
     packages=find_packages(exclude=["demo", "tests"]),
     install_requires=["numpy>=1.13.0", "librosa>=0.6.1,<=0.8.0", "scipy>=1.0.0,<2"],
-    extras_require={"extras": ["lameenc>=1.2.0,<2", "pydub>=0.22.0,<1", "wavio>=0.0.4"]},
+    extras_require={
+        "extras": [
+            "lameenc>=1.2.0,<2",
+            "pydub>=0.22.0,<1",
+            "pyloudnorm>=0.1.0",
+            "wavio>=0.0.4",
+        ]
+    },
     python_requires=">=3.6",
     classifiers=[
         "Programming Language :: Python :: 3",

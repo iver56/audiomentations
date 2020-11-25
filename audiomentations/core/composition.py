@@ -22,6 +22,13 @@ class Compose:
 
         return samples
 
+    def randomize_parameters(self, samples, sample_rate):
+        """
+        Randomise and define parameters of every transform in composition.
+        """
+        for transform in self.transforms:
+            transform.randomize_parameters(samples, sample_rate)  
+
     def freeze_parameters(self):
         """
         Mark all parameters as frozen, i.e. do not randomize them for each call. This can be

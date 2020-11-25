@@ -63,3 +63,36 @@ class TestShift(unittest.TestCase):
         )
         self.assertEqual(backward_shifted_samples.dtype, np.float32)
         self.assertEqual(len(backward_shifted_samples), 4)
+
+    def test_shift_multichannel(self):
+        samples = np.array(
+            [[0.75, 0.5, -0.25, -0.125], [0.9, 0.5, -0.25, -0.125]], dtype=np.float32
+        )
+        sample_rate = 4000
+
+        augment = Shift(min_fraction=0.5, max_fraction=0.5, p=1.0)
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        assert_almost_equal(
+            processed_samples,
+            np.array(
+                [[-0.25, -0.125, 0.75, 0.5], [-0.25, -0.125, 0.9, 0.5]],
+                dtype=np.float32,
+            ),
+        )
+        self.assertEqual(processed_samples.dtype, np.float32)
+
+    def test_shift_without_rollover_multichannel(self):
+        samples = np.array(
+            [[0.75, 0.5, -0.25, -0.125], [0.9, 0.5, -0.25, -0.125]], dtype=np.float32
+        )
+        sample_rate = 4000
+
+        augment = Shift(min_fraction=0.5, max_fraction=0.5, rollover=False, p=1.0)
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        assert_almost_equal(
+            processed_samples,
+            np.array([[0.0, 0.0, 0.75, 0.5], [0.0, 0.0, 0.9, 0.5]], dtype=np.float32),
+        )
+        self.assertEqual(processed_samples.dtype, np.float32)

@@ -276,6 +276,8 @@ class Shift(BaseWaveformTransform):
     Shift the samples forwards or backwards, with or without rollover
     """
 
+    supports_multichannel = True
+
     def __init__(self, min_fraction=-0.5, max_fraction=0.5, rollover=True, p=0.5):
         """
         :param min_fraction: float, fraction of total sound length
@@ -298,18 +300,19 @@ class Shift(BaseWaveformTransform):
         if self.parameters["should_apply"]:
             self.parameters["num_places_to_shift"] = int(
                 round(
-                    random.uniform(self.min_fraction, self.max_fraction) * len(samples)
+                    random.uniform(self.min_fraction, self.max_fraction)
+                    * samples.shape[-1]
                 )
             )
 
     def apply(self, samples, sample_rate):
         num_places_to_shift = self.parameters["num_places_to_shift"]
-        shifted_samples = np.roll(samples, num_places_to_shift)
+        shifted_samples = np.roll(samples, num_places_to_shift, axis=-1)
         if not self.rollover:
             if num_places_to_shift > 0:
-                shifted_samples[:num_places_to_shift] = 0.0
+                shifted_samples[..., :num_places_to_shift] = 0.0
             elif num_places_to_shift < 0:
-                shifted_samples[num_places_to_shift:] = 0.0
+                shifted_samples[..., num_places_to_shift:] = 0.0
         return shifted_samples
 
 

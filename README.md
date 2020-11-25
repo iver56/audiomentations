@@ -236,6 +236,8 @@ Contributions are welcome!
 ## v0.14.0 (TBA)
 
 * Implement `LoudnessNormalization`
+* Implement `randomize_parameters` in `Compose`. Thanks to SolomidHero.
+* Add multichannel support to `Shift`
 
 ## v0.13.0 (2020-11-10)
 

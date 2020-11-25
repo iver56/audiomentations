@@ -1,12 +1,12 @@
 import os
 import random
 import time
+from pathlib import Path
 
 import numpy as np
 from scipy.io import wavfile
 
 from audiomentations import (
-    Compose,
     AddGaussianNoise,
     TimeStretch,
     PitchShift,
@@ -25,8 +25,11 @@ from audiomentations import (
     Mp3Compression,
     LoudnessNormalization,
 )
+from audiomentations.core.audio_loading_utils import load_sound_file
+from audiomentations.core.transforms_interface import (
+    MultichannelAudioNotSupportedException,
+)
 
-SAMPLE_RATE = 16000
 DEMO_DIR = os.path.dirname(__file__)
 
 
@@ -67,23 +70,6 @@ class timer(object):
             print("{}: {:.3f} s".format(self.description, self.execution_time))
 
 
-def load_wav_file(sound_file_path):
-    """Load the wav file at the given file path and return a float32 numpy array."""
-    sample_rate, sound_np = wavfile.read(sound_file_path)
-    if sample_rate != SAMPLE_RATE:
-        raise Exception(
-            "Unexpected sample rate {} (expected {})".format(sample_rate, SAMPLE_RATE)
-        )
-
-    if sound_np.dtype != np.float32:
-        assert sound_np.dtype == np.int16
-        sound_np = np.divide(
-            sound_np, 32768, dtype=np.float32
-        )  # ends up roughly between -1 and 1
-
-    return sound_np
-
-
 if __name__ == "__main__":
     """
     For each transformation, apply it to an example sound and write the transformed sounds to
@@ -95,7 +81,10 @@ if __name__ == "__main__":
     np.random.seed(42)
     random.seed(42)
 
-    samples = load_wav_file(os.path.join(DEMO_DIR, "acoustic_guitar_0.wav"))
+    sound_file_paths = [
+        Path(os.path.join(DEMO_DIR, "acoustic_guitar_0.wav")),
+        Path(os.path.join(DEMO_DIR, "perfect-alley1.ogg")),
+    ]
 
     transforms = [
         {
@@ -166,35 +155,61 @@ if __name__ == "__main__":
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
     ]
 
-    execution_times = {}
-
-    for transform in transforms:
-        augmenter = Compose([transform["instance"]])
-        run_name = (
-            transform.get("name")
-            if transform.get("name")
-            else transform["instance"].__class__.__name__
+    for sound_file_path in sound_file_paths:
+        samples, sample_rate = load_sound_file(
+            sound_file_path, sample_rate=None, mono=False
         )
-        execution_times[run_name] = []
-        for i in range(transform["num_runs"]):
-            output_file_path = os.path.join(
-                output_dir, "{}_{:03d}.wav".format(run_name, i)
-            )
-            with timer() as t:
-                augmented_samples = augmenter(samples=samples, sample_rate=SAMPLE_RATE)
-            execution_times[run_name].append(t.execution_time)
-            wavfile.write(output_file_path, rate=SAMPLE_RATE, data=augmented_samples)
+        if len(samples.shape) == 2 and samples.shape[0] > samples.shape[1]:
+            samples = samples.transpose()
 
-    for run_name in execution_times:
-        if len(execution_times[run_name]) > 1:
-            print(
-                "{:<32} {:.3f} s (std: {:.3f} s)".format(
-                    run_name,
-                    np.mean(execution_times[run_name]),
-                    np.std(execution_times[run_name]),
+        print(
+            "Transforming {} with shape {}".format(
+                sound_file_path.name, str(samples.shape)
+            )
+        )
+        execution_times = {}
+
+        for transform in transforms:
+            augmenter = transform["instance"]
+            run_name = (
+                transform.get("name")
+                if transform.get("name")
+                else transform["instance"].__class__.__name__
+            )
+            execution_times[run_name] = []
+            for i in range(transform["num_runs"]):
+                output_file_path = os.path.join(
+                    output_dir,
+                    "{}_{}_{:03d}.wav".format(sound_file_path.stem, run_name, i),
                 )
-            )
-        else:
-            print(
-                "{:<32} {:.3f} s".format(run_name, np.mean(execution_times[run_name]))
-            )
+                try:
+                    with timer() as t:
+                        augmented_samples = augmenter(
+                            samples=samples, sample_rate=sample_rate
+                        )
+                    execution_times[run_name].append(t.execution_time)
+
+                    if len(augmented_samples.shape) == 2:
+                        augmented_samples = augmented_samples.transpose()
+
+                    wavfile.write(
+                        output_file_path, rate=sample_rate, data=augmented_samples
+                    )
+                except MultichannelAudioNotSupportedException as e:
+                    print(e)
+
+        for run_name in execution_times:
+            if len(execution_times[run_name]) > 1:
+                print(
+                    "{:<32} {:.3f} s (std: {:.3f} s)".format(
+                        run_name,
+                        np.mean(execution_times[run_name]),
+                        np.std(execution_times[run_name]),
+                    )
+                )
+            else:
+                print(
+                    "{:<32} {:.3f} s".format(
+                        run_name, np.mean(execution_times[run_name])
+                    )
+                )

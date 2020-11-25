@@ -122,6 +122,8 @@ class TimeMask(BaseWaveformTransform):
     Inspired by https://arxiv.org/pdf/1904.08779.pdf
     """
 
+    supports_multichannel = True
+
     def __init__(self, min_band_part=0.0, max_band_part=0.5, fade=False, p=0.5):
         """
         :param min_band_part: Minimum length of the silent part as a fraction of the
@@ -139,7 +141,7 @@ class TimeMask(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            num_samples = samples.shape[0]
+            num_samples = samples.shape[-1]
             self.parameters["t"] = random.randint(
                 int(num_samples * self.min_band_part),
                 int(num_samples * self.max_band_part),
@@ -157,7 +159,7 @@ class TimeMask(BaseWaveformTransform):
             fade_length = min(int(sample_rate * 0.01), int(t * 0.1))
             mask[0:fade_length] = np.linspace(1, 0, num=fade_length)
             mask[-fade_length:] = np.linspace(0, 1, num=fade_length)
-        new_samples[t0 : t0 + t] *= mask
+        new_samples[..., t0 : t0 + t] *= mask
         return new_samples
 
 

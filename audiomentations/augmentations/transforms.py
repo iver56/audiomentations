@@ -164,6 +164,8 @@ class TimeMask(BaseWaveformTransform):
 class AddGaussianSNR(BaseWaveformTransform):
     """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR)"""
 
+    supports_multichannel = True
+
     def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
         """
         :param min_SNR: Minimum signal-to-noise ratio
@@ -184,13 +186,15 @@ class AddGaussianSNR(BaseWaveformTransform):
 
     def apply(self, samples, sample_rate):
         noise = np.random.normal(
-            0.0, self.parameters["noise_std"], size=len(samples)
+            0.0, self.parameters["noise_std"], size=samples.shape
         ).astype(np.float32)
         return samples + noise
 
 
 class AddGaussianNoise(BaseWaveformTransform):
     """Add gaussian noise to the samples"""
+
+    supports_multichannel = True
 
     def __init__(self, min_amplitude=0.001, max_amplitude=0.015, p=0.5):
         super().__init__(p)
@@ -205,7 +209,7 @@ class AddGaussianNoise(BaseWaveformTransform):
             )
 
     def apply(self, samples, sample_rate):
-        noise = np.random.randn(len(samples)).astype(np.float32)
+        noise = np.random.randn(*samples.shape).astype(np.float32)
         samples = samples + self.parameters["amplitude"] * noise
         return samples
 

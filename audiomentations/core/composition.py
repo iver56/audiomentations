@@ -24,7 +24,7 @@ class Compose:
 
     def randomize_parameters(self, samples, sample_rate):
         """
-        Randomise and define parameters of every transform in composition.
+        Randomize and define parameters of every transform in composition.
         """
         for transform in self.transforms:
             transform.randomize_parameters(samples, sample_rate)  

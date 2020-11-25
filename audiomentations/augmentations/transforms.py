@@ -348,6 +348,10 @@ class LoudnessNormalization(BaseWaveformTransform):
     See also:
         https://github.com/csteinmetz1/pyloudnorm
         https://en.wikipedia.org/wiki/Audio_normalization
+
+    Warning: This transform can return samples outside the [-1, 1] range, which may lead to
+    clipping or wrap distortion, depending on what you do with the audio in a later stage.
+    See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
     """
 
     supports_multichannel = True

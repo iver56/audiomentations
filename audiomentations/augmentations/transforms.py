@@ -474,6 +474,8 @@ class ClippingDistortion(BaseWaveformTransform):
     30% is drawn, the samples are clipped if they're below the 15th or above the 85th percentile.
     """
 
+    supports_multichannel = True
+
     def __init__(self, min_percentile_threshold=0, max_percentile_threshold=40, p=0.5):
         """
         :param min_percentile_threshold: int, A lower bound on the total percent of samples that

@@ -209,6 +209,12 @@ _Added in v0.2.0_
 
 Time stretch the signal without changing the pitch
 
+## `Trim`
+
+_Added in v0.7.0_
+
+Trim leading and trailing silence from an audio signal using `librosa.effects.trim`
+
 # Spectrogram transforms
 
 ## `SpecChannelShuffle`
@@ -313,10 +319,11 @@ Thanks to askskro
 
 Add new transforms:
 
+* `AddGaussianSNR`
 * `AddImpulseResponse`
 * `FrequencyMask`
 * `TimeMask`
-* `AddGaussianSNR`
+* `Trim`
 
 Thanks to karpnv
 

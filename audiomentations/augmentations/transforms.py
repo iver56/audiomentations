@@ -74,6 +74,8 @@ class FrequencyMask(BaseWaveformTransform):
     Inspired by https://arxiv.org/pdf/1904.08779.pdf
     """
 
+    supports_multichannel = True
+
     def __init__(self, min_frequency_band=0.0, max_frequency_band=0.5, p=0.5):
         """
         :param min_frequency_band: Minimum bandwidth, float

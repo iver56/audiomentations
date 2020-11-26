@@ -123,7 +123,12 @@ if __name__ == "__main__":
             "num_runs": 5,
         },
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
-        {"instance": FrequencyMask(p=1.0), "num_runs": 5},
+        {
+            "instance": FrequencyMask(
+                min_frequency_band=0.5, max_frequency_band=0.6, p=1.0
+            ),
+            "num_runs": 5,
+        },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
         {
             "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),

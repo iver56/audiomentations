@@ -241,7 +241,7 @@ Contributions are welcome!
 
 * Implement `LoudnessNormalization`
 * Implement `randomize_parameters` in `Compose`. Thanks to SolomidHero.
-* Add multichannel support to `AddGaussianNoise`, `AddGaussianSNR`, `Shift` and `TimeMask`
+* Add multichannel support to `AddGaussianNoise`, `AddGaussianSNR`, `FrequencyMask`, `Shift` and `TimeMask`
 
 ## v0.13.0 (2020-11-10)
 

@@ -7,14 +7,16 @@ from numpy.testing import assert_array_equal
 
 from audiomentations.augmentations.transforms import AddShortNoises
 from audiomentations.core.composition import Compose
-from audiomentations.core.transforms_interface import MultichannelAudioNotSupportedException
+from audiomentations.core.transforms_interface import (
+    MultichannelAudioNotSupportedException,
+)
 from audiomentations.core.utils import calculate_rms
 from demo.demo import DEMO_DIR
 
 
 class TestAddShortNoises(unittest.TestCase):
     def test_add_short_noises(self):
-        sample_rate = 16000
+        sample_rate = 44100
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
             np.float32
         )
@@ -40,8 +42,10 @@ class TestAddShortNoises(unittest.TestCase):
         """
         Verify correct behavior when the input sound is shorter than the added noise sounds.
         """
-        sample_rate = 16000
-        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 500)).astype(np.float32)
+        sample_rate = 44100
+        samples = np.sin(
+            np.linspace(0, 440 * 2 * np.pi, int(0.03125 * sample_rate))
+        ).astype(np.float32)
         rms_before = calculate_rms(samples)
         augmenter = Compose(
             [
@@ -62,19 +66,16 @@ class TestAddShortNoises(unittest.TestCase):
 
     def test_add_silence(self):
         """Check that AddShortNoises does not crash if a noise is completely silent."""
-        sample_rate = 44100
-        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 6000)).astype(np.float32)
-        augmenter = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "silence"),
-                    min_time_between_sounds=0.001,
-                    max_time_between_sounds=0.002,
-                    p=1.0,
-                )
-            ]
+        sample_rate = 48000
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 7000)).astype(np.float32)
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "silence"),
+            min_time_between_sounds=0.001,
+            max_time_between_sounds=0.002,
+            p=1.0,
         )
-        augmenter.transforms[0].parameters = {
+
+        augmenter.parameters = {
             "should_apply": True,
             "sounds": [
                 {
@@ -95,7 +96,7 @@ class TestAddShortNoises(unittest.TestCase):
 
     def test_too_long_fade_time(self):
         """Check that a too long fade time does not result in an exception."""
-        sample_rate = 16000
+        sample_rate = 44100
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
             np.float32
         )
@@ -126,11 +127,11 @@ class TestAddShortNoises(unittest.TestCase):
             sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
         )
         samples = np.random.normal(0, 1, size=1024).astype(np.float32)
-        transform.randomize_parameters(samples, sample_rate=16000)
+        transform.randomize_parameters(samples, sample_rate=44100)
         json.dumps(transform.serialize_parameters())
 
     def test_frozen_parameters(self):
-        sample_rate = 16000
+        sample_rate = 44100
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
             np.float32
         )
@@ -152,7 +153,7 @@ class TestAddShortNoises(unittest.TestCase):
         assert_array_equal(samples_out1, samples_out2)
 
     def test_multichannel_audio_not_supported_yet(self):
-        sample_rate = 16000
+        sample_rate = 44100
         samples_chn0 = np.sin(np.linspace(0, 440 * 2 * np.pi, 2 * sample_rate)).astype(
             np.float32
         )

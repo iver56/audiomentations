@@ -12,8 +12,8 @@ from demo.demo import DEMO_DIR
 
 class TestAddBackgroundNoise(unittest.TestCase):
     def test_add_background_noise(self):
-        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 8000)).astype(np.float32)
-        sample_rate = 16000
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 22500)).astype(np.float32)
+        sample_rate = 44100
         augmenter = Compose(
             [
                 AddBackgroundNoise(
@@ -29,8 +29,10 @@ class TestAddBackgroundNoise(unittest.TestCase):
         self.assertEqual(samples_out.dtype, np.float32)
 
     def test_add_background_noise_when_noise_sound_is_too_short(self):
-        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 224000)).astype(np.float32)
-        sample_rate = 16000
+        sample_rate = 44100
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 14 * sample_rate)).astype(
+            np.float32
+        )
         augmenter = Compose(
             [
                 AddBackgroundNoise(
@@ -91,5 +93,5 @@ class TestAddBackgroundNoise(unittest.TestCase):
             sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
         )
         samples = np.random.normal(0, 1, size=1024).astype(np.float32)
-        transform.randomize_parameters(samples, sample_rate=16000)
+        transform.randomize_parameters(samples, sample_rate=44100)
         json.dumps(transform.serialize_parameters())

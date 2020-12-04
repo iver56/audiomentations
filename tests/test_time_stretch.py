@@ -7,7 +7,7 @@ from audiomentations.augmentations.transforms import TimeStretch
 
 class TestTimeStretch(unittest.TestCase):
     def test_dynamic_length(self):
-        samples = np.zeros((20,), dtype=np.float32)
+        samples = np.zeros((2048,), dtype=np.float32)
         sample_rate = 16000
         augmenter = TimeStretch(
             min_rate=0.8, max_rate=0.9, leave_length_unchanged=False, p=1.0
@@ -16,10 +16,10 @@ class TestTimeStretch(unittest.TestCase):
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         self.assertEqual(samples.dtype, np.float32)
-        self.assertGreater(len(samples), 20)
+        self.assertGreater(len(samples), 2048)
 
     def test_fixed_length(self):
-        samples = np.zeros((20,), dtype=np.float32)
+        samples = np.zeros((2048,), dtype=np.float32)
         sample_rate = 16000
         augmenter = TimeStretch(
             min_rate=0.8, max_rate=0.9, leave_length_unchanged=True, p=1.0
@@ -28,7 +28,7 @@ class TestTimeStretch(unittest.TestCase):
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         self.assertEqual(samples.dtype, np.float32)
-        self.assertEqual(len(samples), 20)
+        self.assertEqual(len(samples), 2048)
 
     def test_multichannel(self):
         num_channels = 3

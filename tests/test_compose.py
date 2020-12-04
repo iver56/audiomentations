@@ -18,7 +18,7 @@ from demo.demo import DEMO_DIR
 class TestCompose(unittest.TestCase):
     def test_freeze_and_unfreeze_parameters(self):
         samples = np.zeros((20,), dtype=np.float32)
-        sample_rate = 16000
+        sample_rate = 44100
         augmenter = Compose(
             [
                 AddBackgroundNoise(
@@ -43,21 +43,23 @@ class TestCompose(unittest.TestCase):
             self.assertFalse(transform.are_parameters_frozen)
 
     def test_randomize_parameters_and_apply(self):
-        samples = 1. / np.arange(1, 21, dtype=np.float32)
-        sample_rate = 16000
+        samples = 1.0 / np.arange(1, 21, dtype=np.float32)
+        sample_rate = 44100
 
-        augmenter = Compose([
-            AddBackgroundNoise(
-                sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                min_snr_in_db=15,
-                max_snr_in_db=35,
-                p=1.0,
-            ),
-            ClippingDistortion(p=0.5),
-            FrequencyMask(min_frequency_band=0.3, max_frequency_band=0.5, p=0.5),
-            TimeMask(min_band_part=0.2, max_band_part=0.5, p=0.5),
-            Shift(min_fraction=0.5, max_fraction=0.5, p=0.5),
-        ])
+        augmenter = Compose(
+            [
+                AddBackgroundNoise(
+                    sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+                    min_snr_in_db=15,
+                    max_snr_in_db=35,
+                    p=1.0,
+                ),
+                ClippingDistortion(p=0.5),
+                FrequencyMask(min_frequency_band=0.3, max_frequency_band=0.5, p=0.5),
+                TimeMask(min_band_part=0.2, max_band_part=0.5, p=0.5),
+                Shift(min_fraction=0.5, max_fraction=0.5, p=0.5),
+            ]
+        )
         augmenter.freeze_parameters()
         augmenter.randomize_parameters(samples=samples, sample_rate=sample_rate)
 

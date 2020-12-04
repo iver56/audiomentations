@@ -9,7 +9,7 @@ AUDIO_FILENAME_ENDINGS = (".aiff", ".flac", ".m4a", ".mp3", ".ogg", ".opus", ".w
 def get_file_paths(
     root_path, filename_endings=AUDIO_FILENAME_ENDINGS, traverse_subdirectories=True
 ):
-    """Return a list of paths to all files with the given in a directory
+    """Return a list of paths to all files with the given filename extensions in a directory.
     Also traverses subdirectories by default.
     """
     file_paths = []

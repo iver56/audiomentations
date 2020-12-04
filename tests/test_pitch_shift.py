@@ -19,14 +19,16 @@ class TestPitchShift(unittest.TestCase):
         self.assertEqual(len(samples), 512)
 
     def test_apply_pitch_shift_multichannel(self):
-        samples = np.random.normal(0, 0.1, size=(2, 5555)).astype(np.float32)
+        num_channels = 3
+        samples = np.random.normal(0, 0.1, size=(num_channels, 5555)).astype(np.float32)
         sample_rate = 16000
         augmenter = Compose([PitchShift(min_semitones=1, max_semitones=2, p=1.0)])
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
 
         self.assertEqual(samples_out.dtype, np.float32)
         self.assertEqual(samples_out.shape, samples.shape)
-        assert not np.allclose(samples, samples_out)
+        for i in range(num_channels):
+            assert not np.allclose(samples[i], samples_out[i])
 
     def test_freeze_parameters(self):
         """

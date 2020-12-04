@@ -281,7 +281,7 @@ class PitchShift(BaseWaveformTransform):
             # TODO: When librosa has closed the following issue, we can remove our workaround:
             # https://github.com/librosa/librosa/issues/1085
             pitch_shifted_samples = np.copy(samples)
-            for i in range(samples.ndim):
+            for i in range(samples.shape[0]):
                 pitch_shifted_samples[i] = librosa.effects.pitch_shift(
                     pitch_shifted_samples[i],
                     sample_rate,

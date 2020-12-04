@@ -221,6 +221,8 @@ class AddGaussianNoise(BaseWaveformTransform):
 class TimeStretch(BaseWaveformTransform):
     """Time stretch the signal without changing the pitch"""
 
+    supports_multichannel = True
+
     def __init__(self, min_rate=0.8, max_rate=1.25, leave_length_unchanged=True, p=0.5):
         super().__init__(p)
         assert min_rate > 0.1
@@ -240,16 +242,32 @@ class TimeStretch(BaseWaveformTransform):
             self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
 
     def apply(self, samples, sample_rate):
-        time_stretched_samples = librosa.effects.time_stretch(
-            samples, self.parameters["rate"]
-        )
+        if samples.ndim == 2:
+            # librosa's pitch_shift function doesn't natively support multichannel audio.
+            # Here we use a workaround that simply loops over the channels. It's not perfect.
+            # TODO: When librosa natively supports multichannel audio, remove our workaround
+            time_stretched_channels = []
+            for i in range(samples.shape[0]):
+                time_stretched_samples = librosa.effects.time_stretch(
+                    samples[i], self.parameters["rate"]
+                )
+                time_stretched_channels.append(time_stretched_samples)
+            time_stretched_samples = np.array(
+                time_stretched_channels, dtype=samples.dtype
+            )
+        else:
+            time_stretched_samples = librosa.effects.time_stretch(
+                samples, self.parameters["rate"]
+            )
         if self.leave_length_unchanged:
             # Apply zero padding if the time stretched audio is not long enough to fill the
             # whole space, or crop the time stretched audio if it ended up too long.
             padded_samples = np.zeros(shape=samples.shape, dtype=samples.dtype)
-            window = time_stretched_samples[: samples.shape[0]]
-            actual_window_length = len(window)  # may be smaller than samples.shape[0]
-            padded_samples[:actual_window_length] = window
+            window = time_stretched_samples[..., : samples.shape[-1]]
+            actual_window_length = window.shape[
+                -1
+            ]  # may be smaller than samples.shape[-1]
+            padded_samples[..., :actual_window_length] = window
             time_stretched_samples = padded_samples
         return time_stretched_samples
 

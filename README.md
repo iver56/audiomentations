@@ -2,7 +2,12 @@
 
 [![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg)](https://circleci.com/gh/iver56/audiomentations) [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations) [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black) [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/master/LICENSE)
 
-A Python library for audio data augmentation. Inspired by [albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on CPU. Supports mono audio and partially multichannel audio. Can be integrated in training pipelines in e.g. Tensorflow/Keras or Pytorch. Has helped people get world-class results in Kaggle competitions. Is used by companies making next-generation audio products.
+A Python library for audio data augmentation. Inspired by
+[albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
+CPU. Supports mono audio and [partially multichannel audio](#multichannel-audio). Can be
+integrated in training pipelines in e.g. Tensorflow/Keras or Pytorch. Has helped people get
+world-class results in Kaggle competitions. Is used by companies making next-generation audio
+products.
 
 Need a Pytorch alternative with GPU support? Check out [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)!
 
@@ -235,12 +240,37 @@ given constant (e.g. zero).
 
 # Known limitations
 
-* Some transforms do not support multichannel audio yet.
+* Some transforms do not support multichannel audio yet. See [Multichannel audio](#multichannel-audio)
 * Expects the input dtype to be float32, and have values between -1 and 1.
 * The code runs on CPU, not GPU. For a GPU-compatible version, check out [pytorch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)
 * Multiprocessing is not officially supported yet. See also [#46](https://github.com/iver56/audiomentations/issues/46)
 
 Contributions are welcome!
+
+# Multichannel audio
+
+_The following table is valid for v0.14.0 only_
+
+| Transform | Supports multichannel audio? |
+| --------- | ---------------------------- |
+| AddImpulseResponse | - |
+| FrequencyMask | Yes |
+| TimeMask | Yes |
+| AddGaussianSNR | Yes |
+| AddGaussianNoise | Yes |
+| TimeStretch | Yes |
+| PitchShift | Yes |
+| Shift | Yes |
+| Normalize | Yes |
+| Trim | - |
+| Resample | - |
+| ClippingDistortion | Yes |
+| AddBackgroundNoise | - |
+| AddShortNoises | - |
+| PolarityInversion | Yes |
+| Gain | Yes |
+| Mp3Compression | - |
+| LoudnessNormalization | Yes, up to 5 channels |
 
 # Version history
 

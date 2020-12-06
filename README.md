@@ -151,7 +151,7 @@ to the fact that the LAME encoder inserts some silence at the beginning of the a
 
 ## `LoudnessNormalization`
 
-_To be added in v0.14.0_
+_Added in v0.14.0_
 
 Apply a constant amount of gain to match a specific loudness. This is an implementation of
 ITU-R BS.1770-4.
@@ -274,7 +274,7 @@ _The following table is valid for v0.14.0 only_
 
 # Version history
 
-## v0.14.0 (TBA)
+## v0.14.0 (2020-12-06)
 
 * Implement `LoudnessNormalization`
 * Implement `randomize_parameters` in `Compose`. Thanks to SolomidHero.

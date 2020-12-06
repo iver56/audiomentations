@@ -253,24 +253,24 @@ _The following table is valid for v0.14.0 only_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
-| AddImpulseResponse | - |
-| FrequencyMask | Yes |
-| TimeMask | Yes |
-| AddGaussianSNR | Yes |
-| AddGaussianNoise | Yes |
-| TimeStretch | Yes |
-| PitchShift | Yes |
-| Shift | Yes |
-| Normalize | Yes |
-| Trim | - |
-| Resample | - |
-| ClippingDistortion | Yes |
 | AddBackgroundNoise | - |
+| AddGaussianNoise | Yes |
+| AddGaussianSNR | Yes |
+| AddImpulseResponse | - |
 | AddShortNoises | - |
-| PolarityInversion | Yes |
+| ClippingDistortion | Yes |
+| FrequencyMask | Yes |
 | Gain | Yes |
-| Mp3Compression | - |
 | LoudnessNormalization | Yes, up to 5 channels |
+| Mp3Compression | - |
+| Normalize | Yes |
+| PitchShift | Yes |
+| PolarityInversion | Yes |
+| Resample | - |
+| Shift | Yes |
+| TimeMask | Yes |
+| TimeStretch | Yes |
+| Trim | - |
 
 # Version history
 

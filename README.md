@@ -268,6 +268,8 @@ _The following table is valid for v0.14.0 only_
 | PolarityInversion | Yes |
 | Resample | - |
 | Shift | Yes |
+| SpecChannelShuffle | Yes |
+| SpecFrequencyMask | Yes |
 | TimeMask | Yes |
 | TimeStretch | Yes |
 | Trim | - |

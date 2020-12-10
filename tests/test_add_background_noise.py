@@ -1,5 +1,6 @@
 import json
 import os
+import pickle
 import unittest
 import warnings
 
@@ -95,3 +96,11 @@ class TestAddBackgroundNoise(unittest.TestCase):
         samples = np.random.normal(0, 1, size=1024).astype(np.float32)
         transform.randomize_parameters(samples, sample_rate=44100)
         json.dumps(transform.serialize_parameters())
+
+    def test_picklability(self):
+        transform = AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
+        )
+        pickled = pickle.dumps(transform)
+        unpickled = pickle.loads(pickled)
+        self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)

@@ -1,4 +1,5 @@
 import os
+import pickle
 import unittest
 
 import numpy as np
@@ -35,3 +36,11 @@ class TestImpulseResponse(unittest.TestCase):
 
         self.assertEqual(samples_out.dtype, np.float32)
         self.assertGreater(len(samples_out), len(samples_in))
+
+    def test_picklability(self):
+        add_ir_transform = AddImpulseResponse(
+            ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0
+        )
+        pickled = pickle.dumps(add_ir_transform)
+        unpickled = pickle.loads(pickled)
+        self.assertEqual(add_ir_transform.ir_files, unpickled.ir_files)

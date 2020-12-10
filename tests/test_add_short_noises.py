@@ -1,5 +1,6 @@
 import json
 import os
+import pickle
 import unittest
 
 import numpy as np
@@ -174,3 +175,11 @@ class TestAddShortNoises(unittest.TestCase):
         )
         with self.assertRaises(MultichannelAudioNotSupportedException):
             samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+
+    def test_picklability(self):
+        transform = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"), p=1.0
+        )
+        pickled = pickle.dumps(transform)
+        unpickled = pickle.loads(pickled)
+        self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)

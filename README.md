@@ -276,6 +276,12 @@ _The following table is valid for v0.14.0 only_
 
 # Version history
 
+## v0.15.0 (2020-12-10)
+
+* Fix picklability of instances of `AddImpulseResponse`, `AddBackgroundNoise`
+ and `AddShortNoises`
+* Add an option `leave_length_unchanged` to `AddImpulseResponse`
+
 ## v0.14.0 (2020-12-06)
 
 * Implement `LoudnessNormalization`

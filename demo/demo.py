@@ -106,6 +106,13 @@ if __name__ == "__main__":
             "num_runs": 1,
         },
         {
+            "instance": AddImpulseResponse(
+                p=1.0, ir_path=os.path.join(DEMO_DIR, "ir"), leave_length_unchanged=True
+            ),
+            "num_runs": 1,
+            "name": "AddImpulseResponseLeaveLengthUnchanged",
+        },
+        {
             "instance": AddShortNoises(
                 sounds_path=os.path.join(DEMO_DIR, "short_noises"),
                 min_snr_in_db=0,

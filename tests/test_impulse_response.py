@@ -37,6 +37,20 @@ class TestImpulseResponse(unittest.TestCase):
         self.assertEqual(samples_out.dtype, np.float32)
         self.assertGreater(len(samples_out), len(samples_in))
 
+    def test_leave_length_unchanged(self):
+        sample_len = 1024
+        samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
+        sample_rate = 16000
+
+        add_ir_transform = AddImpulseResponse(
+            ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0, leave_length_unchanged=True
+        )
+
+        samples_out = add_ir_transform(samples=samples_in, sample_rate=sample_rate)
+
+        self.assertEqual(samples_out.dtype, np.float32)
+        self.assertEqual(len(samples_out), len(samples_in))
+
     def test_picklability(self):
         add_ir_transform = AddImpulseResponse(
             ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0

@@ -27,13 +27,22 @@ class AddImpulseResponse(BaseWaveformTransform):
     Impulse responses are represented as wav files in the given ir_path.
     """
 
-    def __init__(self, ir_path="/tmp/ir", p=0.5, lru_cache_size=128):
+    def __init__(
+        self,
+        ir_path="/tmp/ir",
+        p=0.5,
+        lru_cache_size=128,
+        leave_length_unchanged: bool = False,
+    ):
         """
         :param ir_path: Path to a folder that contains one or more wav files of impulse
         responses. Must be str or a Path instance.
         :param p:
         :param lru_cache_size: Maximum size of the LRU cache for storing impulse response files
         in memory.
+        :param leave_length_unchanged: When set to True, the tail of the sound (e.g. reverb at
+            the end) will be chopped off so that the length of the output is equal to the
+            length of the input.
         """
         super().__init__(p)
         self.ir_files = get_file_paths(ir_path)
@@ -42,6 +51,7 @@ class AddImpulseResponse(BaseWaveformTransform):
         self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(
             AddImpulseResponse.__load_ir
         )
+        self.leave_length_unchanged = leave_length_unchanged
 
     @staticmethod
     def __load_ir(file_path, sample_rate):
@@ -65,6 +75,8 @@ class AddImpulseResponse(BaseWaveformTransform):
         max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
         scale = 0.5 / max_value
         signal_ir *= scale
+        if self.leave_length_unchanged:
+            signal_ir = signal_ir[..., : samples.shape[-1]]
         return signal_ir
 
     def __getstate__(self):

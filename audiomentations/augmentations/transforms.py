@@ -67,6 +67,16 @@ class AddImpulseResponse(BaseWaveformTransform):
         signal_ir *= scale
         return signal_ir
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        warnings.warn(
+            "Warning: the LRU cache of AddImpulseResponse gets discarded when pickling it."
+            " E.g. this means the cache will be not be used when using AddImpulseResponse"
+            " together with multiprocessing on Windows"
+        )
+        del state["_AddImpulseResponse__load_ir"]
+        return state
+
 
 class FrequencyMask(BaseWaveformTransform):
     """
@@ -642,6 +652,16 @@ class AddBackgroundNoise(BaseWaveformTransform):
         # Return a mix of the input sound and the background noise sound
         return samples + noise_sound
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        warnings.warn(
+            "Warning: the LRU cache of AddBackgroundNoise gets discarded when pickling it."
+            " E.g. this means the cache will not be used when using AddBackgroundNoise together"
+            " with multiprocessing on Windows"
+        )
+        del state["_load_sound"]
+        return state
+
 
 class AddShortNoises(BaseWaveformTransform):
     """Mix in various (bursts of overlapping) sounds with random pauses between. Useful if your
@@ -877,6 +897,16 @@ class AddShortNoises(BaseWaveformTransform):
 
         # Return a mix of the input sound and the added sounds
         return samples + noise_placeholder
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        warnings.warn(
+            "Warning: the LRU cache of AddShortNoises gets discarded when pickling it."
+            " E.g. this means the cache will not be used when using AddShortNoises together"
+            " with multiprocessing on Windows"
+        )
+        del state["_load_sound"]
+        return state
 
 
 class PolarityInversion(BaseWaveformTransform):

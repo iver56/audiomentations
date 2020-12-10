@@ -249,7 +249,7 @@ Contributions are welcome!
 
 # Multichannel audio
 
-_The following table is valid for v0.14.0 only_
+_The following table is valid for v0.14.0 and v0.15.0 only_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |

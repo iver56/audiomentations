@@ -32,7 +32,7 @@ class AddImpulseResponse(BaseWaveformTransform):
         :param ir_path: Path to a folder that contains one or more wav files of impulse
         responses. Must be str or a Path instance.
         :param p:
-        :param lru_cache_size: Maximum size of the LRU cache for storing impuls files 
+        :param lru_cache_size: Maximum size of the LRU cache for storing impulse response files
         in memory.
         """
         super().__init__(p)

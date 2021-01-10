@@ -19,6 +19,6 @@ from .augmentations.transforms import (
     TimeStretch,
     Trim,
 )
-from .core.composition import Compose
+from .core.composition import Compose, SpecCompose
 
 __version__ = "0.15.0"

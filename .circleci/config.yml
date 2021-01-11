@@ -8,7 +8,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.6
+      - image: circleci/python:3.7.9
     working_directory: ~/repo
     steps:
       - checkout

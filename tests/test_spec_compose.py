@@ -12,11 +12,11 @@ from audiomentations.core.composition import SpecCompose
 
 class TestSpecCompose(unittest.TestCase):
     def test_freeze_and_unfreeze_parameters(self):
-        spectrogram = np.zeros((256, 256), dtype=np.float32)
+        spectrogram = np.random.random((256, 256, 3))
         augmenter = SpecCompose(
             [
-                SpecChannelShuffle(),
-                SpecFrequencyMask(),
+                SpecChannelShuffle(p=1.0),
+                SpecFrequencyMask(p=1.0),
             ]
         )
         perturbed_samples1 = augmenter(magnitude_spectrogram=spectrogram)
@@ -32,11 +32,11 @@ class TestSpecCompose(unittest.TestCase):
             self.assertFalse(transform.are_parameters_frozen)
 
     def test_randomize_parameters_and_apply(self):
-        spectrogram = np.zeros((256, 256), dtype=np.float32)
+        spectrogram = np.random.random((256, 256, 3))
         augmenter = SpecCompose(
             [
-                SpecChannelShuffle(),
-                SpecFrequencyMask(),
+                SpecChannelShuffle(p=1.0),
+                SpecFrequencyMask(p=1.0),
             ]
         )
         augmenter.freeze_parameters()

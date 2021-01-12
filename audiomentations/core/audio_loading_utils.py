@@ -25,12 +25,13 @@ def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto"):
     """
     file_path = Path(file_path)
     if file_path.name.lower().endswith(".wav"):
-        # Use scipy for loading most wav files, because scipy is significantly faster
+        # Use scipy for loading most wav files, because scipy is fast
         try:
             return load_wav_file(
                 file_path, sample_rate, mono, resample_type=resample_type
             )
         except Exception as e:
+            # scipy<1.6.0 does not natively support 24-bit wavs, so we use wavio or librosa.
             if "the wav file has 24-bit data" in str(e):
                 if IS_WAVIO_INSTALLED:
                     return load_wav_file_with_wavio(
@@ -81,10 +82,15 @@ def load_wav_file(file_path, sample_rate, mono=True, resample_type="kaiser_best"
     actual_sample_rate, samples = wavfile.read(file_path)
 
     if samples.dtype != np.float32:
-        assert samples.dtype == np.int16
-        samples = np.true_divide(
-            samples, 32768, dtype=np.float32
-        )  # ends up roughly between -1 and 1
+        if samples.dtype == np.int16:
+            samples = np.true_divide(
+                samples, 32768, dtype=np.float32
+            )  # ends up roughly between -1 and 1
+        elif samples.dtype == np.int32:
+            # TODO: Add support for 24-bit and 32-bit loading in scipy>=1.6.0
+            raise Exception("Unexpected data type")
+        else:
+            raise Exception("Unexpected data type")
 
     if mono and len(samples.shape) > 1:
         if samples.shape[1] == 1:

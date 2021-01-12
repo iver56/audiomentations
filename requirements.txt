@@ -10,7 +10,7 @@ pydub==0.23.1
 pyloudnorm==0.1.0
 pytest==5.3.4
 pytest-cov==2.8.1
-scipy>=1.0.0,<2
+scipy>=1.0.0,<1.6.0
 tqdm==4.31.1
 twine
 wavio==0.0.4

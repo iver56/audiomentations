@@ -83,7 +83,7 @@ class SpecChannelShuffle(BaseSpectrogramTransform):
     def randomize_parameters(self, magnitude_spectrogram):
         super().randomize_parameters(magnitude_spectrogram)
         if self.parameters["should_apply"]:
-            self.parameters["shuffled_channel_indexes"] = list(range(3))
+            self.parameters["shuffled_channel_indexes"] = list(range(magnitude_spectrogram.shape[-1]))
             random.shuffle(self.parameters["shuffled_channel_indexes"])
 
     def apply(self, magnitude_spectrogram):

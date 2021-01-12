@@ -70,7 +70,7 @@ def is_spectrogram_multichannel(spectrogram):
     :param samples: numpy ndarray
     :return:
     """
-    return len(spectrogram.shape) > 2
+    return len(spectrogram.shape) > 2 and spectrogram.shape[-1] > 1
 
 
 def convert_float_samples_to_int16(y):

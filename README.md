@@ -253,7 +253,7 @@ Contributions are welcome!
 
 # Multichannel audio
 
-_The following table is valid for v0.14.0 and v0.15.0 only_
+_The following table is valid for v0.14.0 - v0.16.0 only_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
@@ -278,7 +278,14 @@ _The following table is valid for v0.14.0 and v0.15.0 only_
 | TimeStretch | Yes |
 | Trim | - |
 
-# Version history
+# Changelog
+
+## v0.16.0 (unreleased)
+
+* Implement `SpecCompose` for applying a pipeline of spectrogram transforms. Thanks to omerferhatt.
+* Fix a bug in `SpecChannelShuffle` where it did not support more than 3 audio channels. Thanks to omerferhatt.
+* Limit scipy version range to >=1.0,<1.6 to avoid issues with loading 24-bit wav files.
+Support for scipy>=1.6 will be added later.
 
 ## v0.15.0 (2020-12-10)
 

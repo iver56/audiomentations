@@ -280,7 +280,7 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 
 # Changelog
 
-## v0.16.0 (unreleased)
+## v0.16.0 (2021-02-11)
 
 * Implement `SpecCompose` for applying a pipeline of spectrogram transforms. Thanks to omerferhatt.
 * Fix a bug in `SpecChannelShuffle` where it did not support more than 3 audio channels. Thanks to omerferhatt.

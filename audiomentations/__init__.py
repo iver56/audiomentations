@@ -21,4 +21,4 @@ from .augmentations.transforms import (
 )
 from .core.composition import Compose, SpecCompose
 
-__version__ = "0.15.0"
+__version__ = "0.16.0"

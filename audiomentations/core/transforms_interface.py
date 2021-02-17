@@ -63,7 +63,8 @@ class BaseWaveformTransform(BaseTransform):
                     )
                 if not self.supports_multichannel:
                     raise MultichannelAudioNotSupportedException(
-                        "{} only supports mono audio, not multichannel audio".format(
+                        "{} only supports mono audio, not multichannel audio. In other words, a 1-dimensional input"
+                        " ndarray was expected, but the input had more than 1 dimension.".format(
                             self.__class__.__name__
                         )
                     )

@@ -194,6 +194,9 @@ class AddGaussianSNR(BaseWaveformTransform):
 
     def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
         """
+        Warning: The "SNR" here has inverse chracteristics - When you increase SNR in the method the real SNR decreases.
+        TODO: This should be fixed in a future release.
+
         :param min_SNR: Minimum signal-to-noise ratio
         :param max_SNR: Maximum signal-to-noise ratio
         :param p:

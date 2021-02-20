@@ -253,30 +253,32 @@ Contributions are welcome!
 
 # Multichannel audio
 
+Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
+
 _The following table is valid for v0.14.0 - v0.16.0 only_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
-| AddBackgroundNoise | - |
+| AddBackgroundNoise | No, 1D only |
 | AddGaussianNoise | Yes |
 | AddGaussianSNR | Yes |
-| AddImpulseResponse | - |
-| AddShortNoises | - |
+| AddImpulseResponse | No, 1D only |
+| AddShortNoises | No, 1D only |
 | ClippingDistortion | Yes |
 | FrequencyMask | Yes |
 | Gain | Yes |
 | LoudnessNormalization | Yes, up to 5 channels |
-| Mp3Compression | - |
+| Mp3Compression | No, 1D only |
 | Normalize | Yes |
 | PitchShift | Yes |
 | PolarityInversion | Yes |
-| Resample | - |
+| Resample | No, 1D only |
 | Shift | Yes |
 | SpecChannelShuffle | Yes |
 | SpecFrequencyMask | Yes |
 | TimeMask | Yes |
 | TimeStretch | Yes |
-| Trim | - |
+| Trim | No, 1D only |
 
 # Changelog
 

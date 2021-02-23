@@ -87,9 +87,11 @@ def load_wav_file(file_path, sample_rate, mono=True, resample_type="kaiser_best"
                 samples, 32768, dtype=np.float32
             )  # ends up roughly between -1 and 1
         elif samples.dtype == np.int32:
-            # TODO: Add support for 24-bit and 32-bit loading in scipy>=1.6.0
-            raise Exception("Unexpected data type")
+            samples = np.true_divide(
+                samples, 2147483648, dtype=np.float32
+            )  # ends up roughly between -1 and 1
         else:
+            # TODO: Add support for 24-bit loading in scipy>=1.6.0
             raise Exception("Unexpected data type")
 
     if mono and len(samples.shape) > 1:

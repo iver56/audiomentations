@@ -248,6 +248,7 @@ given constant (e.g. zero).
 * Expects the input dtype to be float32, and have values between -1 and 1.
 * The code runs on CPU, not GPU. For a GPU-compatible version, check out [pytorch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)
 * Multiprocessing is not officially supported yet. See also [#46](https://github.com/iver56/audiomentations/issues/46)
+* Not compatible with scipy>=1.6 due to the way 24-bit and 32-bit int wav files are loaded
 
 Contributions are welcome!
 

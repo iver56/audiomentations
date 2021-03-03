@@ -344,7 +344,15 @@ class Shift(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_fraction=-0.5, max_fraction=0.5, rollover=True, p=0.5):
+    def __init__(
+        self,
+        min_fraction=-0.5,
+        max_fraction=0.5,
+        rollover=True,
+        fade=False,
+        fade_duration=10,
+        p=0.5,
+    ):
         """
         :param min_fraction: float, fraction of total sound length
         :param max_fraction: float, fraction of total sound length
@@ -352,14 +360,22 @@ class Shift(BaseWaveformTransform):
             are re-introduced at the last or first. When set to False, samples that roll beyond
             the first or last position are discarded. In other words, rollover=False results in
             an empty space (with zeroes).
+        :param fade: When set to True, and if rollover is False, there will be a short fade
+            in and out of the silent of duration `fade_duration`.
+        :param fade_samples: The duration of the fade. If it is an integer, then it refers to
+            samples, if float it refers to time.
         :param p:
         """
         super().__init__(p)
         assert min_fraction >= -1
         assert max_fraction <= 1
+        assert type(fade_duration) in [int, float] or not fade
+        assert fade_duration > 0 or not fade
         self.min_fraction = min_fraction
         self.max_fraction = max_fraction
         self.rollover = rollover
+        self.fade = fade
+        self.fade_duration = fade_duration
 
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
@@ -374,11 +390,31 @@ class Shift(BaseWaveformTransform):
     def apply(self, samples, sample_rate):
         num_places_to_shift = self.parameters["num_places_to_shift"]
         shifted_samples = np.roll(samples, num_places_to_shift, axis=-1)
+
+        if type(self.fade_duration) == float:
+            fade_length = int(sample_rate * self.fade_duration)
+        else:
+            fade_length = self.fade_duration
+
         if not self.rollover:
             if num_places_to_shift > 0:
                 shifted_samples[..., :num_places_to_shift] = 0.0
+                if self.fade:
+
+                    # When fading in, the first sample is always 0, that's why
+                    # the fade_length - 1 below.
+
+                    shifted_samples[
+                        ...,
+                        num_places_to_shift - 1 : num_places_to_shift + fade_length - 1,
+                    ] *= np.linspace(0, 1, num=fade_length)
             elif num_places_to_shift < 0:
                 shifted_samples[..., num_places_to_shift:] = 0.0
+                if self.fade:
+                    shifted_samples[
+                        ...,
+                        num_places_to_shift - fade_length + 1 : num_places_to_shift + 1,
+                    ] *= np.linspace(1, 0, num=fade_length)
         return shifted_samples
 
 

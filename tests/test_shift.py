@@ -96,3 +96,103 @@ class TestShift(unittest.TestCase):
             np.array([[0.0, 0.0, 0.75, 0.5], [0.0, 0.0, 0.9, 0.5]], dtype=np.float32),
         )
         self.assertEqual(processed_samples.dtype, np.float32)
+
+    def test_shift_fade(self):
+        samples = np.array(
+            [[1.0, 2.0, 3.0, 4.0, 5.0], [-1.0, -2.0, -3.0, -4.0, -5.0]],
+            dtype=np.float32,
+        )
+        sample_rate = 4000
+
+        augment = Shift(
+            min_fraction=0.5,
+            max_fraction=0.5,
+            rollover=False,
+            fade=True,
+            fade_duration=0.00075,  # 0.00075 * 4000 = 3
+            p=1.0,
+        )
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        assert_almost_equal(
+            processed_samples,
+            np.array(
+                [[0.0, 0.0, 0.0, 1.0, 3.0], [0.0, 0.0, 0.0, -1.0, -3.0]],
+                dtype=np.float32,
+            ),
+        )
+
+    def test_shift_fade_rollover(self):
+        samples = np.array(
+            [[1.0, 2.0, 3.0, 4.0, 5.0], [-1.0, -2.0, -3.0, -4.0, -5.0]],
+            dtype=np.float32,
+        )
+        sample_rate = 4000
+
+        augment = Shift(
+            min_fraction=0.5,
+            max_fraction=0.5,
+            rollover=True,
+            fade=True,
+            fade_duration=0.00075,  # 0.00075 * 4000 = 3
+            p=1.0,
+        )
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert_almost_equal(
+            processed_samples,
+            np.array(
+                [[2.0, 0.0, 0, 1.0, 3.0], [-2.0, 0.0, 0, -1.0, -3.0]],
+                dtype=np.float32,
+            ),
+        )
+
+    def test_shift_fade_rollover_2(self):
+        samples = np.array(
+            [[1.0, 2.0, 3.0, 4.0, 5.0], [-1.0, -2.0, -3.0, -4.0, -5.0]],
+            dtype=np.float32,
+        )
+        sample_rate = 4000
+
+        augment = Shift(
+            min_fraction=-0.5,
+            max_fraction=-0.5,
+            rollover=True,
+            fade=True,
+            fade_duration=0.00075,  # 0.00075 * 4000 = 3
+            p=1.0,
+        )
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert_almost_equal(
+            processed_samples,
+            np.array(
+                [[3.0, 2.0, 0.0, 0.0, 1.0], [-3.0, -2.0, 0.0, -0.0, -1.0]],
+                dtype=np.float32,
+            ),
+        )
+
+    def test_shift_fade_rollover_3(self):
+        samples = np.array(
+            [[1.0, 2.0, 3.0, 4.0, 5.0], [-1.0, -2.0, -3.0, -4.0, -5.0]],
+            dtype=np.float32,
+        )
+        sample_rate = 4000
+
+        augment = Shift(
+            min_fraction=-0.5,
+            max_fraction=-0.5,
+            rollover=True,
+            fade=True,
+            fade_duration=1.0,
+            p=1.0,
+        )
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert_almost_equal(
+            processed_samples,
+            np.array(
+                [
+                    [0.0015004, 0.0010003, 0.0, 0.0, 0.0005001],
+                    [-0.0015004, -0.0010003, -0.0, -0.0, -0.0005001],
+                ],
+                dtype=np.float32,
+            ),
+        )

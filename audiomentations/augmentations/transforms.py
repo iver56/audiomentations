@@ -362,8 +362,7 @@ class Shift(BaseWaveformTransform):
             an empty space (with zeroes).
         :param fade: When set to True, and if rollover is False, there will be a short fade
             in and out of the silent of duration `fade_duration`.
-        :param fade_samples: The duration of the fade. If it is an integer, then it refers to
-            samples, if float it refers to time.
+        :param fade_duration: The duration of the fade in seconds.
         :param p:
         """
         super().__init__(p)

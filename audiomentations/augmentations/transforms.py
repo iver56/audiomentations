@@ -360,9 +360,11 @@ class Shift(BaseWaveformTransform):
             are re-introduced at the last or first. When set to False, samples that roll beyond
             the first or last position are discarded. In other words, rollover=False results in
             an empty space (with zeroes).
-        :param fade: When set to True, and if rollover is False, there will be a short fade
-            in and out of the silent of duration `fade_duration`.
-        :param fade_duration: The duration of the fade in seconds.
+        :param fade: When set to True, there will be a short fade in and/or out at the "stitch"
+            (that was the start or the end of the audio before the shift). This can smooth out an
+            unwanted abrupt change between two consecutive samples (which sounds like a
+            transient/click/pop).
+        :param fade_duration: If `fade=True`, then this is the duration of the fade in seconds.
         :param p:
         """
         super().__init__(p)

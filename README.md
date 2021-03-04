@@ -287,7 +287,7 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 
 ### Added
 
-* Add a `fade` option in Shift for eliminating unwanted clicks
+* Add a `fade` option in `Shift` for eliminating unwanted clicks
 * Add support for 32-bit int wav loading with scipy>=1.6
 
 ## v0.16.0 (2021-02-11)

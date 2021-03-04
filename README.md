@@ -283,6 +283,13 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 
 # Changelog
 
+## Unreleased
+
+### Added
+
+* Add a `fade` option in Shift for eliminating unwanted clicks
+* Add support for 32-bit int wav loading with scipy>=1.6
+
 ## v0.16.0 (2021-02-11)
 
 * Implement `SpecCompose` for applying a pipeline of spectrogram transforms. Thanks to omerferhatt.

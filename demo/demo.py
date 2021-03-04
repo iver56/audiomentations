@@ -156,13 +156,27 @@ if __name__ == "__main__":
         {"instance": Normalize(p=1.0), "num_runs": 1},
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
         {"instance": Resample(p=1.0), "num_runs": 5},
-        {"instance": Shift(min_fraction=-0.5, max_fraction=0.5, p=1.0), "num_runs": 5},
+        {
+            "instance": Shift(min_fraction=-0.5, max_fraction=0.5, fade=False, p=1.0),
+            "num_runs": 5,
+            "name": "ShiftWithoutFade",
+        },
+        {
+            "instance": Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, p=1.0),
+            "num_runs": 5,
+            "name": "ShiftWithShortFade",
+        },
         {
             "instance": Shift(
-                min_fraction=-0.5, max_fraction=0.5, rollover=False, p=1.0
+                min_fraction=-0.5,
+                max_fraction=0.5,
+                rollover=False,
+                fade=True,
+                fade_duration=0.3,
+                p=1.0,
             ),
             "num_runs": 5,
-            "name": "ShiftWithoutRollover",
+            "name": "ShiftWithoutRolloverWithLongFade",
         },
         {"instance": TimeMask(p=1.0), "num_runs": 5},
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},

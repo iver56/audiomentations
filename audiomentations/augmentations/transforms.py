@@ -388,9 +388,6 @@ class Normalize(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, p=0.5):
-        super().__init__(p)
-
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
@@ -933,15 +930,6 @@ class PolarityInversion(BaseWaveformTransform):
     """
 
     supports_multichannel = True
-
-    def __init__(self, p=0.5):
-        """
-        :param p:
-        """
-        super().__init__(p)
-
-    def randomize_parameters(self, samples, sample_rate):
-        super().randomize_parameters(samples, sample_rate)
 
     def apply(self, samples, sample_rate):
         return -samples

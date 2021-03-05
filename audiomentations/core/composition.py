@@ -39,9 +39,6 @@ class BaseCompose:
 
 
 class Compose(BaseCompose):
-    # TODO: Name can change to WaveformCompose
-    def __init__(self, transforms, p=1.0, shuffle=False):
-        super(Compose, self).__init__(transforms, p, shuffle)
 
     def __call__(self, samples, sample_rate):
         transforms = self.transforms.copy()
@@ -59,8 +56,6 @@ class Compose(BaseCompose):
 
 
 class SpecCompose(BaseCompose):
-    def __init__(self, transforms, p=1.0, shuffle=False):
-        super().__init__(transforms, p, shuffle)
 
     def __call__(self, magnitude_spectrogram):
         transforms = self.transforms.copy()

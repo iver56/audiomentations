@@ -47,7 +47,8 @@ class BaseWaveformTransform(BaseTransform):
     def apply(self, samples, sample_rate):
         raise NotImplementedError
 
-    def is_multichannel(self, samples):
+    @staticmethod
+    def is_multichannel(samples):
         return is_waveform_multichannel(samples)
 
     def __call__(self, samples, sample_rate):
@@ -84,7 +85,8 @@ class BaseSpectrogramTransform(BaseTransform):
     def apply(self, magnitude_spectrogram):
         raise NotImplementedError
 
-    def is_multichannel(self, samples):
+    @staticmethod
+    def is_multichannel(samples):
         return is_spectrogram_multichannel(samples)
 
     def __call__(self, magnitude_spectrogram):

@@ -108,7 +108,8 @@ class FrequencyMask(BaseWaveformTransform):
         self.min_frequency_band = min_frequency_band
         self.max_frequency_band = max_frequency_band
 
-    def __butter_bandstop(self, lowcut, highcut, fs, order=5):
+    @staticmethod
+    def __butter_bandstop(lowcut, highcut, fs, order=5):
         nyq = 0.5 * fs
         low = lowcut / nyq
         high = highcut / nyq

@@ -34,7 +34,7 @@ from audiomentations.core.transforms_interface import (
 DEMO_DIR = os.path.dirname(__file__)
 
 
-class timer(object):
+class timer():
     """
     timer: A class used to measure the execution time of a block of code that is
     inside a "with" statement.

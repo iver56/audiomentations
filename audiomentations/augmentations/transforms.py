@@ -465,8 +465,7 @@ class LoudnessNormalization(BaseWaveformTransform):
                 self.parameters["loudness"],
                 self.parameters["lufs_in_db"],
             ).transpose()
-        else:
-            return samples
+        return samples
 
 
 class Trim(BaseWaveformTransform):
@@ -1040,10 +1039,9 @@ class Mp3Compression(BaseWaveformTransform):
     def apply(self, samples, sample_rate):
         if self.backend == "lameenc":
             return self.apply_lameenc(samples, sample_rate)
-        elif self.backend == "pydub":
+        if self.backend == "pydub":
             return self.apply_pydub(samples, sample_rate)
-        else:
-            raise Exception("Backend {} not recognized".format(self.backend))
+        raise Exception("Backend {} not recognized".format(self.backend))
 
     def apply_lameenc(self, samples, sample_rate):
         try:

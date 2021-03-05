@@ -37,14 +37,13 @@ def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto"):
                     return load_wav_file_with_wavio(
                         file_path, sample_rate, mono, resample_type=resample_type
                     )
-                else:
-                    warnings.warn(
-                        "You are loading a 24-bit wav file, and librosa is not very fast at"
-                        " doing that. Install wavio for a performance boost. To install the"
-                        " optional wavio dependency of audiomentations,"
-                        " do `pip install audiomentations[extras]` instead of"
-                        " `pip install audiomentations`"
-                    )
+                warnings.warn(
+                    "You are loading a 24-bit wav file, and librosa is not very fast at"
+                    " doing that. Install wavio for a performance boost. To install the"
+                    " optional wavio dependency of audiomentations,"
+                    " do `pip install audiomentations[extras]` instead of"
+                    " `pip install audiomentations`"
+                )
             elif "Unknown wave file format" in str(e):
                 # This can happen if the file is in MS ADPCM format
                 pass

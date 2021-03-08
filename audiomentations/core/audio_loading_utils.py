@@ -4,6 +4,7 @@ from pathlib import Path
 import librosa
 import numpy as np
 from scipy.io import wavfile
+from wavio import read
 
 IS_WAVIO_INSTALLED = True
 try:
@@ -79,19 +80,44 @@ def load_wav_file(file_path, sample_rate, mono=True, resample_type="kaiser_best"
     """Load a wav audio file as a floating point time series. Significantly faster than
     load_sound_file."""
 
-    actual_sample_rate, samples = wavfile.read(file_path)
-
-    if samples.dtype != np.float32:
-        if samples.dtype == np.int16:
-            samples = np.true_divide(
-                samples, 32768, dtype=np.float32
-            )  # ends up roughly between -1 and 1
-        elif samples.dtype == np.int32:
-            samples = np.true_divide(
-                samples, 2147483648, dtype=np.float32
-            )  # ends up roughly between -1 and 1
-        else:
-            # TODO: Add support for 24-bit loading in scipy>=1.6.0
+    try wavfile.read(file_path):
+        actual_sample_rate, samples = wavfile.read(file_path)
+        if samples.dtype != np.float32:
+            if samples.dtype == np.int16:
+                samples = np.true_divide(
+                    samples, 32768, dtype=np.float32
+                )  # ends up roughly between -1 and 1
+            elif samples.dtype == np.int32:
+                samples = np.true_divide(
+                    samples, 2147483648, dtype=np.float32
+                )  # ends up roughly between -1 and 1
+    except:
+        try read(file_path):
+            w = read(file_path)
+            samples = w.data
+            actual_sample_rate = w.rate
+            sampwidth = w.sampwidth
+            if sampwidth == 1:
+                # uint8
+                samples = np.true_divide(
+                    samples, 128, dtype=np.float32
+                )  # ends up roughly between -1 and 1
+            elif sampwidth == 2:
+                # uint16
+                samples = np.true_divide(
+                    samples, 32768, dtype=np.float32
+                )  # ends up roughly between -1 and 1
+            elif sampwidth == 3:
+                # uint24
+                samples = np.true_divide(
+                    samples, 8388608 , dtype=np.float32
+                )  # ends up roughly between -1 and 1
+            elif sampwidth == 4:
+                # uint32
+                samples = np.true_divide(
+                    samples, 2147483648, dtype=np.float32
+                )  # ends up roughly between -1 and 1
+        except:
             raise Exception("Unexpected data type")
 
     if mono and len(samples.shape) > 1:

@@ -80,7 +80,7 @@ def load_wav_file(file_path, sample_rate, mono=True, resample_type="kaiser_best"
     """Load a wav audio file as a floating point time series. Significantly faster than
     load_sound_file."""
 
-    try wavfile.read(file_path):
+    try:
         actual_sample_rate, samples = wavfile.read(file_path)
         if samples.dtype != np.float32:
             if samples.dtype == np.int16:
@@ -92,7 +92,7 @@ def load_wav_file(file_path, sample_rate, mono=True, resample_type="kaiser_best"
                     samples, 2147483648, dtype=np.float32
                 )  # ends up roughly between -1 and 1
     except:
-        try read(file_path):
+        try:
             w = read(file_path)
             samples = w.data
             actual_sample_rate = w.rate

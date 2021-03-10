@@ -37,7 +37,7 @@ class AddImpulseResponse(BaseWaveformTransform):
         """
         :param ir_path: Path to a folder that contains one or more wav files of impulse
         responses. Must be str or a Path instance.
-        :param p:
+        :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing impulse response files
         in memory.
         :param leave_length_unchanged: When set to True, the tail of the sound (e.g. reverb at
@@ -102,7 +102,7 @@ class FrequencyMask(BaseWaveformTransform):
         """
         :param min_frequency_band: Minimum bandwidth, float
         :param max_frequency_band: Maximum bandwidth, float
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
         self.min_frequency_band = min_frequency_band
@@ -155,7 +155,7 @@ class TimeMask(BaseWaveformTransform):
         :param max_band_part: Maximum length of the silent part as a fraction of the
             total sound length. Float.
         :param fade: Bool, Add linear fade in and fade out of the silent part.
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
         self.min_band_part = min_band_part
@@ -199,7 +199,7 @@ class AddGaussianSNR(BaseWaveformTransform):
 
         :param min_SNR: Minimum signal-to-noise ratio
         :param max_SNR: Maximum signal-to-noise ratio
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
         self.min_SNR = min_SNR
@@ -365,7 +365,7 @@ class Shift(BaseWaveformTransform):
             unwanted abrupt change between two consecutive samples (which sounds like a
             transient/click/pop).
         :param fade_duration: If `fade=True`, then this is the duration of the fade in seconds.
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
         assert min_fraction >= -1
@@ -575,7 +575,7 @@ class Resample(BaseWaveformTransform):
         """
         :param min_sample_rate: int, Minimum sample rate
         :param max_sample_rate: int, Maximum sample rate
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
         assert min_sample_rate <= max_sample_rate
@@ -614,7 +614,7 @@ class ClippingDistortion(BaseWaveformTransform):
             will be clipped
         :param max_percentile_threshold: int, A upper bound on the total percent of samples that
             will be clipped
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
         assert min_percentile_threshold <= max_percentile_threshold
@@ -666,7 +666,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
             files can be flac, mp3, ogg or wav.
         :param min_snr_in_db: Minimum signal-to-noise ratio in dB
         :param max_snr_in_db: Maximum signal-to-noise ratio in dB
-        :param p:
+        :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
         super().__init__(p)
@@ -1013,7 +1013,7 @@ class PolarityInversion(BaseWaveformTransform):
 
     def __init__(self, p=0.5):
         """
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
 
@@ -1038,7 +1038,7 @@ class Gain(BaseWaveformTransform):
 
     def __init__(self, min_gain_in_db=-12, max_gain_in_db=12, p=0.5):
         """
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
         assert min_gain_in_db <= max_gain_in_db

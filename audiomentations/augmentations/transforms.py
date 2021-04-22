@@ -73,8 +73,9 @@ class AddImpulseResponse(BaseWaveformTransform):
             )
         signal_ir = convolve(samples, ir)
         max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
-        scale = 0.5 / max_value
-        signal_ir *= scale
+        if max_value > 0.0:
+            scale = 0.5 / max_value
+            signal_ir *= scale
         if self.leave_length_unchanged:
             signal_ir = signal_ir[..., : samples.shape[-1]]
         return signal_ir

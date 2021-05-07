@@ -296,18 +296,30 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 
 ## v0.16.0 (2021-02-11)
 
+### Added
+
 * Implement `SpecCompose` for applying a pipeline of spectrogram transforms. Thanks to omerferhatt.
+
+### Fixed
+
 * Fix a bug in `SpecChannelShuffle` where it did not support more than 3 audio channels. Thanks to omerferhatt.
 * Limit scipy version range to >=1.0,<1.6 to avoid issues with loading 24-bit wav files.
 Support for scipy>=1.6 will be added later.
 
 ## v0.15.0 (2020-12-10)
 
-* Fix picklability of instances of `AddImpulseResponse`, `AddBackgroundNoise`
- and `AddShortNoises`
+### Added
+
 * Add an option `leave_length_unchanged` to `AddImpulseResponse`
 
+### Fixed
+
+* Fix picklability of instances of `AddImpulseResponse`, `AddBackgroundNoise`
+ and `AddShortNoises`
+
 ## v0.14.0 (2020-12-06)
+
+### Added
 
 * Implement `LoudnessNormalization`
 * Implement `randomize_parameters` in `Compose`. Thanks to SolomidHero.
@@ -316,62 +328,104 @@ Support for scipy>=1.6 will be added later.
 
 ## v0.13.0 (2020-11-10)
 
-* Show a warning if a waveform had to be resampled after loading it. This is because resampling
-is slow. Ideally, files on disk should already have the desired sample rate.
-* Correctly find audio files with upper case filename extensions.
+### Added
+
 * Lay the foundation for spectrogram transforms. Implement `SpecChannelShuffle` and
 `SpecFrequencyMask`.
-* Fix a bug where AddBackgroundNoise crashed when trying to add digital silence to an input. Thanks to juheeuu.
 * Configurable LRU cache for transforms that use external sound files. Thanks to alumae.
 * Officially add multichannel support to `Normalize`
 
+### Changed
+
+* Show a warning if a waveform had to be resampled after loading it. This is because resampling
+is slow. Ideally, files on disk should already have the desired sample rate.
+
+### Fixed
+
+* Correctly find audio files with upper case filename extensions.
+* Fix a bug where AddBackgroundNoise crashed when trying to add digital silence to an input. Thanks to juheeuu.
+
 ## v0.12.1 (2020-09-28)
+
+### Changed
 
 * Speed up `AddBackgroundNoise`, `AddShortNoises` and `AddImpulseResponse` by loading wav files with scipy or wavio instead of librosa.
 
 ## v0.12.0 (2020-09-23)
 
+### Added
+
 * Implement `Mp3Compression`
-* Python <= 3.5 is no longer officially supported, since [Python 3.5 has reached end-of-life](https://devguide.python.org/#status-of-python-branches)
-* Expand range of supported `librosa` versions
 * Officially support multichannel audio in `Gain` and `PolarityInversion`
 * Add m4a and opus to the list of recognized audio filename extensions
+
+### Changed
+
+* Expand range of supported `librosa` versions
+
+### Removed
+
+* Python <= 3.5 is no longer officially supported, since [Python 3.5 has reached end-of-life](https://devguide.python.org/#status-of-python-branches)
 * Breaking change: Internal util functions are no longer exposed directly. If you were doing
     e.g. `from audiomentations import calculate_rms`, now you have to do
     `from audiomentations.core.utils import calculate_rms`
 
-
 ## v0.11.0 (2020-08-27)
+
+### Added
 
 * Implement `Gain` and `PolarityInversion`. Thanks to Spijkervet for the inspiration.
 
 ## v0.10.1 (2020-07-27)
 
+### Changed
+
 * Improve the performance of `AddBackgroundNoise` and `AddShortNoises` by optimizing the implementation of `calculate_rms`.
+
+### Fixed
+
 * Improve compatibility of output files written by the demo script. Thanks to xwJohn.
 * Fix division by zero bug in `Normalize`. Thanks to ZFTurbo.
 
 ## v0.10.0 (2020-05-05)
 
-* Breaking change: `AddImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises` now include subfolders when searching for files. This is useful when your sound files are organized in subfolders.
+### Added
+
 * `AddImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises` now support aiff files in addition to flac, mp3, ogg and wav
+
+### Changed
+
+* Breaking change: `AddImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises` now include subfolders when searching for files. This is useful when your sound files are organized in subfolders.
+
+### Fixed
+
 * Fix filter instability bug in `FrequencyMask`. Thanks to kvilouras.
 
 ## v0.9.0 (2020-02-20)
 
-* Disregard non-audio files when looking for impulse response files
+### Added
+
 * Remember randomized/chosen effect parameters. This allows for freezing the parameters and applying the same effect to multiple sounds. Use transform.freeze_parameters() and transform.unfreeze_parameters() for this.
-* Fix a bug in `ClippingDistortion` where the min_percentile_threshold was not respected as expected.
 * Implement transform.serialize_parameters(). Useful for when you want to store metadata on how a sound was perturbed.
-* Switch to a faster convolve implementation. This makes `AddImpulseResponse` significantly faster.
 * Add a rollover parameter to `Shift`. This allows for introducing silence instead of a wrapped part of the sound.
-* Expand supported range of librosa versions
 * Add support for flac in `AddImpulseResponse`
 * Implement `AddBackgroundNoise` transform. Useful for when you want to add background noise to all of your sound. You need to give it a folder of background noises to choose from.
 * Implement `AddShortNoises`. Useful for when you want to add (bursts of) short noise sounds to your input audio.
+
+### Changed
+
+* Disregard non-audio files when looking for impulse response files
+* Switch to a faster convolve implementation. This makes `AddImpulseResponse` significantly faster.
+* Expand supported range of librosa versions
+
+### Fixed
+
+* Fix a bug in `ClippingDistortion` where the min_percentile_threshold was not respected as expected.
 * Improve handling of empty input
 
 ## v0.8.0 (2020-01-28)
+
+### Added
 
 * Add shuffle parameter in `Composer`
 * Add `Resample` transformation
@@ -382,7 +436,7 @@ Thanks to askskro
 
 ## v0.7.0 (2020-01-14)
 
-Add new transforms:
+### Added
 
 * `AddGaussianSNR`
 * `AddImpulseResponse`
@@ -394,30 +448,48 @@ Thanks to karpnv
 
 ## v0.6.0 (2019-05-27)
 
+### Added
+
 * Implement peak normalization
 
 ## v0.5.0 (2019-02-23)
 
+### Added
+
 * Implement `Shift` transform
+
+### Changed
+
 * Ensure p is within bounds
 
 ## v0.4.0 (2019-02-19)
 
+### Added
+
 * Implement `PitchShift` transform
+
+### Fixed
+
 * Fix output dtype of `AddGaussianNoise`
 
 ## v0.3.0 (2019-02-19)
 
-Implement `leave_length_unchanged` in `TimeStretch`
+### Added
+
+* Implement `leave_length_unchanged` in `TimeStretch`
 
 ## v0.2.0 (2019-02-18)
+
+### Added
 
 * Add `TimeStretch` transform
 * Parametrize `AddGaussianNoise`
 
 ## v0.1.0 (2019-02-15)
 
-Initial release. Includes only one transform: `AddGaussianNoise`
+### Added
+
+* Initial release. Includes only one transform: `AddGaussianNoise`
 
 
 # Development

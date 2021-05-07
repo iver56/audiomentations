@@ -2,10 +2,11 @@ import random
 
 
 class BaseCompose:
-    def __init__(self, transforms, p=1.0, shuffle=False):
+    def __init__(self, transforms, p=1.0, shuffle=False, only_one=False):
         self.transforms = transforms
         self.p = p
         self.shuffle = shuffle
+        self.only_one = only_one
 
         name_list = []
         for transform in self.transforms:
@@ -40,16 +41,18 @@ class BaseCompose:
 
 class Compose(BaseCompose):
     # TODO: Name can change to WaveformCompose
-    def __init__(self, transforms, p=1.0, shuffle=False):
-        super(Compose, self).__init__(transforms, p, shuffle)
+    def __init__(self, transforms, p=1.0, shuffle=False, only_one=False):
+        super(Compose, self).__init__(transforms, p, shuffle, only_one)
 
     def __call__(self, samples, sample_rate):
         transforms = self.transforms.copy()
         if random.random() < self.p:
-            if self.shuffle:
+            if self.shuffle or self.only_one:
                 random.shuffle(transforms)
             for transform in transforms:
                 samples = transform(samples, sample_rate)
+                if self.only_one:
+                    break
 
         return samples
 
@@ -59,16 +62,18 @@ class Compose(BaseCompose):
 
 
 class SpecCompose(BaseCompose):
-    def __init__(self, transforms, p=1.0, shuffle=False):
-        super().__init__(transforms, p, shuffle)
+    def __init__(self, transforms, p=1.0, shuffle=False, only_one=False):
+        super().__init__(transforms, p, shuffle, only_one)
 
     def __call__(self, magnitude_spectrogram):
         transforms = self.transforms.copy()
         if random.random() < self.p:
-            if self.shuffle:
+            if self.shuffle or self.only_one:
                 random.shuffle(transforms)
             for transform in transforms:
                 magnitude_spectrogram = transform(magnitude_spectrogram)
+                if self.only_one:
+                    break
 
         return magnitude_spectrogram
 

@@ -81,6 +81,9 @@ def load_wav_file(file_path, sample_rate, mono=True, resample_type="kaiser_best"
 
     actual_sample_rate, samples = wavfile.read(file_path)
 
+    if samples.dtype == np.float64:
+        samples = samples.astype(np.float32)
+        
     if samples.dtype != np.float32:
         if samples.dtype == np.int16:
             samples = np.true_divide(

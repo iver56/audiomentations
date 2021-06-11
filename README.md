@@ -61,6 +61,8 @@ See [audiomentations/augmentations/spectrogram_transforms.py](https://github.com
 
 # Waveform transforms
 
+Some of the following waveform transforms can be visualized (for understanding) by the [audio-transformation-visualization GUI](https://share.streamlit.io/phrasenmaeher/audio-transformation-visualization/main/visualize_transformation.py) (made by phrasenmaeher), where you can upload your own input wav file
+
 ## `AddBackgroundNoise`
 
 _Added in v0.9.0_

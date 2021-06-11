@@ -1056,6 +1056,26 @@ class Gain(BaseWaveformTransform):
     def apply(self, samples, sample_rate):
         return samples * self.parameters["amplitude_ratio"]
 
+    
+class TanhDistortion(BaseWaveformTransform):
+    """
+    Apply tanh distortion to the audio.
+    output = c1*tanh(c2*input)
+    """
+    
+    supports_multichannel = True
+    
+    def __init__(self, c1=1, c2=1, p=0.5):
+        """
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+        self.c1 = c1
+        self.c2 = c2
+        
+    def apply(self, samples, sample_rate):
+        return self.c1*np.tanh(self.c2*samples)
+
 
 class Mp3Compression(BaseWaveformTransform):
     """Compress the audio using an MP3 encoder to lower the audio quality.

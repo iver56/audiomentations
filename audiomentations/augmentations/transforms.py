@@ -1075,12 +1075,17 @@ class TanhDistortion(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
+            self.parameters["max_amplitude"] = np.amax(np.abs(samples))
             self.parameters["gain"] = random.uniform(self.min_distortion_gain, self.max_distortion_gain)
         
     def apply(self, samples, sample_rate):
-        distorted_samples = np.tanh(self.parameters["gain"]*samples)
-        c = np.sqrt(np.sum(samples**2)/np.sum(distorted_samples**2))
-        return c*distorted_samples
+        if self.parameters["max_amplitude"] > 0:
+            distorted_samples = np.tanh(self.parameters["gain"]*samples)
+            c = np.sqrt(np.sum(samples**2)/np.sum(distorted_samples**2))
+            distorted_samples = c*distorted_samples
+        else:
+            distorted_samples = samples
+        return distorted_samples
 
 
 class Mp3Compression(BaseWaveformTransform):

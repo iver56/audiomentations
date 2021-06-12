@@ -1060,7 +1060,6 @@ class Gain(BaseWaveformTransform):
 class TanhDistortion(BaseWaveformTransform):
     """
     Apply tanh distortion to the audio.
-    output = c1*tanh(c2*input)
     """
     
     supports_multichannel = True

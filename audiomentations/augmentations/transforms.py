@@ -1065,16 +1065,23 @@ class TanhDistortion(BaseWaveformTransform):
     
     supports_multichannel = True
     
-    def __init__(self, c1=1, c2=1, p=0.5):
+    def __init__(self, min_distortion_gain=1., max_distortion_gain=2., p=0.5):
         """
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        self.c1 = c1
-        self.c2 = c2
+        self.min_distortion_gain = min_distortion_gain
+        self.max_distortion_gain = max_distortion_gain
+        
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["gain"] = random.uniform(self.min_distortion_gain, self.max_distortion_gain)
         
     def apply(self, samples, sample_rate):
-        return self.c1*np.tanh(self.c2*samples)
+        distorted_samples = np.tanh(self.parameters["gain"]*samples)
+        c = np.sqrt(np.sum(samples**2)/np.sum(distorted_samples**2))
+        return c*distorted_samples
 
 
 class Mp3Compression(BaseWaveformTransform):

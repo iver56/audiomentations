@@ -1081,7 +1081,7 @@ class TanhDistortion(BaseWaveformTransform):
     def apply(self, samples, sample_rate):
         if self.parameters["max_amplitude"] > 0:
             distorted_samples = np.tanh(self.parameters["gain"]*samples)
-            c = np.sqrt(np.sum(samples**2)/np.sum(distorted_samples**2))
+            c = np.sqrt(np.sum(np.square(samples))/np.sum(np.square(distorted_samples)))
             distorted_samples = c*distorted_samples
         else:
             distorted_samples = samples

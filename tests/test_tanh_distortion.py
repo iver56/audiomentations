@@ -4,6 +4,7 @@ import numpy as np
 
 from audiomentations.augmentations.transforms import TanhDistortion
 from audiomentations.core.composition import Compose
+from audiomentations.core.utils import calculate_rms
 
 
 class TestTanhDistortion(unittest.TestCase):
@@ -11,25 +12,27 @@ class TestTanhDistortion(unittest.TestCase):
         samples = np.zeros((2048,), dtype=np.float32)
         sample_rate = 16000
         augmenter = TanhDistortion(
-            c1=2, c2=2, p=1.0
+           min_distortion_gain=1., max_distortion_gain=2.0, p=1.0
         )
 
-        samples = augmenter(samples=samples, sample_rate=sample_rate)
+        distorted_samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        self.assertEqual(samples.dtype, np.float32)
-        self.assertEqual(len(samples), 2048)
+        self.assertEqual(samples.dtype, distorted_samples.dtype)
+        self.assertEqual(samples.shape, distorted_samples.shape)
+        self.assertEqual(calculate_rms(samples), calculate_rms(distorted_samples))
 
     def test_multichannel(self):
         num_channels = 3
         samples = np.random.normal(0, 0.1, size=(num_channels, 5555)).astype(np.float32)
         sample_rate = 16000
         augmenter = TanhDistortion(
-            c1=2, c2=2, p=1.0
+           min_distortion_gain=1., max_distortion_gain=2.0, p=1.0
         )
 
-        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        distorted_samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        self.assertEqual(samples.dtype, samples_out.dtype)
-        self.assertEqual(samples.shape, samples_out.shape)
+        self.assertEqual(samples.dtype, distorted_samples.dtype)
+        self.assertEqual(samples.shape, distorted_samples.shape)
+        self.assertEqual(calculate_rms(samples), calculate_rms(distorted_samples))
         for i in range(num_channels):
-            assert not np.allclose(samples[i], samples_out[i])
+            assert not np.allclose(samples[i], distorted_samples[i])

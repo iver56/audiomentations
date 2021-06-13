@@ -195,9 +195,6 @@ class AddGaussianSNR(BaseWaveformTransform):
 
     def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
         """
-        Warning: The "SNR" here has inverse chracteristics - When you increase SNR in the method the real SNR decreases.
-        TODO: This should be fixed in a future release.
-
         :param min_SNR: Minimum signal-to-noise ratio
         :param max_SNR: Maximum signal-to-noise ratio
         :param p: The probability of applying this transform
@@ -215,12 +212,15 @@ class AddGaussianSNR(BaseWaveformTransform):
             )
 
     def apply(self, samples, sample_rate):
-        noise = np.random.normal(
-            0.0, self.parameters["noise_std"], size=samples.shape
-        ).astype(np.float32)
-        return samples + noise
+        if self.parameters["noise_std"] > 0:
+            noise = np.random.normal(
+                0.0, 1. / self.parameters["noise_std"], size=samples.shape
+            ).astype(np.float32)
+            return samples + noise
+        else:
+            raise Exception("min_SNR or/and max_SNR must be positive")
 
-
+            
 class AddGaussianNoise(BaseWaveformTransform):
     """Add gaussian noise to the samples"""
 

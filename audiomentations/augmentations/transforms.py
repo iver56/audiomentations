@@ -195,7 +195,7 @@ class AddGaussianSNR(BaseWaveformTransform):
 
     def __init__(self, 
                  min_SNR=0.001,
-                 max_SNR=1.0
+                 max_SNR=1.0,
                  min_snr_in_db=None,
                  max_snr_in_db=None,
                  p=0.5

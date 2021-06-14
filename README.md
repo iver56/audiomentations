@@ -291,6 +291,8 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 
 * Add a `fade` option in `Shift` for eliminating unwanted clicks
 * Add support for 32-bit int wav loading with scipy>=1.6
+* Add support for float64 wav files
+* Implement `TanhDistortion`. Thanks to atamazian.
 
 ### Fixed
 

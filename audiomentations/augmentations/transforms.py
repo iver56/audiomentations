@@ -194,10 +194,10 @@ class AddGaussianSNR(BaseWaveformTransform):
     supports_multichannel = True
 
     def __init__(self, 
-                 min_snr_in_db=3,
-                 max_snr_in_db=30,
-                 min_SNR=None, 
-                 max_SNR=None,
+                 min_SNR=0.001,
+                 max_SNR=1.0
+                 min_snr_in_db=None,
+                 max_snr_in_db=None,
                  p=0.5
      ):
         """

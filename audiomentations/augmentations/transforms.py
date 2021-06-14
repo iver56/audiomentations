@@ -220,13 +220,13 @@ class AddGaussianSNR(BaseWaveformTransform):
             std = np.std(samples)
             if self.min_SNR is not None and self.max_SNR is not None:
                 if self.min_snr_in_db is not None and self.max_snr_in_db is not None:
-                    raise Exception("Use either min_snr_in_db and max_snr_in_db parameters, or use min_SNR and " \
-                                    "max_SNR parameters (legacy) instead. Simultaneous usage of both of them " \
-                                    "is not allowed.")
+                    raise Exception("Set min_snr_in_db and max_snr_in_db to None to keep using min_SNR and " \
+                                    "max_SNR parameters (legacy) instead. We highly recommend to use" \
+                                    "min_snr_in_db and max_snr_in_db parameters instead.")
                 else:
                     warnings.warn(
                         'You use legacy min_SNR and max_SNR parameters. '
-                        'We highly recommend you to use min_snr_in_db and max_snr_in_db parameters instead.'
+                        'We highly recommend to use min_snr_in_db and max_snr_in_db parameters instead.'
                     )
                     min_snr = self.min_SNR
                     max_snr = self.max_SNR

@@ -193,16 +193,23 @@ class AddGaussianSNR(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_SNR=0.001, max_SNR=1.0, p=0.5):
+    def __init__(self, 
+                 min_SNR=0.001,
+                 max_SNR=1.0,
+                 min_snr_in_db=None,
+                 max_snr_in_db=None,
+                 p=0.5
+     ):
         """
-        Warning: The "SNR" here has inverse chracteristics - When you increase SNR in the method the real SNR decreases.
-        TODO: This should be fixed in a future release.
-
-        :param min_SNR: Minimum signal-to-noise ratio
-        :param max_SNR: Maximum signal-to-noise ratio
+        :param min_snr_in_db: Minimum signal-to-noise ratio in db
+        :param max_snr_in_db: Maximum signal-to-noise ratio in db
+        :param min_SNR: Minimum signal-to-noise ratio (legacy)
+        :param max_SNR: Maximum signal-to-noise ratio (legacy)
         :param p: The probability of applying this transform
         """
         super().__init__(p)
+        self.min_snr_in_db = min_snr_in_db
+        self.max_snr_in_db = max_snr_in_db
         self.min_SNR = min_SNR
         self.max_SNR = max_SNR
 
@@ -210,17 +217,42 @@ class AddGaussianSNR(BaseWaveformTransform):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             std = np.std(samples)
+            if self.min_SNR is not None and self.max_SNR is not None:
+                if self.min_snr_in_db is not None and self.max_snr_in_db is not None:
+                    raise Exception("Set min_snr_in_db and max_snr_in_db to None to keep using min_SNR and " \
+                                    "max_SNR parameters (legacy) instead. We highly recommend to use " \
+                                    "min_snr_in_db and max_snr_in_db parameters instead.")
+                else:
+                    warnings.warn(
+                        'You use legacy min_SNR and max_SNR parameters. '
+                        'We highly recommend to use min_snr_in_db and max_snr_in_db parameters instead.'
+                    )
+                    min_snr = self.min_SNR
+                    max_snr = self.max_SNR
+            else:
+                min_snr = convert_decibels_to_amplitude_ratio(self.min_snr_in_db)
+                max_snr = convert_decibels_to_amplitude_ratio(self.max_snr_in_db)
+                
             self.parameters["noise_std"] = random.uniform(
-                self.min_SNR * std, self.max_SNR * std
+                min_snr * std, max_snr * std
             )
 
     def apply(self, samples, sample_rate):
-        noise = np.random.normal(
-            0.0, self.parameters["noise_std"], size=samples.shape
-        ).astype(np.float32)
-        return samples + noise
+        if self.min_SNR is not None and self.max_SNR is not None:
+            noise = np.random.normal(
+                        0.0, self.parameters["noise_std"], size=samples.shape
+                    ).astype(np.float32)
+            return samples + noise
+        else:
+            if self.parameters["noise_std"] > 0:
+                noise = np.random.normal(
+                    0.0, 1. / self.parameters["noise_std"], size=samples.shape
+                ).astype(np.float32)
+                return samples + noise
+            else:
+                raise Exception("min_SNR or/and max_SNR must be positive")
 
-
+            
 class AddGaussianNoise(BaseWaveformTransform):
     """Add gaussian noise to the samples"""
 

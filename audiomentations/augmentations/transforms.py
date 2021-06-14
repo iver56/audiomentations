@@ -198,8 +198,7 @@ class AddGaussianSNR(BaseWaveformTransform):
                  max_snr_in_db=30,
                  min_SNR=None, 
                  max_SNR=None,
-                 p=0.5, 
-                 snr_characteristics=None
+                 p=0.5
      ):
         """
         :param min_snr_in_db: Minimum signal-to-noise ratio in db
@@ -210,13 +209,6 @@ class AddGaussianSNR(BaseWaveformTransform):
         :snr_characteristics: Use legacy mode or not
         """
         super().__init__(p)
-        self.snr_characteristics = snr_characteristics
-        if self.snr_characteristics is None:
-            warnings.warn(
-                'Please set snr_characteristics to either "legacy" or "correct".'
-                ' The default behavior may change from "legacy" to "default" in a later release'
-            )
-            self.snr_characteristics="legacy"
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
         self.min_SNR = min_SNR
@@ -232,6 +224,10 @@ class AddGaussianSNR(BaseWaveformTransform):
                                     "max_SNR parameters (legacy) instead. Simultaneous usage of both of them " \
                                     "is not allowed.")
                 else:
+                    warnings.warn(
+                        'You use legacy min_SNR and max_SNR parameters. '
+                        'We highly recommend you to use min_snr_in_db and max_snr_in_db parameters instead.'
+                    )
                     min_snr = self.min_SNR
                     max_snr = self.max_SNR
             else:
@@ -243,7 +239,7 @@ class AddGaussianSNR(BaseWaveformTransform):
             )
 
     def apply(self, samples, sample_rate):
-        if self.snr_characteristics == "legacy":
+        if self.min_SNR is not None and self.max_SNR is not None:
             noise = np.random.normal(
                         0.0, self.parameters["noise_std"], size=samples.shape
                     ).astype(np.float32)

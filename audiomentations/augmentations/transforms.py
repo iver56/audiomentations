@@ -221,7 +221,7 @@ class AddGaussianSNR(BaseWaveformTransform):
             if self.min_SNR is not None and self.max_SNR is not None:
                 if self.min_snr_in_db is not None and self.max_snr_in_db is not None:
                     raise Exception("Set min_snr_in_db and max_snr_in_db to None to keep using min_SNR and " \
-                                    "max_SNR parameters (legacy) instead. We highly recommend to use" \
+                                    "max_SNR parameters (legacy) instead. We highly recommend to use " \
                                     "min_snr_in_db and max_snr_in_db parameters instead.")
                 else:
                     warnings.warn(

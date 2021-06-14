@@ -297,6 +297,9 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 ### Fixed
 
 * Avoid division by zero in `AddImpulseResponse` when input is digital silence (all zeros)
+* Fix inverse SNR characteristics in `AddGaussianSNR`. It will continue working as before
+  unless you switch to the new parameters `min_snr_in_db` and `max_snr_in_db`. If you
+  use the old parameters, you'll get a warning.
 
 ## v0.16.0 (2021-02-11)
 

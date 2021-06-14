@@ -206,7 +206,6 @@ class AddGaussianSNR(BaseWaveformTransform):
         :param min_SNR: Minimum signal-to-noise ratio (legacy)
         :param max_SNR: Maximum signal-to-noise ratio (legacy)
         :param p: The probability of applying this transform
-        :snr_characteristics: Use legacy mode or not
         """
         super().__init__(p)
         self.min_snr_in_db = min_snr_in_db

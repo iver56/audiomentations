@@ -92,12 +92,13 @@ class ApplyImpulseResponse(BaseWaveformTransform):
 
 
 class AddImpulseResponse(ApplyImpulseResponse):
-    def __init_subclass__(self):
+    def __init__(self, *args, **kwargs):
         warnings.warn(
             "Warning: AddImpulseResponse is deprecated and will be removed in the future versions." \
             "Use ApplyImpulseResponse instead.",
             DeprecationWarning
         )
+        ApplyImpulseResponse.__init__(*args, **kwargs)
 
 
 class FrequencyMask(BaseWaveformTransform):

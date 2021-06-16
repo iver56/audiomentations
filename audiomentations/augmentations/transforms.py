@@ -21,14 +21,6 @@ from audiomentations.core.utils import (
 )
 
 
-class AddImpulseResponse(ApplyImpulseResponse):
-    warnings.warn(
-        "Warning: AddImpulseResponse is deprecated and will be removed in the future versions."
-        "Use ApplyImpulseResponse instead."
-    )
-    pass
-
-
 class ApplyImpulseResponse(BaseWaveformTransform):
     """Convolve the audio with a random impulse response.
     Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
@@ -97,6 +89,14 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         )
         del state["_AddImpulseResponse__load_ir"]
         return state
+    
+    
+class AddImpulseResponse(ApplyImpulseResponse):
+    warnings.warn(
+        "Warning: AddImpulseResponse is deprecated and will be removed in the future versions."
+        "Use ApplyImpulseResponse instead."
+    )
+    pass
 
 
 class FrequencyMask(BaseWaveformTransform):

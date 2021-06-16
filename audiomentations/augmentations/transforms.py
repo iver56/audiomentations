@@ -96,8 +96,7 @@ class AddImpulseResponse(ApplyImpulseResponse):
         warnings.warn(
             "Warning: AddImpulseResponse is deprecated and will be removed in the future versions." \
             "Use ApplyImpulseResponse instead.",
-            DeprecationWarning,
-            2
+            DeprecationWarning
         )
 
 

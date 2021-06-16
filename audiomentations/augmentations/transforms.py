@@ -87,7 +87,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             " E.g. this means the cache will be not be used when using AddImpulseResponse"
             " together with multiprocessing on Windows"
         )
-        del state["_AddImpulseResponse__load_ir"]
+        del state["_ApplyImpulseResponse__load_ir"]
         return state
     
     

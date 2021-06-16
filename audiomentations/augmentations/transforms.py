@@ -92,12 +92,13 @@ class ApplyImpulseResponse(BaseWaveformTransform):
 
 
 class AddImpulseResponse(ApplyImpulseResponse):
-    def __init_subclass__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         warnings.warn(
-            "Warning: AddImpulseResponse is deprecated and will be removed in the future versions."
-            "Use ApplyImpulseResponse instead.",
-            DeprecationWarning,
-            2
+            "The AddImpulseResponse class has been renamed to ApplyImpulseResponse "
+            "This alias will be removed in future versions."
+            " Use ApplyImpulseResponse directly instead.",
+            DeprecationWarning, stacklevel=2
         )
 
 

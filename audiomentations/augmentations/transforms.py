@@ -98,7 +98,7 @@ class AddImpulseResponse(ApplyImpulseResponse):
             "Use ApplyImpulseResponse instead.",
             DeprecationWarning
         )
-        ApplyImpulseResponse.__init__(*args, **kwargs)
+        ApplyImpulseResponse.__init__(self, *args, **kwargs)
 
 
 class FrequencyMask(BaseWaveformTransform):

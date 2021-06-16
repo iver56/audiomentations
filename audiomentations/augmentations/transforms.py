@@ -21,7 +21,15 @@ from audiomentations.core.utils import (
 )
 
 
-class AddImpulseResponse(BaseWaveformTransform):
+class AddImpulseResponse(ApplyImpulseResponse):
+    warnings.warn(
+        "Warning: AddImpulseResponse is deprecated and will be removed in the future versions."
+        "Use ApplyImpulseResponse instead."
+    )
+    pass
+
+
+class ApplyImpulseResponse(BaseWaveformTransform):
     """Convolve the audio with a random impulse response.
     Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
     Impulse responses are represented as wav files in the given ir_path.

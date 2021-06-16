@@ -91,13 +91,14 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         return state
 
 
-class AddImpulseResponse(*args, **kwargs):
-    warnings.warn(
-        "Warning: AddImpulseResponse is deprecated and will be removed in the future versions." \
-        "Use ApplyImpulseResponse instead.",
-        DeprecationWarning
-    )
-    return ApplyImpulseResponse(*args, **kwargs)
+class AddImpulseResponse(ApplyImpulseResponse):
+    def __init_subclass__(self):
+        warnings.warn(
+            "Warning: AddImpulseResponse is deprecated and will be removed in the future versions."
+            "Use ApplyImpulseResponse instead.",
+            DeprecationWarning,
+            2
+        )
 
 
 class FrequencyMask(BaseWaveformTransform):

@@ -505,7 +505,7 @@ class Clip(BaseWaveformTransform):
     Clip audio by specified value.
     """
     
-    supports_multichannel = False
+    supports_multichannel = True
     
     def __init__(self, a_min=-1.0, a_max=1.0, p=0.5):
         """

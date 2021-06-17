@@ -14,10 +14,8 @@ class TestClip(unittest.TestCase):
         augmenter = Compose([Clip(a_min=-0.1, a_max=0.1, p=1.0)])
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        # I used str here because it doesn't work otherwise
-        # TODO: fix this issue
-        self.assertEqual(str(np.amin(samples)), '-0.1')
-        self.assertEqual(str(np.amax(samples)), '0.1')
+        self.assertAlmostEqual(np.amin(samples), -0.1)
+        self.assertAlmostEqual(np.amax(samples), 0.1)
         self.assertEqual(samples.dtype, np.float32)
         self.assertEqual(len(samples), 4)
 
@@ -30,8 +28,6 @@ class TestClip(unittest.TestCase):
         augmenter = Compose([Clip(a_min=-0.1, a_max=0.1, p=1.0)])
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        # I used str here because it doesn't work otherwise
-        # TODO: fix this issue
-        self.assertEqual(str(np.amin(samples)), '-0.1')
-        self.assertEqual(str(np.amax(samples)), '0.1')
+        self.assertAlmostEqual(np.amin(samples), -0.1)
+        self.assertAlmostEqual(np.amax(samples), 0.1)
         self.assertEqual(samples.dtype, np.float32)

@@ -21,7 +21,7 @@ from audiomentations.core.utils import (
 )
 
 
-class AddImpulseResponse(BaseWaveformTransform):
+class ApplyImpulseResponse(BaseWaveformTransform):
     """Convolve the audio with a random impulse response.
     Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
     Impulse responses are represented as wav files in the given ir_path.
@@ -49,7 +49,7 @@ class AddImpulseResponse(BaseWaveformTransform):
         self.ir_files = [str(p) for p in self.ir_files]
         assert len(self.ir_files) > 0
         self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(
-            AddImpulseResponse.__load_ir
+            ApplyImpulseResponse.__load_ir
         )
         self.leave_length_unchanged = leave_length_unchanged
 
@@ -83,12 +83,23 @@ class AddImpulseResponse(BaseWaveformTransform):
     def __getstate__(self):
         state = self.__dict__.copy()
         warnings.warn(
-            "Warning: the LRU cache of AddImpulseResponse gets discarded when pickling it."
-            " E.g. this means the cache will be not be used when using AddImpulseResponse"
+            "Warning: the LRU cache of ApplyImpulseResponse gets discarded when pickling it."
+            " E.g. this means the cache will be not be used when using ApplyImpulseResponse"
             " together with multiprocessing on Windows"
         )
-        del state["_AddImpulseResponse__load_ir"]
+        del state["_ApplyImpulseResponse__load_ir"]
         return state
+
+
+class AddImpulseResponse(ApplyImpulseResponse):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        warnings.warn(
+            "The AddImpulseResponse class has been renamed to ApplyImpulseResponse "
+            "This alias will be removed in future versions."
+            " Use ApplyImpulseResponse directly instead.",
+            DeprecationWarning, stacklevel=2
+        )
 
 
 class FrequencyMask(BaseWaveformTransform):

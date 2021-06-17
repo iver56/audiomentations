@@ -1244,7 +1244,7 @@ class Mp3Compression(BaseWaveformTransform):
             raise
 
         assert len(samples.shape) == 1
-        assert samples.dtype == np.float32
+        assert samples.dtype in (np.float32, np.float64)
 
         int_samples = convert_float_samples_to_int16(samples)
 
@@ -1286,7 +1286,7 @@ class Mp3Compression(BaseWaveformTransform):
             raise
 
         assert len(samples.shape) == 1
-        assert samples.dtype == np.float32
+        assert samples.dtype in (np.float32, np.float64)
 
         int_samples = convert_float_samples_to_int16(samples)
 

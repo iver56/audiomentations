@@ -500,6 +500,28 @@ class Shift(BaseWaveformTransform):
         return shifted_samples
 
 
+class Clip(BaseWaveformTransform):    
+    """
+    Clip audio by specified value.
+    """
+    
+    supports_multichannel = True
+    
+    def __init__(self, a_min=-1.0, a_max=1.0, p=0.5):
+        """
+        :param a_min: float, minimum value for clipping
+        :param a_max: float, maximum value for clipping
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+        assert a_min < a_max
+        self.a_min = a_min
+        self.a_max = a_max
+        
+    def apply(self, samples, sample_rate):
+        return np.clip(samples, self.a_min, self.a_max)
+    
+    
 class Normalize(BaseWaveformTransform):
     """
     Apply a constant amount of gain, so that highest signal level present in the sound becomes

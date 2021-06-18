@@ -297,6 +297,7 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 ### Changed
 
 * Rename `AddImpulseResponse` to `ApplyImpulseResponse`. The former will still work for now, but give a warning.
+* When looking for audio files, follow symlinks by default
 
 ### Fixed
 

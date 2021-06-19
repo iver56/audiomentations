@@ -1186,7 +1186,7 @@ class LowPassFilter(BaseWaveformTransform):
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
     def randomize_parameters(
-        self, selected_samples: torch.Tensor, sample_rate: int = None
+        self, selected_samples: np.array, sample_rate: int = None
     ):
         """
         :params selected_samples: (batch_size, num_channels, num_samples)
@@ -1200,7 +1200,7 @@ class LowPassFilter(BaseWaveformTransform):
         )
         self.transform_parameters["cutoff_freq"] = np.random.choice(dist, size=(batch_size,))
 
-    def apply_transform(self, selected_samples: torch.Tensor, sample_rate: int = None):
+    def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
         batch_size, num_channels, num_samples = selected_samples.shape
 
         if sample_rate is None:
@@ -1251,7 +1251,7 @@ class HighPassFilter(BaseWaveformTransform):
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
     def randomize_parameters(
-        self, selected_samples: torch.Tensor, sample_rate: int = None
+        self, selected_samples: np.array, sample_rate: int = None
     ):
         """
         :params selected_samples: (batch_size, num_channels, num_samples)
@@ -1265,7 +1265,7 @@ class HighPassFilter(BaseWaveformTransform):
         )
         self.transform_parameters["cutoff_freq"] =  np.random.choice(dist, size=(batch_size,))
 
-    def apply_transform(self, selected_samples: torch.Tensor, sample_rate: int = None):
+    def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
         batch_size, num_channels, num_samples = selected_samples.shape
 
         if sample_rate is None:
@@ -1324,7 +1324,7 @@ class BandPassFilter(BaseWaveformTransform):
             raise ValueError("min_high_cutoff_freq must not be greater than max_high_cutoff_freq")
 
     def randomize_parameters(
-        self, selected_samples: torch.Tensor, sample_rate: int = None
+        self, selected_samples: np.array, sample_rate: int = None
     ):
         """
         :params selected_samples: (batch_size, num_channels, num_samples)
@@ -1343,7 +1343,7 @@ class BandPassFilter(BaseWaveformTransform):
         self.transform_parameters["low_cutoff_freq"] = np.random.choice(low_dist, size=(batch_size,))
         self.transform_parameters["high_cutoff_freq"] = np.random.choice(high_dist, size=(batch_size,))
 
-    def apply_transform(self, selected_samples: torch.Tensor, sample_rate: int = None):
+    def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
         batch_size, num_channels, num_samples = selected_samples.shape
 
         if sample_rate is None:

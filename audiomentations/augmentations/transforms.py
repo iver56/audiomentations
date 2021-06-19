@@ -1228,8 +1228,8 @@ class HighPassFilter(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_cutoff_freq=150,
-        max_cutoff_freq=7500,
+        min_cutoff_freq=20,
+        max_cutoff_freq=2400,
         mode: str = "per_example",
         p: float = 0.5,
         p_mode: str = None,

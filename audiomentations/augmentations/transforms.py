@@ -8,6 +8,7 @@ import warnings
 
 import librosa
 import numpy as np
+from pydub.effects import low_pass_filter, high_pass_filter
 from scipy.signal import butter, sosfilt, convolve
 
 from audiomentations.core.audio_loading_utils import load_sound_file
@@ -1151,7 +1152,141 @@ class TanhDistortion(BaseWaveformTransform):
             distorted_samples = samples
         return distorted_samples
 
+    
+class LowPassFilter(BaseWaveformTransform):
+    """
+    Apply low-pass filtering to the input audio.
+    """
 
+    supports_multichannel = True
+    requires_sample_rate = True
+
+    def __init__(
+        self,
+        min_cutoff_freq=150,
+        max_cutoff_freq=7500,
+        mode: str = "per_example",
+        p: float = 0.5,
+        p_mode: str = None,
+        sample_rate: int = None,
+    ):
+        """
+        :param min_cutoff_freq: Minimum cutoff frequency in hertz
+        :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param mode:
+        :param p:
+        :param p_mode:
+        :param sample_rate:
+        """
+        super().__init__(mode, p, p_mode, sample_rate)
+
+        self.min_cutoff_freq = min_cutoff_freq
+        self.max_cutoff_freq = max_cutoff_freq
+        if self.min_cutoff_freq > self.max_cutoff_freq:
+            raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
+
+    def randomize_parameters(
+        self, selected_samples: torch.Tensor, sample_rate: int = None
+    ):
+        """
+        :params selected_samples: (batch_size, num_channels, num_samples)
+        """
+        batch_size, _, num_samples = selected_samples.shape
+
+        # Sample frequencies uniformly in mel space, then convert back to frequency
+        dist = np.random.uniform(
+            low=self.min_cutoff_freq,
+            high=self.max_cutoff_freq
+        )
+        self.transform_parameters["cutoff_freq"] = convert_mels_to_frequencies(
+            np.random.choice(dist, size=(batch_size,))
+        )
+
+    def apply_transform(self, selected_samples: torch.Tensor, sample_rate: int = None):
+        batch_size, num_channels, num_samples = selected_samples.shape
+
+        if sample_rate is None:
+            sample_rate = self.sample_rate
+
+        cutoffs_as_fraction_of_sample_rate = (
+            self.transform_parameters["cutoff_freq"] / sample_rate
+        )
+        # TODO: Instead of using a for loop, perform batched compute to speed things up
+        for i in range(batch_size):
+            selected_samples[i] = low_pass_filter(
+                selected_samples[i], cutoffs_as_fraction_of_sample_rate[i].item()
+            )
+
+        return selected_samples
+
+
+class HighPassFilter(BaseWaveformTransform):
+    """
+    Apply high-pass filtering to the input audio.
+    """
+
+    supports_multichannel = True
+    requires_sample_rate = True
+
+    def __init__(
+        self,
+        min_cutoff_freq=150,
+        max_cutoff_freq=7500,
+        mode: str = "per_example",
+        p: float = 0.5,
+        p_mode: str = None,
+        sample_rate: int = None,
+    ):
+        """
+        :param min_cutoff_freq: Minimum cutoff frequency in hertz
+        :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param mode:
+        :param p:
+        :param p_mode:
+        :param sample_rate:
+        """
+        super().__init__(mode, p, p_mode, sample_rate)
+
+        self.min_cutoff_freq = min_cutoff_freq
+        self.max_cutoff_freq = max_cutoff_freq
+        if self.min_cutoff_freq > self.max_cutoff_freq:
+            raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
+
+    def randomize_parameters(
+        self, selected_samples: torch.Tensor, sample_rate: int = None
+    ):
+        """
+        :params selected_samples: (batch_size, num_channels, num_samples)
+        """
+        batch_size, _, num_samples = selected_samples.shape
+
+        # Sample frequencies uniformly in mel space, then convert back to frequency
+        dist = np.random.uniform(
+            low=self.min_cutoff_freq,
+            high=self.max_cutoff_freq
+        )
+        self.transform_parameters["cutoff_freq"] = convert_mels_to_frequencies(
+            np.random.choice(dist, size=(batch_size,))
+        )
+
+    def apply_transform(self, selected_samples: torch.Tensor, sample_rate: int = None):
+        batch_size, num_channels, num_samples = selected_samples.shape
+
+        if sample_rate is None:
+            sample_rate = self.sample_rate
+
+        cutoffs_as_fraction_of_sample_rate = (
+            self.transform_parameters["cutoff_freq"] / sample_rate
+        )
+        # TODO: Instead of using a for loop, perform batched compute to speed things up
+        for i in range(batch_size):
+            selected_samples[i] = high_pass_filter(
+                selected_samples[i], cutoffs_as_fraction_of_sample_rate[i].item()
+            )
+
+        return selected_samples   
+    
+    
 class Mp3Compression(BaseWaveformTransform):
     """Compress the audio using an MP3 encoder to lower the audio quality.
     This may help machine learning models deal with compressed, low-quality audio.

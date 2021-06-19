@@ -1245,7 +1245,7 @@ class HighPassFilter(BaseWaveformTransform):
         """
         batch_size, _, num_samples = selected_samples.shape
 
-         self.transform_parameters["cutoff_freq"] = np.random.uniform(
+        self.transform_parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
             high=self.max_cutoff_freq,
             size=batch_size

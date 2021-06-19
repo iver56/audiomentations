@@ -1187,7 +1187,7 @@ class LowPassFilter(BaseWaveformTransform):
         """
         batch_size, _, num_samples = selected_samples.shape
 
-        self.transform_parameters["cutoff_freq"] = np.random.uniform(
+        self.parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
             high=self.max_cutoff_freq,
             size=batch_size
@@ -1200,7 +1200,7 @@ class LowPassFilter(BaseWaveformTransform):
             sample_rate = self.sample_rate
 
         cutoffs_as_fraction_of_sample_rate = (
-            self.transform_parameters["cutoff_freq"] / sample_rate
+            self.parameters["cutoff_freq"] / sample_rate
         )
         # TODO: Instead of using a for loop, perform batched compute to speed things up
         for i in range(batch_size):
@@ -1245,7 +1245,7 @@ class HighPassFilter(BaseWaveformTransform):
         """
         batch_size, _, num_samples = selected_samples.shape
 
-        self.transform_parameters["cutoff_freq"] = np.random.uniform(
+        self.parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
             high=self.max_cutoff_freq,
             size=batch_size
@@ -1258,7 +1258,7 @@ class HighPassFilter(BaseWaveformTransform):
             sample_rate = self.sample_rate
 
         cutoffs_as_fraction_of_sample_rate = (
-            self.transform_parameters["cutoff_freq"] / sample_rate
+            self.parameters["cutoff_freq"] / sample_rate
         )
         # TODO: Instead of using a for loop, perform batched compute to speed things up
         for i in range(batch_size):
@@ -1311,12 +1311,12 @@ class BandPassFilter(BaseWaveformTransform):
         """
         batch_size, _, num_samples = selected_samples.shape
 
-        self.transform_parameters["low_cutoff_freq"] = np.random.uniform(
+        self.parameters["low_cutoff_freq"] = np.random.uniform(
             low=self.min_low_cutoff_freq,
             high=self.max_low_cutoff_freq,
             size=batch_size
         )
-        self.transform_parameters["high_cutoff_freq"] = np.random.uniform(
+        self.parameters["high_cutoff_freq"] = np.random.uniform(
             low=self.min_high_cutoff_freq,
             high=self.max_high_cutoff_freq,
             size=batch_size
@@ -1329,10 +1329,10 @@ class BandPassFilter(BaseWaveformTransform):
             sample_rate = self.sample_rate
 
         low_cutoffs_as_fraction_of_sample_rate = (
-            self.transform_parameters["low_cutoff_freq"] / sample_rate
+            self.parameters["low_cutoff_freq"] / sample_rate
         )
         high_cutoffs_as_fraction_of_sample_rate = (
-            self.transform_parameters["high_cutoff_freq"] / sample_rate
+            self.parameters["high_cutoff_freq"] / sample_rate
         )
         # TODO: Instead of using a for loop, perform batched compute to speed things up
         for i in range(batch_size):

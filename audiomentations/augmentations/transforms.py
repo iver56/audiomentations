@@ -1198,9 +1198,7 @@ class LowPassFilter(BaseWaveformTransform):
             low=self.min_cutoff_freq,
             high=self.max_cutoff_freq
         )
-        self.transform_parameters["cutoff_freq"] = convert_mels_to_frequencies(
-            np.random.choice(dist, size=(batch_size,))
-        )
+        self.transform_parameters["cutoff_freq"] = np.random.choice(dist, size=(batch_size,))
 
     def apply_transform(self, selected_samples: torch.Tensor, sample_rate: int = None):
         batch_size, num_channels, num_samples = selected_samples.shape
@@ -1265,9 +1263,7 @@ class HighPassFilter(BaseWaveformTransform):
             low=self.min_cutoff_freq,
             high=self.max_cutoff_freq
         )
-        self.transform_parameters["cutoff_freq"] = convert_mels_to_frequencies(
-            np.random.choice(dist, size=(batch_size,))
-        )
+        self.transform_parameters["cutoff_freq"] =  np.random.choice(dist, size=(batch_size,))
 
     def apply_transform(self, selected_samples: torch.Tensor, sample_rate: int = None):
         batch_size, num_channels, num_samples = selected_samples.shape

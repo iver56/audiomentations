@@ -1187,12 +1187,11 @@ class LowPassFilter(BaseWaveformTransform):
         """
         batch_size, _, num_samples = selected_samples.shape
 
-        # Sample frequencies uniformly in mel space, then convert back to frequency
-        dist = np.random.uniform(
+        self.transform_parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
-            high=self.max_cutoff_freq
+            high=self.max_cutoff_freq,
+            size=batch_size
         )
-        self.transform_parameters["cutoff_freq"] = np.random.choice(dist, size=(batch_size,))
 
     def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
         batch_size, num_channels, num_samples = selected_samples.shape
@@ -1246,12 +1245,11 @@ class HighPassFilter(BaseWaveformTransform):
         """
         batch_size, _, num_samples = selected_samples.shape
 
-        # Sample frequencies uniformly in mel space, then convert back to frequency
-        dist = np.random.uniform(
+         self.transform_parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
-            high=self.max_cutoff_freq
+            high=self.max_cutoff_freq,
+            size=batch_size
         )
-        self.transform_parameters["cutoff_freq"] =  np.random.choice(dist, size=(batch_size,))
 
     def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
         batch_size, num_channels, num_samples = selected_samples.shape
@@ -1313,17 +1311,16 @@ class BandPassFilter(BaseWaveformTransform):
         """
         batch_size, _, num_samples = selected_samples.shape
 
-        # Sample frequencies uniformly in mel space, then convert back to frequency
-        low_dist = np.random.uniform(
+        self.transform_parameters["low_cutoff_freq"] = np.random.uniform(
             low=self.min_low_cutoff_freq,
-            high=self.max_low_cutoff_freq
+            high=self.max_low_cutoff_freq,
+            size=batch_size
         )
-        high_dist = np.random.uniform(
+        self.transform_parameters["high_cutoff_freq"] = np.random.uniform(
             low=self.min_high_cutoff_freq,
-            high=self.max_high_cutoff_freq
+            high=self.max_high_cutoff_freq,
+            size=batch_size
         )
-        self.transform_parameters["low_cutoff_freq"] = np.random.choice(low_dist, size=(batch_size,))
-        self.transform_parameters["high_cutoff_freq"] = np.random.choice(high_dist, size=(batch_size,))
 
     def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
         batch_size, num_channels, num_samples = selected_samples.shape

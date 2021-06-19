@@ -1165,20 +1165,14 @@ class LowPassFilter(BaseWaveformTransform):
         self,
         min_cutoff_freq=150,
         max_cutoff_freq=7500,
-        mode: str = "per_example",
         p: float = 0.5,
-        p_mode: str = None,
-        sample_rate: int = None,
     ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
-        :param mode:
         :param p:
-        :param p_mode:
-        :param sample_rate:
         """
-        super().__init__(mode, p, p_mode, sample_rate)
+        super().__init__(p)
 
         self.min_cutoff_freq = min_cutoff_freq
         self.max_cutoff_freq = max_cutoff_freq
@@ -1230,20 +1224,14 @@ class HighPassFilter(BaseWaveformTransform):
         self,
         min_cutoff_freq=20,
         max_cutoff_freq=2400,
-        mode: str = "per_example",
-        p: float = 0.5,
-        p_mode: str = None,
-        sample_rate: int = None,
+        p: float = 0.5
     ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
-        :param mode:
         :param p:
-        :param p_mode:
-        :param sample_rate:
         """
-        super().__init__(mode, p, p_mode, sample_rate)
+        super().__init__(p)
 
         self.min_cutoff_freq = min_cutoff_freq
         self.max_cutoff_freq = max_cutoff_freq
@@ -1297,22 +1285,16 @@ class BandPassFilter(BaseWaveformTransform):
         max_low_cutoff_freq=7500,
         min_high_cutoff_freq=15000,
         max_high_cutoff_freq=22350,
-        mode: str = "per_example",
-        p: float = 0.5,
-        p_mode: str = None,
-        sample_rate: int = None,
+        p: float = 0.5
     ):
         """
         :param min_low_cutoff_freq: Minimum low cutoff frequency in hertz
         :param max_low_cutoff_freq: Maximum low cutoff frequency in hertz
         :param min_high_cutoff_freq: Minimum high cutoff frequency in hertz
         :param max_high_cutoff_freq: Maximum high cutoff frequency in hertz
-        :param mode:
         :param p:
-        :param p_mode:
-        :param sample_rate:
         """
-        super().__init__(mode, p, p_mode, sample_rate)
+        super().__init__(p)
 
         self.min_low_cutoff_freq = min_low_cutoff_freq
         self.max_low_cutoff_freq = max_low_cutoff_freq

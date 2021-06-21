@@ -17,10 +17,10 @@ class TestBandPassFilter(unittest.TestCase):
         )
         sample_rate = 16000
 
-        augment = BandPassFilter(min_low_cutoff_freq=200, 
-                                 max_low_cutoff_freq=7000,
-                                 min_high_cutoff_freq=10000,
-                                 max_high_cutoff_freq=17000,
+        augment = BandPassFilter(min_center_freq=100, 
+                                 max_center_freq=5000,
+                                 min_q=1.0,
+                                 max_q=2.0,
                                  p=1.0)
         processed_samples = augment(
             samples=samples, sample_rate=sample_rate

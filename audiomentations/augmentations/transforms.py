@@ -1170,7 +1170,7 @@ class LowPassFilter(BaseWaveformTransform):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
 
@@ -1228,7 +1228,7 @@ class HighPassFilter(BaseWaveformTransform):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
-        :param p:
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
 
@@ -1279,29 +1279,29 @@ class BandPassFilter(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_low_cutoff_freq=150,
-        max_low_cutoff_freq=7500,
-        min_high_cutoff_freq=15000,
-        max_high_cutoff_freq=22350,
-        p: float = 0.5
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_q=1.0,
+        max_q=2.0,
+        p=0.5
     ):
         """
-        :param min_low_cutoff_freq: Minimum low cutoff frequency in hertz
-        :param max_low_cutoff_freq: Maximum low cutoff frequency in hertz
-        :param min_high_cutoff_freq: Minimum high cutoff frequency in hertz
-        :param max_high_cutoff_freq: Maximum high cutoff frequency in hertz
-        :param p:
+        :param min_center_freq: Minimum center frequency in hertz
+        :param max_center_freq: Maximum center frequency in hertz
+        :param min_q: Minimum ratio of center frequency to bandwidth
+        :param max_q: Maximum ratio of center frequency to bandwidth
+        :param p: The probability of applying this transform
         """
         super().__init__(p)
 
-        self.min_low_cutoff_freq = min_low_cutoff_freq
-        self.max_low_cutoff_freq = max_low_cutoff_freq
-        self.min_high_cutoff_freq = min_high_cutoff_freq
-        self.max_high_cutoff_freq = max_high_cutoff_freq
-        if self.min_low_cutoff_freq > self.max_low_cutoff_freq:
-            raise ValueError("min_low_cutoff_freq must not be greater than max_low_cutoff_freq")
-        if self.min_high_cutoff_freq > self.max_high_cutoff_freq:
-            raise ValueError("min_high_cutoff_freq must not be greater than max_high_cutoff_freq")
+        self.min_center_freq = min_center_freq
+        self.max_center_freq = max_center_freq
+        self.min_q = min_q
+        self.max_q = max_q
+        if self.min_center_freq > self.max_center_freq:
+            raise ValueError("min_center_freq must not be greater than max_center_freq")
+        if self.min_q > self.max_q:
+            raise ValueError("min_q must not be greater than max_q")
 
     def randomize_parameters(
         self, selected_samples: np.array, sample_rate: int = None
@@ -1311,14 +1311,14 @@ class BandPassFilter(BaseWaveformTransform):
         """
         batch_size, _, num_samples = selected_samples.shape
 
-        self.parameters["low_cutoff_freq"] = np.random.uniform(
-            low=self.min_low_cutoff_freq,
-            high=self.max_low_cutoff_freq,
+        self.parameters["center_freq"] = np.random.uniform(
+            low=self.min_center_freq,
+            high=self.max_center_freq,
             size=batch_size
         )
-        self.parameters["high_cutoff_freq"] = np.random.uniform(
-            low=self.min_high_cutoff_freq,
-            high=self.max_high_cutoff_freq,
+        self.parameters["q"] = np.random.uniform(
+            low=self.min_q,
+            high=self.max_q,
             size=batch_size
         )
 
@@ -1329,10 +1329,10 @@ class BandPassFilter(BaseWaveformTransform):
             sample_rate = self.sample_rate
 
         low_cutoffs_as_fraction_of_sample_rate = (
-            self.parameters["low_cutoff_freq"] / sample_rate
+            self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])  / sample_rate
         )
         high_cutoffs_as_fraction_of_sample_rate = (
-            self.parameters["high_cutoff_freq"] / sample_rate
+            self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])  / sample_rate
         )
         # TODO: Instead of using a for loop, perform batched compute to speed things up
         for i in range(batch_size):

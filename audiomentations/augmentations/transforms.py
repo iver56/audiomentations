@@ -502,7 +502,7 @@ class Shift(BaseWaveformTransform):
 
 class Clip(BaseWaveformTransform):    
     """
-    Clip audio by specified value. e.g. set a_min=-1.0 and a_max=1.0 to ensure that no
+    Clip audio by specified values. e.g. set a_min=-1.0 and a_max=1.0 to ensure that no
     samples in the audio exceed that extent. This can be relevant for avoiding integer
     overflow or underflow (which results in unintended wrap distortion that can sound
     horrible) when exporting to e.g. 16-bit PCM wav.

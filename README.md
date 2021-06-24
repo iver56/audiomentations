@@ -326,7 +326,7 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 * Add support for 32-bit int wav loading with scipy>=1.6
 * Add support for float64 wav files
 * Implement `Clip` and `TanhDistortion`. Thanks to atamazian.
-* Add some parameter sanity checks in AddGaussianNoise
+* Add some parameter sanity checks in `AddGaussianNoise`
 
 ### Changed
 

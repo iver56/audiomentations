@@ -271,6 +271,9 @@ class AddGaussianNoise(BaseWaveformTransform):
 
     def __init__(self, min_amplitude=0.001, max_amplitude=0.015, p=0.5):
         super().__init__(p)
+        assert min_amplitude > 0.0
+        assert max_amplitude > 0.0
+        assert max_amplitude >= min_amplitude
         self.min_amplitude = min_amplitude
         self.max_amplitude = max_amplitude
 

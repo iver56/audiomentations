@@ -114,6 +114,51 @@ class TestLoadSoundFiles(unittest.TestCase):
         self.assertGreater(max_value, 0.09)
         self.assertLess(max_value, 1.0)
 
+    def test_load_mono_signed_24_bit_wav2(self):
+        samples, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "mono_int24.wav"), sample_rate=None
+        )
+        self.assertEqual(sample_rate, 44100)
+        self.assertEqual(samples.dtype, np.float32)
+        self.assertEqual(samples.ndim, 1)
+
+        self.assertEqual(samples.shape[-1], 22)
+
+        max_value = np.amax(samples)
+        self.assertAlmostEqual(max_value, 0.96750367)
+        min_value = np.amin(samples)
+        self.assertAlmostEqual(min_value, -0.9822748)
+
+    def test_load_mono_signed_32_bit_wav(self):
+        samples, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "mono_int32.wav"), sample_rate=None
+        )
+        self.assertEqual(sample_rate, 44100)
+        self.assertEqual(samples.dtype, np.float32)
+        self.assertEqual(samples.ndim, 1)
+
+        self.assertEqual(samples.shape[-1], 22)
+
+        max_value = np.amax(samples)
+        self.assertAlmostEqual(max_value, 0.96750367)
+        min_value = np.amin(samples)
+        self.assertAlmostEqual(min_value, -0.9822748)
+
+    def test_load_mono_float64_wav(self):
+        samples, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "mono_float64.wav"), sample_rate=None
+        )
+        self.assertEqual(sample_rate, 44100)
+        self.assertEqual(samples.dtype, np.float32)
+        self.assertEqual(samples.ndim, 1)
+
+        self.assertEqual(samples.shape[-1], 22)
+
+        max_value = np.amax(samples)
+        self.assertAlmostEqual(max_value, 0.96750367)
+        min_value = np.amin(samples)
+        self.assertAlmostEqual(min_value, -0.9822748)
+
     def test_load_stereo_signed_24_bit_wav(self):
         samples, sample_rate = load_sound_file(
             os.path.join(DEMO_DIR, "stereo_24bit.WAV"), sample_rate=None

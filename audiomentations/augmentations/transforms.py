@@ -98,7 +98,8 @@ class AddImpulseResponse(ApplyImpulseResponse):
             "The AddImpulseResponse class has been renamed to ApplyImpulseResponse "
             "This alias will be removed in future versions."
             " Use ApplyImpulseResponse directly instead.",
-            DeprecationWarning, stacklevel=2
+            DeprecationWarning,
+            stacklevel=2,
         )
 
 
@@ -200,17 +201,20 @@ class TimeMask(BaseWaveformTransform):
 
 
 class AddGaussianSNR(BaseWaveformTransform):
-    """Add gaussian noise to the samples with random Signal to Noise Ratio (SNR)"""
+    """
+    Add gaussian noise to the samples with random Signal to Noise Ratio (SNR).
+
+    Note that old versions of audiomentations (0.16.0 and below) used parameters
+    min_SNR and max_SNR, which had inverse (wrong) characteristics. The use of these
+    parameters is discouraged, and one should use min_snr_in_db and max_snr_in_db
+    instead now.
+    """
 
     supports_multichannel = True
 
-    def __init__(self, 
-                 min_SNR=0.001,
-                 max_SNR=1.0,
-                 min_snr_in_db=None,
-                 max_snr_in_db=None,
-                 p=0.5
-     ):
+    def __init__(
+        self, min_SNR=0.001, max_SNR=1.0, min_snr_in_db=None, max_snr_in_db=None, p=0.5
+    ):
         """
         :param min_snr_in_db: Minimum signal-to-noise ratio in db
         :param max_snr_in_db: Maximum signal-to-noise ratio in db
@@ -230,40 +234,40 @@ class AddGaussianSNR(BaseWaveformTransform):
             std = np.std(samples)
             if self.min_SNR is not None and self.max_SNR is not None:
                 if self.min_snr_in_db is not None and self.max_snr_in_db is not None:
-                    raise Exception("Set min_snr_in_db and max_snr_in_db to None to keep using min_SNR and " \
-                                    "max_SNR parameters (legacy) instead. We highly recommend to use " \
-                                    "min_snr_in_db and max_snr_in_db parameters instead.")
+                    raise Exception(
+                        "Set min_snr_in_db and max_snr_in_db to None to keep using min_SNR and "
+                        "max_SNR parameters (legacy) instead. We highly recommend to use "
+                        "min_snr_in_db and max_snr_in_db parameters instead."
+                    )
                 else:
                     warnings.warn(
-                        'You use legacy min_SNR and max_SNR parameters. '
-                        'We highly recommend to use min_snr_in_db and max_snr_in_db parameters instead.'
+                        "You use legacy min_SNR and max_SNR parameters. "
+                        "We highly recommend to use min_snr_in_db and max_snr_in_db parameters instead."
                     )
                     min_snr = self.min_SNR
                     max_snr = self.max_SNR
             else:
                 min_snr = convert_decibels_to_amplitude_ratio(self.min_snr_in_db)
                 max_snr = convert_decibels_to_amplitude_ratio(self.max_snr_in_db)
-                
-            self.parameters["noise_std"] = random.uniform(
-                min_snr * std, max_snr * std
-            )
+
+            self.parameters["noise_std"] = random.uniform(min_snr * std, max_snr * std)
 
     def apply(self, samples, sample_rate):
         if self.min_SNR is not None and self.max_SNR is not None:
             noise = np.random.normal(
-                        0.0, self.parameters["noise_std"], size=samples.shape
-                    ).astype(np.float32)
+                0.0, self.parameters["noise_std"], size=samples.shape
+            ).astype(np.float32)
             return samples + noise
         else:
             if self.parameters["noise_std"] > 0:
                 noise = np.random.normal(
-                    0.0, 1. / self.parameters["noise_std"], size=samples.shape
+                    0.0, 1.0 / self.parameters["noise_std"], size=samples.shape
                 ).astype(np.float32)
                 return samples + noise
             else:
                 raise Exception("min_SNR or/and max_SNR must be positive")
 
-            
+
 class AddGaussianNoise(BaseWaveformTransform):
     """Add gaussian noise to the samples"""
 
@@ -503,7 +507,7 @@ class Shift(BaseWaveformTransform):
         return shifted_samples
 
 
-class Clip(BaseWaveformTransform):    
+class Clip(BaseWaveformTransform):
     """
     Clip audio by specified values. e.g. set a_min=-1.0 and a_max=1.0 to ensure that no
     samples in the audio exceed that extent. This can be relevant for avoiding integer
@@ -519,9 +523,9 @@ class Clip(BaseWaveformTransform):
     cheap and harsh limiter (for samples that exceed the allotted extent) that can
     sometimes be useful at the end of a data augmentation pipeline.
     """
-    
+
     supports_multichannel = True
-    
+
     def __init__(self, a_min=-1.0, a_max=1.0, p=0.5):
         """
         :param a_min: float, minimum value for clipping
@@ -532,11 +536,11 @@ class Clip(BaseWaveformTransform):
         assert a_min < a_max
         self.a_min = a_min
         self.a_max = a_max
-        
+
     def apply(self, samples, sample_rate):
         return np.clip(samples, self.a_min, self.a_max)
-    
-    
+
+
 class Normalize(BaseWaveformTransform):
     """
     Apply a constant amount of gain, so that highest signal level present in the sound becomes
@@ -1136,7 +1140,7 @@ class Gain(BaseWaveformTransform):
     def apply(self, samples, sample_rate):
         return samples * self.parameters["amplitude_ratio"]
 
-    
+
 class TanhDistortion(BaseWaveformTransform):
     """
     Apply tanh distortion to the audio. This technique is sometimes used for adding
@@ -1149,27 +1153,31 @@ class TanhDistortion(BaseWaveformTransform):
 
     See this page for examples: http://gdsp.hf.ntnu.no/lessons/3/17/
     """
-    
+
     supports_multichannel = True
-    
-    def __init__(self, min_distortion_gain=1., max_distortion_gain=2., p=0.5):
+
+    def __init__(self, min_distortion_gain=1.0, max_distortion_gain=2.0, p=0.5):
         """
         :param p: The probability of applying this transform
         """
         super().__init__(p)
         self.min_distortion_gain = min_distortion_gain
         self.max_distortion_gain = max_distortion_gain
-        
+
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["max_amplitude"] = np.amax(np.abs(samples))
-            self.parameters["gain"] = random.uniform(self.min_distortion_gain, self.max_distortion_gain)
-        
+            self.parameters["gain"] = random.uniform(
+                self.min_distortion_gain, self.max_distortion_gain
+            )
+
     def apply(self, samples, sample_rate):
         if self.parameters["max_amplitude"] > 0:
-            distorted_samples = np.tanh(self.parameters["gain"]*samples)
-            distorted_samples = (calculate_rms(distorted_samples)/calculate_rms(samples))*distorted_samples
+            distorted_samples = np.tanh(self.parameters["gain"] * samples)
+            distorted_samples = (
+                calculate_rms(distorted_samples) / calculate_rms(samples)
+            ) * distorted_samples
         else:
             distorted_samples = samples
         return distorted_samples

@@ -5,12 +5,12 @@ lameenc==1.2.2
 librosa>=0.6.1,<=0.8.0
 matplotlib>=3.0.0,<4
 numba>=0.48,<0.50
-numpy==1.15.0
+numpy==1.16.5
 pydub==0.23.1
 pyloudnorm==0.1.0
 pytest==5.3.4
 pytest-cov==2.8.1
-scipy>=1.0.0,<1.6.0
+scipy>=1.0.0,<1.7.0
 tqdm==4.31.1
 twine
 wavio==0.0.4

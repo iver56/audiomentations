@@ -26,6 +26,7 @@ from audiomentations import (
     LoudnessNormalization,
     Trim,
 )
+from audiomentations.augmentations.transforms import TanhDistortion
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
@@ -178,6 +179,7 @@ if __name__ == "__main__":
             "num_runs": 5,
             "name": "ShiftWithoutRolloverWithLongFade",
         },
+        {"instance": TanhDistortion(p=1.0), "num_runs": 5},
         {"instance": TimeMask(p=1.0), "num_runs": 5},
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
         {"instance": Trim(p=1.0), "num_runs": 1},

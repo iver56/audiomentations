@@ -116,7 +116,7 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `Clip`
 
-_To be added in v0.17.0_
+_Added in v0.17.0_
 
 Clip audio by specified values. e.g. set a_min=-1.0 and a_max=1.0 to ensure that no
 samples in the audio exceed that extent. This can be relevant for avoiding integer

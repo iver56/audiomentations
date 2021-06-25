@@ -17,7 +17,6 @@ from .augmentations.transforms import (
     PolarityInversion,
     Resample,
     Shift,
-    TanhDistortion,
     TimeMask,
     TimeStretch,
     Trim,

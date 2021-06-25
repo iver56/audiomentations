@@ -228,7 +228,7 @@ Shift the samples forwards or backwards, with or without rollover
 
 ## `TanhDistortion`
 
-_To be added in v0.17.0_
+_To be added in v0.18.0_
 
 Apply tanh (hyperbolic tangent) distortion to the audio. This technique is sometimes
 used for adding distortion to guitar recordings. The tanh() function can give a rounded
@@ -238,7 +238,7 @@ negative parts of the signal are squashed in the same way. This transform can be
 useful as data augmentation because it adds harmonics. In other words, it changes
 the timbre of the sound.
 
-See this page for examples: http://gdsp.hf.ntnu.no/lessons/3/17/
+See this page for examples: [http://gdsp.hf.ntnu.no/lessons/3/17/](http://gdsp.hf.ntnu.no/lessons/3/17/)
 
 ## `TimeMask`
 

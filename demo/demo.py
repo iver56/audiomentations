@@ -1,9 +1,9 @@
 import os
 import random
-import time
 from pathlib import Path
 
 import numpy as np
+import time
 from scipy.io import wavfile
 
 from audiomentations import (
@@ -12,7 +12,6 @@ from audiomentations import (
     PitchShift,
     Shift,
     Normalize,
-    AddImpulseResponse,
     FrequencyMask,
     TimeMask,
     AddGaussianSNR,
@@ -26,7 +25,7 @@ from audiomentations import (
     LoudnessNormalization,
     Trim,
 )
-from audiomentations.augmentations.transforms import TanhDistortion
+from audiomentations.augmentations.transforms import TanhDistortion, ApplyImpulseResponse
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
@@ -101,13 +100,22 @@ if __name__ == "__main__":
             ),
             "num_runs": 5,
         },
-        {"instance": AddGaussianSNR(p=1.0), "num_runs": 5},
         {
-            "instance": AddImpulseResponse(p=1.0, ir_path=os.path.join(DEMO_DIR, "ir")),
+            "instance": AddGaussianSNR(p=1.0),
+            "num_runs": 5,
+            "name": "AddGaussianSNRLegacy",
+        },
+        {
+            "instance": AddGaussianSNR(min_snr_in_db=0, max_snr_in_db=35, p=1.0),
+            "num_runs": 5,
+            "name": "AddGaussianSNRNew",
+        },
+        {
+            "instance": ApplyImpulseResponse(p=1.0, ir_path=os.path.join(DEMO_DIR, "ir")),
             "num_runs": 1,
         },
         {
-            "instance": AddImpulseResponse(
+            "instance": ApplyImpulseResponse(
                 p=1.0, ir_path=os.path.join(DEMO_DIR, "ir"), leave_length_unchanged=True
             ),
             "num_runs": 1,
@@ -179,7 +187,7 @@ if __name__ == "__main__":
             "num_runs": 5,
             "name": "ShiftWithoutRolloverWithLongFade",
         },
-        {"instance": TanhDistortion(p=1.0), "num_runs": 5},
+        # {"instance": TanhDistortion(p=1.0), "num_runs": 5},  # TODO: Uncomment this later
         {"instance": TimeMask(p=1.0), "num_runs": 5},
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
         {"instance": Trim(p=1.0), "num_runs": 1},

@@ -1,9 +1,12 @@
 import unittest
 
+import numpy as np
+
 from audiomentations.core.utils import (
     calculate_desired_noise_rms,
     convert_decibels_to_amplitude_ratio,
     get_file_paths,
+    calculate_rms,
 )
 from demo.demo import DEMO_DIR
 
@@ -28,3 +31,12 @@ class TestUtils(unittest.TestCase):
                 found_it = True
                 break
         self.assertTrue(found_it)
+
+    def test_calculate_rms_stereo(self):
+        np.random.seed(42)
+        sample_len = 1024
+        samples_in = np.random.uniform(low=-0.5, high=0.5, size=(2, sample_len)).astype(
+            np.float32
+        )
+        rms = calculate_rms(samples_in)
+        self.assertAlmostEqual(rms, 0.287, delta=0.01)

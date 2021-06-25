@@ -34,7 +34,7 @@ def get_file_paths(
 
 def calculate_rms(samples):
     """Given a numpy array of audio samples, return its Root Mean Square (RMS)."""
-    return np.sqrt(np.mean(np.square(samples), axis=-1))
+    return np.sqrt(np.mean(np.square(samples)))
 
 
 def calculate_desired_noise_rms(clean_rms, snr):

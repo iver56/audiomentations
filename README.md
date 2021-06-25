@@ -322,16 +322,28 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 
 ### Added
 
+* Implement `TanhDistortion`. Thanks to atamazian.
+
+## v0.17.0 (2021-06-25)
+
+### Added
+
 * Add a `fade` option in `Shift` for eliminating unwanted clicks
 * Add support for 32-bit int wav loading with scipy>=1.6
-* Add support for float64 wav files
-* Implement `Clip` and `TanhDistortion`. Thanks to atamazian.
+* Add support for float64 wav files. However, the use of this format is discouraged,
+  since float32 is more than enough for audio in most cases.
+* Implement `Clip`. Thanks to atamazian.
 * Add some parameter sanity checks in `AddGaussianNoise`
 
 ### Changed
 
-* Rename `AddImpulseResponse` to `ApplyImpulseResponse`. The former will still work for now, but give a warning.
-* When looking for audio files, follow symlinks by default
+* Rename `AddImpulseResponse` to `ApplyImpulseResponse`. The former will still work for
+  now, but give a warning.
+* When looking for audio files in `AddImpulseResponse`, `AddBackgroundNoise`
+  and `AddShortNoises`, follow symlinks by default.
+* When using the new parameters `min_snr_in_db` and `max_snr_in_db` in `AddGaussianSNR`,
+  SNRs will be picked uniformly in _the decibel scale_ instead of in the linear amplitude
+  ratio scale. The new behavior aligns more with human hearing, which is not linear.
 
 ### Fixed
 

@@ -290,7 +290,7 @@ Contributions are welcome!
 
 Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
 
-_The following table is valid for v0.14.0 - v0.16.0 only_
+_The following table is valid for v0.14.0 - v0.17.0 only_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
@@ -299,6 +299,7 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
 | AddGaussianSNR | Yes |
 | AddImpulseResponse | No, 1D only |
 | AddShortNoises | No, 1D only |
+| Clip | Yes |
 | ClippingDistortion | Yes |
 | FrequencyMask | Yes |
 | Gain | Yes |

@@ -230,8 +230,8 @@ Shift the samples forwards or backwards, with or without rollover
 
 _To be added in v0.17.0_
 
-Apply tanh distortion to the audio. This technique is sometimes used for adding
-distortion to guitar recordings. The tanh() function can give a rounded
+Apply tanh (hyperbolic tangent) distortion to the audio. This technique is sometimes
+used for adding distortion to guitar recordings. The tanh() function can give a rounded
 "soft clipping" kind of distortion, and the distortion amount is proportional to the
 loudness of the input and the pre-gain. Tanh is symmetric, so the positive and
 negative parts of the signal are squashed in the same way. This transform can be

@@ -1143,8 +1143,8 @@ class Gain(BaseWaveformTransform):
 
 class TanhDistortion(BaseWaveformTransform):
     """
-    Apply tanh distortion to the audio. This technique is sometimes used for adding
-    distortion to guitar recordings. The tanh() function can give a rounded
+    Apply tanh (hyperbolic tangent) distortion to the audio. This technique is sometimes
+    used for adding distortion to guitar recordings. The tanh() function can give a rounded
     "soft clipping" kind of distortion, and the distortion amount is proportional to the
     loudness of the input and the pre-gain. Tanh is symmetric, so the positive and
     negative parts of the signal are squashed in the same way. This transform can be
@@ -1158,6 +1158,8 @@ class TanhDistortion(BaseWaveformTransform):
 
     def __init__(self, min_distortion_gain=1.0, max_distortion_gain=2.0, p=0.5):
         """
+        :param min_distortion_gain: Min pre-gain factor
+        :param max_distortion_gain: Max pre-gain factor
         :param p: The probability of applying this transform
         """
         super().__init__(p)

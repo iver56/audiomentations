@@ -334,6 +334,7 @@ _The following table is valid for v0.14.0 - v0.16.0 only_
   since float32 is more than enough for audio in most cases.
 * Implement `Clip`. Thanks to atamazian.
 * Add some parameter sanity checks in `AddGaussianNoise`
+* Officially support librosa 0.8.1
 
 ### Changed
 

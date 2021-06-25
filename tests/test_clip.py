@@ -1,17 +1,15 @@
 import unittest
 
 import numpy as np
-from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.transforms import Clip
-from audiomentations.core.composition import Compose
+from audiomentations import Clip
 
 
 class TestClip(unittest.TestCase):
     def test_single_channel(self):
         samples = np.array([0.5, 0.6, -0.2, 0.0], dtype=np.float32)
         sample_rate = 16000
-        augmenter = Compose([Clip(a_min=-0.1, a_max=0.1, p=1.0)])
+        augmenter = Clip(a_min=-0.1, a_max=0.1, p=1.0)
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         self.assertAlmostEqual(np.amin(samples), -0.1)
@@ -25,7 +23,7 @@ class TestClip(unittest.TestCase):
             dtype=np.float32,
         )
         sample_rate = 16000
-        augmenter = Compose([Clip(a_min=-0.1, a_max=0.1, p=1.0)])
+        augmenter = Clip(a_min=-0.1, a_max=0.1, p=1.0)
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         self.assertAlmostEqual(np.amin(samples), -0.1)

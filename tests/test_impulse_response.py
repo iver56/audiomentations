@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import AddImpulseResponse
+from audiomentations import AddImpulseResponse, ApplyImpulseResponse
 from audiomentations.core.composition import Compose
 from demo.demo import DEMO_DIR
 
@@ -15,7 +15,7 @@ class TestImpulseResponse(unittest.TestCase):
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000
 
-        add_ir_transform = AddImpulseResponse(
+        add_ir_transform = ApplyImpulseResponse(
             ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0
         )
 
@@ -42,7 +42,7 @@ class TestImpulseResponse(unittest.TestCase):
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000
 
-        add_ir_transform = AddImpulseResponse(
+        add_ir_transform = ApplyImpulseResponse(
             ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0, leave_length_unchanged=True
         )
 
@@ -52,9 +52,15 @@ class TestImpulseResponse(unittest.TestCase):
         self.assertEqual(len(samples_out), len(samples_in))
 
     def test_picklability(self):
-        add_ir_transform = AddImpulseResponse(
+        add_ir_transform = ApplyImpulseResponse(
             ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0
         )
         pickled = pickle.dumps(add_ir_transform)
         unpickled = pickle.loads(pickled)
         self.assertEqual(add_ir_transform.ir_files, unpickled.ir_files)
+
+    def test_legacy_class_warning(self):
+        with self.assertWarns(DeprecationWarning):
+            AddImpulseResponse(
+                ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0
+            )

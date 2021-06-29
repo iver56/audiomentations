@@ -51,6 +51,11 @@ class BaseWaveformTransform(BaseTransform):
         return is_waveform_multichannel(samples)
 
     def __call__(self, samples, sample_rate):
+        if samples.dtype == np.float64:
+            warnings.warn(
+                "Warning: input samples have np.float64 dtype. Converting to np.float32..."
+            )
+            samples = np.float32(samples)
         if not self.are_parameters_frozen:
             self.randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"] and len(samples) > 0:

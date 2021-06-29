@@ -1185,7 +1185,7 @@ class LowPassFilter(BaseWaveformTransform):
         """
         :params samples: (num_channels, num_samples)
         """
-        _, num_samples = samples.shape
+        num_samples = samples.shape[-1]
 
         self.parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
@@ -1241,7 +1241,7 @@ class HighPassFilter(BaseWaveformTransform):
         """
         :params samples: (num_channels, num_samples)
         """
-        _, num_samples = samples.shape
+        num_samples = samples.shape[-1]
 
         self.parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
@@ -1305,7 +1305,7 @@ class BandPassFilter(BaseWaveformTransform):
         """
         :params samples: (num_channels, num_samples)
         """
-        _, num_samples = samples.shape
+        num_samples = samples.shape[-1]
 
         self.parameters["center_freq"] = np.random.uniform(
             low=self.min_center_freq,

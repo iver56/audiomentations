@@ -1180,21 +1180,20 @@ class LowPassFilter(BaseWaveformTransform):
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
     def randomize_parameters(
-        self, selected_samples: np.array, sample_rate: int = None
+        self, samples: np.array, sample_rate: int = None
     ):
         """
-        :params selected_samples: (batch_size, num_channels, num_samples)
+        :params samples: (num_channels, num_samples)
         """
-        batch_size, _, num_samples = selected_samples.shape
+        _, num_samples = samples.shape
 
         self.parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
-            high=self.max_cutoff_freq,
-            size=batch_size
+            high=self.max_cutoff_freq
         )
 
-    def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
-        batch_size, num_channels, num_samples = selected_samples.shape
+    def apply_transform(self, samples: np.array, sample_rate: int = None):
+        num_channels, num_samples = samples.shape
 
         if sample_rate is None:
             sample_rate = self.sample_rate
@@ -1202,13 +1201,11 @@ class LowPassFilter(BaseWaveformTransform):
         cutoffs_as_fraction_of_sample_rate = (
             self.parameters["cutoff_freq"] / sample_rate
         )
-        # TODO: Instead of using a for loop, perform batched compute to speed things up
-        for i in range(batch_size):
-            selected_samples[i] = low_pass_filter(
-                selected_samples[i], cutoffs_as_fraction_of_sample_rate[i].item()
-            )
 
-        return selected_samples
+        samples = low_pass_filter(
+            samples, cutoffs_as_fraction_of_sample_rate.item()
+
+        return samples
 
 
 class HighPassFilter(BaseWaveformTransform):
@@ -1238,21 +1235,20 @@ class HighPassFilter(BaseWaveformTransform):
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
     def randomize_parameters(
-        self, selected_samples: np.array, sample_rate: int = None
+        self, samples: np.array, sample_rate: int = None
     ):
         """
-        :params selected_samples: (batch_size, num_channels, num_samples)
+        :params samples: (num_channels, num_samples)
         """
-        batch_size, _, num_samples = selected_samples.shape
+        _, num_samples = samples.shape
 
         self.parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
-            high=self.max_cutoff_freq,
-            size=batch_size
+            high=self.max_cutoff_freq
         )
 
-    def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
-        batch_size, num_channels, num_samples = selected_samples.shape
+    def apply_transform(self, samples: np.array, sample_rate: int = None):
+        num_channels, num_samples = samples.shape
 
         if sample_rate is None:
             sample_rate = self.sample_rate
@@ -1260,13 +1256,11 @@ class HighPassFilter(BaseWaveformTransform):
         cutoffs_as_fraction_of_sample_rate = (
             self.parameters["cutoff_freq"] / sample_rate
         )
-        # TODO: Instead of using a for loop, perform batched compute to speed things up
-        for i in range(batch_size):
-            selected_samples[i] = high_pass_filter(
-                selected_samples[i], cutoffs_as_fraction_of_sample_rate[i].item()
-            )
 
-        return selected_samples   
+        samples = high_pass_filter(
+            samples, cutoffs_as_fraction_of_sample_rate.item()
+
+        return samples
 
 
 class BandPassFilter(BaseWaveformTransform):
@@ -1304,26 +1298,24 @@ class BandPassFilter(BaseWaveformTransform):
             raise ValueError("min_q must not be greater than max_q")
 
     def randomize_parameters(
-        self, selected_samples: np.array, sample_rate: int = None
+        self, samples: np.array, sample_rate: int = None
     ):
         """
-        :params selected_samples: (batch_size, num_channels, num_samples)
+        :params samples: (num_channels, num_samples)
         """
-        batch_size, _, num_samples = selected_samples.shape
+        _, num_samples = samples.shape
 
         self.parameters["center_freq"] = np.random.uniform(
             low=self.min_center_freq,
-            high=self.max_center_freq,
-            size=batch_size
+            high=self.max_center_freq
         )
         self.parameters["q"] = np.random.uniform(
             low=self.min_q,
-            high=self.max_q,
-            size=batch_size
+            high=self.max_q
         )
 
-    def apply_transform(self, selected_samples: np.array, sample_rate: int = None):
-        batch_size, num_channels, num_samples = selected_samples.shape
+    def apply_transform(self, samples: np.array, sample_rate: int = None):
+        num_channels, num_samples = samples.shape
 
         if sample_rate is None:
             sample_rate = self.sample_rate
@@ -1334,16 +1326,15 @@ class BandPassFilter(BaseWaveformTransform):
         high_cutoffs_as_fraction_of_sample_rate = (
             self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])  / sample_rate
         )
-        # TODO: Instead of using a for loop, perform batched compute to speed things up
-        for i in range(batch_size):
-            selected_samples[i] = low_pass_filter(
-                selected_samples[i], low_cutoffs_as_fraction_of_sample_rate[i].item()
-            )
-            selected_samples[i] = high_pass_filter(
-                selected_samples[i], high_cutoffs_as_fraction_of_sample_rate[i].item()
-            )
 
-        return selected_samples   
+        samples = low_pass_filter(
+            samples, low_cutoffs_as_fraction_of_sample_rat.item()
+        )
+        samples = high_pass_filter(
+            samples, high_cutoffs_as_fraction_of_sample_rate.item()
+        )
+
+        return samples   
     
     
 class Mp3Compression(BaseWaveformTransform):

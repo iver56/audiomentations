@@ -1,6 +1,8 @@
 import random
 import warnings
 
+import numpy as np
+
 from audiomentations.core.utils import (
     is_waveform_multichannel,
     is_spectrogram_multichannel,
@@ -50,7 +52,7 @@ class BaseWaveformTransform(BaseTransform):
     def is_multichannel(self, samples):
         return is_waveform_multichannel(samples)
 
-    def __call__(self, samples, sample_rate):
+    def __call__(self, samples: np.ndarray, sample_rate: int):
         if samples.dtype == np.float64:
             warnings.warn(
                 "Warning: input samples have np.float64 dtype. Converting to np.float32..."

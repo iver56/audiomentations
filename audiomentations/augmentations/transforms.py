@@ -1305,6 +1305,13 @@ class Mp3Compression(BaseWaveformTransform):
             raise
 
         assert len(samples.shape) == 1
+        
+        if samples.dtype == np.float64:
+            warnings.warn(
+                "Warning: input samples have np.float64 dtype. Converting to np.float32..."
+            )
+            samples = np.float32(samples)
+        
         assert samples.dtype == np.float32
 
         int_samples = convert_float_samples_to_int16(samples)

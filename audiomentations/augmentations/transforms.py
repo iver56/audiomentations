@@ -1204,6 +1204,7 @@ class LowPassFilter(BaseWaveformTransform):
 
         samples = low_pass_filter(
             samples, cutoffs_as_fraction_of_sample_rate.item()
+        )
 
         return samples
 
@@ -1259,6 +1260,7 @@ class HighPassFilter(BaseWaveformTransform):
 
         samples = high_pass_filter(
             samples, cutoffs_as_fraction_of_sample_rate.item()
+        )
 
         return samples
 

@@ -1193,7 +1193,7 @@ class LowPassFilter(BaseWaveformTransform):
         )
 
     def apply_transform(self, samples: np.array, sample_rate: int = None):
-        num_channels, num_samples = samples.shape
+        num_samples = samples.shape[-1]
 
         if sample_rate is None:
             sample_rate = self.sample_rate
@@ -1249,8 +1249,8 @@ class HighPassFilter(BaseWaveformTransform):
         )
 
     def apply_transform(self, samples: np.array, sample_rate: int = None):
-        num_channels, num_samples = samples.shape
-
+        num_samples = samples.shape[-1]
+        
         if sample_rate is None:
             sample_rate = self.sample_rate
 
@@ -1317,7 +1317,7 @@ class BandPassFilter(BaseWaveformTransform):
         )
 
     def apply_transform(self, samples: np.array, sample_rate: int = None):
-        num_channels, num_samples = samples.shape
+        num_samples = samples.shape[-1]
 
         if sample_rate is None:
             sample_rate = self.sample_rate

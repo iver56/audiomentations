@@ -102,7 +102,29 @@ class AddImpulseResponse(ApplyImpulseResponse):
             stacklevel=2,
         )
 
+        
+class ApplyWowResampling(BaseWaveformTransform):
+    """
+    Similar to PitchShift
+    Inspired by https://arxiv.org/ftp/arxiv/papers/1912/1912.05472.pdf
+    """
+    
+    supports_multichannel = True
+    
+    def __init__(self, am=0.5, fm=0.5, p=0.5):
+        """
+        :param am: parameter 1
+        :param fm: parameter 2
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+        self.am = am
+        self.fm = fm
+        
+    def apply(self, samples, sample_rate):
+        return samples + am*np.sin(2*np.pi*fm*samples)/(2*np.pi*fm)
 
+    
 class FrequencyMask(BaseWaveformTransform):
     """
     Mask some frequency band on the spectrogram.

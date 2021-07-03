@@ -5,6 +5,7 @@ from .augmentations.transforms import (
     AddGaussianSNR,
     AddImpulseResponse,
     ApplyImpulseResponse,
+    ApplyWowResampling,
     AddShortNoises,
     Clip,
     ClippingDistortion,

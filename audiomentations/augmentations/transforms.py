@@ -131,11 +131,11 @@ class ApplyWowResampling(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["am"] = random.randint(
+            self.parameters["am"] = random.uniform(
                 self.min_am,
                 self.max_am
             ) + self.ref
-            self.parameters["fm"] = random.randint(
+            self.parameters["fm"] = random.uniform(
                 self.min_fm,
                 self.max_fm
             ) + self.ref

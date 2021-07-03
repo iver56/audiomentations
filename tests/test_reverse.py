@@ -1,8 +1,9 @@
 import unittest
 
 import numpy as np
+from numpy.testing import assert_array_almost_equal
 
-from audiomentations import Reverse
+from audiomentations.augmentations.transforms import Reverse
 
 
 class TestReverse(unittest.TestCase):
@@ -22,6 +23,13 @@ class TestReverse(unittest.TestCase):
         )
         sample_rate = 16000
         augmenter = Reverse(p=1.0)
-        samples = augmenter(samples=samples, sample_rate=sample_rate)
+        reversed_samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         self.assertEqual(samples.dtype, np.float32)
+        assert_array_almost_equal(
+            reversed_samples,
+            np.array(
+                [[0.0, -0.125, -0.25, 0.5, 0.9], [0.0, -0.125, -0.25, 0.5, 0.95]],
+                dtype=np.float32,
+            ),
+        )

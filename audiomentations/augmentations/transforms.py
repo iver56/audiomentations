@@ -111,18 +111,39 @@ class ApplyWowResampling(BaseWaveformTransform):
     
     supports_multichannel = True
     
-    def __init__(self, am=0.5, fm=0.5, p=0.5):
+    def __init__(self, min_am=0.5, max_am=1.5, min_fm=0.5, max_fm=1.5, ref=1e-8, p=0.5):
         """
-        :param am: parameter 1
-        :param fm: parameter 2
+        :param min_am: Minimum of parameter 1
+        :param max_am: Maximum of parameter 1
+        :param min_fm: Minimum of parameter 2
+        :param max_fm: Maximum of parameter 2
+        :param ref: Small number added to am and fm to prevent them from having zero values
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        self.am = am
-        self.fm = fm
+        
+        self.min_am = min_am
+        self.max_am = max_am
+        self.min_fm = min_fm
+        self.max_fm = max_fm
+        self.ref = ref
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            self.parameters["am"] = random.randint(
+                self.min_am,
+                self.max_am
+            ) + self.ref
+            self.parameters["fm"] = random.randint(
+                self.min_fm,
+                self.max_fm
+            ) + self.ref
         
     def apply(self, samples, sample_rate):
-        return samples + self.am*np.sin(2*np.pi*self.fm*samples)/(2*np.pi*self.fm)
+        am = self.parameters["am"]
+        fm = self.parameters["fm"]
+        return samples + am*np.sin(2*np.pi*fm*samples)/(2*np.pi*fm)
 
     
 class FrequencyMask(BaseWaveformTransform):

@@ -1183,7 +1183,7 @@ class Reverse(BaseWaveformTransform):
         super().__init__(p)
         
     def apply(self, samples, sample_rate):
-        return np.flipud(samples)
+        return samples[::-1]
 
 
 class TanhDistortion(BaseWaveformTransform):

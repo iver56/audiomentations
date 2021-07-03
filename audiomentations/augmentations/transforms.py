@@ -122,7 +122,7 @@ class ApplyWowResampling(BaseWaveformTransform):
         self.fm = fm
         
     def apply(self, samples, sample_rate):
-        return samples + am*np.sin(2*np.pi*fm*samples)/(2*np.pi*fm)
+        return samples + self.am*np.sin(2*np.pi*self.fm*samples)/(2*np.pi*self.fm)
 
     
 class FrequencyMask(BaseWaveformTransform):

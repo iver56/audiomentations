@@ -1167,6 +1167,26 @@ class Gain(BaseWaveformTransform):
 
     def apply(self, samples, sample_rate):
         return samples * self.parameters["amplitude_ratio"]
+    
+    
+class Reverse(BaseWaveformTransform):
+    """
+    Reverse the audio.
+    """
+    
+    supports_multichannel = True
+    
+    def __init__(self, p=0.5):
+        """
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+        
+    def apply(self, samples, sample_rate):
+        if len(samples.shape) > 1:
+            return np.fliplr(samples)
+        else:
+            return np.flipud(samples)
 
 
 class TanhDistortion(BaseWaveformTransform):

@@ -16,6 +16,7 @@ from .augmentations.transforms import (
     PitchShift,
     PolarityInversion,
     Resample,
+    Reverse,
     Shift,
     TimeMask,
     TimeStretch,

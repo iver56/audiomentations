@@ -1185,6 +1185,7 @@ class LowPassFilter(BaseWaveformTransform):
         """
         :params samples: (num_channels, num_samples)
         """
+        super().randomize_parameters(samples, sample_rate)
         num_samples = samples.shape[-1]
 
         self.parameters["cutoff_freq"] = np.random.uniform(
@@ -1194,9 +1195,6 @@ class LowPassFilter(BaseWaveformTransform):
 
     def apply(self, samples: np.array, sample_rate: int = None):
         num_samples = samples.shape[-1]
-
-        if sample_rate is None:
-            sample_rate = self.sample_rate
 
         cutoffs_as_fraction_of_sample_rate = (
             self.parameters["cutoff_freq"] / sample_rate

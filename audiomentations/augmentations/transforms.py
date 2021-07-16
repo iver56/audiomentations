@@ -1303,7 +1303,7 @@ class BandPassFilter(BaseWaveformTransform):
         """
         :params samples: (num_channels, num_samples)
         """
-        num_samples = samples.shape[-1]
+        super().randomize_parameters(samples, sample_rate)
 
         self.parameters["center_freq"] = np.random.uniform(
             low=self.min_center_freq,

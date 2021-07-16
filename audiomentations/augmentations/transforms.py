@@ -1209,7 +1209,7 @@ class LowPassFilter(BaseWaveformTransform):
         seg = low_pass_filter(
             seg, cutoffs_as_fraction_of_sample_rate
         )
-        samples = seg.get_array_of_samples()
+        samples = np.array(seg.get_array_of_samples())
         return samples
 
 

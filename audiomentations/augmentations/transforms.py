@@ -1201,7 +1201,7 @@ class LowPassFilter(BaseWaveformTransform):
         )
 
         samples = low_pass_filter(
-            samples, cutoffs_as_fraction_of_sample_rate.item()
+            samples, cutoffs_as_fraction_of_sample_rate
         )
 
         return samples

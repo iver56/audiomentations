@@ -1206,10 +1206,10 @@ class LowPassFilter(BaseWaveformTransform):
             self.parameters["cutoff_freq"] / sample_rate
         )
 
-        samples = low_pass_filter(
-            samples, cutoffs_as_fraction_of_sample_rate
+        seg = low_pass_filter(
+            seg, cutoffs_as_fraction_of_sample_rate
         )
-
+        samples = seg.get_array_of_samples()
         return samples
 
 

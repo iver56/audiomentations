@@ -1192,7 +1192,7 @@ class LowPassFilter(BaseWaveformTransform):
             high=self.max_cutoff_freq
         )
 
-    def apply_transform(self, samples: np.array, sample_rate: int = None):
+    def apply(self, samples: np.array, sample_rate: int = None):
         num_samples = samples.shape[-1]
 
         if sample_rate is None:
@@ -1248,7 +1248,7 @@ class HighPassFilter(BaseWaveformTransform):
             high=self.max_cutoff_freq
         )
 
-    def apply_transform(self, samples: np.array, sample_rate: int = None):
+    def apply(self, samples: np.array, sample_rate: int = None):
         num_samples = samples.shape[-1]
         
         if sample_rate is None:
@@ -1316,7 +1316,7 @@ class BandPassFilter(BaseWaveformTransform):
             high=self.max_q
         )
 
-    def apply_transform(self, samples: np.array, sample_rate: int = None):
+    def apply(self, samples: np.array, sample_rate: int = None):
         num_samples = samples.shape[-1]
 
         if sample_rate is None:
@@ -1330,7 +1330,7 @@ class BandPassFilter(BaseWaveformTransform):
         )
 
         samples = low_pass_filter(
-            samples, low_cutoffs_as_fraction_of_sample_rat.item()
+            samples, low_cutoffs_as_fraction_of_sample_rate.item()
         )
         samples = high_pass_filter(
             samples, high_cutoffs_as_fraction_of_sample_rate.item()

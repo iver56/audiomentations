@@ -220,6 +220,14 @@ Resample signal using librosa.core.resample
 To do downsampling only set both minimum and maximum sampling rate lower than original
 sampling rate and vice versa to do upsampling only.
 
+## `Reverse`
+
+Reverse the audio. Also known as time inversion. Inversion of an audio track along its time
+axis relates to the random flip of an image, which is an augmentation technique that is
+widely used in the visual domain. This can be relevant in the context of audio
+classification. It was successfully applied in the paper
+[AudioCLIP: Extending CLIP to Image, Text and Audio](https://arxiv.org/pdf/2106.13043.pdf).
+
 ## `Shift`
 
 _Added in v0.5.0_
@@ -290,7 +298,7 @@ Contributions are welcome!
 
 Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
 
-_The following table is valid for v0.14.0 - v0.17.0 only_
+_The following table is valid for new versions of audiomentations, like >=0.17.0_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
@@ -309,6 +317,7 @@ _The following table is valid for v0.14.0 - v0.17.0 only_
 | PitchShift | Yes |
 | PolarityInversion | Yes |
 | Resample | No, 1D only |
+| Reverse | Yes |
 | Shift | Yes |
 | SpecChannelShuffle | Yes |
 | SpecFrequencyMask | Yes |
@@ -322,7 +331,7 @@ _The following table is valid for v0.14.0 - v0.17.0 only_
 
 ### Added
 
-* Implement `TanhDistortion`. Thanks to atamazian.
+* Implement `Reverse` and `TanhDistortion`. Thanks to atamazian.
 
 ## v0.17.0 (2021-06-25)
 

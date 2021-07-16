@@ -1257,7 +1257,7 @@ class HighPassFilter(BaseWaveformTransform):
         )
 
         samples = high_pass_filter(
-            samples, cutoffs_as_fraction_of_sample_rate.item()
+            samples, cutoffs_as_fraction_of_sample_rate
         )
 
         return samples
@@ -1328,10 +1328,10 @@ class BandPassFilter(BaseWaveformTransform):
         )
 
         samples = low_pass_filter(
-            samples, low_cutoffs_as_fraction_of_sample_rate.item()
+            samples, low_cutoffs_as_fraction_of_sample_rate
         )
         samples = high_pass_filter(
-            samples, high_cutoffs_as_fraction_of_sample_rate.item()
+            samples, high_cutoffs_as_fraction_of_sample_rate
         )
 
         return samples   

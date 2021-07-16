@@ -8,6 +8,7 @@ import warnings
 
 import librosa
 import numpy as np
+from pydub import AudioSegment
 from pydub.effects import low_pass_filter, high_pass_filter
 from scipy.signal import butter, sosfilt, convolve
 
@@ -1186,7 +1187,6 @@ class LowPassFilter(BaseWaveformTransform):
         :params samples: (num_channels, num_samples)
         """
         super().randomize_parameters(samples, sample_rate)
-        num_samples = samples.shape[-1]
 
         self.parameters["cutoff_freq"] = np.random.uniform(
             low=self.min_cutoff_freq,
@@ -1195,6 +1195,12 @@ class LowPassFilter(BaseWaveformTransform):
 
     def apply(self, samples: np.array, sample_rate: int = None):
         num_samples = samples.shape[-1]
+        seg = AudioSegment(
+            samples.tobytes(), 
+            frame_rate=sample_rate,
+            sample_width=samples.dtype.itemsize, 
+            channels=num_samples
+        )
 
         cutoffs_as_fraction_of_sample_rate = (
             self.parameters["cutoff_freq"] / sample_rate

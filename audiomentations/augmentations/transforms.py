@@ -1194,12 +1194,12 @@ class LowPassFilter(BaseWaveformTransform):
         )
 
     def apply(self, samples: np.array, sample_rate: int = None):
-        num_samples = samples.shape[-1]
+        num_channels = samples.shape[0]
         seg = AudioSegment(
             samples.tobytes(), 
             frame_rate=sample_rate,
             sample_width=samples.dtype.itemsize, 
-            channels=num_samples
+            channels=num_channels
         )
 
         cutoffs_as_fraction_of_sample_rate = (

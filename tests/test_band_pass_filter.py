@@ -1,6 +1,7 @@
 import unittest
 
 import numpy as np
+from numpy.testing import assert_array_equal
 
 from audiomentations.augmentations.transforms import BandPassFilter
 
@@ -27,3 +28,4 @@ class TestBandPassFilter(unittest.TestCase):
         )
         self.assertEqual(processed_samples.shape, samples.shape)
         self.assertEqual(processed_samples.dtype, np.float32)
+        assert_raises(AssertionError, assert_array_equal, processed_samples, samples)

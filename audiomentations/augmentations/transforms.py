@@ -1222,7 +1222,7 @@ class LowPassFilter(BaseWaveformTransform):
         audio_segment = pydub.effects.low_pass_filter(
             audio_segment, self.parameters["cutoff_freq"]
         )
-        samples = convert_int16_samples_to_float(np.array(seg.get_array_of_samples()))
+        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
         return samples
 
 

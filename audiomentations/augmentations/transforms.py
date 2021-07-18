@@ -20,6 +20,7 @@ from audiomentations.core.utils import (
     get_file_paths,
     convert_decibels_to_amplitude_ratio,
     convert_float_samples_to_int16,
+    convert_int16_samples_to_float
 )
 
 
@@ -1194,22 +1195,34 @@ class LowPassFilter(BaseWaveformTransform):
         )
 
     def apply(self, samples: np.array, sample_rate: int = None):
-        num_channels = samples.shape[0]
-        seg = AudioSegment(
-            samples.tobytes(), 
+        try:
+            import pydub
+        except ImportError:
+            print(
+                "Failed to import pydub. Maybe it is not installed? "
+                "To install the optional pydub dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` instead of"
+                " `pip install audiomentations`",
+                file=sys.stderr,
+            )
+            raise
+            
+        assert len(samples.shape) == 1
+        assert samples.dtype == np.float32
+        
+        int_samples = convert_float_samples_to_int16(samples)
+        
+        audio_segment = pydub.AudioSegment(
+            int_samples.tobytes(),
             frame_rate=sample_rate,
-            sample_width=samples.dtype.itemsize, 
-            channels=num_channels
+            sample_width=int_samples.dtype.itemsize,
+            channels=1,
         )
 
-        cutoffs_as_fraction_of_sample_rate = (
-            self.parameters["cutoff_freq"] / sample_rate
+        audio_segment = pydub.effects.low_pass_filter(
+            audio_segment, self.parameters["cutoff_freq"]
         )
-
-        seg = low_pass_filter(
-            seg, cutoffs_as_fraction_of_sample_rate
-        )
-        samples = np.array(seg.get_array_of_samples())
+        samples = convert_int16_samples_to_float(np.array(seg.get_array_of_samples()))
         return samples
 
 

@@ -1160,7 +1160,7 @@ class LowPassFilter(BaseWaveformTransform):
     Apply low-pass filtering to the input audio.
     """
 
-    supports_multichannel = True
+    supports_multichannel = False
     requires_sample_rate = True
 
     def __init__(
@@ -1231,7 +1231,7 @@ class HighPassFilter(BaseWaveformTransform):
     Apply high-pass filtering to the input audio.
     """
 
-    supports_multichannel = True
+    supports_multichannel = False
     requires_sample_rate = True
 
     def __init__(
@@ -1266,19 +1266,34 @@ class HighPassFilter(BaseWaveformTransform):
         )
 
     def apply(self, samples: np.array, sample_rate: int = None):
-        num_samples = samples.shape[-1]
+        try:
+            import pydub
+        except ImportError:
+            print(
+                "Failed to import pydub. Maybe it is not installed? "
+                "To install the optional pydub dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` instead of"
+                " `pip install audiomentations`",
+                file=sys.stderr,
+            )
+            raise
+            
+        assert len(samples.shape) == 1
+        assert samples.dtype == np.float32
         
-        if sample_rate is None:
-            sample_rate = self.sample_rate
-
-        cutoffs_as_fraction_of_sample_rate = (
-            self.parameters["cutoff_freq"] / sample_rate
+        int_samples = convert_float_samples_to_int16(samples)
+        
+        audio_segment = pydub.AudioSegment(
+            int_samples.tobytes(),
+            frame_rate=sample_rate,
+            sample_width=int_samples.dtype.itemsize,
+            channels=1,
         )
 
-        samples = high_pass_filter(
-            samples, cutoffs_as_fraction_of_sample_rate
+        audio_segment = pydub.effects.high_pass_filter(
+            audio_segment, self.parameters["cutoff_freq"]
         )
-
+        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
         return samples
 
 
@@ -1334,24 +1349,37 @@ class BandPassFilter(BaseWaveformTransform):
         )
 
     def apply(self, samples: np.array, sample_rate: int = None):
-        num_samples = samples.shape[-1]
+        try:
+            import pydub
+        except ImportError:
+            print(
+                "Failed to import pydub. Maybe it is not installed? "
+                "To install the optional pydub dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` instead of"
+                " `pip install audiomentations`",
+                file=sys.stderr,
+            )
+            raise
+            
+        assert len(samples.shape) == 1
+        assert samples.dtype == np.float32
+        
+        int_samples = convert_float_samples_to_int16(samples)
+        
+        audio_segment = pydub.AudioSegment(
+            int_samples.tobytes(),
+            frame_rate=sample_rate,
+            sample_width=int_samples.dtype.itemsize,
+            channels=1,
+        )
 
-        if sample_rate is None:
-            sample_rate = self.sample_rate
-
-        low_cutoffs_as_fraction_of_sample_rate = (
-            self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])  / sample_rate
+        audio_segment = pydub.effects.low_pass_filter(
+            audio_segment, self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])
         )
-        high_cutoffs_as_fraction_of_sample_rate = (
-            self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])  / sample_rate
+        audio_segment = pydub.effects.high_pass_filter(
+            audio_segment, self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])
         )
-
-        samples = low_pass_filter(
-            samples, low_cutoffs_as_fraction_of_sample_rate
-        )
-        samples = high_pass_filter(
-            samples, high_cutoffs_as_fraction_of_sample_rate
-        )
+        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
 
         return samples   
     

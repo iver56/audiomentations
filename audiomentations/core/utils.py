@@ -87,4 +87,4 @@ def convert_int16_samples_to_float(y):
     """Convert int16 numpy array of audio samples to floating-point."""
     if not issubclass(y.dtype.type, np.int16):
         raise ValueError("input samples not int16")
-    return (y / np.iinfo(np.int16).max).astype(np.floating)
+    return (y / np.iinfo(np.int16).max).astype(np.float32)

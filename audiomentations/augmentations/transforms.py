@@ -1243,11 +1243,11 @@ class TanhDistortion(BaseWaveformTransform):
     
 class LowPassFilter(BaseWaveformTransform):
     """
-    Apply low-pass filtering to the input audio.
+    Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
+    octave above the cutoff frequency, so this filter is fairly gentle.
     """
 
     supports_multichannel = False
-    requires_sample_rate = True
 
     def __init__(
         self,
@@ -1270,9 +1270,6 @@ class LowPassFilter(BaseWaveformTransform):
     def randomize_parameters(
         self, samples: np.array, sample_rate: int = None
     ):
-        """
-        :params samples: (num_channels, num_samples)
-        """
         super().randomize_parameters(samples, sample_rate)
 
         self.parameters["cutoff_freq"] = np.random.uniform(
@@ -1313,11 +1310,11 @@ class LowPassFilter(BaseWaveformTransform):
 
 class HighPassFilter(BaseWaveformTransform):
     """
-    Apply high-pass filtering to the input audio.
+    Apply high-pass filtering to the input audio. The signal will be reduced by 6 dB per
+    octave below the cutoff frequency, so this filter is fairly gentle.
     """
 
     supports_multichannel = False
-    requires_sample_rate = True
 
     def __init__(
         self,
@@ -1340,9 +1337,6 @@ class HighPassFilter(BaseWaveformTransform):
     def randomize_parameters(
         self, samples: np.array, sample_rate: int = None
     ):
-        """
-        :params samples: (num_channels, num_samples)
-        """
         super().randomize_parameters(samples, sample_rate)
 
         self.parameters["cutoff_freq"] = np.random.uniform(
@@ -1387,7 +1381,6 @@ class BandPassFilter(BaseWaveformTransform):
     """
 
     supports_multichannel = False
-    requires_sample_rate = True
 
     def __init__(
         self,
@@ -1418,9 +1411,6 @@ class BandPassFilter(BaseWaveformTransform):
     def randomize_parameters(
         self, samples: np.array, sample_rate: int = None
     ):
-        """
-        :params samples: (num_channels, num_samples)
-        """
         super().randomize_parameters(samples, sample_rate)
 
         self.parameters["center_freq"] = np.random.uniform(

@@ -114,6 +114,12 @@ occur.
 
 A folder of (noise) sounds to be mixed in must be specified.
 
+## `BandPassFilter`
+
+_To be added in v0.18.0_
+
+Apply band-pass filtering to the input audio. The filter steepness is 6 dB per octave.
+
 ## `Clip`
 
 _Added in v0.17.0_
@@ -159,6 +165,20 @@ technique can help a model become somewhat invariant to the overall gain of the 
 Warning: This transform can return samples outside the [-1, 1] range, which may lead to
 clipping or wrap distortion, depending on what you do with the audio in a later stage.
 See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
+
+## `HighPassFilter`
+
+_To be added in v0.18.0_
+
+Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
+octave above the cutoff frequency, so this filter is fairly gentle.
+
+## `LowPassFilter`
+
+_To be added in v0.18.0_
+
+Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
+octave above the cutoff frequency, so this filter is fairly gentle.
 
 ## `Mp3Compression`
 
@@ -309,11 +329,14 @@ _The following table is valid for new versions of audiomentations, like >=0.17.0
 | AddGaussianSNR | Yes |
 | AddImpulseResponse | No, 1D only |
 | AddShortNoises | No, 1D only |
+| BandPassFilter | No, 1D only |
 | Clip | Yes |
 | ClippingDistortion | Yes |
 | FrequencyMask | Yes |
 | Gain | Yes |
+| HighPassFilter | No, 1D only |
 | LoudnessNormalization | Yes, up to 5 channels |
+| LowPassFilter | No, 1D only |
 | Mp3Compression | No, 1D only |
 | Normalize | Yes |
 | PitchShift | Yes |
@@ -323,6 +346,7 @@ _The following table is valid for new versions of audiomentations, like >=0.17.0
 | Shift | Yes |
 | SpecChannelShuffle | Yes |
 | SpecFrequencyMask | Yes |
+| TanhDistortion | Yes |
 | TimeMask | Yes |
 | TimeStretch | Yes |
 | Trim | No, 1D only |
@@ -333,7 +357,7 @@ _The following table is valid for new versions of audiomentations, like >=0.17.0
 
 ### Added
 
-* Implement `Reverse` and `TanhDistortion`. Thanks to atamazian.
+* Implement `BandPassFilter`, `HighPassFilter`, `LowPassFilter`, `Reverse` and `TanhDistortion`. Thanks to atamazian.
 
 ## v0.17.0 (2021-06-25)
 

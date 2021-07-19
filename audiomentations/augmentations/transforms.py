@@ -8,6 +8,8 @@ import warnings
 
 import librosa
 import numpy as np
+from pydub import AudioSegment
+from pydub.effects import low_pass_filter, high_pass_filter
 from scipy.signal import butter, sosfilt, convolve
 
 from audiomentations.core.audio_loading_utils import load_sound_file
@@ -18,6 +20,7 @@ from audiomentations.core.utils import (
     get_file_paths,
     convert_decibels_to_amplitude_ratio,
     convert_float_samples_to_int16,
+    convert_int16_samples_to_float
 )
 
 
@@ -1237,7 +1240,233 @@ class TanhDistortion(BaseWaveformTransform):
             distorted_samples = samples
         return distorted_samples
 
+    
+class LowPassFilter(BaseWaveformTransform):
+    """
+    Apply low-pass filtering to the input audio.
+    """
 
+    supports_multichannel = False
+    requires_sample_rate = True
+
+    def __init__(
+        self,
+        min_cutoff_freq=150,
+        max_cutoff_freq=7500,
+        p: float = 0.5,
+    ):
+        """
+        :param min_cutoff_freq: Minimum cutoff frequency in hertz
+        :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+
+        self.min_cutoff_freq = min_cutoff_freq
+        self.max_cutoff_freq = max_cutoff_freq
+        if self.min_cutoff_freq > self.max_cutoff_freq:
+            raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
+
+    def randomize_parameters(
+        self, samples: np.array, sample_rate: int = None
+    ):
+        """
+        :params samples: (num_channels, num_samples)
+        """
+        super().randomize_parameters(samples, sample_rate)
+
+        self.parameters["cutoff_freq"] = np.random.uniform(
+            low=self.min_cutoff_freq,
+            high=self.max_cutoff_freq
+        )
+
+    def apply(self, samples: np.array, sample_rate: int = None):
+        try:
+            import pydub
+        except ImportError:
+            print(
+                "Failed to import pydub. Maybe it is not installed? "
+                "To install the optional pydub dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` instead of"
+                " `pip install audiomentations`",
+                file=sys.stderr,
+            )
+            raise
+            
+        assert samples.dtype == np.float32
+        
+        int_samples = convert_float_samples_to_int16(samples)
+        
+        audio_segment = pydub.AudioSegment(
+            int_samples.tobytes(),
+            frame_rate=sample_rate,
+            sample_width=int_samples.dtype.itemsize,
+            channels=1,
+        )
+
+        audio_segment = pydub.effects.low_pass_filter(
+            audio_segment, self.parameters["cutoff_freq"]
+        )
+        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
+        return samples
+
+
+class HighPassFilter(BaseWaveformTransform):
+    """
+    Apply high-pass filtering to the input audio.
+    """
+
+    supports_multichannel = False
+    requires_sample_rate = True
+
+    def __init__(
+        self,
+        min_cutoff_freq=20,
+        max_cutoff_freq=2400,
+        p: float = 0.5
+    ):
+        """
+        :param min_cutoff_freq: Minimum cutoff frequency in hertz
+        :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+
+        self.min_cutoff_freq = min_cutoff_freq
+        self.max_cutoff_freq = max_cutoff_freq
+        if self.min_cutoff_freq > self.max_cutoff_freq:
+            raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
+
+    def randomize_parameters(
+        self, samples: np.array, sample_rate: int = None
+    ):
+        """
+        :params samples: (num_channels, num_samples)
+        """
+        super().randomize_parameters(samples, sample_rate)
+
+        self.parameters["cutoff_freq"] = np.random.uniform(
+            low=self.min_cutoff_freq,
+            high=self.max_cutoff_freq
+        )
+
+    def apply(self, samples: np.array, sample_rate: int = None):
+        try:
+            import pydub
+        except ImportError:
+            print(
+                "Failed to import pydub. Maybe it is not installed? "
+                "To install the optional pydub dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` instead of"
+                " `pip install audiomentations`",
+                file=sys.stderr,
+            )
+            raise
+            
+        assert samples.dtype == np.float32
+        
+        int_samples = convert_float_samples_to_int16(samples)
+        
+        audio_segment = pydub.AudioSegment(
+            int_samples.tobytes(),
+            frame_rate=sample_rate,
+            sample_width=int_samples.dtype.itemsize,
+            channels=1,
+        )
+
+        audio_segment = pydub.effects.high_pass_filter(
+            audio_segment, self.parameters["cutoff_freq"]
+        )
+        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
+        return samples
+
+
+class BandPassFilter(BaseWaveformTransform):
+    """
+    Apply band-pass filtering to the input audio.
+    """
+
+    supports_multichannel = False
+    requires_sample_rate = True
+
+    def __init__(
+        self,
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_q=1.0,
+        max_q=2.0,
+        p=0.5
+    ):
+        """
+        :param min_center_freq: Minimum center frequency in hertz
+        :param max_center_freq: Maximum center frequency in hertz
+        :param min_q: Minimum ratio of center frequency to bandwidth
+        :param max_q: Maximum ratio of center frequency to bandwidth
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+
+        self.min_center_freq = min_center_freq
+        self.max_center_freq = max_center_freq
+        self.min_q = min_q
+        self.max_q = max_q
+        if self.min_center_freq > self.max_center_freq:
+            raise ValueError("min_center_freq must not be greater than max_center_freq")
+        if self.min_q > self.max_q:
+            raise ValueError("min_q must not be greater than max_q")
+
+    def randomize_parameters(
+        self, samples: np.array, sample_rate: int = None
+    ):
+        """
+        :params samples: (num_channels, num_samples)
+        """
+        super().randomize_parameters(samples, sample_rate)
+
+        self.parameters["center_freq"] = np.random.uniform(
+            low=self.min_center_freq,
+            high=self.max_center_freq
+        )
+        self.parameters["q"] = np.random.uniform(
+            low=self.min_q,
+            high=self.max_q
+        )
+
+    def apply(self, samples: np.array, sample_rate: int = None):
+        try:
+            import pydub
+        except ImportError:
+            print(
+                "Failed to import pydub. Maybe it is not installed? "
+                "To install the optional pydub dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` instead of"
+                " `pip install audiomentations`",
+                file=sys.stderr,
+            )
+            raise
+            
+        assert samples.dtype == np.float32
+        
+        int_samples = convert_float_samples_to_int16(samples)
+        
+        audio_segment = pydub.AudioSegment(
+            int_samples.tobytes(),
+            frame_rate=sample_rate,
+            sample_width=int_samples.dtype.itemsize,
+            channels=1,
+        )
+
+        audio_segment = pydub.effects.low_pass_filter(
+            audio_segment, self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])
+        )
+        audio_segment = pydub.effects.high_pass_filter(
+            audio_segment, self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])
+        )
+        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
+
+        return samples   
+    
+    
 class Mp3Compression(BaseWaveformTransform):
     """Compress the audio using an MP3 encoder to lower the audio quality.
     This may help machine learning models deal with compressed, low-quality audio.

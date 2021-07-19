@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 from audiomentations.augmentations.transforms import BandPassFilter
 
+DEBUG = False
 
 class TestBandPassFilter(unittest.TestCase):
     def test_band_pass_filter(self):
@@ -27,6 +28,7 @@ class TestBandPassFilter(unittest.TestCase):
         self.assertEqual(processed_samples.shape, samples.shape)
         self.assertEqual(processed_samples.dtype, np.float32)
         
-        plt.plot(samples)
-        plt.plot(processed_samples, '-.')
-        plt.show()
+        if DEBUG:        
+            plt.plot(samples)
+            plt.plot(processed_samples, '-.')
+            plt.show()

@@ -1207,7 +1207,6 @@ class LowPassFilter(BaseWaveformTransform):
             )
             raise
             
-        assert len(samples.shape) == 1
         assert samples.dtype == np.float32
         
         int_samples = convert_float_samples_to_int16(samples)
@@ -1278,7 +1277,6 @@ class HighPassFilter(BaseWaveformTransform):
             )
             raise
             
-        assert len(samples.shape) == 1
         assert samples.dtype == np.float32
         
         int_samples = convert_float_samples_to_int16(samples)
@@ -1302,7 +1300,7 @@ class BandPassFilter(BaseWaveformTransform):
     Apply band-pass filtering to the input audio.
     """
 
-    supports_multichannel = True
+    supports_multichannel = False
     requires_sample_rate = True
 
     def __init__(
@@ -1361,7 +1359,6 @@ class BandPassFilter(BaseWaveformTransform):
             )
             raise
             
-        assert len(samples.shape) == 1
         assert samples.dtype == np.float32
         
         int_samples = convert_float_samples_to_int16(samples)

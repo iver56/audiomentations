@@ -171,7 +171,7 @@ See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 _To be added in v0.18.0_
 
 Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
-octave above the cutoff frequency, so this filter is fairly gentle.
+octave below the cutoff frequency, so this filter is fairly gentle.
 
 ## `LowPassFilter`
 

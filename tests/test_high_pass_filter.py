@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 from audiomentations.augmentations.transforms import HighPassFilter
 
+DEBUG = False
 
 class TestHighPassFilter(unittest.TestCase):
     def test_high_pass_filter(self):
@@ -23,6 +24,7 @@ class TestHighPassFilter(unittest.TestCase):
         self.assertEqual(processed_samples.shape, samples.shape)
         self.assertEqual(processed_samples.dtype, np.float32)
         
-        plt.plot(samples)
-        plt.plot(processed_samples, '-.')
-        plt.show()
+        if DEBUG:        
+            plt.plot(samples)
+            plt.plot(processed_samples, '-.')
+            plt.show()

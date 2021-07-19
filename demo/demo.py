@@ -25,7 +25,13 @@ from audiomentations import (
     LoudnessNormalization,
     Trim,
 )
-from audiomentations.augmentations.transforms import TanhDistortion, ApplyImpulseResponse
+from audiomentations.augmentations.transforms import (
+    LowPassFilter,
+    HighPassFilter,
+    BandPassFilter,
+    ApplyImpulseResponse,
+    Reverse,
+)
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
@@ -111,7 +117,9 @@ if __name__ == "__main__":
             "name": "AddGaussianSNRNew",
         },
         {
-            "instance": ApplyImpulseResponse(p=1.0, ir_path=os.path.join(DEMO_DIR, "ir")),
+            "instance": ApplyImpulseResponse(
+                p=1.0, ir_path=os.path.join(DEMO_DIR, "ir")
+            ),
             "num_runs": 1,
         },
         {
@@ -139,6 +147,7 @@ if __name__ == "__main__":
             ),
             "num_runs": 5,
         },
+        {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
         {
             "instance": FrequencyMask(
@@ -147,6 +156,8 @@ if __name__ == "__main__":
             "num_runs": 5,
         },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
+        {"instance": HighPassFilter(p=1.0), "num_runs": 5},
+        {"instance": LowPassFilter(p=1.0), "num_runs": 5},
         {
             "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
             "num_runs": 5,
@@ -165,6 +176,7 @@ if __name__ == "__main__":
         {"instance": Normalize(p=1.0), "num_runs": 1},
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
         {"instance": Resample(p=1.0), "num_runs": 5},
+        {"instance": Reverse(p=1.0), "num_runs": 1},
         {
             "instance": Shift(min_fraction=-0.5, max_fraction=0.5, fade=False, p=1.0),
             "num_runs": 5,

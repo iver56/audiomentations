@@ -1273,7 +1273,7 @@ class InterruptPulse(BaseWaveformTransform):
     ):
         super().randomize_parameters(samples, sample_rate)
 
-        self.parameters["num_interruptions"] = np.random.uniform(
+        self.parameters["num_interruptions"] = np.random.randint(
             low=self.min_num_interruptions,
             high=self.max_num_interruptions
         )
@@ -1283,7 +1283,7 @@ class InterruptPulse(BaseWaveformTransform):
         min_peak = np.min(samples).astype(int)
         num_samples = samples.shape[-1]
         
-        interruption_start_times = (num_samples * np.random.random(self.parameters["num_interruptions"])*4/5).astype(int)
+        interruption_start_times = (num_samples * np.random.randomself.parameters["num_interruptions"])*4/5).astype(int)
         for interruption in interruption_start_times:
             interruption_len = int(num_samples*np.random.random()//5)
             interruption_val = np.random.randint(min_peak, max_peak)

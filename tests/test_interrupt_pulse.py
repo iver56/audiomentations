@@ -11,7 +11,7 @@ DEBUG = False
 class TestInterruptPulse(unittest.TestCase):
     def test_interrupt_pulse(self):
         sample_rate = 16000
-        t = .25                # signal duration in sec
+        t = .5                 # signal duration in sec
         f = 500                # signal frequency in Hz
         samples = np.arange(t * f, dtype=np.float32) / sample_rate
         samples = np.sin(2 * np.pi * f * samples)

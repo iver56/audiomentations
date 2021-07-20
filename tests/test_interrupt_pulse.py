@@ -8,8 +8,8 @@ from audiomentations import InterruptPulse
 
 DEBUG = False
 
-class TestLowPassFilter(unittest.TestCase):
-    def test_low_pass_filter(self):
+class TestInterruptPulse(unittest.TestCase):
+    def test_interrupt_pulse(self):
         sample_rate = 16000
         t = .25                # signal duration in sec
         f = 500                # signal frequency in Hz

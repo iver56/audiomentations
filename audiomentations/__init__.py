@@ -10,6 +10,7 @@ from .augmentations.transforms import (
     ClippingDistortion,
     FrequencyMask,
     Gain,
+    InterruptPulse,
     LoudnessNormalization,
     Mp3Compression,
     Normalize,

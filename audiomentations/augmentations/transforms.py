@@ -1241,6 +1241,56 @@ class TanhDistortion(BaseWaveformTransform):
         return distorted_samples
 
     
+class InterruptPulse(BaseWaveformTransform):
+    """
+    Add interrupt pulses to the input audio.
+    """    
+    support_multichannel = False
+    
+    def __init__(
+        self,
+        min_num_interruptions: int = 0,
+        max_num_interruptions: int = 3,
+        noise_level: float = 100.,
+        p: float = 0.5
+    ):
+        """
+        :param min_num_interruptions: Minimum number of interruptions
+        :param max_num_interruptions: Maximum number of interruptions
+        :noise_level: Noise level
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+
+        self.min_num_interruptions = min_num_interruptions
+        self.max_num_interruptions = max_num_interruptions
+        self.noise_level = noise_level
+        if self.min_num_interruptions > self.max_num_interruptions:
+            raise ValueError("min_num_interruptions must not be greater than max_num_interruptions")
+            
+    def randomize_parameters(
+        self, samples: np.array, sample_rate: int = None
+    ):
+        super().randomize_parameters(samples, sample_rate)
+
+        self.parameters["num_interruptions"] = np.random.uniform(
+            low=self.min_num_interruptions,
+            high=self.max_num_interruptions
+        )
+        
+    def apply(self, samples: np.array, sample_rate: int = None):(audio_seg, max_num_interruptions, noise_level, p):
+        max_peak = np.max(samples).astype(int)
+        min_peak = np.min(samples).astype(int)
+        num_samples = samples.shape[-1]
+        
+        interruption_start_times = (num_samples * np.random.random(self.parameters["num_interruptions"])*4/5).astype(int)
+        for interruption in interruption_start_times:
+            interruption_len = int(num_samples*np.random.random()//5)
+            interruption_val = np.random.randint(min_peak, max_peak)
+            samples[interruption:interruption+interruption_len] = interruption_val+np.random.normal(0, 1, interruption_len)*self.noise_level
+        return samples
+
+    
 class LowPassFilter(BaseWaveformTransform):
     """
     Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per

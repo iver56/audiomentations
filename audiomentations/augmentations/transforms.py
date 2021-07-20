@@ -1278,7 +1278,7 @@ class InterruptPulse(BaseWaveformTransform):
             high=self.max_num_interruptions
         )
         
-    def apply(self, samples: np.array, sample_rate: int = None):(audio_seg, max_num_interruptions, noise_level, p):
+    def apply(self, samples: np.array, sample_rate: int = None):
         max_peak = np.max(samples).astype(int)
         min_peak = np.min(samples).astype(int)
         num_samples = samples.shape[-1]

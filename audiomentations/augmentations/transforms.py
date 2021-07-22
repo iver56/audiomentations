@@ -1279,6 +1279,7 @@ class InterruptPulse(BaseWaveformTransform):
         )
         
     def apply(self, samples: np.array, sample_rate: int = None):
+        samples = convert_float_samples_to_int16(samples)
         max_peak = np.max(samples).astype(int)
         min_peak = np.min(samples).astype(int)
         num_samples = samples.shape[-1]
@@ -1288,6 +1289,7 @@ class InterruptPulse(BaseWaveformTransform):
             interruption_len = int(num_samples*np.random.random()//5)
             interruption_val = np.random.randint(min_peak, max_peak)
             samples[interruption:interruption+interruption_len] = interruption_val+np.random.normal(0, 1, interruption_len)*self.noise_level
+        samples = convert_int16_samples_to_float(samples)
         return samples
 
     

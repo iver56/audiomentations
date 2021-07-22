@@ -1243,7 +1243,9 @@ class TanhDistortion(BaseWaveformTransform):
     
 class InterruptPulse(BaseWaveformTransform):
     """
-    Add interrupt pulses to the input audio.
+    Add interrupt pulses to the input audio. This can be used to simulate the signals when the ECG electrodes are in lead-off condition.
+    The function generates random number of flat pulses with some noise on it.
+    The pulses' amplitudes are between signal max-min range and pulses have random width.
     """    
     support_multichannel = False
     

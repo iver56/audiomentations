@@ -116,7 +116,7 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `BandPassFilter`
 
-_To be added in v0.18.0_
+_Added in v0.18.0_
 
 Apply band-pass filtering to the input audio. The filter steepness is 6 dB per octave.
 
@@ -168,14 +168,14 @@ See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
 ## `HighPassFilter`
 
-_To be added in v0.18.0_
+_Added in v0.18.0_
 
 Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
 octave below the cutoff frequency, so this filter is fairly gentle.
 
 ## `LowPassFilter`
 
-_To be added in v0.18.0_
+_Added in v0.18.0_
 
 Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
 octave above the cutoff frequency, so this filter is fairly gentle.
@@ -242,7 +242,7 @@ sampling rate and vice versa to do upsampling only.
 
 ## `Reverse`
 
-_To be added in v0.18.0_
+_Added in v0.18.0_
 
 Reverse the audio. Also known as time inversion. Inversion of an audio track along its time
 axis relates to the random flip of an image, which is an augmentation technique that is
@@ -258,7 +258,7 @@ Shift the samples forwards or backwards, with or without rollover
 
 ## `TanhDistortion`
 
-_To be added in v0.18.0_
+_To be added in v0.19.0_
 
 Apply tanh (hyperbolic tangent) distortion to the audio. This technique is sometimes
 used for adding distortion to guitar recordings. The tanh() function can give a rounded
@@ -320,7 +320,7 @@ Contributions are welcome!
 
 Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
 
-_The following table is valid for new versions of audiomentations, like >=0.17.0_
+_The following table is valid for new versions of audiomentations, like >=0.18.0_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
@@ -357,7 +357,13 @@ _The following table is valid for new versions of audiomentations, like >=0.17.0
 
 ### Added
 
-* Implement `BandPassFilter`, `HighPassFilter`, `LowPassFilter`, `Reverse` and `TanhDistortion`. Thanks to atamazian.
+* Implement `TanhDistortion`. Thanks to atamazian.
+
+## v0.18.0 (2021-08-05)
+
+### Added
+
+* Implement `BandPassFilter`, `HighPassFilter`, `LowPassFilter` and `Reverse`. Thanks to atamazian.
 
 ## v0.17.0 (2021-06-25)
 

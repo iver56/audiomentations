@@ -79,6 +79,11 @@ sound will be repeated, which may sound unnatural.
 Note that the gain of the added noise is relative to the amount of signal in the input. This
 implies that if the input is completely silent, no noise will be added.
 
+Here are some examples of datasets that can be downloaded and used as background noise:
+
+* https://github.com/karolpiczak/ESC-50#download
+* https://github.com/microsoft/DNS-Challenge/
+
 ## `AddGaussianNoise`
 
 _Added in v0.1.0_

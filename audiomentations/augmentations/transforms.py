@@ -888,6 +888,8 @@ class AddShortNoises(BaseWaveformTransform):
         max_snr_in_db=24,
         min_time_between_sounds=4.0,
         max_time_between_sounds=16.0,
+        noise_power=("relative", "absolute"),
+        absolute_noise_rms_db=-20,
         burst_probability=0.22,
         min_pause_factor_during_burst=0.1,
         max_pause_factor_during_burst=1.1,
@@ -907,6 +909,13 @@ class AddShortNoises(BaseWaveformTransform):
             sounds/noises will be louder.
         :param min_time_between_sounds: Minimum pause time between the added sounds/noises
         :param max_time_between_sounds: Maximum pause time between the added sounds/noises
+        :param noise_power: Defines how the noises will be added to the audio input. If the chosen
+        option is "relative", the power of the added noise will be proportional to the power of
+        the input sound. If the chosen option is "absolute", the added noises will all have the
+        same power independently of the power of the input.
+        :param absolute_noise_rms_db: Is only used if noise_power is set to "absolute". The rms in dB
+         of the added noises will be constant and equal to absolute_noise_rms_db. Recommended values
+        for this parameter range from -10 to -50 (or even less).
         :param burst_probability: The probability of adding an extra sound/noise that overlaps
         :param min_pause_factor_during_burst: Min value of how far into the current sound (as
             fraction) the burst sound should start playing. The value must be greater than 0.
@@ -943,6 +952,7 @@ class AddShortNoises(BaseWaveformTransform):
         assert min_fade_out_time >= 0.0
         assert max_fade_out_time >= 0.0
         assert min_fade_out_time <= max_fade_out_time
+        assert absolute_noise_rms_db < 0
 
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
@@ -955,6 +965,8 @@ class AddShortNoises(BaseWaveformTransform):
         self.max_fade_in_time = max_fade_in_time
         self.min_fade_out_time = min_fade_out_time
         self.max_fade_out_time = max_fade_out_time
+        self.noise_power = noise_power
+        self.absolute_noise_rms_db = absolute_noise_rms_db
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddShortNoises.__load_sound
         )
@@ -1074,7 +1086,7 @@ class AddShortNoises(BaseWaveformTransform):
             noise_gain[-fade_out_mask.shape[0] :] = np.minimum(
                 noise_gain[-fade_out_mask.shape[0] :], fade_out_mask
             )
-            noise_samples = noise_samples * noise_gain
+            noise_samples = noise_samples * noise_gain  # Gain here describes just the gain from the fade in and fade out.
 
             start_sample_index = int(sound_params["start"] * sample_rate)
             end_sample_index = start_sample_index + len(noise_samples)
@@ -1095,16 +1107,30 @@ class AddShortNoises(BaseWaveformTransform):
 
             clean_rms = calculate_rms(samples[start_sample_index:end_sample_index])
             noise_rms = calculate_rms(noise_samples)
+
             if noise_rms > 0:
-                desired_noise_rms = calculate_desired_noise_rms(
-                    clean_rms, sound_params["snr_in_db"]
-                )
+                if self.noise_power == "relative":
 
-                # Adjust the noise to match the desired noise RMS
-                noise_samples = noise_samples * (desired_noise_rms / noise_rms)
+                    desired_noise_rms = calculate_desired_noise_rms(
+                        clean_rms, sound_params["snr_in_db"]
+                    )
 
-                noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+                    # Adjust the noise to match the desired noise RMS
+                    noise_samples = noise_samples * (desired_noise_rms / noise_rms)
 
+                    noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+                if self.noise_power == "absolute":
+                    desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(self.absolute_noise_rms_db)
+                    gain = desired_noise_rms_amp / noise_rms
+                    noise_samples = noise_samples * gain
+
+                    max_noise_samples = np.amax(np.abs(noise_samples))
+
+                    if max_noise_samples > 1:  # Not optimal, since this will change the rms. Happens primarily to
+                        # noise bursts.
+                        noise_samples = noise_samples / max_noise_samples
+
+                    noise_placeholder[start_sample_index:end_sample_index] += noise_samples
         # Return a mix of the input sound and the added sounds
         return samples + noise_placeholder
 

@@ -28,6 +28,7 @@ class TestAddShortNoises(unittest.TestCase):
                     sounds_path=os.path.join(DEMO_DIR, "short_noises"),
                     min_time_between_sounds=2.0,
                     max_time_between_sounds=8.0,
+                    noise_power="absolute",
                     p=1.0,
                 )
             ]
@@ -54,6 +55,7 @@ class TestAddShortNoises(unittest.TestCase):
                     sounds_path=os.path.join(DEMO_DIR, "short_noises"),
                     min_time_between_sounds=0.00001,
                     max_time_between_sounds=0.00002,
+                    noise_power="absolute",
                     p=1.0,
                 )
             ]
@@ -73,6 +75,7 @@ class TestAddShortNoises(unittest.TestCase):
             sounds_path=os.path.join(DEMO_DIR, "silence"),
             min_time_between_sounds=0.001,
             max_time_between_sounds=0.002,
+            noise_power="absolute",
             p=1.0,
         )
 
@@ -112,6 +115,7 @@ class TestAddShortNoises(unittest.TestCase):
                     max_fade_in_time=0.99,
                     min_fade_out_time=0.9,
                     max_fade_out_time=0.99,
+                    noise_power="absolute",
                     p=1.0,
                 )
             ]
@@ -142,6 +146,7 @@ class TestAddShortNoises(unittest.TestCase):
                     sounds_path=os.path.join(DEMO_DIR, "short_noises"),
                     min_time_between_sounds=2.0,
                     max_time_between_sounds=8.0,
+                    noise_power="absolute",
                     p=1.0,
                 )
             ]

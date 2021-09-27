@@ -20,7 +20,7 @@ from audiomentations.core.utils import (
     get_file_paths,
     convert_decibels_to_amplitude_ratio,
     convert_float_samples_to_int16,
-    convert_int16_samples_to_float
+    convert_int16_samples_to_float,
 )
 
 
@@ -281,7 +281,9 @@ class AddGaussianSNR(BaseWaveformTransform):
                     min_snr = self.min_SNR
                     max_snr = self.max_SNR
                     std = np.std(samples)
-                    self.parameters["noise_std"] = random.uniform(min_snr * std, max_snr * std)
+                    self.parameters["noise_std"] = random.uniform(
+                        min_snr * std, max_snr * std
+                    )
             else:
                 # Pick snr in decibel scale
                 snr = random.uniform(self.min_snr_in_db, self.max_snr_in_db)
@@ -494,10 +496,9 @@ class Shift(BaseWaveformTransform):
                 )
                 fade_in_length = fade_in_end - fade_in_start
 
-                shifted_samples[
-                    ...,
-                    fade_in_start:fade_in_end,
-                ] *= fade_in[:fade_in_length]
+                shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
+                    :fade_in_length
+                ]
 
                 if self.rollover:
 
@@ -530,10 +531,9 @@ class Shift(BaseWaveformTransform):
                         shifted_samples.shape[-1],
                     )
                     fade_in_length = fade_in_end - fade_in_start
-                    shifted_samples[
-                        ...,
-                        fade_in_start:fade_in_end,
-                    ] *= fade_in[:fade_in_length]
+                    shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
+                        :fade_in_length
+                    ]
 
         return shifted_samples
 
@@ -888,8 +888,9 @@ class AddShortNoises(BaseWaveformTransform):
         max_snr_in_db=24,
         min_time_between_sounds=4.0,
         max_time_between_sounds=16.0,
-        noise_power=("relative", "absolute"),
-        absolute_noise_rms_db=-20,
+        noise_power="relative",
+        min_absolute_noise_rms_db=-50,
+        max_absolute_noise_rms_db=-10,
         burst_probability=0.22,
         min_pause_factor_during_burst=0.1,
         max_pause_factor_during_burst=1.1,
@@ -910,12 +911,14 @@ class AddShortNoises(BaseWaveformTransform):
         :param min_time_between_sounds: Minimum pause time between the added sounds/noises
         :param max_time_between_sounds: Maximum pause time between the added sounds/noises
         :param noise_power: Defines how the noises will be added to the audio input. If the chosen
-        option is "relative", the power of the added noise will be proportional to the power of
-        the input sound. If the chosen option is "absolute", the added noises will all have the
-        same power independently of the power of the input.
-        :param absolute_noise_rms_db: Is only used if noise_power is set to "absolute". The rms in dB
-         of the added noises will be constant and equal to absolute_noise_rms_db. Recommended values
-        for this parameter range from -10 to -50 (or even less).
+            option is "relative", the power of the added noise will be proportional to the power of
+            the input sound. If the chosen option is "absolute", the added noises will all have the
+            same power independently of the power of the input.
+        :param min_absolute_noise_rms_db: Is only used if noise_power is set to "absolute". It is
+            the minimum rms value in dB that the added noise can take. The lower the rms is, the
+            lower will the added sound be.
+        :param max_absolute_noise_rms_db: Is only used if noise_power is set to "absolute". It is
+            the maximum rms value in dB that the added noise can take.
         :param burst_probability: The probability of adding an extra sound/noise that overlaps
         :param min_pause_factor_during_burst: Min value of how far into the current sound (as
             fraction) the burst sound should start playing. The value must be greater than 0.
@@ -952,7 +955,7 @@ class AddShortNoises(BaseWaveformTransform):
         assert min_fade_out_time >= 0.0
         assert max_fade_out_time >= 0.0
         assert min_fade_out_time <= max_fade_out_time
-        assert absolute_noise_rms_db < 0
+        assert min_absolute_noise_rms_db <= max_absolute_noise_rms_db < 0
 
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
@@ -966,7 +969,8 @@ class AddShortNoises(BaseWaveformTransform):
         self.min_fade_out_time = min_fade_out_time
         self.max_fade_out_time = max_fade_out_time
         self.noise_power = noise_power
-        self.absolute_noise_rms_db = absolute_noise_rms_db
+        self.min_absolute_noise_rms_db = min_absolute_noise_rms_db
+        self.max_absolute_noise_rms_db = max_absolute_noise_rms_db
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddShortNoises.__load_sound
         )
@@ -1011,6 +1015,10 @@ class AddShortNoises(BaseWaveformTransform):
                         "snr_in_db": random.uniform(
                             self.min_snr_in_db, self.max_snr_in_db
                         ),
+                        "rms_in_db": random.uniform(
+                            self.min_absolute_noise_rms_db,
+                            self.max_absolute_noise_rms_db,
+                        ),
                     }
                 )
 
@@ -1052,6 +1060,10 @@ class AddShortNoises(BaseWaveformTransform):
                             "snr_in_db": random.uniform(
                                 self.min_snr_in_db, self.max_snr_in_db
                             ),
+                            "rms_in_db": random.uniform(
+                                self.min_absolute_noise_rms_db,
+                                self.max_absolute_noise_rms_db,
+                            ),
                         }
                     )
 
@@ -1086,7 +1098,9 @@ class AddShortNoises(BaseWaveformTransform):
             noise_gain[-fade_out_mask.shape[0] :] = np.minimum(
                 noise_gain[-fade_out_mask.shape[0] :], fade_out_mask
             )
-            noise_samples = noise_samples * noise_gain  # Gain here describes just the gain from the fade in and fade out.
+            noise_samples = (
+                noise_samples * noise_gain
+            )  # Gain here describes just the gain from the fade in and fade out.
 
             start_sample_index = int(sound_params["start"] * sample_rate)
             end_sample_index = start_sample_index + len(noise_samples)
@@ -1118,19 +1132,20 @@ class AddShortNoises(BaseWaveformTransform):
                     # Adjust the noise to match the desired noise RMS
                     noise_samples = noise_samples * (desired_noise_rms / noise_rms)
 
-                    noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+                    noise_placeholder[
+                        start_sample_index:end_sample_index
+                    ] += noise_samples
                 if self.noise_power == "absolute":
-                    desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(self.absolute_noise_rms_db)
+                    desired_noise_rms_db = sound_params["rms_in_db"]
+                    desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
+                        desired_noise_rms_db
+                    )
                     gain = desired_noise_rms_amp / noise_rms
                     noise_samples = noise_samples * gain
 
-                    max_noise_samples = np.amax(np.abs(noise_samples))
-
-                    if max_noise_samples > 1:  # Not optimal, since this will change the rms. Happens primarily to
-                        # noise bursts.
-                        noise_samples = noise_samples / max_noise_samples
-
-                    noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+                    noise_placeholder[
+                        start_sample_index:end_sample_index
+                    ] += noise_samples
         # Return a mix of the input sound and the added sounds
         return samples + noise_placeholder
 
@@ -1201,8 +1216,8 @@ class Gain(BaseWaveformTransform):
 
     def apply(self, samples, sample_rate):
         return samples * self.parameters["amplitude_ratio"]
-    
-    
+
+
 class Reverse(BaseWaveformTransform):
     """
     Reverse the audio. Also known as time inversion. Inversion of an audio track along its time
@@ -1212,15 +1227,15 @@ class Reverse(BaseWaveformTransform):
     AudioCLIP: Extending CLIP to Image, Text and Audio
     https://arxiv.org/pdf/2106.13043.pdf
     """
-    
+
     supports_multichannel = True
-    
+
     def __init__(self, p=0.5):
         """
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        
+
     def apply(self, samples, sample_rate):
         if len(samples.shape) > 1:
             return np.fliplr(samples)
@@ -1271,7 +1286,7 @@ class TanhDistortion(BaseWaveformTransform):
             distorted_samples = samples
         return distorted_samples
 
-    
+
 class LowPassFilter(BaseWaveformTransform):
     """
     Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
@@ -1281,10 +1296,7 @@ class LowPassFilter(BaseWaveformTransform):
     supports_multichannel = False
 
     def __init__(
-        self,
-        min_cutoff_freq=150,
-        max_cutoff_freq=7500,
-        p: float = 0.5,
+        self, min_cutoff_freq=150, max_cutoff_freq=7500, p: float = 0.5,
     ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
@@ -1298,14 +1310,11 @@ class LowPassFilter(BaseWaveformTransform):
         if self.min_cutoff_freq > self.max_cutoff_freq:
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
-    def randomize_parameters(
-        self, samples: np.array, sample_rate: int = None
-    ):
+    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
         super().randomize_parameters(samples, sample_rate)
 
         self.parameters["cutoff_freq"] = np.random.uniform(
-            low=self.min_cutoff_freq,
-            high=self.max_cutoff_freq
+            low=self.min_cutoff_freq, high=self.max_cutoff_freq
         )
 
     def apply(self, samples: np.array, sample_rate: int = None):
@@ -1320,11 +1329,11 @@ class LowPassFilter(BaseWaveformTransform):
                 file=sys.stderr,
             )
             raise
-            
+
         assert samples.dtype == np.float32
-        
+
         int_samples = convert_float_samples_to_int16(samples)
-        
+
         audio_segment = pydub.AudioSegment(
             int_samples.tobytes(),
             frame_rate=sample_rate,
@@ -1335,7 +1344,9 @@ class LowPassFilter(BaseWaveformTransform):
         audio_segment = pydub.effects.low_pass_filter(
             audio_segment, self.parameters["cutoff_freq"]
         )
-        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
+        samples = convert_int16_samples_to_float(
+            np.array(audio_segment.get_array_of_samples())
+        )
         return samples
 
 
@@ -1347,12 +1358,7 @@ class HighPassFilter(BaseWaveformTransform):
 
     supports_multichannel = False
 
-    def __init__(
-        self,
-        min_cutoff_freq=20,
-        max_cutoff_freq=2400,
-        p: float = 0.5
-    ):
+    def __init__(self, min_cutoff_freq=20, max_cutoff_freq=2400, p: float = 0.5):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
@@ -1365,14 +1371,11 @@ class HighPassFilter(BaseWaveformTransform):
         if self.min_cutoff_freq > self.max_cutoff_freq:
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
-    def randomize_parameters(
-        self, samples: np.array, sample_rate: int = None
-    ):
+    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
         super().randomize_parameters(samples, sample_rate)
 
         self.parameters["cutoff_freq"] = np.random.uniform(
-            low=self.min_cutoff_freq,
-            high=self.max_cutoff_freq
+            low=self.min_cutoff_freq, high=self.max_cutoff_freq
         )
 
     def apply(self, samples: np.array, sample_rate: int = None):
@@ -1387,11 +1390,11 @@ class HighPassFilter(BaseWaveformTransform):
                 file=sys.stderr,
             )
             raise
-            
+
         assert samples.dtype == np.float32
-        
+
         int_samples = convert_float_samples_to_int16(samples)
-        
+
         audio_segment = pydub.AudioSegment(
             int_samples.tobytes(),
             frame_rate=sample_rate,
@@ -1402,7 +1405,9 @@ class HighPassFilter(BaseWaveformTransform):
         audio_segment = pydub.effects.high_pass_filter(
             audio_segment, self.parameters["cutoff_freq"]
         )
-        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
+        samples = convert_int16_samples_to_float(
+            np.array(audio_segment.get_array_of_samples())
+        )
         return samples
 
 
@@ -1414,12 +1419,7 @@ class BandPassFilter(BaseWaveformTransform):
     supports_multichannel = False
 
     def __init__(
-        self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_q=1.0,
-        max_q=2.0,
-        p=0.5
+        self, min_center_freq=100.0, max_center_freq=1000.0, min_q=1.0, max_q=2.0, p=0.5
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
@@ -1439,19 +1439,13 @@ class BandPassFilter(BaseWaveformTransform):
         if self.min_q > self.max_q:
             raise ValueError("min_q must not be greater than max_q")
 
-    def randomize_parameters(
-        self, samples: np.array, sample_rate: int = None
-    ):
+    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
         super().randomize_parameters(samples, sample_rate)
 
         self.parameters["center_freq"] = np.random.uniform(
-            low=self.min_center_freq,
-            high=self.max_center_freq
+            low=self.min_center_freq, high=self.max_center_freq
         )
-        self.parameters["q"] = np.random.uniform(
-            low=self.min_q,
-            high=self.max_q
-        )
+        self.parameters["q"] = np.random.uniform(low=self.min_q, high=self.max_q)
 
     def apply(self, samples: np.array, sample_rate: int = None):
         try:
@@ -1465,11 +1459,11 @@ class BandPassFilter(BaseWaveformTransform):
                 file=sys.stderr,
             )
             raise
-            
+
         assert samples.dtype == np.float32
-        
+
         int_samples = convert_float_samples_to_int16(samples)
-        
+
         audio_segment = pydub.AudioSegment(
             int_samples.tobytes(),
             frame_rate=sample_rate,
@@ -1478,16 +1472,20 @@ class BandPassFilter(BaseWaveformTransform):
         )
 
         audio_segment = pydub.effects.low_pass_filter(
-            audio_segment, self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])
+            audio_segment,
+            self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"]),
         )
         audio_segment = pydub.effects.high_pass_filter(
-            audio_segment, self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])
+            audio_segment,
+            self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"]),
         )
-        samples = convert_int16_samples_to_float(np.array(audio_segment.get_array_of_samples()))
+        samples = convert_int16_samples_to_float(
+            np.array(audio_segment.get_array_of_samples())
+        )
 
-        return samples   
-    
-    
+        return samples
+
+
 class Mp3Compression(BaseWaveformTransform):
     """Compress the audio using an MP3 encoder to lower the audio quality.
     This may help machine learning models deal with compressed, low-quality audio.

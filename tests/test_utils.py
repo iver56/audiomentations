@@ -7,6 +7,7 @@ from audiomentations.core.utils import (
     convert_decibels_to_amplitude_ratio,
     get_file_paths,
     calculate_rms,
+    calculate_rms_without_silence,
 )
 from demo.demo import DEMO_DIR
 
@@ -40,3 +41,12 @@ class TestUtils(unittest.TestCase):
         )
         rms = calculate_rms(samples_in)
         self.assertAlmostEqual(rms, 0.287, delta=0.01)
+
+    def test_calculate_rms_without_silence(self):
+        sample_rate = 48000
+        samples_in = np.zeros(int(2.001 * sample_rate))
+        samples_in[0:sample_rate] = 0.4 * np.ones(sample_rate)
+        rms_before = calculate_rms(samples_in)
+        rms_after = calculate_rms_without_silence(samples_in, sample_rate)
+        self.assertGreater(rms_after, rms_before)
+        self.assertAlmostEqual(rms_after, 0.4)

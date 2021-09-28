@@ -16,6 +16,7 @@ from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
     calculate_rms,
+    calculate_rms_without_silence,
     calculate_desired_noise_rms,
     get_file_paths,
     convert_decibels_to_amplitude_ratio,
@@ -1120,7 +1121,7 @@ class AddShortNoises(BaseWaveformTransform):
                 end_sample_index = num_samples
 
             clean_rms = calculate_rms(samples[start_sample_index:end_sample_index])
-            noise_rms = calculate_rms(noise_samples)
+            noise_rms = calculate_rms_without_silence(noise_samples, sample_rate)
 
             if noise_rms > 0:
                 if self.noise_power == "relative":

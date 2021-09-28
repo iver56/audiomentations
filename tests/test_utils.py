@@ -44,7 +44,7 @@ class TestUtils(unittest.TestCase):
 
     def test_calculate_rms_without_silence(self):
         sample_rate = 48000
-        samples_in = np.zeros(int(2.001 * sample_rate))
+        samples_in = np.zeros(int(2.0022 * sample_rate))
         samples_in[0:sample_rate] = 0.4 * np.ones(sample_rate)
         rms_before = calculate_rms(samples_in)
         rms_after = calculate_rms_without_silence(samples_in, sample_rate)

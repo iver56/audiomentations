@@ -52,25 +52,12 @@ def calculate_rms_without_silence(samples, sample_rate):
         )
         current_time += window
 
-    # Cut the samples after the last whole segment (anyway, it's very often just silence)
-    samples = samples[0:current_time]
-    rms_threshold = (
-        np.max(rms_all_windows) / 25
-    )  # All the time segments whose rms value is below this threshold will be discarded
+    rms_threshold = np.max(rms_all_windows) / 25
 
     # The segments with a too low rms are identified and discarded
-    mask = np.ones(len(samples))
-    segments_discarded = np.where(rms_all_windows < rms_threshold)[0]
-
-    for segment in segments_discarded:
-        print(segment)
-        mask[int(segment * window) : int((segment + 1) * window)] = np.array(
-            [np.nan for _ in range(window)]
-        )
-
-    samples = np.multiply(samples, mask)
-    samples_noise_only = samples[~np.isnan(samples)]
-    return calculate_rms(samples_noise_only)
+    rms_all_windows = rms_all_windows[rms_all_windows > rms_threshold]
+    # Beware that each window must have the same number of samples so that this calculation of the rms is valid.
+    return calculate_rms(rms_all_windows)
 
 
 def calculate_desired_noise_rms(clean_rms, snr):

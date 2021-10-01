@@ -889,9 +889,10 @@ class AddShortNoises(BaseWaveformTransform):
         max_snr_in_db=24,
         min_time_between_sounds=4.0,
         max_time_between_sounds=16.0,
-        noise_power="relative",
+        noise_rms="relative",
         min_absolute_noise_rms_db=-50,
         max_absolute_noise_rms_db=-10,
+        include_silence_in_noise_rms_estimation=True,
         burst_probability=0.22,
         min_pause_factor_during_burst=0.1,
         max_pause_factor_during_burst=1.1,
@@ -911,15 +912,20 @@ class AddShortNoises(BaseWaveformTransform):
             sounds/noises will be louder.
         :param min_time_between_sounds: Minimum pause time between the added sounds/noises
         :param max_time_between_sounds: Maximum pause time between the added sounds/noises
-        :param noise_power: Defines how the noises will be added to the audio input. If the chosen
-            option is "relative", the power of the added noise will be proportional to the power of
-            the input sound. If the chosen option is "absolute", the added noises will all have the
-            same power independently of the power of the input.
-        :param min_absolute_noise_rms_db: Is only used if noise_power is set to "absolute". It is
+        :param noise_rms: Defines how the noises will be added to the audio input. If the chosen
+            option is "relative", the rms of the added noise will be proportional to the rms of
+            the input sound. If the chosen option is "absolute", the added noises will have
+            a rms independent of the rms of the input audio file.
+        :param min_absolute_noise_rms_db: Is only used if noise_rms is set to "absolute". It is
             the minimum rms value in dB that the added noise can take. The lower the rms is, the
             lower will the added sound be.
-        :param max_absolute_noise_rms_db: Is only used if noise_power is set to "absolute". It is
-            the maximum rms value in dB that the added noise can take.
+        :param max_absolute_noise_rms_db: Is only used if noise_rms is set to "absolute". It is
+            the maximum rms value in dB that the added noise can take. Note that this value
+            can not exceed 0.
+        :param include_silence_in_noise_rms_estimation: A boolean. It chooses how the rms of
+            the noises to be added will be calculated. If this option is set to False, the silence
+            in the noise files will be removed before the rms calculation. It is useful for
+            non-stationary noises where silent periods occur.
         :param burst_probability: The probability of adding an extra sound/noise that overlaps
         :param min_pause_factor_during_burst: Min value of how far into the current sound (as
             fraction) the burst sound should start playing. The value must be greater than 0.
@@ -957,6 +963,7 @@ class AddShortNoises(BaseWaveformTransform):
         assert max_fade_out_time >= 0.0
         assert min_fade_out_time <= max_fade_out_time
         assert min_absolute_noise_rms_db <= max_absolute_noise_rms_db < 0
+        assert type(include_silence_in_noise_rms_estimation) == bool
 
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
@@ -969,9 +976,12 @@ class AddShortNoises(BaseWaveformTransform):
         self.max_fade_in_time = max_fade_in_time
         self.min_fade_out_time = min_fade_out_time
         self.max_fade_out_time = max_fade_out_time
-        self.noise_power = noise_power
+        self.noise_rms = noise_rms
         self.min_absolute_noise_rms_db = min_absolute_noise_rms_db
         self.max_absolute_noise_rms_db = max_absolute_noise_rms_db
+        self.include_silence_in_noise_rms_estimation = (
+            include_silence_in_noise_rms_estimation
+        )
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddShortNoises.__load_sound
         )
@@ -1121,10 +1131,14 @@ class AddShortNoises(BaseWaveformTransform):
                 end_sample_index = num_samples
 
             clean_rms = calculate_rms(samples[start_sample_index:end_sample_index])
-            noise_rms = calculate_rms_without_silence(noise_samples, sample_rate)
+
+            if self.include_silence_in_noise_rms_estimation:
+                noise_rms = calculate_rms(noise_samples)
+            else:
+                noise_rms = calculate_rms_without_silence(noise_samples, sample_rate)
 
             if noise_rms > 0:
-                if self.noise_power == "relative":
+                if self.noise_rms == "relative":
 
                     desired_noise_rms = calculate_desired_noise_rms(
                         clean_rms, sound_params["snr_in_db"]
@@ -1136,7 +1150,7 @@ class AddShortNoises(BaseWaveformTransform):
                     noise_placeholder[
                         start_sample_index:end_sample_index
                     ] += noise_samples
-                if self.noise_power == "absolute":
+                if self.noise_rms == "absolute":
                     desired_noise_rms_db = sound_params["rms_in_db"]
                     desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
                         desired_noise_rms_db

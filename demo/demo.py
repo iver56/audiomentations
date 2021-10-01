@@ -134,7 +134,7 @@ if __name__ == "__main__":
                 max_snr_in_db=8,
                 min_absolute_noise_rms_db=-30,
                 max_absolute_noise_rms_db=-10,
-                noise_power="absolute",
+                noise_rms="absolute",
                 min_time_between_sounds=2.0,
                 max_time_between_sounds=4.0,
                 burst_probability=0.4,
@@ -147,7 +147,7 @@ if __name__ == "__main__":
                 p=1.0,
             ),
             "num_runs": 5,
-            "name": "AddShortNoisesAbsolute"
+            "name": "AddShortNoisesAbsolute",
         },
         {
             "instance": AddShortNoises(
@@ -156,7 +156,7 @@ if __name__ == "__main__":
                 max_snr_in_db=8,
                 min_absolute_noise_rms_db=-30,
                 max_absolute_noise_rms_db=-10,
-                noise_power="relative",
+                noise_rms="relative",
                 min_time_between_sounds=2.0,
                 max_time_between_sounds=4.0,
                 burst_probability=0.4,
@@ -169,7 +169,7 @@ if __name__ == "__main__":
                 p=1.0,
             ),
             "num_runs": 5,
-            "name": "AddShortNoisesRelative"
+            "name": "AddShortNoisesRelative",
         },
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},

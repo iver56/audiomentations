@@ -7,10 +7,10 @@ AUDIO_FILENAME_ENDINGS = (".aiff", ".flac", ".m4a", ".mp3", ".ogg", ".opus", ".w
 
 
 def get_file_paths(
-    root_path, 
-    filename_endings=AUDIO_FILENAME_ENDINGS, 
+    root_path,
+    filename_endings=AUDIO_FILENAME_ENDINGS,
     traverse_subdirectories=True,
-    follow_symlinks=True
+    follow_symlinks=True,
 ):
     """Return a list of paths to all files with the given filename extensions in a directory.
     Also traverses subdirectories by default.
@@ -35,6 +35,29 @@ def get_file_paths(
 def calculate_rms(samples):
     """Given a numpy array of audio samples, return its Root Mean Square (RMS)."""
     return np.sqrt(np.mean(np.square(samples)))
+
+
+def calculate_rms_without_silence(samples, sample_rate):
+    """
+    This function returns the rms of a given noise whose silent periods have been removed. This ensures
+    that the rms of the noise is not underestimated. Is most useful for short non-stationary noises.
+    """
+    window = int(0.025 * sample_rate)
+    rms_all_windows = np.zeros(len(samples) // window)
+    current_time = 0
+
+    while current_time < len(samples) - window:
+        rms_all_windows[current_time // window] += calculate_rms(
+            samples[current_time : current_time + window]
+        )
+        current_time += window
+
+    rms_threshold = np.max(rms_all_windows) / 25
+
+    # The segments with a too low rms are identified and discarded
+    rms_all_windows = rms_all_windows[rms_all_windows > rms_threshold]
+    # Beware that each window must have the same number of samples so that this calculation of the rms is valid.
+    return calculate_rms(rms_all_windows)
 
 
 def calculate_desired_noise_rms(clean_rms, snr):

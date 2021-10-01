@@ -183,3 +183,51 @@ class TestAddShortNoises(unittest.TestCase):
         pickled = pickle.dumps(transform)
         unpickled = pickle.loads(pickled)
         self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)
+
+    def test_absolute_parameter(self):
+        sample_rate = 44100
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
+            np.float32
+        )
+        rms_before = calculate_rms(samples)
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=8.0,
+                    noise_rms="absolute",
+                    p=1.0,
+                )
+            ]
+        )
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        self.assertEqual(samples_out.dtype, np.float32)
+        self.assertEqual(samples_out.shape, samples.shape)
+
+        rms_after = calculate_rms(samples_out)
+        self.assertGreater(rms_after, rms_before)
+
+    def test_include_silence_in_noise_rms_calculation(self):
+        sample_rate = 44100
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
+            np.float32
+        )
+        rms_before = calculate_rms(samples)
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=8.0,
+                    noise_rms="absolute",
+                    include_silence_in_noise_rms_estimation=False,
+                    p=1.0,
+                )
+            ]
+        )
+
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+
+        rms_after = calculate_rms(samples_out)
+        self.assertGreater(rms_after, rms_before)

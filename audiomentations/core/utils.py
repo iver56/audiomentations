@@ -42,7 +42,12 @@ def calculate_rms_without_silence(samples, sample_rate):
     This function returns the rms of a given noise whose silent periods have been removed. This ensures
     that the rms of the noise is not underestimated. Is most useful for short non-stationary noises.
     """
+
     window = int(0.025 * sample_rate)
+
+    if len(samples) < window:
+        return calculate_rms(samples)
+
     rms_all_windows = np.zeros(len(samples) // window)
     current_time = 0
 

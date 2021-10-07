@@ -50,3 +50,7 @@ class TestUtils(unittest.TestCase):
         rms_after = calculate_rms_without_silence(samples_in, sample_rate)
         self.assertGreater(rms_after, rms_before)
         self.assertAlmostEqual(rms_after, 0.4)
+
+        # Check that the function works if the input is shorter than a window (25 ms)
+        rms_short = calculate_rms_without_silence(samples_in[0:int(0.015*sample_rate)], sample_rate)
+        self.assertAlmostEqual(rms_short, 0.4)

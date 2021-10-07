@@ -45,13 +45,13 @@ def calculate_rms_without_silence(samples, sample_rate):
 
     window = int(0.025 * sample_rate)
 
-    if len(samples) < window:
+    if samples.shape[-1] < window:
         return calculate_rms(samples)
 
-    rms_all_windows = np.zeros(len(samples) // window)
+    rms_all_windows = np.zeros(samples.shape[-1] // window)
     current_time = 0
 
-    while current_time < len(samples) - window:
+    while current_time < samples.shape[-1] - window:
         rms_all_windows[current_time // window] += calculate_rms(
             samples[current_time : current_time + window]
         )

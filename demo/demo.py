@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import time
+from audiomentations.augmentations.transforms import TanhDistortion
 from scipy.io import wavfile
 
 from audiomentations import (
@@ -223,7 +224,7 @@ if __name__ == "__main__":
             "num_runs": 5,
             "name": "ShiftWithoutRolloverWithLongFade",
         },
-        # {"instance": TanhDistortion(p=1.0), "num_runs": 5},  # TODO: Uncomment this later
+        {"instance": TanhDistortion(p=1.0), "num_runs": 5},
         {"instance": TimeMask(p=1.0), "num_runs": 5},
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
         {"instance": Trim(p=1.0), "num_runs": 1},

@@ -363,6 +363,9 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 ### Added
 
 * Implement `TanhDistortion`. Thanks to atamazian.
+* Add a `noise_rms` parameter to `AddShortNoises`. It defaults to `relative`, which
+ is the old behavior. `absolute` allows for adding loud noises to parts that are
+ relatively silent in the input.
 
 ## v0.18.0 (2021-08-05)
 

@@ -21,6 +21,7 @@ from .augmentations.transforms import (
     Resample,
     Reverse,
     Shift,
+    TanhDistortion,
     TimeMask,
     TimeStretch,
     Trim,

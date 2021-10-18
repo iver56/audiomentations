@@ -28,4 +28,4 @@ from .augmentations.transforms import (
 )
 from .core.composition import Compose, SpecCompose
 
-__version__ = "0.18.0"
+__version__ = "0.19.0"

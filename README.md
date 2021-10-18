@@ -360,6 +360,8 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 
 ## Unreleased
 
+## v0.19.0 (2021-10-18)
+
 ### Added
 
 * Implement `TanhDistortion`. Thanks to atamazian and iver56.

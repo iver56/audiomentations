@@ -497,9 +497,10 @@ class Shift(BaseWaveformTransform):
                 )
                 fade_in_length = fade_in_end - fade_in_start
 
-                shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
-                    :fade_in_length
-                ]
+                shifted_samples[
+                    ...,
+                    fade_in_start:fade_in_end,
+                ] *= fade_in[:fade_in_length]
 
                 if self.rollover:
 
@@ -532,9 +533,10 @@ class Shift(BaseWaveformTransform):
                         shifted_samples.shape[-1],
                     )
                     fade_in_length = fade_in_end - fade_in_start
-                    shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
-                        :fade_in_length
-                    ]
+                    shifted_samples[
+                        ...,
+                        fade_in_start:fade_in_end,
+                    ] *= fade_in[:fade_in_length]
 
         return shifted_samples
 
@@ -1306,32 +1308,44 @@ class TanhDistortion(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_distortion_gain=1.0, max_distortion_gain=2.0, p=0.5):
+    def __init__(
+        self, min_distortion: float = 0.01, max_distortion: float = 0.7, p: float = 0.5
+    ):
         """
-        :param min_distortion_gain: Min pre-gain factor
-        :param max_distortion_gain: Max pre-gain factor
+        :param min_distortion: Minimum amount of distortion (between 0 and 1)
+        :param max_distortion: Maximum amount of distortion (between 0 and 1)
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        self.min_distortion_gain = min_distortion_gain
-        self.max_distortion_gain = max_distortion_gain
+        assert 0 <= min_distortion <= 1
+        assert 0 <= max_distortion <= 1
+        assert min_distortion <= max_distortion
+        self.min_distortion = min_distortion
+        self.max_distortion = max_distortion
 
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["max_amplitude"] = np.amax(np.abs(samples))
-            self.parameters["gain"] = random.uniform(
-                self.min_distortion_gain, self.max_distortion_gain
+            self.parameters["distortion_amount"] = random.uniform(
+                self.min_distortion, self.max_distortion
             )
 
     def apply(self, samples, sample_rate):
-        if self.parameters["max_amplitude"] > 0:
-            distorted_samples = np.tanh(self.parameters["gain"] * samples)
-            distorted_samples = (
-                calculate_rms(distorted_samples) / calculate_rms(samples)
-            ) * distorted_samples
-        else:
-            distorted_samples = samples
+        # Find out how much to pre-gain the audio to get a given amount of distortion
+        percentile = 100 - 99 * self.parameters["distortion_amount"]
+        threshold = np.percentile(abs(samples), percentile)
+        gain_factor = 0.5 / (threshold + 1e-6)
+
+        # Distort the audio
+        distorted_samples = np.tanh(gain_factor * samples)
+
+        # Scale the output so its loudness matches the input
+        rms_before = calculate_rms(samples)
+        if rms_before > 1e-9:
+            rms_after = calculate_rms(distorted_samples)
+            post_gain = rms_before / rms_after
+            distorted_samples = post_gain * distorted_samples
+
         return distorted_samples
 
 
@@ -1344,7 +1358,10 @@ class LowPassFilter(BaseWaveformTransform):
     supports_multichannel = False
 
     def __init__(
-        self, min_cutoff_freq=150, max_cutoff_freq=7500, p: float = 0.5,
+        self,
+        min_cutoff_freq=150,
+        max_cutoff_freq=7500,
+        p: float = 0.5,
     ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz

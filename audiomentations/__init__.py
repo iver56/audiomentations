@@ -21,10 +21,11 @@ from .augmentations.transforms import (
     Resample,
     Reverse,
     Shift,
+    TanhDistortion,
     TimeMask,
     TimeStretch,
     Trim,
 )
 from .core.composition import Compose, SpecCompose
 
-__version__ = "0.18.0"
+__version__ = "0.19.0"

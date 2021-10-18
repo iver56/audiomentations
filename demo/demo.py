@@ -4,7 +4,6 @@ from pathlib import Path
 
 import numpy as np
 import time
-from audiomentations.augmentations.transforms import TanhDistortion
 from scipy.io import wavfile
 
 from audiomentations import (
@@ -30,6 +29,7 @@ from audiomentations import (
     BandPassFilter,
     ApplyImpulseResponse,
     Reverse,
+    TanhDistortion,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (

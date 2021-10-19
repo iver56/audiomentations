@@ -780,11 +780,11 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def __init__(
         self,
         sounds_path=None,
+        min_snr_in_db=3,
+        max_snr_in_db=30,
         noise_rms="relative",
         min_absolute_rms_in_db=-45,
         max_absolute_rms_in_db=-15,
-        min_snr_in_db=3,
-        max_snr_in_db=30,
         p=0.5,
         lru_cache_size=2,
     ):

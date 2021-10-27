@@ -791,6 +791,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
         """
         :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
             files can be flac, mp3, ogg or wav.
+        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
+        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param noise_rms: Defines how the background noise will be added to the audio input. If the chosen
             option is "relative", the rms of the added noise will be proportional to the rms of
             the input sound. If the chosen option is "absolute", the background noise will have
@@ -801,8 +803,6 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param max_absolute_rms_in_db: Is only used if noise_rms is set to "absolute". It is
             the maximum rms value in dB that the added noise can take. Note that this value
             can not exceed 0.
-        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
-        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """

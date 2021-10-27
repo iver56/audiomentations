@@ -84,8 +84,8 @@ if __name__ == "__main__":
     output_dir = os.path.join(DEMO_DIR, "output")
     os.makedirs(output_dir, exist_ok=True)
 
-    np.random.seed(42)
-    random.seed(42)
+    np.random.seed(420)
+    random.seed(420)
 
     sound_file_paths = [
         Path(os.path.join(DEMO_DIR, "acoustic_guitar_0.wav")),
@@ -104,6 +104,8 @@ if __name__ == "__main__":
             "instance": AddBackgroundNoise(
                 sounds_path=os.path.join(DEMO_DIR, "background_noises"),
                 noise_rms="absolute",
+                min_absolute_rms_in_db=-30,
+                max_absolute_rms_in_db=-10,
                 p=1.0,
             ),
             "num_runs": 5,

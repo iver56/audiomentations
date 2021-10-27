@@ -98,6 +98,16 @@ if __name__ == "__main__":
                 sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
             ),
             "num_runs": 5,
+            "name": "AddBackgroundNoiseRelative",
+        },
+        {
+            "instance": AddBackgroundNoise(
+                sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+                noise_rms="absolute",
+                p=1.0,
+            ),
+            "num_runs": 5,
+            "name": "AddBackgroundNoiseAbsolute",
         },
         {
             "instance": AddGaussianNoise(

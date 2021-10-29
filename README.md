@@ -360,6 +360,13 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 
 ## Unreleased
 
+### Changed
+
+* Insert three new parameters in `AddBackgroundNoise`: `noise_rms` (defaults to "relative", which is 
+ the old behavior), `min_absolute_rms_in_db` and `max_absolute_rms_in_db`. This **may be a breaking
+ change** if you used `AddBackgroundNoise` with positional arguments in earlier versions of audiomentations!
+ Please use keyword arguments to be on the safe side - it should be backwards compatible then.
+
 ## v0.19.0 (2021-10-18)
 
 ### Added

@@ -112,7 +112,7 @@ class TestAddBackgroundNoise(unittest.TestCase):
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    noise_power="absolute",
+                    noise_rms="absolute",
                     p=1.0,
                 )
             ]

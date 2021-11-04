@@ -113,8 +113,8 @@ class OneOf(BaseCompose):
 
     ```
     augment = OneOf([
-        TimeStretch(min_rate=0.8, max_rate=1.25, p=0.5),
-        PitchShift(min_semitones=-4, max_semitones=4, p=0.5),
+        TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
+        PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
     ])
 
     # Generate 2 seconds of dummy audio for the sake of example
@@ -122,6 +122,8 @@ class OneOf(BaseCompose):
 
     # Augment/transform/perturb the audio data
     augmented_samples = augment(samples=samples, sample_rate=16000)
+
+    # Result: The audio was either time-stretched or pitch-shifted, but not both
     ```
     """
 

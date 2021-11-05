@@ -39,8 +39,6 @@ Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg down
 from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift, Shift
 import numpy as np
 
-SAMPLE_RATE = 16000
-
 augment = Compose([
     AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
     TimeStretch(min_rate=0.8, max_rate=1.25, p=0.5),
@@ -52,7 +50,7 @@ augment = Compose([
 samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
 
 # Augment/transform/perturb the audio data
-augmented_samples = augment(samples=samples, sample_rate=SAMPLE_RATE)
+augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
 Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see the waveform transforms you can apply, and what arguments they have.

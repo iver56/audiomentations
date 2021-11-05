@@ -2,10 +2,11 @@ import random
 
 
 class BaseCompose:
-    def __init__(self, transforms, p=1.0, shuffle=False):
+    def __init__(self, transforms, p: float = 1.0, shuffle: bool = False):
         self.transforms = transforms
         self.p = p
         self.shuffle = shuffle
+        self.are_parameters_frozen = False
 
         name_list = []
         for transform in self.transforms:
@@ -19,43 +20,72 @@ class BaseCompose:
         """
         Randomize and define parameters of every transform in composition.
         """
-        raise NotImplementedError
+        apply_to_children = kwargs.get("apply_to_children", True)
+        if apply_to_children:
+            if "apply_to_children" in kwargs:
+                del kwargs["apply_to_children"]
+            for transform in self.transforms:
+                transform.randomize_parameters(*args, **kwargs)
 
-    def freeze_parameters(self):
+    def freeze_parameters(self, apply_to_children=True):
         """
         Mark all parameters as frozen, i.e. do not randomize them for each call. This can be
         useful if you want to apply an effect chain with the exact same parameters to multiple
         sounds.
         """
-        for transform in self.transforms:
-            transform.freeze_parameters()
+        self.are_parameters_frozen = True
+        if apply_to_children:
+            for transform in self.transforms:
+                transform.freeze_parameters()
 
-    def unfreeze_parameters(self):
+    def unfreeze_parameters(self, apply_to_children=True):
         """
         Unmark all parameters as frozen, i.e. let them be randomized for each call.
         """
-        for transform in self.transforms:
-            transform.unfreeze_parameters()
+        self.are_parameters_frozen = False
+        if apply_to_children:
+            for transform in self.transforms:
+                transform.unfreeze_parameters()
 
 
 class Compose(BaseCompose):
-    # TODO: Name can change to WaveformCompose
+    """
+    Compose applies the given sequence of transforms when called,
+    optionally shuffling the sequence for every call.
+
+    Example usage:
+
+    ```
+    augment = Compose([
+        AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
+        TimeStretch(min_rate=0.8, max_rate=1.25, p=0.5),
+        PitchShift(min_semitones=-4, max_semitones=4, p=0.5),
+        Shift(min_fraction=-0.5, max_fraction=0.5, p=0.5),
+    ])
+
+    # Generate 2 seconds of dummy audio for the sake of example
+    samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
+
+    # Augment/transform/perturb the audio data
+    augmented_samples = augment(samples=samples, sample_rate=16000)
+    ```
+    """
+
     def __init__(self, transforms, p=1.0, shuffle=False):
-        super(Compose, self).__init__(transforms, p, shuffle)
+        super().__init__(transforms, p, shuffle)
 
     def __call__(self, samples, sample_rate):
         transforms = self.transforms.copy()
-        if random.random() < self.p:
+        should_apply = random.random() < self.p
+        # TODO: Adhere to self.are_parameters_frozen
+        # https://github.com/iver56/audiomentations/issues/135
+        if should_apply:
             if self.shuffle:
                 random.shuffle(transforms)
             for transform in transforms:
                 samples = transform(samples, sample_rate)
 
         return samples
-
-    def randomize_parameters(self, samples, sample_rate):
-        for transform in self.transforms:
-            transform.randomize_parameters(samples, sample_rate)
 
 
 class SpecCompose(BaseCompose):
@@ -64,7 +94,10 @@ class SpecCompose(BaseCompose):
 
     def __call__(self, magnitude_spectrogram):
         transforms = self.transforms.copy()
-        if random.random() < self.p:
+        should_apply = random.random() < self.p
+        # TODO: Adhere to self.are_parameters_frozen
+        # https://github.com/iver56/audiomentations/issues/135
+        if should_apply:
             if self.shuffle:
                 random.shuffle(transforms)
             for transform in transforms:
@@ -72,6 +105,54 @@ class SpecCompose(BaseCompose):
 
         return magnitude_spectrogram
 
-    def randomize_parameters(self, magnitude_spectrogram):
-        for transform in self.transforms:
-            transform.randomize_parameters(magnitude_spectrogram)
+
+class OneOf(BaseCompose):
+    """
+    OneOf randomly picks one of the given transforms when called, and applies that
+    transform.
+
+    Example usage:
+
+    ```
+    augment = OneOf([
+        TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
+        PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
+    ])
+
+    # Generate 2 seconds of dummy audio for the sake of example
+    samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
+
+    # Augment/transform/perturb the audio data
+    augmented_samples = augment(samples=samples, sample_rate=16000)
+
+    # Result: The audio was either time-stretched or pitch-shifted, but not both
+    ```
+    """
+
+    def __init__(self, transforms, p: float = 1.0):
+        super().__init__(transforms, p)
+        self.transform_index = 0
+        self.should_apply = True
+
+    def randomize_parameters(self, *args, **kwargs):
+        super().randomize_parameters(*args, **kwargs)
+        self.should_apply = random.random() < self.p
+        if self.should_apply:
+            self.transform_index = random.randint(0, len(self.transforms) - 1)
+
+    def __call__(self, *args, **kwargs):
+        if not self.are_parameters_frozen:
+            kwargs["apply_to_children"] = False
+            self.randomize_parameters(*args, **kwargs)
+
+        if self.should_apply:
+            if "apply_to_children" in kwargs:
+                del kwargs["apply_to_children"]
+            return self.transforms[self.transform_index](*args, **kwargs)
+
+        if "samples" in kwargs:
+            return kwargs["samples"]
+        elif "magnitude_spectrogram" in kwargs:
+            return kwargs["magnitude_spectrogram"]
+        else:
+            return args[0]

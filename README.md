@@ -358,6 +358,11 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 
 ## Unreleased
 
+### Added
+
+* Implement `OneOf` for applying one of many transforms. The transform is randomly
+ chosen every call. Inspired by augly.
+
 ### Changed
 
 * Insert three new parameters in `AddBackgroundNoise`: `noise_rms` (defaults to "relative", which is 

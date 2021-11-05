@@ -362,6 +362,8 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 
 * Implement `OneOf` for applying one of many transforms. The transform is randomly
  chosen every call. Inspired by augly.
+* Add a new argument `apply_to_children` (bool) in `randomize_parameters`,
+ `freeze_parameters` and `unfreeze_parameters` in `Compose` and `SpecCompose`.
 
 ### Changed
 

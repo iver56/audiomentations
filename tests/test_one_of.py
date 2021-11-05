@@ -42,7 +42,7 @@ class TestOneOf(unittest.TestCase):
             )
             assert num_transforms_applied == 1
 
-    def test_freeze_and_unfreeze_parameters(self):
+    def test_freeze_and_unfreeze_all_parameters(self):
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
         sample_rate = 44100
 
@@ -65,7 +65,28 @@ class TestOneOf(unittest.TestCase):
             for transform in augmenter.transforms:
                 self.assertFalse(transform.are_parameters_frozen)
 
-    def test_randomize_parameters_and_apply(self):
+    def test_freeze_and_unfreeze_own_parameters(self):
+        augmenter = OneOf(
+            [
+                Gain(p=1.0),
+                PolarityInversion(p=1.0),
+            ]
+        )
+        assert not augmenter.are_parameters_frozen
+        for transform in augmenter.transforms:
+            assert not transform.are_parameters_frozen
+
+        augmenter.freeze_parameters(apply_to_children=False)
+        assert augmenter.are_parameters_frozen
+        for transform in augmenter.transforms:
+            assert not transform.are_parameters_frozen
+
+        augmenter.unfreeze_parameters(apply_to_children=False)
+        assert not augmenter.are_parameters_frozen
+        for transform in augmenter.transforms:
+            assert not transform.are_parameters_frozen
+
+    def test_randomize_all_parameters_and_apply(self):
         samples = 1.0 / np.arange(1, 21, dtype=np.float32)
         sample_rate = 44100
 
@@ -95,6 +116,39 @@ class TestOneOf(unittest.TestCase):
 
         augmenter.unfreeze_parameters()
 
+        for transform_parameters, transform in zip(parameters, augmenter.transforms):
+            assert transform_parameters == transform.parameters
+            assert not transform.are_parameters_frozen
+
+    def test_randomize_only_own_parameters(self):
+        samples = 1.0 / np.arange(1, 21, dtype=np.float32)
+        sample_rate = 44100
+
+        augmenter = OneOf(
+            [
+                Gain(p=1.0),
+                PolarityInversion(p=1.0),
+            ]
+        )
+        augmenter.randomize_parameters(samples, sample_rate, apply_to_children=True)
+        own_parameters_before = (augmenter.should_apply, augmenter.transform_index)
+
+        parameters = [transform.parameters for transform in augmenter.transforms]
+
+        own_parameters_changed = False
+        for i in range(30):
+            augmenter.randomize_parameters(
+                samples, sample_rate, apply_to_children=False
+            )
+            if (
+                augmenter.should_apply,
+                augmenter.transform_index,
+            ) != own_parameters_before:
+                own_parameters_changed = True
+                break
+        assert own_parameters_changed
+
+        # Check that the children's parameters are still the same
         for transform_parameters, transform in zip(parameters, augmenter.transforms):
             assert transform_parameters == transform.parameters
             assert not transform.are_parameters_frozen

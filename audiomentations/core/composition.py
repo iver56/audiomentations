@@ -22,6 +22,8 @@ class BaseCompose:
         """
         apply_to_children = kwargs.get("apply_to_children", True)
         if apply_to_children:
+            if "apply_to_children" in kwargs:
+                del kwargs["apply_to_children"]
             for transform in self.transforms:
                 transform.randomize_parameters(*args, **kwargs)
 
@@ -140,9 +142,12 @@ class OneOf(BaseCompose):
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:
-            self.randomize_parameters(apply_to_children=False)
+            kwargs["apply_to_children"] = False
+            self.randomize_parameters(*args, **kwargs)
 
         if self.should_apply:
+            if "apply_to_children" in kwargs:
+                del kwargs["apply_to_children"]
             return self.transforms[self.transform_index](*args, **kwargs)
 
         if "samples" in kwargs:

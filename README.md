@@ -70,8 +70,8 @@ augment = SpecCompose(
     ]
 )
 
-# Generate a 256x256 spectrogram with 2 audio channels for the sake of example
-spectrogram = np.random.random((256, 256, 2))
+# Example spectrogram with 1025 frequency bins, 256 time steps and 2 audio channels
+spectrogram = np.random.random((1025, 256, 2))
 
 # Augment/transform/perturb the spectrogram
 augmented_spectrogram = augment(spectrogram)

@@ -30,6 +30,7 @@ class SpecFrequencyMask(BaseSpectrogramTransform):
         assert fill_mode in ("mean", "constant")
         self.fill_mode = fill_mode
         self.fill_constant = fill_constant
+        self.name = "SpecFrequencyMask"
 
     def randomize_parameters(self, magnitude_spectrogram):
         super().randomize_parameters(magnitude_spectrogram)
@@ -79,6 +80,10 @@ class SpecChannelShuffle(BaseSpectrogramTransform):
     """
     supports_multichannel = True
     supports_mono = False
+
+    def __init__(self):
+        super().__init__()
+        self.name = "SpecChannelShuffle"
 
     def randomize_parameters(self, magnitude_spectrogram):
         super().randomize_parameters(magnitude_spectrogram)

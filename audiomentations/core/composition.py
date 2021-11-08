@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 
 class BaseCompose:
@@ -106,7 +107,66 @@ class SpecCompose(BaseCompose):
         return magnitude_spectrogram
 
 
-class OneOf(BaseCompose):
+
+class SomeOf(BaseCompose):
+    """
+    SomeOf randomly picks one or several of the given transforms when called, and applies these
+    transforms.
+
+    INCLUDE EXAMPLES !!!!!!!!
+
+    """
+
+    def __init__(self, transforms, p: float = 1.0):
+        super().__init__(transforms, p)
+        self.transform_indexes = []
+        self.nbr_transforms_to_apply = None
+        self.should_apply = True
+
+    def randomize_parameters(self, *args, **kwargs):
+        super().randomize_parameters(*args, **kwargs)
+        self.should_apply = random.random() < self.p
+        if self.should_apply:
+            self.nbr_transforms_to_apply = random.randint(1, len(self.transforms))
+            all_indexes_transforms = list(np.arange(len(self.transforms)))
+            print(all_indexes_transforms)
+            self.transform_indexes = sorted(random.sample(all_indexes_transforms, self.nbr_transforms_to_apply))
+        return self.transform_indexes
+
+    def __call__(self, *args, **kwargs):
+        if not self.are_parameters_frozen:
+            kwargs["apply_to_children"] = False
+            self.randomize_parameters(*args, **kwargs)
+
+        if self.should_apply:
+            if "apply_to_children" in kwargs:
+                del kwargs["apply_to_children"]
+            print(self.transform_indexes[0])
+            transformed_data = self.transforms[self.transform_indexes[0]](*args, **kwargs)
+
+            if hasattr(self.transforms[0], "name"): # Quick fix, means that they are transforms on spectrograms
+                for transform_index in self.transform_indexes[1:]:
+                    transformed_data = self.transforms[self.transform_indexes[transform_index]](transformed_data)
+            else:
+                # get access to the sample rate
+                if "sample_rate" in kwargs:
+                    sample_rate = kwargs["sample_rate"]
+                else:
+                    sample_rate = args[1]
+
+                for transform_index in self.transform_indexes[1:]:
+                    print(transform_index)
+                    transformed_data = self.transforms[transform_index](transformed_data, sample_rate)
+            return transformed_data
+
+        if "samples" in kwargs:
+            return kwargs["samples"]
+        elif "magnitude_spectrogram" in kwargs:
+            return kwargs["magnitude_spectrogram"]
+        else:
+            return args[0]
+
+class OneOf(SomeOf):
     """
     OneOf randomly picks one of the given transforms when called, and applies that
     transform.
@@ -131,14 +191,9 @@ class OneOf(BaseCompose):
 
     def __init__(self, transforms, p: float = 1.0):
         super().__init__(transforms, p)
-        self.transform_index = 0
-        self.should_apply = True
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
-        self.should_apply = random.random() < self.p
-        if self.should_apply:
-            self.transform_index = random.randint(0, len(self.transforms) - 1)
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:
@@ -148,6 +203,8 @@ class OneOf(BaseCompose):
         if self.should_apply:
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
+            self.transform_index = random.choice(self.transform_indexes)
+            print(self.transform_index)
             return self.transforms[self.transform_index](*args, **kwargs)
 
         if "samples" in kwargs:
@@ -156,3 +213,5 @@ class OneOf(BaseCompose):
             return kwargs["magnitude_spectrogram"]
         else:
             return args[0]
+
+

@@ -35,6 +35,8 @@ Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg down
 
 # Usage example
 
+## Waveform
+
 ```python
 from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift, Shift
 import numpy as np
@@ -54,6 +56,26 @@ augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
 Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see the waveform transforms you can apply, and what arguments they have.
+
+## Spectrogram
+
+```python
+from audiomentations import SpecCompose, SpecChannelShuffle, SpecFrequencyMask
+import numpy as np
+
+augment = SpecCompose(
+    [
+        SpecChannelShuffle(p=0.5),
+        SpecFrequencyMask(p=0.5),
+    ]
+)
+
+# Generate a 256x256 spectrogram with 2 audio channels for the sake of example
+spectrogram = np.random.random((256, 256, 2))
+
+# Augment/transform/perturb the spectrogram
+augmented_spectrogram = augment(spectrogram)
+```
 
 See [audiomentations/augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/spectrogram_transforms.py) for spectrogram transforms. 
 

@@ -107,7 +107,6 @@ class SpecCompose(BaseCompose):
         return magnitude_spectrogram
 
 
-
 class SomeOf(BaseCompose):
     """
     SomeOf randomly picks several (one or plus) of the given transforms when called, and applies these
@@ -144,7 +143,9 @@ class SomeOf(BaseCompose):
             self.nbr_transforms_to_apply = random.randint(1, len(self.transforms))
             all_indexes_transforms = list(np.arange(len(self.transforms)))
             print(all_indexes_transforms)
-            self.transform_indexes = sorted(random.sample(all_indexes_transforms, self.nbr_transforms_to_apply))
+            self.transform_indexes = sorted(
+                random.sample(all_indexes_transforms, self.nbr_transforms_to_apply)
+            )
         return self.transform_indexes
 
     def __call__(self, *args, **kwargs):
@@ -156,11 +157,18 @@ class SomeOf(BaseCompose):
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
             print(self.transform_indexes[0])
-            transformed_data = self.transforms[self.transform_indexes[0]](*args, **kwargs)
+            transformed_data = self.transforms[self.transform_indexes[0]](
+                *args, **kwargs
+            )
 
-            if hasattr(self.transforms[0], "name"): # Quick fix, means that they are transforms on spectrograms
+            if hasattr(
+                self.transforms[0], "name"
+            ):  # Quick fix, added a name to the transformations on spectrograms
+                # to be able to separate transforms on the waveforms and transforms on the spectrograms
                 for transform_index in self.transform_indexes[1:]:
-                    transformed_data = self.transforms[self.transform_indexes[transform_index]](transformed_data)
+                    transformed_data = self.transforms[
+                        self.transform_indexes[transform_index]
+                    ](transformed_data)
             else:
                 # get access to the sample rate
                 if "sample_rate" in kwargs:
@@ -170,7 +178,9 @@ class SomeOf(BaseCompose):
 
                 for transform_index in self.transform_indexes[1:]:
                     print(transform_index)
-                    transformed_data = self.transforms[transform_index](transformed_data, sample_rate)
+                    transformed_data = self.transforms[transform_index](
+                        transformed_data, sample_rate
+                    )
             return transformed_data
 
         if "samples" in kwargs:
@@ -226,4 +236,3 @@ class OneOf(BaseCompose):
             return kwargs["magnitude_spectrogram"]
         else:
             return args[0]
-

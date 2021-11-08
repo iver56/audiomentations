@@ -166,34 +166,35 @@ class SomeOf(BaseCompose):
         else:
             return args[0]
 
-class OneOf(SomeOf):
+
+class OneOf(BaseCompose):
     """
     OneOf randomly picks one of the given transforms when called, and applies that
     transform.
-
     Example usage:
-
     ```
     augment = OneOf([
         TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
         PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
     ])
-
     # Generate 2 seconds of dummy audio for the sake of example
     samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
-
     # Augment/transform/perturb the audio data
     augmented_samples = augment(samples=samples, sample_rate=16000)
-
     # Result: The audio was either time-stretched or pitch-shifted, but not both
     ```
     """
 
     def __init__(self, transforms, p: float = 1.0):
         super().__init__(transforms, p)
+        self.transform_index = 0
+        self.should_apply = True
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
+        self.should_apply = random.random() < self.p
+        if self.should_apply:
+            self.transform_index = random.randint(0, len(self.transforms) - 1)
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:
@@ -203,8 +204,6 @@ class OneOf(SomeOf):
         if self.should_apply:
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
-            self.transform_index = random.choice(self.transform_indexes)
-            print(self.transform_index)
             return self.transforms[self.transform_index](*args, **kwargs)
 
         if "samples" in kwargs:
@@ -213,5 +212,4 @@ class OneOf(SomeOf):
             return kwargs["magnitude_spectrogram"]
         else:
             return args[0]
-
 

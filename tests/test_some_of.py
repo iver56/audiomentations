@@ -42,19 +42,14 @@ class TestOneOf(unittest.TestCase):
             )
             num_transforms_applied += num_transforms_applied_one_iteration
 
-        assert num_transforms_applied/nbr_runs > 1
+        assert num_transforms_applied / nbr_runs > 1
 
     def test_freeze_and_unfreeze_all_parameters(self):
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
         sample_rate = 44100
 
         for _ in range(30):
-            augmenter = SomeOf(
-                [
-                    Gain(p=1.0),
-                    PolarityInversion(p=1.0),
-                ]
-            )
+            augmenter = SomeOf([Gain(p=1.0), PolarityInversion(p=1.0),])
             perturbed_samples1 = augmenter(samples=samples, sample_rate=sample_rate)
             augmenter.freeze_parameters()
             for transform in augmenter.transforms:
@@ -68,12 +63,7 @@ class TestOneOf(unittest.TestCase):
                 self.assertFalse(transform.are_parameters_frozen)
 
     def test_freeze_and_unfreeze_own_parameters(self):
-        augmenter = SomeOf(
-            [
-                Gain(p=1.0),
-                PolarityInversion(p=1.0),
-            ]
-        )
+        augmenter = SomeOf([Gain(p=1.0), PolarityInversion(p=1.0),])
         assert not augmenter.are_parameters_frozen
         for transform in augmenter.transforms:
             assert not transform.are_parameters_frozen
@@ -126,12 +116,7 @@ class TestOneOf(unittest.TestCase):
         samples = 1.0 / np.arange(1, 21, dtype=np.float32)
         sample_rate = 44100
 
-        augmenter = SomeOf(
-            [
-                Gain(p=1.0),
-                PolarityInversion(p=1.0),
-            ]
-        )
+        augmenter = SomeOf([Gain(p=1.0), PolarityInversion(p=1.0),])
         augmenter.randomize_parameters(samples, sample_rate, apply_to_children=True)
         own_parameters_before = (augmenter.should_apply, augmenter.transform_indexes)
 
@@ -185,7 +170,7 @@ class TestOneOf(unittest.TestCase):
                 SpecFrequencyMask(fill_mode="mean", p=1.0),
                 SpecFrequencyMask(fill_mode="constant", p=1.0),
             ],
-            p=0.0
+            p=0.0,
         )
 
         # Positional argument

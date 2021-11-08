@@ -2,9 +2,9 @@ import os
 import unittest
 
 import numpy as np
-from audiomentations import Gain
-from numpy.testing import assert_array_equal
+from numpy.testing import assert_array_equal, assert_array_almost_equal
 
+from audiomentations import Gain, SpecFrequencyMask, OneOf
 from audiomentations.augmentations.transforms import (
     ClippingDistortion,
     AddBackgroundNoise,
@@ -13,7 +13,6 @@ from audiomentations.augmentations.transforms import (
     Shift,
     PolarityInversion,
 )
-from audiomentations import OneOf
 from demo.demo import DEMO_DIR
 
 
@@ -152,3 +151,48 @@ class TestOneOf(unittest.TestCase):
         for transform_parameters, transform in zip(parameters, augmenter.transforms):
             assert transform_parameters == transform.parameters
             assert not transform.are_parameters_frozen
+
+    def test_one_of_spectogram_magnitude(self):
+        spectrogram = np.random.random((128, 128, 2))
+        augmenter = OneOf(
+            [
+                SpecFrequencyMask(fill_mode="mean", p=1.0),
+                SpecFrequencyMask(fill_mode="constant", p=1.0),
+            ]
+        )
+
+        # Positional argument
+        augmented_spectrogram = augmenter(spectrogram)
+        assert augmented_spectrogram.shape == spectrogram.shape
+        assert augmented_spectrogram.dtype == spectrogram.dtype
+        with np.testing.assert_raises(AssertionError):
+            assert_array_almost_equal(augmented_spectrogram, spectrogram)
+
+        # Keyword argument
+        augmented_spectrogram = augmenter(magnitude_spectrogram=spectrogram)
+        assert augmented_spectrogram.shape == spectrogram.shape
+        assert augmented_spectrogram.dtype == spectrogram.dtype
+        with np.testing.assert_raises(AssertionError):
+            assert_array_almost_equal(augmented_spectrogram, spectrogram)
+
+    def test_one_of_spectogram_magnitude_with_p_0(self):
+        spectrogram = np.random.random((128, 128, 2))
+        augmenter = OneOf(
+            [
+                SpecFrequencyMask(fill_mode="mean", p=1.0),
+                SpecFrequencyMask(fill_mode="constant", p=1.0),
+            ],
+            p=0.0
+        )
+
+        # Positional argument
+        augmented_spectrogram = augmenter(spectrogram)
+        assert augmented_spectrogram.shape == spectrogram.shape
+        assert augmented_spectrogram.dtype == spectrogram.dtype
+        assert_array_equal(augmented_spectrogram, spectrogram)
+
+        # Keyword argument
+        augmented_spectrogram = augmenter(magnitude_spectrogram=spectrogram)
+        assert augmented_spectrogram.shape == spectrogram.shape
+        assert augmented_spectrogram.dtype == spectrogram.dtype
+        assert_array_equal(augmented_spectrogram, spectrogram)

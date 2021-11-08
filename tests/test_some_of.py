@@ -16,7 +16,7 @@ from audiomentations.augmentations.transforms import (
 from demo.demo import DEMO_DIR
 
 
-class TestOneOf(unittest.TestCase):
+class TestSomeOf(unittest.TestCase):
     def test_several_transforms_applied(self):
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
         sample_rate = 44100

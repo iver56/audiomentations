@@ -152,7 +152,7 @@ class TestOneOf(unittest.TestCase):
             assert transform_parameters == transform.parameters
             assert not transform.are_parameters_frozen
 
-    def test_one_of_spectogram_magnitude(self):
+    def test_one_of_spectrogram_magnitude(self):
         spectrogram = np.random.random((128, 128, 2))
         augmenter = OneOf(
             [
@@ -175,7 +175,7 @@ class TestOneOf(unittest.TestCase):
         with np.testing.assert_raises(AssertionError):
             assert_array_almost_equal(augmented_spectrogram, spectrogram)
 
-    def test_one_of_spectogram_magnitude_with_p_0(self):
+    def test_one_of_spectrogram_magnitude_with_p_0(self):
         spectrogram = np.random.random((128, 128, 2))
         augmenter = OneOf(
             [

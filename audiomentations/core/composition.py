@@ -113,23 +113,37 @@ class SpecCompose(BaseCompose):
 
 class SomeOf(BaseCompose):
     """
-    SomeOf randomly picks several (one or plus) of the given transforms when called, and applies these
-    transforms.
+    SomeOf randomly picks several of the given transforms when called, and applies these
+    transforms. The number of transforms to apply can be chosen in two different ways:
+
+        - Pick exactly n transforms:
+            Example:    # pick exactly two of the transforms
+                        SomeOf(2, [transform1, transform2, transform3])
+
+        - Pick between a minimum and maximum number of transforms.
+            Examples:   # pick 1 to 3 of the transforms
+                        SomeOf((1, 3), [transform1, transform2, transform3])
+
+                        # pick 2 to all of the transforms
+                        SomeOf((2, None), [transform1, transform2, transform3, transform4])
 
     Example usage:
 
     ```
-    augment = SomeOf([
+    augment = SomeOf((2, None),
+    [
         TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
         PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
         Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
     ])
+
     # Generate 2 seconds of dummy audio for the sake of example
     samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
+
     # Augment/transform/perturb the audio data
     augmented_samples = augment(samples=samples, sample_rate=16000)
-    # Result: Several of the three transforms above were applied. The minimum number of applied transforms is 1
-    and the maximum is 3. It is not possible that no transform is applied.
+
+    # Result: 2 or more transforms will be applied from the list of transforms.
     ```
 
     """

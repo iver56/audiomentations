@@ -1,6 +1,9 @@
 import random
 import numpy as np
-from audiomentations.core.transforms_interface import BaseWaveformTransform, BaseSpectrogramTransform
+from audiomentations.core.transforms_interface import (
+    BaseWaveformTransform,
+    BaseSpectrogramTransform,
+)
 
 
 class BaseCompose:
@@ -131,19 +134,29 @@ class SomeOf(BaseCompose):
 
     """
 
-    def __init__(self, transforms, p: float = 1.0):
+    def __init__(
+        self, nbr_transforms_to_apply: float or tuple, transforms, p: float = 1.0
+    ):
         super().__init__(transforms, p)
         self.transform_indexes = []
-        self.nbr_transforms_to_apply = None
+        self.nbr_transforms_to_apply = nbr_transforms_to_apply
         self.should_apply = True
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
         self.should_apply = random.random() < self.p
         if self.should_apply:
-            self.nbr_transforms_to_apply = random.randint(1, len(self.transforms))
+            if type(self.nbr_transforms_to_apply) == tuple:
+                if self.nbr_transforms_to_apply[1] is None:
+                    self.nbr_transforms_to_apply = random.randint(
+                        self.nbr_transforms_to_apply[0], len(self.transforms)
+                    )
+                else:
+                    self.nbr_transforms_to_apply = random.randint(
+                        self.nbr_transforms_to_apply[0], self.nbr_transforms_to_apply[1]
+                    )
+
             all_indexes_transforms = list(np.arange(len(self.transforms)))
-            print(all_indexes_transforms)
             self.transform_indexes = sorted(
                 random.sample(all_indexes_transforms, self.nbr_transforms_to_apply)
             )
@@ -155,14 +168,19 @@ class SomeOf(BaseCompose):
             self.randomize_parameters(*args, **kwargs)
 
         if self.should_apply:
+            print(self.transform_indexes)
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
 
             if issubclass(type(self.transforms[0]), BaseSpectrogramTransform):
                 if "magnitude_spectrogram" in kwargs:
-                    transformed_data = self.transforms[self.transform_indexes[0]](kwargs["magnitude_spectrogram"])
+                    transformed_data = self.transforms[self.transform_indexes[0]](
+                        kwargs["magnitude_spectrogram"]
+                    )
                 else:
-                    transformed_data = self.transforms[self.transform_indexes[0]](args[0])
+                    transformed_data = self.transforms[self.transform_indexes[0]](
+                        args[0]
+                    )
 
                 for transform_index in self.transform_indexes[1:]:
                     transformed_data = self.transforms[
@@ -178,7 +196,9 @@ class SomeOf(BaseCompose):
                     samples = args[0]
                     sample_rate = args[1]
 
-                transformed_data = self.transforms[self.transform_indexes[0]](samples, sample_rate)
+                transformed_data = self.transforms[self.transform_indexes[0]](
+                    samples, sample_rate
+                )
 
                 for transform_index in self.transform_indexes[1:]:
                     transformed_data = self.transforms[transform_index](

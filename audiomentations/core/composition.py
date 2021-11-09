@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from audiomentations.core.transforms_interface import BaseWaveformTransform, BaseSpectrogramTransform
 
 
 class BaseCompose:
@@ -156,28 +157,30 @@ class SomeOf(BaseCompose):
         if self.should_apply:
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
-            print(self.transform_indexes[0])
-            transformed_data = self.transforms[self.transform_indexes[0]](
-                *args, **kwargs
-            )
 
-            if hasattr(
-                self.transforms[0], "name"
-            ):  # Quick fix, added a name to the transformations on spectrograms
-                # to be able to separate transforms on the waveforms and transforms on the spectrograms
+            if issubclass(type(self.transforms[0]), BaseSpectrogramTransform):
+                if "magnitude_spectrogram" in kwargs:
+                    transformed_data = self.transforms[self.transform_indexes[0]](kwargs["magnitude_spectrogram"])
+                else:
+                    transformed_data = self.transforms[self.transform_indexes[0]](args[0])
+
                 for transform_index in self.transform_indexes[1:]:
                     transformed_data = self.transforms[
                         self.transform_indexes[transform_index]
                     ](transformed_data)
-            else:
+
+            if issubclass(type(self.transforms[0]), BaseWaveformTransform):
                 # get access to the sample rate
                 if "sample_rate" in kwargs:
+                    samples = kwargs["samples"] if "samples" in kwargs else args[0]
                     sample_rate = kwargs["sample_rate"]
                 else:
+                    samples = args[0]
                     sample_rate = args[1]
 
+                transformed_data = self.transforms[self.transform_indexes[0]](samples, sample_rate)
+
                 for transform_index in self.transform_indexes[1:]:
-                    print(transform_index)
                     transformed_data = self.transforms[transform_index](
                         transformed_data, sample_rate
                     )

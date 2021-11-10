@@ -149,32 +149,33 @@ class SomeOf(BaseCompose):
     """
 
     def __init__(
-        self, nbr_transforms_to_apply: float or tuple, transforms, p: float = 1.0
+        self, nbr_transforms: float or tuple, transforms, p: float = 1.0
     ):
         super().__init__(transforms, p)
         self.transform_indexes = []
-        self.nbr_transforms_to_apply = nbr_transforms_to_apply
+        self.nbr_transforms = nbr_transforms
         self.should_apply = True
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
         self.should_apply = random.random() < self.p
         if self.should_apply:
-            if type(self.nbr_transforms_to_apply) == tuple:
-                if self.nbr_transforms_to_apply[1] is None:
-                    self.nbr_transforms_to_apply = random.randint(
-                        self.nbr_transforms_to_apply[0], len(self.transforms)
+            if type(self.nbr_transforms) == tuple:
+                if self.nbr_transforms[1] is None:
+                    nbr_transforms_to_apply = random.randint(
+                        self.nbr_transforms[0], len(self.transforms)
                     )
                 else:
-                    self.nbr_transforms_to_apply = random.randint(
-                        self.nbr_transforms_to_apply[0], self.nbr_transforms_to_apply[1]
+                    nbr_transforms_to_apply = random.randint(
+                        self.nbr_transforms[0], self.nbr_transforms[1]
                     )
-
-            all_indexes_transforms = list(np.arange(len(self.transforms)))
+            else:
+                nbr_transforms_to_apply = self.nbr_transforms
+            all_transforms_indexes = list(np.arange(len(self.transforms)))
             self.transform_indexes = sorted(
-                random.sample(all_indexes_transforms, self.nbr_transforms_to_apply)
+                random.sample(all_transforms_indexes, nbr_transforms_to_apply)
             )
-        return self.transform_indexes, self.nbr_transforms_to_apply
+        return self.transform_indexes
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:

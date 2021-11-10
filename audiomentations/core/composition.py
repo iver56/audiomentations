@@ -174,7 +174,7 @@ class SomeOf(BaseCompose):
             self.transform_indexes = sorted(
                 random.sample(all_indexes_transforms, self.nbr_transforms_to_apply)
             )
-        return self.transform_indexes
+        return self.transform_indexes, self.nbr_transforms_to_apply
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:

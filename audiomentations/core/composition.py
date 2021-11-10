@@ -247,14 +247,14 @@ class OneOf(BaseCompose):
 
     def __init__(self, transforms, p: float = 1.0):
         super().__init__(transforms, p)
-        self.transform_index = 0
+        self.transform_indexes = 0
         self.should_apply = True
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
         self.should_apply = random.random() < self.p
         if self.should_apply:
-            self.transform_index = random.randint(0, len(self.transforms) - 1)
+            self.transform_indexes = random.randint(0, len(self.transforms) - 1)
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:
@@ -264,7 +264,7 @@ class OneOf(BaseCompose):
         if self.should_apply:
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
-            return self.transforms[self.transform_index](*args, **kwargs)
+            return self.transforms[self.transform_indexes](*args, **kwargs)
 
         if "samples" in kwargs:
             return kwargs["samples"]

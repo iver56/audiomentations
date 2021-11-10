@@ -182,7 +182,6 @@ class SomeOf(BaseCompose):
             self.randomize_parameters(*args, **kwargs)
 
         if self.should_apply:
-            print(self.transform_indexes)
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
 

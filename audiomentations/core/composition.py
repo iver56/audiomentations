@@ -128,14 +128,15 @@ class SomeOf(BaseCompose):
                         SomeOf((2, None), [transform1, transform2, transform3, transform4])
 
     Example usage:
-
     ```
-    augment = SomeOf((2, None),
-    [
-        TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
-        PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
-        Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
-    ])
+    augment = SomeOf(
+        (2, None),
+        [
+            TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
+            PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
+            Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
+        ],
+    )
 
     # Generate 2 seconds of dummy audio for the sake of example
     samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
@@ -145,12 +146,9 @@ class SomeOf(BaseCompose):
 
     # Result: 2 or more transforms will be applied from the list of transforms.
     ```
-
     """
 
-    def __init__(
-        self, num_transforms: int or tuple, transforms, p: float = 1.0
-    ):
+    def __init__(self, num_transforms: int or tuple, transforms, p: float = 1.0):
         super().__init__(transforms, p)
         self.transform_indexes = []
         self.num_transforms = num_transforms

@@ -380,6 +380,8 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 
 ## Unreleased
 
+## v0.20.0 (2021-11-18)
+
 ### Added
 
 * Implement `OneOf` and `SomeOf` for applying one of or some of many transforms. Transforms are randomly

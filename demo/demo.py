@@ -30,6 +30,9 @@ from audiomentations import (
     ApplyImpulseResponse,
     Reverse,
     TanhDistortion,
+    Compose,
+    SomeOf,
+    OneOf,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
@@ -240,6 +243,24 @@ if __name__ == "__main__":
         {"instance": TimeMask(p=1.0), "num_runs": 5},
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
         {"instance": Trim(p=1.0), "num_runs": 1},
+        {
+            "instance": Compose(
+                [
+                    AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
+                    SomeOf(
+                        (0, 2),
+                        [
+                            TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
+                            PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
+                        ],
+                    ),
+                    Shift(min_fraction=-0.5, max_fraction=0.5, p=0.5),
+                    OneOf([TanhDistortion(p=1.0), ClippingDistortion(p=1.0)], p=0.25),
+                ]
+            ),
+            "num_runs": 10,
+            "name": "BigCompose",
+        },
     ]
 
     for sound_file_path in sound_file_paths:

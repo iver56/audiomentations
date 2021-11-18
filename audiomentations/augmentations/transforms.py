@@ -8,8 +8,6 @@ import warnings
 
 import librosa
 import numpy as np
-from pydub import AudioSegment
-from pydub.effects import low_pass_filter, high_pass_filter
 from scipy.signal import butter, sosfilt, convolve
 
 from audiomentations.core.audio_loading_utils import load_sound_file

@@ -219,7 +219,7 @@ class TestAddShortNoises(unittest.TestCase):
                 AddShortNoises(
                     sounds_path=os.path.join(DEMO_DIR, "short_noises"),
                     min_time_between_sounds=2.0,
-                    max_time_between_sounds=8.0,
+                    max_time_between_sounds=4.0,
                     noise_rms="absolute",
                     include_silence_in_noise_rms_estimation=False,
                     p=1.0,

@@ -382,8 +382,8 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 
 ### Added
 
-* Implement `OneOf` for applying one of many transforms. The transform is randomly
- chosen every call. Inspired by augly.
+* Implement `OneOf` and `SomeOf` for applying one of or some of many transforms. Transforms are randomly
+ chosen every call. Inspired by augly. Thanks to Cangonin and iver56.
 * Add a new argument `apply_to_children` (bool) in `randomize_parameters`,
  `freeze_parameters` and `unfreeze_parameters` in `Compose` and `SpecCompose`.
 
@@ -393,6 +393,11 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
  the old behavior), `min_absolute_rms_in_db` and `max_absolute_rms_in_db`. This **may be a breaking
  change** if you used `AddBackgroundNoise` with positional arguments in earlier versions of audiomentations!
  Please use keyword arguments to be on the safe side - it should be backwards compatible then.
+
+### Fixed
+
+* Remove global `pydub` import which was accidentally introduced in v0.18.0. `pydub` is
+ considered an optional dependency and is imported only on demand now.
 
 ## v0.19.0 (2021-10-18)
 

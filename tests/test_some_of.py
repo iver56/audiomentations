@@ -21,20 +21,21 @@ class TestSomeOf(unittest.TestCase):
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
         sample_rate = 44100
         num_transforms_applied = []
-        nbr_runs = 30
-        nbr_augmenters = 3
+        num_runs = 30
+        num_augmenters = 4
         list_transforms = [
             Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
             PolarityInversion(p=1.0),
         ]
 
-        for i in range(0, nbr_augmenters):
+        for i in range(0, num_augmenters):
             num_transforms_applied_one_augmenter = 0
-            for _ in range(nbr_runs):
+            for _ in range(num_runs):
                 augmenter1 = SomeOf(1, list_transforms)
                 augmenter2 = SomeOf((1, 2), list_transforms)
                 augmenter3 = SomeOf((2, None), list_transforms)
-                augmenters = [augmenter1, augmenter2, augmenter3]
+                augmenter4 = SomeOf((0, None), list_transforms)
+                augmenters = [augmenter1, augmenter2, augmenter3, augmenter4]
                 augmenter = augmenters[i]
                 perturbed_samples = augmenter(samples=samples, sample_rate=sample_rate)
 
@@ -51,9 +52,10 @@ class TestSomeOf(unittest.TestCase):
                     num_transforms_applied_one_iteration
                 )
             num_transforms_applied.append(num_transforms_applied_one_augmenter)
-        assert num_transforms_applied[0] / nbr_runs == 1
-        assert 1 < num_transforms_applied[1] / nbr_runs < 2
-        assert num_transforms_applied[2] / nbr_runs == 2
+        assert num_transforms_applied[0] / num_runs == 1
+        assert 1 < num_transforms_applied[1] / num_runs < 2
+        assert num_transforms_applied[2] / num_runs == 2
+        assert 1 < num_transforms_applied[3] / num_runs < 2
 
     def test_freeze_and_unfreeze_all_parameters(self):
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
@@ -74,7 +76,13 @@ class TestSomeOf(unittest.TestCase):
                 self.assertFalse(transform.are_parameters_frozen)
 
     def test_freeze_and_unfreeze_own_parameters(self):
-        augmenter = SomeOf((1, None), [Gain(p=1.0), PolarityInversion(p=1.0),])
+        augmenter = SomeOf(
+            (1, None),
+            [
+                Gain(p=1.0),
+                PolarityInversion(p=1.0),
+            ],
+        )
         assert not augmenter.are_parameters_frozen
         for transform in augmenter.transforms:
             assert not transform.are_parameters_frozen
@@ -128,7 +136,13 @@ class TestSomeOf(unittest.TestCase):
         samples = 1.0 / np.arange(1, 21, dtype=np.float32)
         sample_rate = 44100
 
-        augmenter = SomeOf((1, None), [Gain(p=1.0), PolarityInversion(p=1.0),])
+        augmenter = SomeOf(
+            (1, None),
+            [
+                Gain(p=1.0),
+                PolarityInversion(p=1.0),
+            ],
+        )
         augmenter.randomize_parameters(samples, sample_rate, apply_to_children=True)
         own_parameters_before = (augmenter.should_apply, augmenter.transform_indexes)
 
@@ -198,3 +212,16 @@ class TestSomeOf(unittest.TestCase):
         assert augmented_spectrogram.shape == spectrogram.shape
         assert augmented_spectrogram.dtype == spectrogram.dtype
         assert_array_equal(augmented_spectrogram, spectrogram)
+
+    def test_some_of_spectrogram_magnitude_min_zero(self):
+        spectrogram = np.random.random((64, 64, 2))
+        augmenter = SomeOf(
+            (0, 1),
+            [
+                SpecFrequencyMask(fill_mode="mean", p=1.0),
+                SpecFrequencyMask(fill_mode="constant", p=1.0),
+            ],
+        )
+
+        for i in range(20):
+            augmenter(spectrogram)

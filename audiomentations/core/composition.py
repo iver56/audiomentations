@@ -186,20 +186,17 @@ class SomeOf(BaseCompose):
 
             if issubclass(type(self.transforms[0]), BaseSpectrogramTransform):
                 if "magnitude_spectrogram" in kwargs:
-                    transformed_data = self.transforms[self.transform_indexes[0]](
-                        kwargs["magnitude_spectrogram"]
-                    )
+                    magnitude_spectrogram = kwargs["magnitude_spectrogram"]
                 else:
-                    transformed_data = self.transforms[self.transform_indexes[0]](
-                        args[0]
-                    )
+                    magnitude_spectrogram = args[0]
 
-                for transform_index in self.transform_indexes[1:]:
-                    transformed_data = self.transforms[
+                for transform_index in self.transform_indexes:
+                    magnitude_spectrogram = self.transforms[
                         self.transform_indexes[transform_index]
-                    ](transformed_data)
+                    ](magnitude_spectrogram)
+
+                return magnitude_spectrogram
             else:  # The transforms are subclasses of BaseWaveformTransform
-                # Get access to the sample rate
                 if "sample_rate" in kwargs:
                     samples = kwargs["samples"] if "samples" in kwargs else args[0]
                     sample_rate = kwargs["sample_rate"]
@@ -207,15 +204,12 @@ class SomeOf(BaseCompose):
                     samples = args[0]
                     sample_rate = args[1]
 
-                transformed_data = self.transforms[self.transform_indexes[0]](
-                    samples, sample_rate
-                )
-
-                for transform_index in self.transform_indexes[1:]:
-                    transformed_data = self.transforms[transform_index](
-                        transformed_data, sample_rate
+                for transform_index in self.transform_indexes:
+                    samples = self.transforms[transform_index](
+                        samples, sample_rate
                     )
-            return transformed_data
+
+                return samples
 
         if "samples" in kwargs:
             return kwargs["samples"]

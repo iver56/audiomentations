@@ -169,7 +169,7 @@ class SomeOf(BaseCompose):
                     )
             else:
                 num_transforms_to_apply = self.num_transforms
-            all_transforms_indexes = list(np.arange(len(self.transforms)))
+            all_transforms_indexes = list(range(len(self.transforms)))
             self.transform_indexes = sorted(
                 random.sample(all_transforms_indexes, num_transforms_to_apply)
             )
@@ -191,9 +191,9 @@ class SomeOf(BaseCompose):
                     magnitude_spectrogram = args[0]
 
                 for transform_index in self.transform_indexes:
-                    magnitude_spectrogram = self.transforms[
-                        self.transform_indexes[transform_index]
-                    ](magnitude_spectrogram)
+                    magnitude_spectrogram = self.transforms[transform_index](
+                        magnitude_spectrogram
+                    )
 
                 return magnitude_spectrogram
             else:  # The transforms are subclasses of BaseWaveformTransform
@@ -205,9 +205,7 @@ class SomeOf(BaseCompose):
                     sample_rate = args[1]
 
                 for transform_index in self.transform_indexes:
-                    samples = self.transforms[transform_index](
-                        samples, sample_rate
-                    )
+                    samples = self.transforms[transform_index](samples, sample_rate)
 
                 return samples
 

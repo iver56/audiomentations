@@ -198,9 +198,8 @@ class SomeOf(BaseCompose):
                     transformed_data = self.transforms[
                         self.transform_indexes[transform_index]
                     ](transformed_data)
-
-            if issubclass(type(self.transforms[0]), BaseWaveformTransform):
-                # get access to the sample rate
+            else:  # The transforms are subclasses of BaseWaveformTransform
+                # Get access to the sample rate
                 if "sample_rate" in kwargs:
                     samples = kwargs["samples"] if "samples" in kwargs else args[0]
                     sample_rate = kwargs["sample_rate"]

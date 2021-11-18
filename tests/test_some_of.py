@@ -51,7 +51,6 @@ class TestSomeOf(unittest.TestCase):
                     num_transforms_applied_one_iteration
                 )
             num_transforms_applied.append(num_transforms_applied_one_augmenter)
-        print(num_transforms_applied)
         assert num_transforms_applied[0] / nbr_runs == 1
         assert 1 < num_transforms_applied[1] / nbr_runs < 2
         assert num_transforms_applied[2] / nbr_runs == 2

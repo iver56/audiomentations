@@ -27,9 +27,9 @@ Some features have extra dependencies. Extra python package dependencies can be 
 
 | Feature | Extra dependencies |
 | ------- | ---------------- |
-| Load 24-bit wav files fast | `wavio` |
 | `LoudnessNormalization` | `pyloudnorm` |
 | `Mp3Compression` | `ffmpeg` and [`pydub` or `lameenc`] |
+| `LowPassFilter`, `HighPassFilter`, `BandPassFilter` | `pydub` |
 
 Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
 

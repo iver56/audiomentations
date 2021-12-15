@@ -29,6 +29,8 @@ class ApplyImpulseResponse(BaseWaveformTransform):
     Impulse responses are represented as wav files in the given ir_path.
     """
 
+    supports_multichannel = True
+
     def __init__(
         self,
         ir_path="/tmp/ir",
@@ -73,7 +75,16 @@ class ApplyImpulseResponse(BaseWaveformTransform):
                 "Recording sample rate {} did not match Impulse Response signal"
                 " sample rate {}!".format(sample_rate, sample_rate2)
             )
-        signal_ir = convolve(samples, ir)
+
+        if samples.ndim > 1:
+            signal_ir = []
+            for i in range(samples.shape[0]):
+                channel_conv = convolve(samples[i], ir)
+                signal_ir.append(channel_conv)
+            signal_ir = np.array(signal_ir, dtype=samples.dtype)
+        else:
+            signal_ir = convolve(samples, ir)
+
         max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
         if max_value > 0.0:
             scale = 0.5 / max_value

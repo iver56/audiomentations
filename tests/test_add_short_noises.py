@@ -231,3 +231,39 @@ class TestAddShortNoises(unittest.TestCase):
 
         rms_after = calculate_rms(samples_out)
         self.assertGreater(rms_after, rms_before)
+
+    def test_add_noises_with_same_level(self):
+        dummy_audio = np.random.randint(1, 5, 250000)
+        transform_same_noise_level = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_snr_in_db=15,
+            max_snr_in_db=30,
+            noise_rms="relative",
+            add_all_noises_with_same_level=True,
+            min_time_between_sounds=0.5,
+            max_time_between_sounds=1,
+            p=1
+        )
+
+        transform_different_noise_level = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_snr_in_db=15,
+            max_snr_in_db=30,
+            add_all_noises_with_same_level=False,
+            min_time_between_sounds=0.5,
+            max_time_between_sounds=1,
+            p=1
+        )
+
+        for i in range(3):
+            transform_same_noise_level.randomize_parameters(dummy_audio, sample_rate=44100)
+            sounds = transform_same_noise_level.parameters["sounds"]
+            snr_sounds_same_level = [sounds[j]["snr_in_db"] for j in range(len(sounds))]
+            transform_different_noise_level.randomize_parameters(dummy_audio, sample_rate=44100)
+            sounds = transform_different_noise_level.parameters["sounds"]
+            snr_sounds_different_level = [sounds[j]["snr_in_db"] for j in range(len(sounds))]
+
+            assert len(set(snr_sounds_same_level)) == 1
+            assert len(set(snr_sounds_different_level)) > 1
+
+

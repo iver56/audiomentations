@@ -497,10 +497,9 @@ class Shift(BaseWaveformTransform):
                 )
                 fade_in_length = fade_in_end - fade_in_start
 
-                shifted_samples[
-                    ...,
-                    fade_in_start:fade_in_end,
-                ] *= fade_in[:fade_in_length]
+                shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
+                    :fade_in_length
+                ]
 
                 if self.rollover:
 
@@ -533,10 +532,9 @@ class Shift(BaseWaveformTransform):
                         shifted_samples.shape[-1],
                     )
                     fade_in_length = fade_in_end - fade_in_start
-                    shifted_samples[
-                        ...,
-                        fade_in_start:fade_in_end,
-                    ] *= fade_in[:fade_in_length]
+                    shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
+                        :fade_in_length
+                    ]
 
         return shifted_samples
 
@@ -926,7 +924,8 @@ class AddShortNoises(BaseWaveformTransform):
         max_time_between_sounds=16.0,
         noise_rms="relative",
         min_absolute_noise_rms_db=-50,
-        max_absolute_noise_rms_db=-10,
+        max_absolute_noise_rms_db=-20,
+        add_all_noises_with_same_level=False,
         include_silence_in_noise_rms_estimation=True,
         burst_probability=0.22,
         min_pause_factor_during_burst=0.1,
@@ -957,6 +956,10 @@ class AddShortNoises(BaseWaveformTransform):
         :param max_absolute_noise_rms_db: Is only used if noise_rms is set to "absolute". It is
             the maximum rms value in dB that the added noise can take. Note that this value
             can not exceed 0.
+        : param add_all_noises_with_same_level: add all the short noises with the same snr.
+            The latter will be included between min_snr_in_db and max_snr_in_db. If
+            noise_rms == "absolute", the rms is used instead of the snr.This snr value
+            will change each time the parameters of the transform are randomized.
         :param include_silence_in_noise_rms_estimation: A boolean. It chooses how the rms of
             the noises to be added will be calculated. If this option is set to False, the silence
             in the noise files will be removed before the rms calculation. It is useful for
@@ -1017,6 +1020,7 @@ class AddShortNoises(BaseWaveformTransform):
         self.include_silence_in_noise_rms_estimation = (
             include_silence_in_noise_rms_estimation
         )
+        self.add_all_noises_with_same_level = add_all_noises_with_same_level
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddShortNoises.__load_sound
         )
@@ -1036,6 +1040,12 @@ class AddShortNoises(BaseWaveformTransform):
             )
             current_time += global_offset
             sounds = []
+
+            snr_in_db = random.uniform(self.min_snr_in_db, self.max_snr_in_db)
+            rms_in_db = random.uniform(
+                self.min_absolute_noise_rms_db, self.max_absolute_noise_rms_db
+            )
+
             while current_time < input_sound_duration:
                 sound_file_path = random.choice(self.sound_file_paths)
                 sound, _ = self.__load_sound(sound_file_path, sample_rate)
@@ -1051,6 +1061,12 @@ class AddShortNoises(BaseWaveformTransform):
                     random.uniform(self.min_fade_out_time, self.max_fade_out_time),
                 )
 
+                if not self.add_all_noises_with_same_level:
+                    snr_in_db = random.uniform(self.min_snr_in_db, self.max_snr_in_db)
+                    rms_in_db = random.uniform(
+                        self.min_absolute_noise_rms_db, self.max_absolute_noise_rms_db
+                    )
+
                 sounds.append(
                     {
                         "fade_in_time": fade_in_time,
@@ -1058,13 +1074,8 @@ class AddShortNoises(BaseWaveformTransform):
                         "end": current_time + sound_duration,
                         "fade_out_time": fade_out_time,
                         "file_path": sound_file_path,
-                        "snr_in_db": random.uniform(
-                            self.min_snr_in_db, self.max_snr_in_db
-                        ),
-                        "rms_in_db": random.uniform(
-                            self.min_absolute_noise_rms_db,
-                            self.max_absolute_noise_rms_db,
-                        ),
+                        "snr_in_db": snr_in_db,
+                        "rms_in_db": rms_in_db,
                     }
                 )
 
@@ -1096,6 +1107,15 @@ class AddShortNoises(BaseWaveformTransform):
                         random.uniform(self.min_fade_out_time, self.max_fade_out_time),
                     )
 
+                    if not self.add_all_noises_with_same_level:
+                        snr_in_db = random.uniform(
+                            self.min_snr_in_db, self.max_snr_in_db
+                        )
+                        rms_in_db = random.uniform(
+                            self.min_absolute_noise_rms_db,
+                            self.max_absolute_noise_rms_db,
+                        )
+
                     sounds.append(
                         {
                             "fade_in_time": fade_in_time,
@@ -1103,13 +1123,8 @@ class AddShortNoises(BaseWaveformTransform):
                             "end": current_time + sound_duration,
                             "fade_out_time": fade_out_time,
                             "file_path": sound_file_path,
-                            "snr_in_db": random.uniform(
-                                self.min_snr_in_db, self.max_snr_in_db
-                            ),
-                            "rms_in_db": random.uniform(
-                                self.min_absolute_noise_rms_db,
-                                self.max_absolute_noise_rms_db,
-                            ),
+                            "snr_in_db": snr_in_db,
+                            "rms_in_db": rms_in_db,
                         }
                     )
 
@@ -1358,10 +1373,7 @@ class LowPassFilter(BaseWaveformTransform):
     supports_multichannel = False
 
     def __init__(
-        self,
-        min_cutoff_freq=150,
-        max_cutoff_freq=7500,
-        p: float = 0.5,
+        self, min_cutoff_freq=150, max_cutoff_freq=7500, p: float = 0.5,
     ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz

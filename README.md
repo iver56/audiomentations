@@ -352,8 +352,8 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 | AddBackgroundNoise | No, 1D only |
 | AddGaussianNoise | Yes |
 | AddGaussianSNR | Yes |
-| AddImpulseResponse | No, 1D only |
 | AddShortNoises | No, 1D only |
+| ApplyImpulseResponse | Yes (unreleased as of December 2021) |
 | BandPassFilter | No, 1D only |
 | Clip | Yes |
 | ClippingDistortion | Yes |

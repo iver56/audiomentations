@@ -10,7 +10,7 @@ DEBUG = False
 
 
 class TestHighShelfFilter(unittest.TestCase):
-    def test_low_pass_filter(self):
+    def test_high_shelf_filter(self):
         sample_rate = 16000
         t = 0.25  # signal duration in sec
         f = 500  # signal frequency in Hz

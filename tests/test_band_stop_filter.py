@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from audiomentations import BandStopFilter
 
-DEBUG = True
+DEBUG = False
 
 
 class TestBandPassFilter(unittest.TestCase):

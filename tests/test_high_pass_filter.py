@@ -47,7 +47,7 @@ class TestHighPassFilter(unittest.TestCase):
             window="hann",
         )
 
-        # Compute db at cutoffs between the ideal
+        # Compute db at cutoffs at the input as well as the filtered signals
         samples_db_at_fc = 10 * np.log10(
             samples_pxx[int(np.round(nfft / sample_rate * fc))]
         )

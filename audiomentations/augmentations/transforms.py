@@ -1358,14 +1358,13 @@ class TanhDistortion(BaseWaveformTransform):
         return distorted_samples
 
 
-
 class LowPassFilter(BaseWaveformTransform):
     """
     Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
     octave above the cutoff frequency, so this filter is fairly gentle.
     """
 
-    supports_multichannel = False
+    supports_multichannel = True
 
     def __init__(
         self,
@@ -1415,7 +1414,7 @@ class HighPassFilter(BaseWaveformTransform):
     octave below the cutoff frequency, so this filter is fairly gentle.
     """
 
-    supports_multichannel = False
+    supports_multichannel = True
 
     def __init__(self, min_cutoff_freq=20, max_cutoff_freq=2400, p: float = 0.5):
         """
@@ -1458,7 +1457,7 @@ class BandStopFilter(BaseWaveformTransform):
     Apply band-pass filtering to the input audio.
     """
 
-    supports_multichannel = False
+    supports_multichannel = True
 
     def __init__(
         self, min_center_freq=100.0, max_center_freq=1000.0, min_q=1.0, max_q=2.0, p=0.5
@@ -1508,7 +1507,7 @@ class BandPassFilter(BaseWaveformTransform):
     Apply band-pass filtering to the input audio.
     """
 
-    supports_multichannel = False
+    supports_multichannel = True
 
     def __init__(
         self, min_center_freq=100.0, max_center_freq=1000.0, min_q=1.0, max_q=2.0, p=0.5

@@ -353,14 +353,15 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 | AddGaussianSNR | Yes |
 | AddShortNoises | No, 1D only |
 | ApplyImpulseResponse | Yes (unreleased as of December 2021) |
-| BandPassFilter | No, 1D only |
+| BandPassFilter | Yes |
+| BandStopFilter | Yes |
 | Clip | Yes |
 | ClippingDistortion | Yes |
 | FrequencyMask | Yes |
 | Gain | Yes |
-| HighPassFilter | No, 1D only |
+| HighPassFilter | Yes |
 | LoudnessNormalization | Yes, up to 5 channels |
-| LowPassFilter | No, 1D only |
+| LowPassFilter | Yes |
 | Mp3Compression | No, 1D only |
 | Normalize | Yes |
 | PitchShift | Yes |
@@ -381,8 +382,9 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 
 ### Added
 * Added magnitude response tests for `BandPassFilter`, `LowPassFilter`, `HighPassFilter`
+* Added `BandStopFilter`
 ### Changed
-* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter` to use scipy's butterworth filters
+* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. Now they support multichannel as well.
 
 ## v0.20.0 (2021-11-18)
 

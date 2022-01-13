@@ -29,7 +29,6 @@ Some features have extra dependencies. Extra python package dependencies can be 
 | ------- | ---------------- |
 | `LoudnessNormalization` | `pyloudnorm` |
 | `Mp3Compression` | `ffmpeg` and [`pydub` or `lameenc`] |
-| `LowPassFilter`, `HighPassFilter`, `BandPassFilter` | `pydub` |
 
 Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
 
@@ -379,6 +378,11 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 # Changelog
 
 ## Unreleased
+
+### Added
+* Added magnitude response tests for `BandPassFilter`, `LowPassFilter`, `HighPassFilter`
+### Changed
+* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter` to use scipy's butterworth filters
 
 ## v0.20.0 (2021-11-18)
 

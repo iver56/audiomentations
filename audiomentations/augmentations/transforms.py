@@ -1358,6 +1358,12 @@ class TanhDistortion(BaseWaveformTransform):
         return distorted_samples
 
 
+class LowShelfFilter(BaseWaveformTransform):
+    pass
+
+class HighShelfFilter(BaseWaveformTransform):
+    pass
+
 class LowPassFilter(BaseWaveformTransform):
     """
     Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
@@ -1392,36 +1398,13 @@ class LowPassFilter(BaseWaveformTransform):
         )
 
     def apply(self, samples: np.array, sample_rate: int = None):
-        try:
-            import pydub
-        except ImportError:
-            print(
-                "Failed to import pydub. Maybe it is not installed? "
-                "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
-                file=sys.stderr,
-            )
-            raise
 
         assert samples.dtype == np.float32
 
-        int_samples = convert_float_samples_to_int16(samples)
+        sos = butter(1,  self.parameters["cutoff_freq"], btype='lowpass', analog=False, fs=sample_rate, output='sos')
+        processed_samples = sosfilt(sos, samples).astype(np.float32)
 
-        audio_segment = pydub.AudioSegment(
-            int_samples.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=int_samples.dtype.itemsize,
-            channels=1,
-        )
-
-        audio_segment = pydub.effects.low_pass_filter(
-            audio_segment, self.parameters["cutoff_freq"]
-        )
-        samples = convert_int16_samples_to_float(
-            np.array(audio_segment.get_array_of_samples())
-        )
-        return samples
+        return processed_samples
 
 
 class HighPassFilter(BaseWaveformTransform):
@@ -1453,36 +1436,12 @@ class HighPassFilter(BaseWaveformTransform):
         )
 
     def apply(self, samples: np.array, sample_rate: int = None):
-        try:
-            import pydub
-        except ImportError:
-            print(
-                "Failed to import pydub. Maybe it is not installed? "
-                "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
-                file=sys.stderr,
-            )
-            raise
-
         assert samples.dtype == np.float32
 
-        int_samples = convert_float_samples_to_int16(samples)
+        sos = butter(1,  self.parameters["cutoff_freq"], btype='lowpass', analog=False, fs=sample_rate, output='sos')
+        processed_samples = sosfilt(sos, samples).astype(np.float32)
 
-        audio_segment = pydub.AudioSegment(
-            int_samples.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=int_samples.dtype.itemsize,
-            channels=1,
-        )
-
-        audio_segment = pydub.effects.high_pass_filter(
-            audio_segment, self.parameters["cutoff_freq"]
-        )
-        samples = convert_int16_samples_to_float(
-            np.array(audio_segment.get_array_of_samples())
-        )
-        return samples
+        return processed_samples
 
 
 class BandPassFilter(BaseWaveformTransform):
@@ -1522,42 +1481,15 @@ class BandPassFilter(BaseWaveformTransform):
         self.parameters["q"] = np.random.uniform(low=self.min_q, high=self.max_q)
 
     def apply(self, samples: np.array, sample_rate: int = None):
-        try:
-            import pydub
-        except ImportError:
-            print(
-                "Failed to import pydub. Maybe it is not installed? "
-                "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
-                file=sys.stderr,
-            )
-            raise
 
         assert samples.dtype == np.float32
 
-        int_samples = convert_float_samples_to_int16(samples)
+        fcl = self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])
+        fch = self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])
+        sos = butter(1, [fcl, fch], btype='bandpass', analog=False, fs=sample_rate, output='sos')
+        processed_samples = sosfilt(sos, samples).astype(np.float32)
 
-        audio_segment = pydub.AudioSegment(
-            int_samples.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=int_samples.dtype.itemsize,
-            channels=1,
-        )
-
-        audio_segment = pydub.effects.low_pass_filter(
-            audio_segment,
-            self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"]),
-        )
-        audio_segment = pydub.effects.high_pass_filter(
-            audio_segment,
-            self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"]),
-        )
-        samples = convert_int16_samples_to_float(
-            np.array(audio_segment.get_array_of_samples())
-        )
-
-        return samples
+        return processed_samples
 
 
 class Mp3Compression(BaseWaveformTransform):

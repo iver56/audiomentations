@@ -1358,11 +1358,6 @@ class TanhDistortion(BaseWaveformTransform):
         return distorted_samples
 
 
-class LowShelfFilter(BaseWaveformTransform):
-    pass
-
-class HighShelfFilter(BaseWaveformTransform):
-    pass
 
 class LowPassFilter(BaseWaveformTransform):
     """
@@ -1401,7 +1396,14 @@ class LowPassFilter(BaseWaveformTransform):
 
         assert samples.dtype == np.float32
 
-        sos = butter(1,  self.parameters["cutoff_freq"], btype='lowpass', analog=False, fs=sample_rate, output='sos')
+        sos = butter(
+            1,
+            self.parameters["cutoff_freq"],
+            btype="lowpass",
+            analog=False,
+            fs=sample_rate,
+            output="sos",
+        )
         processed_samples = sosfilt(sos, samples).astype(np.float32)
 
         return processed_samples
@@ -1438,7 +1440,64 @@ class HighPassFilter(BaseWaveformTransform):
     def apply(self, samples: np.array, sample_rate: int = None):
         assert samples.dtype == np.float32
 
-        sos = butter(1,  self.parameters["cutoff_freq"], btype='lowpass', analog=False, fs=sample_rate, output='sos')
+        sos = butter(
+            1,
+            self.parameters["cutoff_freq"],
+            btype="lowpass",
+            analog=False,
+            fs=sample_rate,
+            output="sos",
+        )
+        processed_samples = sosfilt(sos, samples).astype(np.float32)
+
+        return processed_samples
+
+
+class BandStopFilter(BaseWaveformTransform):
+    """
+    Apply band-pass filtering to the input audio.
+    """
+
+    supports_multichannel = False
+
+    def __init__(
+        self, min_center_freq=100.0, max_center_freq=1000.0, min_q=1.0, max_q=2.0, p=0.5
+    ):
+        """
+        :param min_center_freq: Minimum center frequency in hertz
+        :param max_center_freq: Maximum center frequency in hertz
+        :param min_q: Minimum ratio of center frequency to bandwidth
+        :param max_q: Maximum ratio of center frequency to bandwidth
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+
+        self.min_center_freq = min_center_freq
+        self.max_center_freq = max_center_freq
+        self.min_q = min_q
+        self.max_q = max_q
+        if self.min_center_freq > self.max_center_freq:
+            raise ValueError("min_center_freq must not be greater than max_center_freq")
+        if self.min_q > self.max_q:
+            raise ValueError("min_q must not be greater than max_q")
+
+    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
+        super().randomize_parameters(samples, sample_rate)
+
+        self.parameters["center_freq"] = np.random.uniform(
+            low=self.min_center_freq, high=self.max_center_freq
+        )
+        self.parameters["q"] = np.random.uniform(low=self.min_q, high=self.max_q)
+
+    def apply(self, samples: np.array, sample_rate: int = None):
+
+        assert samples.dtype == np.float32
+
+        fcl = self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])
+        fch = self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])
+        sos = butter(
+            1, [fcl, fch], btype="bandstop", analog=False, fs=sample_rate, output="sos"
+        )
         processed_samples = sosfilt(sos, samples).astype(np.float32)
 
         return processed_samples
@@ -1486,7 +1545,9 @@ class BandPassFilter(BaseWaveformTransform):
 
         fcl = self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])
         fch = self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])
-        sos = butter(1, [fcl, fch], btype='bandpass', analog=False, fs=sample_rate, output='sos')
+        sos = butter(
+            1, [fcl, fch], btype="bandpass", analog=False, fs=sample_rate, output="sos"
+        )
         processed_samples = sosfilt(sos, samples).astype(np.float32)
 
         return processed_samples

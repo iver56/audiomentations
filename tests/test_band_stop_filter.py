@@ -4,9 +4,9 @@ import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 
-from audiomentations import BandPassFilter
+from audiomentations import BandStopFilter
 
-DEBUG = False
+DEBUG = True
 
 
 class TestBandPassFilter(unittest.TestCase):
@@ -23,8 +23,8 @@ class TestBandPassFilter(unittest.TestCase):
         n = np.arange(0, 20, 1 / sample_rate)
         samples = scipy.signal.chirp(n, 50, 20, 2000, method="linear")
 
-        augment = BandPassFilter(
-            min_center_freq=100.0, max_center_freq=1000.0, min_q=1.0, max_q=2.0, p=1.0
+        augment = BandStopFilter(
+            min_center_freq=100.0, max_center_freq=3000.0, min_q=1.0, max_q=2.0, p=1.0
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         fcL = augment.parameters["center_freq"] * (1 - 0.5 / augment.parameters["q"])

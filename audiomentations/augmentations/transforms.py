@@ -1408,18 +1408,40 @@ class LowPassFilter(BaseWaveformTransform):
         return processed_samples
 
 
-class HighPassFilter(BaseWaveformTransform):
+class ButterworthFilter(BaseWaveformTransform):
     """
-    Apply high-pass filtering to the input audio. The signal will be reduced by 6 dB per
-    octave below the cutoff frequency, so this filter is fairly gentle.
+    A `scipy.signal.butter`-based generic filter class.
     """
 
-    supports_multichannel = True
+    def __init__(self, **kwargs):
+        assert "p" in kwargs
+        super().__init__(kwargs["p"])
 
-    def __init__(self, min_cutoff_freq=20, max_cutoff_freq=2400, p: float = 0.5):
+        assert "min_rolloff" in kwargs
+        assert "max_rolloff" in kwargs
+
+        assert ("min_cutoff_freq" in kwargs and "max_cutoff_freq" in kwargs) or (
+            "min_center_freq" in kwargs
+            and "max_freq_center" in kwargs
+            and "min_bandwidth" in kwargs
+            and "max_bandwidth" in kwargs
+        ), "Arguments for either a one-sided, or a two-sided filter must be given"
+
+    def initialize_single_band_filter(
+        self,
+        min_cutoff_freq=20,
+        max_cutoff_freq=2400,
+        min_rolloff=12,
+        max_rolloff=24,
+        p: float = 0.5,
+    ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -1429,6 +1451,76 @@ class HighPassFilter(BaseWaveformTransform):
         if self.min_cutoff_freq > self.max_cutoff_freq:
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
+        self.min_rolloff = min_rolloff
+        self.max_rolloff = max_rolloff
+
+        if self.min_rolloff < 6 or self.min_rolloff % 6 != 0:
+            raise ValueError(
+                "min_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
+            )
+        if self.max_rolloff < 6 or self.max_rolloff % 6 != 0:
+            raise ValueError(
+                "max_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
+            )
+        if self.min_rolloff > self.max_rolloff:
+            raise ValueError("min_rolloff must not be greater than max_rolloff")
+
+    # def randomize_parameters(self, samples: np.array, sample_rate: int = None):
+    #     super().randomize_parameters(samples, sample_rate)
+
+    #     self.parameters["cutoff_freq"] = np.random.uniform(
+    #         low=self.min_cutoff_freq, high=self.max_cutoff_freq
+    #     )
+
+    #     random_order = random.randint(self.min_rolloff // 6
+
+
+class HighPassFilter(BaseWaveformTransform):
+    """
+    Apply high-pass filtering to the input audio. The signal will be reduced by 6 dB per
+    octave below the cutoff frequency, so this filter is fairly gentle.
+    """
+
+    supports_multichannel = True
+
+    def __init__(
+        self,
+        min_cutoff_freq=20,
+        max_cutoff_freq=2400,
+        min_rolloff=12,
+        max_rolloff=24,
+        p: float = 0.5,
+    ):
+        """
+        :param min_cutoff_freq: Minimum cutoff frequency in hertz
+        :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+
+        self.min_cutoff_freq = min_cutoff_freq
+        self.max_cutoff_freq = max_cutoff_freq
+        if self.min_cutoff_freq > self.max_cutoff_freq:
+            raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
+
+        self.min_rolloff = min_rolloff
+        self.max_rolloff = max_rolloff
+
+        if self.min_rolloff < 6 or self.min_rolloff % 6 != 0:
+            raise ValueError(
+                "min_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
+            )
+        if self.max_rolloff < 6 or self.max_rolloff % 6 != 0:
+            raise ValueError(
+                "max_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
+            )
+        if self.min_rolloff > self.max_rolloff:
+            raise ValueError("min_rolloff must not be greater than max_rolloff")
+
     def randomize_parameters(self, samples: np.array, sample_rate: int = None):
         super().randomize_parameters(samples, sample_rate)
 
@@ -1436,13 +1528,16 @@ class HighPassFilter(BaseWaveformTransform):
             low=self.min_cutoff_freq, high=self.max_cutoff_freq
         )
 
+        random_order = random.randint(self.min_rolloff // 6, self.max_rolloff // 6)
+        self.parameters["rolloff"] = random_order * 6
+
     def apply(self, samples: np.array, sample_rate: int = None):
         assert samples.dtype == np.float32
 
         sos = butter(
-            1,
+            self.parameters["rolloff"] // 6,
             self.parameters["cutoff_freq"],
-            btype="lowpass",
+            btype="highpass",
             analog=False,
             fs=sample_rate,
             output="sos",

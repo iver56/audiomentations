@@ -384,7 +384,7 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 * Added magnitude response tests for `BandPassFilter`, `LowPassFilter`, `HighPassFilter`
 * Added `BandStopFilter`
 ### Changed
-* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. Now they support multichannel as well.
+* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. Now they support multichannel, parametrized roll-off, and they're almost 60 times faster than before.
 
 ## v0.20.0 (2021-11-18)
 

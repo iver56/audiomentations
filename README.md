@@ -142,7 +142,7 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 _Added in v0.18.0_
 
-Apply band-pass filtering to the input audio. The filter steepness is 6 dB per octave.
+Apply band-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave)
 
 ## `Clip`
 
@@ -381,7 +381,7 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 ## Unreleased
 
 ### Added
-* Added magnitude response tests for `BandPassFilter`, `LowPassFilter`, `HighPassFilter`
+* Added magnitude response tests for one-sided (`HighPassFilter`, `LowPassFilter`) and two-sided (`BandPassFilter`, `BandStopFilter`) filter transforms.
 * Added `BandStopFilter`
 ### Changed
 * Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. Now they support multichannel, parametrized roll-off, and they're almost 60 times faster than before.

@@ -1358,67 +1358,31 @@ class TanhDistortion(BaseWaveformTransform):
         return distorted_samples
 
 
-class LowPassFilter(BaseWaveformTransform):
-    """
-    Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
-    octave above the cutoff frequency, so this filter is fairly gentle.
-    """
-
-    supports_multichannel = True
-
-    def __init__(
-        self,
-        min_cutoff_freq=150,
-        max_cutoff_freq=7500,
-        p: float = 0.5,
-    ):
-        """
-        :param min_cutoff_freq: Minimum cutoff frequency in hertz
-        :param max_cutoff_freq: Maximum cutoff frequency in hertz
-        :param p: The probability of applying this transform
-        """
-        super().__init__(p)
-
-        self.min_cutoff_freq = min_cutoff_freq
-        self.max_cutoff_freq = max_cutoff_freq
-        if self.min_cutoff_freq > self.max_cutoff_freq:
-            raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
-
-    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-        super().randomize_parameters(samples, sample_rate)
-
-        self.parameters["cutoff_freq"] = np.random.uniform(
-            low=self.min_cutoff_freq, high=self.max_cutoff_freq
-        )
-
-    def apply(self, samples: np.array, sample_rate: int = None):
-
-        assert samples.dtype == np.float32
-
-        sos = butter(
-            1,
-            self.parameters["cutoff_freq"],
-            btype="lowpass",
-            analog=False,
-            fs=sample_rate,
-            output="sos",
-        )
-        processed_samples = sosfilt(sos, samples).astype(np.float32)
-
-        return processed_samples
-
-
 class ButterworthFilter(BaseWaveformTransform):
     """
     A `scipy.signal.butter`-based generic filter class.
     """
 
+    # The types below must be equal to the ones accepted by
+    # the `btype` argument of `scipy.signal.butter`
+    ALLOWED_ONE_SIDE_FILTER_TYPES = ("lowpass", "highpass")
+    ALLOWED_TWO_SIDE_FILTER_TYPES = ("bandpass", "bandstop")
+    ALLOWED_FILTER_TYPES = ALLOWED_ONE_SIDE_FILTER_TYPES + ALLOWED_TWO_SIDE_FILTER_TYPES
+
     def __init__(self, **kwargs):
         assert "p" in kwargs
-        super().__init__(kwargs["p"])
-
         assert "min_rolloff" in kwargs
         assert "max_rolloff" in kwargs
+        assert "filter_type" in kwargs
+
+        filter_type = kwargs["filter_type"]
+
+        assert (
+            filter_type in ButterworthFilter.ALLOWED_FILTER_TYPES
+        ), "Filter type must be one of: " + ", ".join(
+            ButterworthFilter.ALLOWED_FILTER_TYPES
+        )
+        self.filter_type = filter_type
 
         assert ("min_cutoff_freq" in kwargs and "max_cutoff_freq" in kwargs) or (
             "min_center_freq" in kwargs
@@ -1426,6 +1390,15 @@ class ButterworthFilter(BaseWaveformTransform):
             and "min_bandwidth" in kwargs
             and "max_bandwidth" in kwargs
         ), "Arguments for either a one-sided, or a two-sided filter must be given"
+
+        if "min_cutoff_freq" in kwargs:
+            self.initialize_single_band_filter(
+                kwargs["min_cutoff_freq"],
+                kwargs["max_cutoff_freq"],
+                kwargs["min_rolloff"],
+                kwargs["max_rolloff"],
+                kwargs["p"],
+            )
 
     def initialize_single_band_filter(
         self,
@@ -1465,20 +1438,38 @@ class ButterworthFilter(BaseWaveformTransform):
         if self.min_rolloff > self.max_rolloff:
             raise ValueError("min_rolloff must not be greater than max_rolloff")
 
-    # def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-    #     super().randomize_parameters(samples, sample_rate)
+    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
 
-    #     self.parameters["cutoff_freq"] = np.random.uniform(
-    #         low=self.min_cutoff_freq, high=self.max_cutoff_freq
-    #     )
+        random_order = random.randint(self.min_rolloff // 6, self.max_rolloff // 6)
+        self.parameters["rolloff"] = random_order * 6
 
-    #     random_order = random.randint(self.min_rolloff // 6
+        if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
+            super().randomize_parameters(samples, sample_rate)
+
+            self.parameters["cutoff_freq"] = np.random.uniform(
+                low=self.min_cutoff_freq, high=self.max_cutoff_freq
+            )
+
+    def apply(self, samples: np.array, sample_rate: int = None):
+        assert samples.dtype == np.float32
+
+        if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
+            sos = butter(
+                self.parameters["rolloff"] // 6,
+                self.parameters["cutoff_freq"],
+                btype=self.filter_type,
+                analog=False,
+                fs=sample_rate,
+                output="sos",
+            )
+        processed_samples = sosfilt(sos, samples).astype(np.float32)
+
+        return processed_samples
 
 
-class HighPassFilter(BaseWaveformTransform):
+class LowPassFilter(ButterworthFilter):
     """
-    Apply high-pass filtering to the input audio. The signal will be reduced by 6 dB per
-    octave below the cutoff frequency, so this filter is fairly gentle.
+    Apply high-pass filtering to the input audio.
     """
 
     supports_multichannel = True
@@ -1500,51 +1491,48 @@ class HighPassFilter(BaseWaveformTransform):
             Must be a multiple of 6
         :param p: The probability of applying this transform
         """
-        super().__init__(p)
-
-        self.min_cutoff_freq = min_cutoff_freq
-        self.max_cutoff_freq = max_cutoff_freq
-        if self.min_cutoff_freq > self.max_cutoff_freq:
-            raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
-
-        self.min_rolloff = min_rolloff
-        self.max_rolloff = max_rolloff
-
-        if self.min_rolloff < 6 or self.min_rolloff % 6 != 0:
-            raise ValueError(
-                "min_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
-            )
-        if self.max_rolloff < 6 or self.max_rolloff % 6 != 0:
-            raise ValueError(
-                "max_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
-            )
-        if self.min_rolloff > self.max_rolloff:
-            raise ValueError("min_rolloff must not be greater than max_rolloff")
-
-    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-        super().randomize_parameters(samples, sample_rate)
-
-        self.parameters["cutoff_freq"] = np.random.uniform(
-            low=self.min_cutoff_freq, high=self.max_cutoff_freq
+        super().__init__(
+            min_cutoff_freq=min_cutoff_freq,
+            max_cutoff_freq=max_cutoff_freq,
+            min_rolloff=min_rolloff,
+            max_rolloff=max_rolloff,
+            p=p,
+            filter_type="lowpass",
         )
 
-        random_order = random.randint(self.min_rolloff // 6, self.max_rolloff // 6)
-        self.parameters["rolloff"] = random_order * 6
 
-    def apply(self, samples: np.array, sample_rate: int = None):
-        assert samples.dtype == np.float32
+class HighPassFilter(ButterworthFilter):
+    """
+    Apply high-pass filtering to the input audio.
+    """
 
-        sos = butter(
-            self.parameters["rolloff"] // 6,
-            self.parameters["cutoff_freq"],
-            btype="highpass",
-            analog=False,
-            fs=sample_rate,
-            output="sos",
+    supports_multichannel = True
+
+    def __init__(
+        self,
+        min_cutoff_freq=20,
+        max_cutoff_freq=2400,
+        min_rolloff=12,
+        max_rolloff=24,
+        p: float = 0.5,
+    ):
+        """
+        :param min_cutoff_freq: Minimum cutoff frequency in hertz
+        :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
+        :param p: The probability of applying this transform
+        """
+        super().__init__(
+            min_cutoff_freq=min_cutoff_freq,
+            max_cutoff_freq=max_cutoff_freq,
+            min_rolloff=min_rolloff,
+            max_rolloff=max_rolloff,
+            p=p,
+            filter_type="highpass",
         )
-        processed_samples = sosfilt(sos, samples).astype(np.float32)
-
-        return processed_samples
 
 
 class BandStopFilter(BaseWaveformTransform):

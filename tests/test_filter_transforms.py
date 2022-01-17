@@ -15,7 +15,7 @@ DEBUG = False
 
 def get_chirp_test(sample_rate, duration):
     """
-    Create a `duration` seconds chirp from 2Hz to `nyquist frequency` - 10 Hz
+    Create a `duration` seconds chirp from 0Hz to `nyquist frequency`
     """
 
     n = np.arange(0, duration, 1 / sample_rate)
@@ -25,7 +25,7 @@ def get_chirp_test(sample_rate, duration):
 
 def get_randn_test(sample_rate, duration):
     """
-    Create a `duration` seconds chirp from 2Hz to `nyquist frequency` - 10 Hz
+    Create a random noise test stimulus
     """
 
     n_samples = int(duration * sample_rate)
@@ -160,7 +160,7 @@ class TestOneSidedFilterTransforms:
     def test_two_channel_input(self, samples, filter_type, rolloff):
 
         sample_rate = 8000
-        samples = get_chirp_test(sample_rate, 10)
+        samples = get_randn_test(sample_rate, 10)
 
         # Convert to 2D two channels
         two_channels = np.vstack([samples, samples])
@@ -203,7 +203,7 @@ class TestTwoSidedFilterTransforms:
     def test_two_channel_input(self, filter_type):
 
         sample_rate = 8000
-        samples = get_chirp_test(sample_rate, 20)
+        samples = get_randn_test(sample_rate, 20)
 
         # Convert to 2D two channels
         two_channels = np.vstack([samples, samples])

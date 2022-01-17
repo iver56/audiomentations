@@ -1,15 +1,17 @@
-from audiomentations.augmentations.transforms import LowPassFilter, HighPassFilter
-
+import numpy as np
 import pytest
 import scipy
 import scipy.signal
 
-import numpy as np
-
-
-
+from audiomentations.augmentations.transforms import (
+    BandPassFilter,
+    BandStopFilter,
+    HighPassFilter,
+    LowPassFilter,
+)
 
 DEBUG = False
+
 
 def get_chirp_test(sample_rate, duration):
     """
@@ -17,12 +19,23 @@ def get_chirp_test(sample_rate, duration):
     """
 
     n = np.arange(0, duration, 1 / sample_rate)
-    samples = scipy.signal.chirp(n, 2, duration, sample_rate // 2 - 10, method="linear")
+    samples = scipy.signal.chirp(n, 0, duration, sample_rate // 2, method="linear")
+    return samples
+
+
+def get_randn_test(sample_rate, duration):
+    """
+    Create a `duration` seconds chirp from 2Hz to `nyquist frequency` - 10 Hz
+    """
+
+    n_samples = int(duration * sample_rate)
+
+    samples = np.random.randn(n_samples)
+
     return samples
 
 
 class TestOneSidedFilterTransforms:
-
     @pytest.mark.parametrize("filter_type", ["lowpass", "highpass"])
     @pytest.mark.parametrize(
         "rolloff",
@@ -101,6 +114,7 @@ class TestOneSidedFilterTransforms:
 
         if DEBUG:
             import matplotlib.pyplot as plt
+
             plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
             plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
             plt.legend(["Input signal", f"Highpassed at f_c={fc:.2f}"])
@@ -139,10 +153,14 @@ class TestOneSidedFilterTransforms:
         [get_chirp_test(8000, 40)],
     )
     @pytest.mark.parametrize("filter_type", ["lowpass", "highpass"])
-    def test_two_channel_input(self, samples, filter_type):
+    @pytest.mark.parametrize(
+        "rolloff",
+        [6, 12, 18, 120],
+    )
+    def test_two_channel_input(self, samples, filter_type, rolloff):
 
         sample_rate = 8000
-        samples = get_chirp_test(sample_rate, 40)
+        samples = get_chirp_test(sample_rate, 10)
 
         # Convert to 2D two channels
         two_channels = np.vstack([samples, samples])
@@ -153,14 +171,14 @@ class TestOneSidedFilterTransforms:
             FilterTransform = LowPassFilter
 
         augment = FilterTransform(
-            min_cutoff_freq=100,
-            max_cutoff_freq=100,
-            min_rolloff=6,
-            max_rolloff=6,
+            min_cutoff_freq=1000,
+            max_cutoff_freq=1000,
+            min_rolloff=rolloff,
+            max_rolloff=rolloff,
             p=1.0,
         )
 
-        processed_samples = augment(samples=two_channels, sample_rate=sample_rate)
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
         processed_two_channels = augment(samples=two_channels, sample_rate=sample_rate)
 
@@ -170,5 +188,59 @@ class TestOneSidedFilterTransforms:
 
         # Check that the processed 2D channel version applies the same effect
         # as the passband version.
-        for n, channel in enumerate(processed_two_channels):
-            assert np.allclose(channel, processed_samples[n])
+        for _, channel in enumerate(processed_two_channels):
+            if DEBUG:
+                import matplotlib.pyplot as plt
+
+                plt.plot(channel)
+                plt.plot(processed_samples)
+                plt.show()
+            assert np.allclose(channel, processed_samples)
+
+
+class TestTwoSidedFilterTransforms:
+    @pytest.mark.parametrize("filter_type", ["bandpass", "bandstop"])
+    def test_two_channel_input(self, filter_type):
+
+        sample_rate = 8000
+        samples = get_chirp_test(sample_rate, 20)
+
+        # Convert to 2D two channels
+        two_channels = np.vstack([samples, samples])
+
+        if filter_type == "bandpass":
+            FilterTransform = BandPassFilter
+        elif filter_type == "bandstop":
+            FilterTransform = BandStopFilter
+
+        augment = FilterTransform(
+            min_center_freq=1000,
+            max_center_freq=1000,
+            min_bandwidth=100,
+            max_bandwidth=100,
+            min_rolloff=6,
+            max_rolloff=6,
+            p=1.0,
+        )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        processed_two_channels = augment(samples=two_channels, sample_rate=sample_rate)
+
+        assert processed_two_channels.shape[0] == 2
+        assert processed_two_channels.shape == two_channels.shape
+        assert processed_two_channels.dtype == np.float32
+
+        # Check that the two channels are equal
+        assert np.allclose(processed_two_channels[0], processed_two_channels[1])
+
+        # Check that the processed 2D channel version applies the same effect
+        # as the passband version.
+        for _, channel in enumerate(processed_two_channels):
+            if DEBUG:
+                import matplotlib.pyplot as plt
+
+                plt.plot(channel)
+                plt.plot(processed_samples)
+                plt.show()
+            assert np.allclose(channel, processed_samples, rtol=1e-5)

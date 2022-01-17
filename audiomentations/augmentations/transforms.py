@@ -8,18 +8,17 @@ import warnings
 
 import librosa
 import numpy as np
-from scipy.signal import butter, sosfilt, convolve
+from scipy.signal import butter, convolve, sosfilt, sosfilt_zi
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
+    calculate_desired_noise_rms,
     calculate_rms,
     calculate_rms_without_silence,
-    calculate_desired_noise_rms,
-    get_file_paths,
     convert_decibels_to_amplitude_ratio,
     convert_float_samples_to_int16,
-    convert_int16_samples_to_float,
+    get_file_paths,
 )
 
 
@@ -1363,6 +1362,8 @@ class ButterworthFilter(BaseWaveformTransform):
     A `scipy.signal.butter`-based generic filter class.
     """
 
+    supports_multichannel = True
+
     # The types below must be equal to the ones accepted by
     # the `btype` argument of `scipy.signal.butter`
     ALLOWED_ONE_SIDE_FILTER_TYPES = ("lowpass", "highpass")
@@ -1386,21 +1387,31 @@ class ButterworthFilter(BaseWaveformTransform):
 
         assert ("min_cutoff_freq" in kwargs and "max_cutoff_freq" in kwargs) or (
             "min_center_freq" in kwargs
-            and "max_freq_center" in kwargs
+            and "max_center_freq" in kwargs
             and "min_bandwidth" in kwargs
             and "max_bandwidth" in kwargs
         ), "Arguments for either a one-sided, or a two-sided filter must be given"
 
         if "min_cutoff_freq" in kwargs:
-            self.initialize_single_band_filter(
-                kwargs["min_cutoff_freq"],
-                kwargs["max_cutoff_freq"],
-                kwargs["min_rolloff"],
-                kwargs["max_rolloff"],
-                kwargs["p"],
+            self.initialize_one_sided_filter(
+                min_cutoff_freq=kwargs["min_cutoff_freq"],
+                max_cutoff_freq=kwargs["max_cutoff_freq"],
+                min_rolloff=kwargs["min_rolloff"],
+                max_rolloff=kwargs["max_rolloff"],
+                p=kwargs["p"],
+            )
+        elif "min_center_freq" in kwargs:
+            self.initialize_two_sided_filter(
+                min_center_freq=kwargs["min_center_freq"],
+                max_center_freq=kwargs["max_center_freq"],
+                min_bandwidth=kwargs["min_bandwidth"],
+                max_bandwidth=kwargs["max_bandwidth"],
+                min_rolloff=kwargs["min_rolloff"],
+                max_rolloff=kwargs["max_rolloff"],
+                p=kwargs["p"],
             )
 
-    def initialize_single_band_filter(
+    def initialize_one_sided_filter(
         self,
         min_cutoff_freq=20,
         max_cutoff_freq=2400,
@@ -1438,16 +1449,57 @@ class ButterworthFilter(BaseWaveformTransform):
         if self.min_rolloff > self.max_rolloff:
             raise ValueError("min_rolloff must not be greater than max_rolloff")
 
+    def initialize_two_sided_filter(
+        self,
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_bandwidth=1.0,
+        max_bandwidth=2.0,
+        min_rolloff=12,
+        max_rolloff=24,
+        p=0.5,
+    ):
+        """
+        :param min_center_freq: Minimum center frequency in hertz
+        :param max_center_freq: Maximum center frequency in hertz
+        :param min_bandwidth: Minimum bandwidth
+        :param max_bandwidth: Maximum bandwidth
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
+        :param p: The probability of applying this transform
+        """
+        super().__init__(p)
+
+        self.min_center_freq = min_center_freq
+        self.max_center_freq = max_center_freq
+        self.min_bandwidth = min_bandwidth
+        self.max_bandwidth = max_bandwidth
+
+        self.min_rolloff = min_rolloff
+        self.max_rolloff = max_rolloff
+        if self.min_center_freq > self.max_center_freq:
+            raise ValueError("min_center_freq must not be greater than max_center_freq")
+        if self.min_bandwidth > self.max_bandwidth:
+            raise ValueError("min_q must not be greater than max_q")
+
     def randomize_parameters(self, samples: np.array, sample_rate: int = None):
 
+        super().randomize_parameters(samples, sample_rate)
         random_order = random.randint(self.min_rolloff // 6, self.max_rolloff // 6)
         self.parameters["rolloff"] = random_order * 6
 
         if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
-            super().randomize_parameters(samples, sample_rate)
-
             self.parameters["cutoff_freq"] = np.random.uniform(
                 low=self.min_cutoff_freq, high=self.max_cutoff_freq
+            )
+        elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
+            self.parameters["center_freq"] = np.random.uniform(
+                low=self.min_center_freq, high=self.max_center_freq
+            )
+            self.parameters["bandwidth"] = np.random.uniform(
+                low=self.min_bandwidth, high=self.max_bandwidth
             )
 
     def apply(self, samples: np.array, sample_rate: int = None):
@@ -1462,7 +1514,31 @@ class ButterworthFilter(BaseWaveformTransform):
                 fs=sample_rate,
                 output="sos",
             )
-        processed_samples = sosfilt(sos, samples).astype(np.float32)
+        elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
+            sos = butter(
+                self.parameters["rolloff"] // 6,
+                [
+                    self.parameters["center_freq"] - self.parameters["bandwidth"] / 2,
+                    self.parameters["center_freq"] + self.parameters["bandwidth"] / 2,
+                ],
+                btype=self.filter_type,
+                analog=False,
+                fs=sample_rate,
+                output="sos",
+            )
+
+        if len(samples.shape) == 1:
+            zi = sosfilt_zi(sos) * samples[0]
+            processed_samples, zf = sosfilt(sos, samples, zi=zi)
+        else:
+            processed_samples = np.zeros_like(samples, dtype=np.float32)
+            zi = sosfilt_zi(sos)
+            for chn_idx in range(samples.shape[0]):
+
+                processed_samples[chn_idx, :], _ = sosfilt(
+                    sos, samples[chn_idx, :], zi=zi * samples[chn_idx, 0]
+                )
+        processed_samples = processed_samples.astype(np.float32)
 
         return processed_samples
 
@@ -1535,7 +1611,47 @@ class HighPassFilter(ButterworthFilter):
         )
 
 
-class BandStopFilter(BaseWaveformTransform):
+class BandStopFilter(ButterworthFilter):
+    """
+    Apply band-stop filtering to the input audio.
+    """
+
+    supports_multichannel = True
+
+    def __init__(
+        self,
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_bandwidth=1.0,
+        max_bandwidth=2.0,
+        min_rolloff=12,
+        max_rolloff=24,
+        p=0.5,
+    ):
+        """
+        :param min_center_freq: Minimum center frequency in hertz
+        :param max_center_freq: Maximum center frequency in hertz
+        :param min_bandwidth: Minimum bandwidth
+        :param max_bandwidth: Maximum bandwidth
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
+        :param p: The probability of applying this transform
+        """
+        super().__init__(
+            min_center_freq=min_center_freq,
+            max_center_freq=max_center_freq,
+            min_bandwidth=min_bandwidth,
+            max_bandwidth=max_bandwidth,
+            min_rolloff=min_rolloff,
+            max_rolloff=max_rolloff,
+            p=p,
+            filter_type="bandstop",
+        )
+
+
+class BandPassFilter(ButterworthFilter):
     """
     Apply band-pass filtering to the input audio.
     """
@@ -1543,96 +1659,36 @@ class BandStopFilter(BaseWaveformTransform):
     supports_multichannel = True
 
     def __init__(
-        self, min_center_freq=100.0, max_center_freq=1000.0, min_q=1.0, max_q=2.0, p=0.5
+        self,
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_bandwidth=1.0,
+        max_bandwidth=2.0,
+        min_rolloff=12,
+        max_rolloff=24,
+        p=0.5,
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
-        :param min_q: Minimum ratio of center frequency to bandwidth
-        :param max_q: Maximum ratio of center frequency to bandwidth
+        :param min_bandwidth: Minimum bandwidth
+        :param max_bandwidth: Maximum bandwidth
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
         :param p: The probability of applying this transform
         """
-        super().__init__(p)
-
-        self.min_center_freq = min_center_freq
-        self.max_center_freq = max_center_freq
-        self.min_q = min_q
-        self.max_q = max_q
-        if self.min_center_freq > self.max_center_freq:
-            raise ValueError("min_center_freq must not be greater than max_center_freq")
-        if self.min_q > self.max_q:
-            raise ValueError("min_q must not be greater than max_q")
-
-    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-        super().randomize_parameters(samples, sample_rate)
-
-        self.parameters["center_freq"] = np.random.uniform(
-            low=self.min_center_freq, high=self.max_center_freq
+        super().__init__(
+            min_center_freq=min_center_freq,
+            max_center_freq=max_center_freq,
+            min_bandwidth=min_bandwidth,
+            max_bandwidth=max_bandwidth,
+            min_rolloff=min_rolloff,
+            max_rolloff=max_rolloff,
+            p=p,
+            filter_type="bandpass",
         )
-        self.parameters["q"] = np.random.uniform(low=self.min_q, high=self.max_q)
-
-    def apply(self, samples: np.array, sample_rate: int = None):
-
-        assert samples.dtype == np.float32
-
-        fcl = self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])
-        fch = self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])
-        sos = butter(
-            1, [fcl, fch], btype="bandstop", analog=False, fs=sample_rate, output="sos"
-        )
-        processed_samples = sosfilt(sos, samples).astype(np.float32)
-
-        return processed_samples
-
-
-class BandPassFilter(BaseWaveformTransform):
-    """
-    Apply band-pass filtering to the input audio.
-    """
-
-    supports_multichannel = True
-
-    def __init__(
-        self, min_center_freq=100.0, max_center_freq=1000.0, min_q=1.0, max_q=2.0, p=0.5
-    ):
-        """
-        :param min_center_freq: Minimum center frequency in hertz
-        :param max_center_freq: Maximum center frequency in hertz
-        :param min_q: Minimum ratio of center frequency to bandwidth
-        :param max_q: Maximum ratio of center frequency to bandwidth
-        :param p: The probability of applying this transform
-        """
-        super().__init__(p)
-
-        self.min_center_freq = min_center_freq
-        self.max_center_freq = max_center_freq
-        self.min_q = min_q
-        self.max_q = max_q
-        if self.min_center_freq > self.max_center_freq:
-            raise ValueError("min_center_freq must not be greater than max_center_freq")
-        if self.min_q > self.max_q:
-            raise ValueError("min_q must not be greater than max_q")
-
-    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-        super().randomize_parameters(samples, sample_rate)
-
-        self.parameters["center_freq"] = np.random.uniform(
-            low=self.min_center_freq, high=self.max_center_freq
-        )
-        self.parameters["q"] = np.random.uniform(low=self.min_q, high=self.max_q)
-
-    def apply(self, samples: np.array, sample_rate: int = None):
-
-        assert samples.dtype == np.float32
-
-        fcl = self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"])
-        fch = self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"])
-        sos = butter(
-            1, [fcl, fch], btype="bandpass", analog=False, fs=sample_rate, output="sos"
-        )
-        processed_samples = sosfilt(sos, samples).astype(np.float32)
-
-        return processed_samples
 
 
 class Mp3Compression(BaseWaveformTransform):

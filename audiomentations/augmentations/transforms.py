@@ -1603,7 +1603,13 @@ class LowPassFilter(ButterworthFilter):
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
             Must be a multiple of 6
-        :param zero_phase: Whether filtering should be zero phase
+        :param zero_phase: Whether filtering should be zero phase.
+            When this is set to `true` it will not affect the phase of the
+            input signal but will sound 3db lower at the cutoff frequency
+            compared to the non-zero phase case (6db vs 3db). Additionally,
+            it is 2X times slower than in the non-zero phase case. If you
+            absolutely want no phase distortions (e.g. want to augment a
+            drum track), set this to `true`.
         :param p: The probability of applying this transform
         """
         super().__init__(
@@ -1640,7 +1646,13 @@ class HighPassFilter(ButterworthFilter):
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
             Must be a multiple of 6
-        :param zero_phase: Whether filtering should be zero phase
+        :param zero_phase: Whether filtering should be zero phase.
+            When this is set to `true` it will not affect the phase of the
+            input signal but will sound 3db lower at the cutoff frequency
+            compared to the non-zero phase case (6db vs 3db). Additionally,
+            it is 2X times slower than in the non-zero phase case. If you
+            absolutely want no phase distortions (e.g. want to augment a
+            drum track), set this to `true`.
         :param p: The probability of applying this transform
         """
         super().__init__(
@@ -1681,7 +1693,13 @@ class BandStopFilter(ButterworthFilter):
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
             Must be a multiple of 6
-        :param zero_phase: Whether filtering should be zero phase
+        :param zero_phase: Whether filtering should be zero phase.
+            When this is set to `true` it will not affect the phase of the
+            input signal but will sound 3db lower at the cutoff frequency
+            compared to the non-zero phase case (6db vs 3db). Additionally,
+            it is 2X times slower than in the non-zero phase case. If you
+            absolutely want no phase distortions (e.g. want to augment a
+            drum track), set this to `true`.
         :param p: The probability of applying this transform
         """
         super().__init__(
@@ -1724,7 +1742,14 @@ class BandPassFilter(ButterworthFilter):
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
             Must be a multiple of 6
-        :param zero_phase: Whether filtering should be zero phase
+        :param zero_phase: Whether filtering should be zero phase.
+            When this is set to `true` it will not affect the phase of the
+            input signal but will sound 3db lower at the cutoff frequency
+            compared to the non-zero phase case (6db vs 3db). Additionally,
+            it is 2X times slower than in the non-zero phase case. If you
+            absolutely want no phase distortions (e.g. want to augment an
+            audio file with lots of transients, like a drum track), set
+            this to `true`.
         :param p: The probability of applying this transform
         """
         super().__init__(

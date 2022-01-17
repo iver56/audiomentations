@@ -140,14 +140,14 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `BandPassFilter`
 
-Updated in v0.19.0_
+Updated in v0.21.0_
 
 Apply band-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave)
 
 
 ## `BandStopFilter`
 
-_Added in v0.19.0_
+_Added in v0.21.0_
 
 Apply band-stop filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave)
 
@@ -200,14 +200,14 @@ See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
 ## `HighPassFilter`
 
-Updated in v0.19.0_
+Updated in v0.21.0_
 
 Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
 
 
 ## `LowPassFilter`
 
-_Updated in v0.19.0_
+_Updated in v0.21.0_
 
 Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave)
 

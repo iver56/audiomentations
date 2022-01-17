@@ -8,7 +8,7 @@ import warnings
 
 import librosa
 import numpy as np
-from scipy.signal import butter, convolve, sosfilt, sosfilt_zi
+from scipy.signal import butter, convolve, sosfilt, sosfiltfilt, sosfilt_zi
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -505,9 +505,10 @@ class Shift(BaseWaveformTransform):
                 )
                 fade_in_length = fade_in_end - fade_in_start
 
-                shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
-                    :fade_in_length
-                ]
+                shifted_samples[
+                    ...,
+                    fade_in_start:fade_in_end,
+                ] *= fade_in[:fade_in_length]
 
                 if self.rollover:
 
@@ -540,9 +541,10 @@ class Shift(BaseWaveformTransform):
                         shifted_samples.shape[-1],
                     )
                     fade_in_length = fade_in_end - fade_in_start
-                    shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
-                        :fade_in_length
-                    ]
+                    shifted_samples[
+                        ...,
+                        fade_in_start:fade_in_end,
+                    ] *= fade_in[:fade_in_length]
 
         return shifted_samples
 
@@ -1390,15 +1392,33 @@ class ButterworthFilter(BaseWaveformTransform):
         assert "min_rolloff" in kwargs
         assert "max_rolloff" in kwargs
         assert "filter_type" in kwargs
+        assert "zero_phase" in kwargs
 
-        filter_type = kwargs["filter_type"]
+        self.filter_type = kwargs["filter_type"]
+        self.min_rolloff = kwargs["min_rolloff"]
+        self.max_rolloff = kwargs["max_rolloff"]
+        self.zero_phase = kwargs["zero_phase"]
+
+        if self.zero_phase:
+            assert (
+                self.min_rolloff % 12 == 0
+            ), "Zero phase filters can only have a steepness which is a multiple of 12db/octave"
+            assert (
+                self.max_rolloff % 12 == 0
+            ), "Zero phase filters can only have a steepness which is a multiple of 12db/octave"
+        else:
+            assert (
+                self.min_rolloff % 6 == 0
+            ), "Non zero phase filters can only have a steepness which is a multiple of 6db/octave"
+            assert (
+                self.max_rolloff % 6 == 0
+            ), "Non zero phase filters can only have a steepness which is a multiple of 6db/octave"
 
         assert (
-            filter_type in ButterworthFilter.ALLOWED_FILTER_TYPES
+            self.filter_type in ButterworthFilter.ALLOWED_FILTER_TYPES
         ), "Filter type must be one of: " + ", ".join(
             ButterworthFilter.ALLOWED_FILTER_TYPES
         )
-        self.filter_type = filter_type
 
         assert ("min_cutoff_freq" in kwargs and "max_cutoff_freq" in kwargs) or (
             "min_center_freq" in kwargs
@@ -1411,8 +1431,6 @@ class ButterworthFilter(BaseWaveformTransform):
             self.initialize_one_sided_filter(
                 min_cutoff_freq=kwargs["min_cutoff_freq"],
                 max_cutoff_freq=kwargs["max_cutoff_freq"],
-                min_rolloff=kwargs["min_rolloff"],
-                max_rolloff=kwargs["max_rolloff"],
                 p=kwargs["p"],
             )
         elif "min_center_freq" in kwargs:
@@ -1421,8 +1439,6 @@ class ButterworthFilter(BaseWaveformTransform):
                 max_center_freq=kwargs["max_center_freq"],
                 min_bandwidth=kwargs["min_bandwidth"],
                 max_bandwidth=kwargs["max_bandwidth"],
-                min_rolloff=kwargs["min_rolloff"],
-                max_rolloff=kwargs["max_rolloff"],
                 p=kwargs["p"],
             )
 
@@ -1430,8 +1446,6 @@ class ButterworthFilter(BaseWaveformTransform):
         self,
         min_cutoff_freq=20,
         max_cutoff_freq=2400,
-        min_rolloff=12,
-        max_rolloff=24,
         p: float = 0.5,
     ):
         """
@@ -1450,9 +1464,6 @@ class ButterworthFilter(BaseWaveformTransform):
         if self.min_cutoff_freq > self.max_cutoff_freq:
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
-        self.min_rolloff = min_rolloff
-        self.max_rolloff = max_rolloff
-
         if self.min_rolloff < 6 or self.min_rolloff % 6 != 0:
             raise ValueError(
                 "min_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
@@ -1470,8 +1481,6 @@ class ButterworthFilter(BaseWaveformTransform):
         max_center_freq=1000.0,
         min_bandwidth=1.0,
         max_bandwidth=2.0,
-        min_rolloff=12,
-        max_rolloff=24,
         p=0.5,
     ):
         """
@@ -1492,8 +1501,6 @@ class ButterworthFilter(BaseWaveformTransform):
         self.min_bandwidth = min_bandwidth
         self.max_bandwidth = max_bandwidth
 
-        self.min_rolloff = min_rolloff
-        self.max_rolloff = max_rolloff
         if self.min_center_freq > self.max_center_freq:
             raise ValueError("min_center_freq must not be greater than max_center_freq")
         if self.min_bandwidth > self.max_bandwidth:
@@ -1502,8 +1509,14 @@ class ButterworthFilter(BaseWaveformTransform):
     def randomize_parameters(self, samples: np.array, sample_rate: int = None):
 
         super().randomize_parameters(samples, sample_rate)
-        random_order = random.randint(self.min_rolloff // 6, self.max_rolloff // 6)
-        self.parameters["rolloff"] = random_order * 6
+        if self.zero_phase:
+            random_order = random.randint(
+                self.min_rolloff // 12, self.max_rolloff // 12
+            )
+            self.parameters["rolloff"] = random_order * 12
+        else:
+            random_order = random.randint(self.min_rolloff // 6, self.max_rolloff // 6)
+            self.parameters["rolloff"] = random_order * 6
 
         if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
             self.parameters["cutoff_freq"] = np.random.uniform(
@@ -1522,7 +1535,7 @@ class ButterworthFilter(BaseWaveformTransform):
 
         if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
             sos = butter(
-                self.parameters["rolloff"] // 6,
+                self.parameters["rolloff"] // (12 if self.zero_phase else 6),
                 self.parameters["cutoff_freq"],
                 btype=self.filter_type,
                 analog=False,
@@ -1531,7 +1544,7 @@ class ButterworthFilter(BaseWaveformTransform):
             )
         elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
             sos = butter(
-                self.parameters["rolloff"] // 6,
+                self.parameters["rolloff"] // (12 if self.zero_phase else 6),
                 [
                     self.parameters["center_freq"] - self.parameters["bandwidth"] / 2,
                     self.parameters["center_freq"] + self.parameters["bandwidth"] / 2,
@@ -1542,18 +1555,27 @@ class ButterworthFilter(BaseWaveformTransform):
                 output="sos",
             )
 
+        # The actual processing takes place here
         if len(samples.shape) == 1:
-            zi = sosfilt_zi(sos) * samples[0]
-            processed_samples, zf = sosfilt(sos, samples, zi=zi)
+            if self.zero_phase:
+                processed_samples = sosfiltfilt(sos, samples)
+            else:
+                zi = sosfilt_zi(sos) * samples[0]
+                processed_samples, zf = sosfilt(sos, samples, zi=zi)
+            processed_samples = processed_samples.astype(np.float32)
         else:
             processed_samples = np.zeros_like(samples, dtype=np.float32)
-            zi = sosfilt_zi(sos)
-            for chn_idx in range(samples.shape[0]):
-
-                processed_samples[chn_idx, :], _ = sosfilt(
-                    sos, samples[chn_idx, :], zi=zi * samples[chn_idx, 0]
-                )
-        processed_samples = processed_samples.astype(np.float32)
+            if self.zero_phase:
+                for chn_idx in range(samples.shape[0]):
+                    processed_samples[chn_idx, :] = sosfiltfilt(
+                        sos, samples[chn_idx, :]
+                    )
+            else:
+                zi = sosfilt_zi(sos)
+                for chn_idx in range(samples.shape[0]):
+                    processed_samples[chn_idx, :], _ = sosfilt(
+                        sos, samples[chn_idx, :], zi=zi * samples[chn_idx, 0]
+                    )
 
         return processed_samples
 
@@ -1571,6 +1593,7 @@ class LowPassFilter(ButterworthFilter):
         max_cutoff_freq=2400,
         min_rolloff=12,
         max_rolloff=24,
+        zero_phase=False,
         p: float = 0.5,
     ):
         """
@@ -1580,6 +1603,7 @@ class LowPassFilter(ButterworthFilter):
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
             Must be a multiple of 6
+        :param zero_phase: Whether filtering should be zero phase
         :param p: The probability of applying this transform
         """
         super().__init__(
@@ -1587,6 +1611,7 @@ class LowPassFilter(ButterworthFilter):
             max_cutoff_freq=max_cutoff_freq,
             min_rolloff=min_rolloff,
             max_rolloff=max_rolloff,
+            zero_phase=zero_phase,
             p=p,
             filter_type="lowpass",
         )
@@ -1605,6 +1630,7 @@ class HighPassFilter(ButterworthFilter):
         max_cutoff_freq=2400,
         min_rolloff=12,
         max_rolloff=24,
+        zero_phase=False,
         p: float = 0.5,
     ):
         """
@@ -1614,6 +1640,7 @@ class HighPassFilter(ButterworthFilter):
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
             Must be a multiple of 6
+        :param zero_phase: Whether filtering should be zero phase
         :param p: The probability of applying this transform
         """
         super().__init__(
@@ -1621,6 +1648,7 @@ class HighPassFilter(ButterworthFilter):
             max_cutoff_freq=max_cutoff_freq,
             min_rolloff=min_rolloff,
             max_rolloff=max_rolloff,
+            zero_phase=zero_phase,
             p=p,
             filter_type="highpass",
         )
@@ -1637,10 +1665,11 @@ class BandStopFilter(ButterworthFilter):
         self,
         min_center_freq=100.0,
         max_center_freq=1000.0,
-        min_bandwidth=1.0,
-        max_bandwidth=2.0,
+        min_bandwidth=100.0,
+        max_bandwidth=300.0,
         min_rolloff=12,
         max_rolloff=24,
+        zero_phase=False,
         p=0.5,
     ):
         """
@@ -1652,6 +1681,7 @@ class BandStopFilter(ButterworthFilter):
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
             Must be a multiple of 6
+        :param zero_phase: Whether filtering should be zero phase
         :param p: The probability of applying this transform
         """
         super().__init__(
@@ -1661,6 +1691,7 @@ class BandStopFilter(ButterworthFilter):
             max_bandwidth=max_bandwidth,
             min_rolloff=min_rolloff,
             max_rolloff=max_rolloff,
+            zero_phase=zero_phase,
             p=p,
             filter_type="bandstop",
         )
@@ -1677,10 +1708,11 @@ class BandPassFilter(ButterworthFilter):
         self,
         min_center_freq=100.0,
         max_center_freq=1000.0,
-        min_bandwidth=1.0,
-        max_bandwidth=2.0,
+        min_bandwidth=100.0,
+        max_bandwidth=300.0,
         min_rolloff=12,
         max_rolloff=24,
+        zero_phase=False,
         p=0.5,
     ):
         """
@@ -1692,6 +1724,7 @@ class BandPassFilter(ButterworthFilter):
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
             Must be a multiple of 6
+        :param zero_phase: Whether filtering should be zero phase
         :param p: The probability of applying this transform
         """
         super().__init__(
@@ -1701,6 +1734,7 @@ class BandPassFilter(ButterworthFilter):
             max_bandwidth=max_bandwidth,
             min_rolloff=min_rolloff,
             max_rolloff=max_rolloff,
+            zero_phase=zero_phase,
             p=p,
             filter_type="bandpass",
         )

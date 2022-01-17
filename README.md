@@ -140,16 +140,16 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `BandPassFilter`
 
-Updated in v0.21.0_
+_Updated in v0.21.0_
 
-Apply band-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave)
+Apply band-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoffs).
 
 
 ## `BandStopFilter`
 
 _Added in v0.21.0_
 
-Apply band-stop filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave)
+Apply band-stop filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoffs).
 
 
 ## `Clip`
@@ -202,14 +202,14 @@ See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
 Updated in v0.21.0_
 
-Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
 
 ## `LowPassFilter`
 
 _Updated in v0.21.0_
 
-Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave)
+Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
 ## `Mp3Compression`
 
@@ -393,7 +393,7 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 * Added `BandStopFilter`
 * Added the `ButterworthFilter` class for Butterworth-based filters.
 ### Changed
-* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. They Inherit the `ButterworthFilter` class. Now they support multichannel, parametrized roll-off, and they're almost 60 times faster than before. 
+* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. They Inherit the `ButterworthFilter` class. Now they support multichannel, parametrized roll-off, zero-phase filtering, and they're almost 60 times faster than before. 
 
 ## v0.20.0 (2021-11-18)
 

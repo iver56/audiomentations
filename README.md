@@ -29,7 +29,6 @@ Some features have extra dependencies. Extra python package dependencies can be 
 | ------- | ---------------- |
 | `LoudnessNormalization` | `pyloudnorm` |
 | `Mp3Compression` | `ffmpeg` and [`pydub` or `lameenc`] |
-| `LowPassFilter`, `HighPassFilter`, `BandPassFilter` | `pydub` |
 
 Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
 
@@ -141,9 +140,17 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `BandPassFilter`
 
-_Added in v0.18.0_
+_Updated in v0.21.0_
 
-Apply band-pass filtering to the input audio. The filter steepness is 6 dB per octave.
+Apply band-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoffs).
+
+
+## `BandStopFilter`
+
+_Added in v0.21.0_
+
+Apply band-stop filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoffs).
+
 
 ## `Clip`
 
@@ -193,17 +200,16 @@ See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
 ## `HighPassFilter`
 
-_Added in v0.18.0_
+Updated in v0.21.0_
 
-Apply high-pass filtering to the input audio. The signal will be reduced by 6 dB per
-octave below the cutoff frequency, so this filter is fairly gentle.
+Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
+
 
 ## `LowPassFilter`
 
-_Added in v0.18.0_
+_Updated in v0.21.0_
 
-Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
-octave above the cutoff frequency, so this filter is fairly gentle.
+Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
 ## `Mp3Compression`
 
@@ -354,14 +360,15 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 | AddGaussianSNR | Yes |
 | AddShortNoises | No, 1D only |
 | ApplyImpulseResponse | Yes (unreleased as of December 2021) |
-| BandPassFilter | No, 1D only |
+| BandPassFilter | Yes |
+| BandStopFilter | Yes |
 | Clip | Yes |
 | ClippingDistortion | Yes |
 | FrequencyMask | Yes |
 | Gain | Yes |
-| HighPassFilter | No, 1D only |
+| HighPassFilter | Yes |
 | LoudnessNormalization | Yes, up to 5 channels |
-| LowPassFilter | No, 1D only |
+| LowPassFilter | Yes |
 | Mp3Compression | No, 1D only |
 | Normalize | Yes |
 | PitchShift | Yes |
@@ -379,6 +386,14 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 # Changelog
 
 ## Unreleased
+
+### Added
+* Added magnitude response tests for one-sided (`HighPassFilter`, `LowPassFilter`) and two-sided (`BandPassFilter`,
+ `BandStopFilter`) filter transforms.
+* Added `BandStopFilter`
+* Added the `ButterworthFilter` class for Butterworth-based filters.
+### Changed
+* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. They Inherit the `ButterworthFilter` class. Now they support multichannel, parametrized roll-off, zero-phase filtering, and they're almost 60 times faster than before. 
 
 ## v0.20.0 (2021-11-18)
 

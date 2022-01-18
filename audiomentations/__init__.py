@@ -7,6 +7,7 @@ from .augmentations.transforms import (
     ApplyImpulseResponse,
     AddShortNoises,
     BandPassFilter,
+    BandStopFilter,
     Clip,
     ClippingDistortion,
     FrequencyMask,

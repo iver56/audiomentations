@@ -8,18 +8,17 @@ import warnings
 
 import librosa
 import numpy as np
-from scipy.signal import butter, sosfilt, convolve
+from scipy.signal import butter, convolve, sosfilt, sosfiltfilt, sosfilt_zi
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
+    calculate_desired_noise_rms,
     calculate_rms,
     calculate_rms_without_silence,
-    calculate_desired_noise_rms,
-    get_file_paths,
     convert_decibels_to_amplitude_ratio,
     convert_float_samples_to_int16,
-    convert_int16_samples_to_float,
+    get_file_paths,
 )
 
 
@@ -506,9 +505,10 @@ class Shift(BaseWaveformTransform):
                 )
                 fade_in_length = fade_in_end - fade_in_start
 
-                shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
-                    :fade_in_length
-                ]
+                shifted_samples[
+                    ...,
+                    fade_in_start:fade_in_end,
+                ] *= fade_in[:fade_in_length]
 
                 if self.rollover:
 
@@ -541,9 +541,10 @@ class Shift(BaseWaveformTransform):
                         shifted_samples.shape[-1],
                     )
                     fade_in_length = fade_in_end - fade_in_start
-                    shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
-                        :fade_in_length
-                    ]
+                    shifted_samples[
+                        ...,
+                        fade_in_start:fade_in_end,
+                    ] *= fade_in[:fade_in_length]
 
         return shifted_samples
 
@@ -1373,20 +1374,87 @@ class TanhDistortion(BaseWaveformTransform):
         return distorted_samples
 
 
-class LowPassFilter(BaseWaveformTransform):
+class ButterworthFilter(BaseWaveformTransform):
     """
-    Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
-    octave above the cutoff frequency, so this filter is fairly gentle.
+    A `scipy.signal.butter`-based generic filter class.
     """
 
-    supports_multichannel = False
+    supports_multichannel = True
 
-    def __init__(
-        self, min_cutoff_freq=150, max_cutoff_freq=7500, p: float = 0.5,
+    # The types below must be equal to the ones accepted by
+    # the `btype` argument of `scipy.signal.butter`
+    ALLOWED_ONE_SIDE_FILTER_TYPES = ("lowpass", "highpass")
+    ALLOWED_TWO_SIDE_FILTER_TYPES = ("bandpass", "bandstop")
+    ALLOWED_FILTER_TYPES = ALLOWED_ONE_SIDE_FILTER_TYPES + ALLOWED_TWO_SIDE_FILTER_TYPES
+
+    def __init__(self, **kwargs):
+        assert "p" in kwargs
+        assert "min_rolloff" in kwargs
+        assert "max_rolloff" in kwargs
+        assert "filter_type" in kwargs
+        assert "zero_phase" in kwargs
+
+        self.filter_type = kwargs["filter_type"]
+        self.min_rolloff = kwargs["min_rolloff"]
+        self.max_rolloff = kwargs["max_rolloff"]
+        self.zero_phase = kwargs["zero_phase"]
+
+        if self.zero_phase:
+            assert (
+                self.min_rolloff % 12 == 0
+            ), "Zero phase filters can only have a steepness which is a multiple of 12db/octave"
+            assert (
+                self.max_rolloff % 12 == 0
+            ), "Zero phase filters can only have a steepness which is a multiple of 12db/octave"
+        else:
+            assert (
+                self.min_rolloff % 6 == 0
+            ), "Non zero phase filters can only have a steepness which is a multiple of 6db/octave"
+            assert (
+                self.max_rolloff % 6 == 0
+            ), "Non zero phase filters can only have a steepness which is a multiple of 6db/octave"
+
+        assert (
+            self.filter_type in ButterworthFilter.ALLOWED_FILTER_TYPES
+        ), "Filter type must be one of: " + ", ".join(
+            ButterworthFilter.ALLOWED_FILTER_TYPES
+        )
+
+        assert ("min_cutoff_freq" in kwargs and "max_cutoff_freq" in kwargs) or (
+            "min_center_freq" in kwargs
+            and "max_center_freq" in kwargs
+            and "min_bandwidth" in kwargs
+            and "max_bandwidth" in kwargs
+        ), "Arguments for either a one-sided, or a two-sided filter must be given"
+
+        if "min_cutoff_freq" in kwargs:
+            self.initialize_one_sided_filter(
+                min_cutoff_freq=kwargs["min_cutoff_freq"],
+                max_cutoff_freq=kwargs["max_cutoff_freq"],
+                p=kwargs["p"],
+            )
+        elif "min_center_freq" in kwargs:
+            self.initialize_two_sided_filter(
+                min_center_freq=kwargs["min_center_freq"],
+                max_center_freq=kwargs["max_center_freq"],
+                min_bandwidth=kwargs["min_bandwidth"],
+                max_bandwidth=kwargs["max_bandwidth"],
+                p=kwargs["p"],
+            )
+
+    def initialize_one_sided_filter(
+        self,
+        min_cutoff_freq=20,
+        max_cutoff_freq=2400,
+        p: float = 0.5,
     ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -1396,180 +1464,305 @@ class LowPassFilter(BaseWaveformTransform):
         if self.min_cutoff_freq > self.max_cutoff_freq:
             raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
 
-    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-        super().randomize_parameters(samples, sample_rate)
-
-        self.parameters["cutoff_freq"] = np.random.uniform(
-            low=self.min_cutoff_freq, high=self.max_cutoff_freq
-        )
-
-    def apply(self, samples: np.array, sample_rate: int = None):
-        try:
-            import pydub
-        except ImportError:
-            print(
-                "Failed to import pydub. Maybe it is not installed? "
-                "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
-                file=sys.stderr,
+        if self.min_rolloff < 6 or self.min_rolloff % 6 != 0:
+            raise ValueError(
+                "min_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
             )
-            raise
-
-        assert samples.dtype == np.float32
-
-        int_samples = convert_float_samples_to_int16(samples)
-
-        audio_segment = pydub.AudioSegment(
-            int_samples.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=int_samples.dtype.itemsize,
-            channels=1,
-        )
-
-        audio_segment = pydub.effects.low_pass_filter(
-            audio_segment, self.parameters["cutoff_freq"]
-        )
-        samples = convert_int16_samples_to_float(
-            np.array(audio_segment.get_array_of_samples())
-        )
-        return samples
-
-
-class HighPassFilter(BaseWaveformTransform):
-    """
-    Apply high-pass filtering to the input audio. The signal will be reduced by 6 dB per
-    octave below the cutoff frequency, so this filter is fairly gentle.
-    """
-
-    supports_multichannel = False
-
-    def __init__(self, min_cutoff_freq=20, max_cutoff_freq=2400, p: float = 0.5):
-        """
-        :param min_cutoff_freq: Minimum cutoff frequency in hertz
-        :param max_cutoff_freq: Maximum cutoff frequency in hertz
-        :param p: The probability of applying this transform
-        """
-        super().__init__(p)
-
-        self.min_cutoff_freq = min_cutoff_freq
-        self.max_cutoff_freq = max_cutoff_freq
-        if self.min_cutoff_freq > self.max_cutoff_freq:
-            raise ValueError("min_cutoff_freq must not be greater than max_cutoff_freq")
-
-    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-        super().randomize_parameters(samples, sample_rate)
-
-        self.parameters["cutoff_freq"] = np.random.uniform(
-            low=self.min_cutoff_freq, high=self.max_cutoff_freq
-        )
-
-    def apply(self, samples: np.array, sample_rate: int = None):
-        try:
-            import pydub
-        except ImportError:
-            print(
-                "Failed to import pydub. Maybe it is not installed? "
-                "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
-                file=sys.stderr,
+        if self.max_rolloff < 6 or self.max_rolloff % 6 != 0:
+            raise ValueError(
+                "max_rolloff must be 6 or greater, as well as a multiple of 6 (e.g. 6, 12, 18, 24...)"
             )
-            raise
+        if self.min_rolloff > self.max_rolloff:
+            raise ValueError("min_rolloff must not be greater than max_rolloff")
 
-        assert samples.dtype == np.float32
-
-        int_samples = convert_float_samples_to_int16(samples)
-
-        audio_segment = pydub.AudioSegment(
-            int_samples.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=int_samples.dtype.itemsize,
-            channels=1,
-        )
-
-        audio_segment = pydub.effects.high_pass_filter(
-            audio_segment, self.parameters["cutoff_freq"]
-        )
-        samples = convert_int16_samples_to_float(
-            np.array(audio_segment.get_array_of_samples())
-        )
-        return samples
-
-
-class BandPassFilter(BaseWaveformTransform):
-    """
-    Apply band-pass filtering to the input audio.
-    """
-
-    supports_multichannel = False
-
-    def __init__(
-        self, min_center_freq=100.0, max_center_freq=1000.0, min_q=1.0, max_q=2.0, p=0.5
+    def initialize_two_sided_filter(
+        self,
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_bandwidth=1.0,
+        max_bandwidth=2.0,
+        p=0.5,
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
-        :param min_q: Minimum ratio of center frequency to bandwidth
-        :param max_q: Maximum ratio of center frequency to bandwidth
+        :param min_bandwidth: Minimum bandwidth
+        :param max_bandwidth: Maximum bandwidth
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
         :param p: The probability of applying this transform
         """
         super().__init__(p)
 
         self.min_center_freq = min_center_freq
         self.max_center_freq = max_center_freq
-        self.min_q = min_q
-        self.max_q = max_q
+        self.min_bandwidth = min_bandwidth
+        self.max_bandwidth = max_bandwidth
+
         if self.min_center_freq > self.max_center_freq:
             raise ValueError("min_center_freq must not be greater than max_center_freq")
-        if self.min_q > self.max_q:
+        if self.min_bandwidth > self.max_bandwidth:
             raise ValueError("min_q must not be greater than max_q")
 
     def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-        super().randomize_parameters(samples, sample_rate)
 
-        self.parameters["center_freq"] = np.random.uniform(
-            low=self.min_center_freq, high=self.max_center_freq
-        )
-        self.parameters["q"] = np.random.uniform(low=self.min_q, high=self.max_q)
+        super().randomize_parameters(samples, sample_rate)
+        if self.zero_phase:
+            random_order = random.randint(
+                self.min_rolloff // 12, self.max_rolloff // 12
+            )
+            self.parameters["rolloff"] = random_order * 12
+        else:
+            random_order = random.randint(self.min_rolloff // 6, self.max_rolloff // 6)
+            self.parameters["rolloff"] = random_order * 6
+
+        if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
+            self.parameters["cutoff_freq"] = np.random.uniform(
+                low=self.min_cutoff_freq, high=self.max_cutoff_freq
+            )
+        elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
+            self.parameters["center_freq"] = np.random.uniform(
+                low=self.min_center_freq, high=self.max_center_freq
+            )
+            self.parameters["bandwidth"] = np.random.uniform(
+                low=self.min_bandwidth, high=self.max_bandwidth
+            )
 
     def apply(self, samples: np.array, sample_rate: int = None):
-        try:
-            import pydub
-        except ImportError:
-            print(
-                "Failed to import pydub. Maybe it is not installed? "
-                "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
-                file=sys.stderr,
-            )
-            raise
-
         assert samples.dtype == np.float32
 
-        int_samples = convert_float_samples_to_int16(samples)
+        if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
+            sos = butter(
+                self.parameters["rolloff"] // (12 if self.zero_phase else 6),
+                self.parameters["cutoff_freq"],
+                btype=self.filter_type,
+                analog=False,
+                fs=sample_rate,
+                output="sos",
+            )
+        elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
+            sos = butter(
+                self.parameters["rolloff"] // (12 if self.zero_phase else 6),
+                [
+                    self.parameters["center_freq"] - self.parameters["bandwidth"] / 2,
+                    self.parameters["center_freq"] + self.parameters["bandwidth"] / 2,
+                ],
+                btype=self.filter_type,
+                analog=False,
+                fs=sample_rate,
+                output="sos",
+            )
 
-        audio_segment = pydub.AudioSegment(
-            int_samples.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=int_samples.dtype.itemsize,
-            channels=1,
+        # The actual processing takes place here
+        if len(samples.shape) == 1:
+            if self.zero_phase:
+                processed_samples = sosfiltfilt(sos, samples)
+            else:
+                zi = sosfilt_zi(sos) * samples[0]
+                processed_samples, zf = sosfilt(sos, samples, zi=zi)
+            processed_samples = processed_samples.astype(np.float32)
+        else:
+            processed_samples = np.zeros_like(samples, dtype=np.float32)
+            if self.zero_phase:
+                for chn_idx in range(samples.shape[0]):
+                    processed_samples[chn_idx, :] = sosfiltfilt(
+                        sos, samples[chn_idx, :]
+                    )
+            else:
+                zi = sosfilt_zi(sos)
+                for chn_idx in range(samples.shape[0]):
+                    processed_samples[chn_idx, :], _ = sosfilt(
+                        sos, samples[chn_idx, :], zi=zi * samples[chn_idx, 0]
+                    )
+
+        return processed_samples
+
+
+class LowPassFilter(ButterworthFilter):
+    """
+    Apply high-pass filtering to the input audio.
+    """
+
+    supports_multichannel = True
+
+    def __init__(
+        self,
+        min_cutoff_freq=20,
+        max_cutoff_freq=2400,
+        min_rolloff=12,
+        max_rolloff=24,
+        zero_phase=False,
+        p: float = 0.5,
+    ):
+        """
+        :param min_cutoff_freq: Minimum cutoff frequency in hertz
+        :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
+        :param zero_phase: Whether filtering should be zero phase.
+            When this is set to `true` it will not affect the phase of the
+            input signal but will sound 3db lower at the cutoff frequency
+            compared to the non-zero phase case (6db vs 3db). Additionally,
+            it is 2X times slower than in the non-zero phase case. If you
+            absolutely want no phase distortions (e.g. want to augment a
+            drum track), set this to `true`.
+        :param p: The probability of applying this transform
+        """
+        super().__init__(
+            min_cutoff_freq=min_cutoff_freq,
+            max_cutoff_freq=max_cutoff_freq,
+            min_rolloff=min_rolloff,
+            max_rolloff=max_rolloff,
+            zero_phase=zero_phase,
+            p=p,
+            filter_type="lowpass",
         )
 
-        audio_segment = pydub.effects.low_pass_filter(
-            audio_segment,
-            self.parameters["center_freq"] * (1 - 0.5 / self.parameters["q"]),
-        )
-        audio_segment = pydub.effects.high_pass_filter(
-            audio_segment,
-            self.parameters["center_freq"] * (1 + 0.5 / self.parameters["q"]),
-        )
-        samples = convert_int16_samples_to_float(
-            np.array(audio_segment.get_array_of_samples())
+
+class HighPassFilter(ButterworthFilter):
+    """
+    Apply high-pass filtering to the input audio.
+    """
+
+    supports_multichannel = True
+
+    def __init__(
+        self,
+        min_cutoff_freq=20,
+        max_cutoff_freq=2400,
+        min_rolloff=12,
+        max_rolloff=24,
+        zero_phase=False,
+        p: float = 0.5,
+    ):
+        """
+        :param min_cutoff_freq: Minimum cutoff frequency in hertz
+        :param max_cutoff_freq: Maximum cutoff frequency in hertz
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
+        :param zero_phase: Whether filtering should be zero phase.
+            When this is set to `true` it will not affect the phase of the
+            input signal but will sound 3db lower at the cutoff frequency
+            compared to the non-zero phase case (6db vs 3db). Additionally,
+            it is 2X times slower than in the non-zero phase case. If you
+            absolutely want no phase distortions (e.g. want to augment a
+            drum track), set this to `true`.
+        :param p: The probability of applying this transform
+        """
+        super().__init__(
+            min_cutoff_freq=min_cutoff_freq,
+            max_cutoff_freq=max_cutoff_freq,
+            min_rolloff=min_rolloff,
+            max_rolloff=max_rolloff,
+            zero_phase=zero_phase,
+            p=p,
+            filter_type="highpass",
         )
 
-        return samples
+
+class BandStopFilter(ButterworthFilter):
+    """
+    Apply band-stop filtering to the input audio.
+    """
+
+    supports_multichannel = True
+
+    def __init__(
+        self,
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_bandwidth=100.0,
+        max_bandwidth=300.0,
+        min_rolloff=12,
+        max_rolloff=24,
+        zero_phase=False,
+        p=0.5,
+    ):
+        """
+        :param min_center_freq: Minimum center frequency in hertz
+        :param max_center_freq: Maximum center frequency in hertz
+        :param min_bandwidth: Minimum bandwidth
+        :param max_bandwidth: Maximum bandwidth
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
+        :param zero_phase: Whether filtering should be zero phase.
+            When this is set to `true` it will not affect the phase of the
+            input signal but will sound 3db lower at the cutoff frequency
+            compared to the non-zero phase case (6db vs 3db). Additionally,
+            it is 2X times slower than in the non-zero phase case. If you
+            absolutely want no phase distortions (e.g. want to augment a
+            drum track), set this to `true`.
+        :param p: The probability of applying this transform
+        """
+        super().__init__(
+            min_center_freq=min_center_freq,
+            max_center_freq=max_center_freq,
+            min_bandwidth=min_bandwidth,
+            max_bandwidth=max_bandwidth,
+            min_rolloff=min_rolloff,
+            max_rolloff=max_rolloff,
+            zero_phase=zero_phase,
+            p=p,
+            filter_type="bandstop",
+        )
+
+
+class BandPassFilter(ButterworthFilter):
+    """
+    Apply band-pass filtering to the input audio.
+    """
+
+    supports_multichannel = True
+
+    def __init__(
+        self,
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_bandwidth=100.0,
+        max_bandwidth=300.0,
+        min_rolloff=12,
+        max_rolloff=24,
+        zero_phase=False,
+        p=0.5,
+    ):
+        """
+        :param min_center_freq: Minimum center frequency in hertz
+        :param max_center_freq: Maximum center frequency in hertz
+        :param min_bandwidth: Minimum bandwidth
+        :param max_bandwidth: Maximum bandwidth
+        :param min_rolloff: Minimum filter roll-off (in db/octave).
+            Must be a multiple of 6
+        :param max_rolloff: Maximum filter roll-off (in db/octave)
+            Must be a multiple of 6
+        :param zero_phase: Whether filtering should be zero phase.
+            When this is set to `true` it will not affect the phase of the
+            input signal but will sound 3db lower at the cutoff frequency
+            compared to the non-zero phase case (6db vs 3db). Additionally,
+            it is 2X times slower than in the non-zero phase case. If you
+            absolutely want no phase distortions (e.g. want to augment an
+            audio file with lots of transients, like a drum track), set
+            this to `true`.
+        :param p: The probability of applying this transform
+        """
+        super().__init__(
+            min_center_freq=min_center_freq,
+            max_center_freq=max_center_freq,
+            min_bandwidth=min_bandwidth,
+            max_bandwidth=max_bandwidth,
+            min_rolloff=min_rolloff,
+            max_rolloff=max_rolloff,
+            zero_phase=zero_phase,
+            p=p,
+            filter_type="bandpass",
+        )
 
 
 class Mp3Compression(BaseWaveformTransform):

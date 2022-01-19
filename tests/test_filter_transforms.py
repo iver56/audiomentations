@@ -8,9 +8,10 @@ from audiomentations.augmentations.transforms import (
     BandStopFilter,
     HighPassFilter,
     LowPassFilter,
+    PeakingFilter,
 )
 
-DEBUG = False
+DEBUG = True
 
 
 def get_chirp_test(sample_rate, duration):
@@ -35,6 +36,181 @@ def get_randn_test(sample_rate, duration):
     return samples
 
 
+class TestPeakingFilterTransforms:
+    @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
+    @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
+    def test_one_single_input(self, gain_db, q_factor):
+        np.random.seed(1)
+
+        sample_rate = 8000
+
+        # Parameters for computing periodograms.
+        # When examining lower frequencies we need to have
+        # a high nfft number.
+
+        nfft = 4096
+        nperseg = 1024
+
+        samples = get_chirp_test(sample_rate, 40)
+
+        augment = PeakingFilter(
+            min_gain_db=gain_db,
+            max_gain_db=gain_db,
+            min_q=q_factor,
+            max_q=q_factor,
+            p=1.0,
+        )
+
+        processed_samples = augment(samples, sample_rate=sample_rate)
+
+        assert processed_samples.shape == samples.shape
+        assert processed_samples.dtype == np.float32
+
+        # Compute periodograms
+        wx, samples_pxx = scipy.signal.welch(
+            samples,
+            fs=sample_rate,
+            nfft=nfft,
+            nperseg=nperseg,
+            scaling="spectrum",
+            window="hann",
+        )
+        _, processed_samples_pxx = scipy.signal.welch(
+            processed_samples,
+            fs=sample_rate,
+            nperseg=nperseg,
+            nfft=nfft,
+            scaling="spectrum",
+            window="hann",
+        )
+
+        # Compute db at cutoffs at the input as well as the filtered signals
+        samples_at_0db_gain = np.max(10 * np.log10(samples_pxx))
+        samples_db_at_center_freq = 10 * np.log10(
+            samples_pxx[
+                int(np.round(nfft / sample_rate * augment.parameters["center_freq"]))
+            ]
+        )
+
+        # At center frequency, we have to be at `gain_db` gain (in... db)
+        assert np.isclose(samples_at_0db_gain + gain_db, samples_db_at_center_freq, 0.5)
+
+        # Bandwidth is defined as the frequency range between the midpointspoints
+
+        # Q Factor -> BW (in Octaves)
+        bw_in_octaves = (
+            2 / np.log(2) * np.log(0.5 / q_factor + np.sqrt(1 + 0.25 / q_factor ** 2))
+        )
+
+        # BW (in Octaves) -> gain midpoints (frequencies where the gain in db is half)
+        c1 = np.exp(
+            np.log(2) / 2 * bw_in_octaves + np.log(augment.parameters["center_freq"])
+        )
+
+        c2 = np.exp(
+            np.log(augment.parameters["center_freq"]) - np.log(2) / 2 * bw_in_octaves
+        )
+
+        assert c2 < c1
+
+        if c1 < sample_rate / 2:
+            samples_db_at_lower_cutoff = 10 * np.log10(
+                samples_pxx[int(np.round(nfft / sample_rate * c1))]
+            )
+            assert np.isclose(
+                samples_db_at_lower_cutoff, samples_at_0db_gain + gain_db / 2, 1
+            )
+
+        if c2 < sample_rate / 2:
+            samples_db_at_higher_cutoff = 10 * np.log10(
+                samples_pxx[int(np.round(nfft / sample_rate * c2))]
+            )
+            assert np.isclose(
+                samples_db_at_higher_cutoff, samples_at_0db_gain + gain_db / 2, 1
+            )
+
+        if DEBUG:
+            import matplotlib.pyplot as plt
+
+            plt.title(f"Filter type: Peaking at {gain_db} with Q={q_factor}")
+            plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
+            plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
+            plt.legend(
+                [
+                    "Input signal",
+                    f"Peaking with center freq {augment.parameters['center_freq']:.2f}",
+                ]
+            )
+            plt.axvline(augment.parameters["center_freq"], color="red", linestyle=":")
+            plt.axhline(
+                samples_at_0db_gain + gain_db,
+                color="red",
+                linestyle=":",
+            )
+            plt.axhline(
+                samples_at_0db_gain + gain_db / 2,
+                color="green",
+                linestyle=":",
+            )
+
+            plt.axvline(
+                c1,
+                color="green",
+                linestyle=":",
+            )
+
+            plt.axvline(
+                c2,
+                color="green",
+                linestyle=":",
+            )
+
+            plt.xlabel("Frequency (Hz)")
+            plt.ylabel("Magnitude (dB)")
+            plt.show()
+
+    @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
+    @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
+    def test_two_channel_input(self, gain_db, q_factor):
+
+        sample_rate = 8000
+        samples = get_randn_test(sample_rate, 10)
+
+        # Convert to 2D two channels
+        two_channels = np.vstack([samples, samples])
+
+        augment = PeakingFilter(
+            min_gain_db=gain_db,
+            max_gain_db=gain_db,
+            min_q=q_factor,
+            max_q=q_factor,
+            p=1.0,
+        )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        processed_two_channels = augment(samples=two_channels, sample_rate=sample_rate)
+
+        assert processed_two_channels.shape[0] == 2
+        assert processed_two_channels.shape == two_channels.shape
+        assert processed_two_channels.dtype == np.float32
+
+        # Check that the processed 2D channel version applies the same effect
+        # as the passband version.
+        for _, channel in enumerate(processed_two_channels):
+            if DEBUG:
+                import matplotlib.pyplot as plt
+
+                plt.title(f"Filter type: Peaking at {gain_db} with Q={q_factor}")
+
+                plt.plot(processed_samples)
+                plt.plot(channel, "r--")
+
+                plt.legend(["1D", "2D"])
+                plt.show()
+            assert np.allclose(channel, processed_samples)
+
+
 class TestOneSidedFilterTransforms:
     @pytest.mark.parametrize("filter_type", ["lowpass", "highpass"])
     @pytest.mark.parametrize(
@@ -48,11 +224,14 @@ class TestOneSidedFilterTransforms:
 
         sample_rate = 8000
 
-        samples = get_chirp_test(sample_rate, 40)
+        # Parameters for computing periodograms.
+        # When examining lower frequencies we need to have
+        # a high nfft number.
 
-        # Parameters for computing periodograms
-        nfft = 1024
+        nfft = 4096
         nperseg = 1024
+
+        samples = get_chirp_test(sample_rate, 40)
 
         # Expected db drop at fc
         if zero_phase:
@@ -256,11 +435,14 @@ class TestTwoSidedFilterTransforms:
 
         sample_rate = 8000
 
-        samples = get_chirp_test(sample_rate, 40)
+        # Parameters for computing periodograms.
+        # When examining lower frequencies we need to have
+        # a high nfft number.
 
-        # Parameters for computing periodograms
-        nfft = 1024
+        nfft = 4096
         nperseg = 1024
+
+        samples = get_chirp_test(sample_rate, 40)
 
         # Expected db drop at f_c's
         if zero_phase:

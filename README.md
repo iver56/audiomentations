@@ -244,6 +244,11 @@ Apply a constant amount of gain, so that highest signal level present in the sou
 0 dBFS, i.e. the loudest level allowed if all samples must be between -1 and 1. Also known
 as peak normalization.
 
+## `PeakingFilter`
+_Added in v0.21.0_
+
+Add a biquad peaking filter transform
+
 ## `PitchShift`
 
 _Added in v0.4.0_
@@ -371,6 +376,7 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 | LowPassFilter | Yes |
 | Mp3Compression | No, 1D only |
 | Normalize | Yes |
+| PeakingFilter | yes |
 | PitchShift | Yes |
 | PolarityInversion | Yes |
 | Resample | No, 1D only |
@@ -392,6 +398,7 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
  `BandStopFilter`) filter transforms.
 * Added `BandStopFilter`
 * Added the `ButterworthFilter` class for Butterworth-based filters.
+* Added `PeakingFilter` 
 ### Changed
 * Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. They Inherit the `ButterworthFilter` class. Now they support multichannel, parametrized roll-off, zero-phase filtering, and they're almost 60 times faster than before. 
 

@@ -11,7 +11,7 @@ from audiomentations.augmentations.transforms import (
     PeakingFilter,
 )
 
-DEBUG = True
+DEBUG = False
 
 
 def get_chirp_test(sample_rate, duration):
@@ -37,9 +37,10 @@ def get_randn_test(sample_rate, duration):
 
 
 class TestPeakingFilterTransforms:
+    @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
     @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
-    def test_one_single_input(self, gain_db, q_factor):
+    def test_one_single_input(self, center_freq, gain_db, q_factor):
         np.random.seed(1)
 
         sample_rate = 8000
@@ -54,6 +55,8 @@ class TestPeakingFilterTransforms:
         samples = get_chirp_test(sample_rate, 40)
 
         augment = PeakingFilter(
+            min_center_freq=center_freq,
+            max_center_freq=center_freq,
             min_gain_db=gain_db,
             max_gain_db=gain_db,
             min_q=q_factor,
@@ -169,9 +172,10 @@ class TestPeakingFilterTransforms:
             plt.ylabel("Magnitude (dB)")
             plt.show()
 
+    @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
     @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
-    def test_two_channel_input(self, gain_db, q_factor):
+    def test_two_channel_input(self, center_freq, gain_db, q_factor):
 
         sample_rate = 8000
         samples = get_randn_test(sample_rate, 10)
@@ -180,6 +184,8 @@ class TestPeakingFilterTransforms:
         two_channels = np.vstack([samples, samples])
 
         augment = PeakingFilter(
+            min_center_freq=center_freq,
+            max_center_freq=center_freq,
             min_gain_db=gain_db,
             max_gain_db=gain_db,
             min_q=q_factor,

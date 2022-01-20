@@ -17,6 +17,7 @@ from .augmentations.transforms import (
     LowPassFilter,
     Mp3Compression,
     Normalize,
+    PeakingFilter,
     PitchShift,
     PolarityInversion,
     Resample,

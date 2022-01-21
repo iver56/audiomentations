@@ -35,6 +35,7 @@ from audiomentations import (
     Compose,
     SomeOf,
     OneOf,
+    BandStopFilter,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
@@ -190,6 +191,7 @@ if __name__ == "__main__":
             "name": "AddShortNoisesRelative",
         },
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
+        {"instance": BandStopFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
         {
             "instance": FrequencyMask(

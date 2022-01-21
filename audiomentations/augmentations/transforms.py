@@ -1394,6 +1394,8 @@ class ButterworthFilter(BaseWaveformTransform):
         assert "filter_type" in kwargs
         assert "zero_phase" in kwargs
 
+        super().__init__(kwargs["p"])
+
         self.filter_type = kwargs["filter_type"]
         self.min_rolloff = kwargs["min_rolloff"]
         self.max_rolloff = kwargs["max_rolloff"]
@@ -1431,7 +1433,6 @@ class ButterworthFilter(BaseWaveformTransform):
             self.initialize_one_sided_filter(
                 min_cutoff_freq=kwargs["min_cutoff_freq"],
                 max_cutoff_freq=kwargs["max_cutoff_freq"],
-                p=kwargs["p"],
             )
         elif "min_center_freq" in kwargs:
             self.initialize_two_sided_filter(
@@ -1439,14 +1440,12 @@ class ButterworthFilter(BaseWaveformTransform):
                 max_center_freq=kwargs["max_center_freq"],
                 min_bandwidth=kwargs["min_bandwidth"],
                 max_bandwidth=kwargs["max_bandwidth"],
-                p=kwargs["p"],
             )
 
     def initialize_one_sided_filter(
         self,
         min_cutoff_freq=20,
         max_cutoff_freq=2400,
-        p: float = 0.5,
     ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
@@ -1457,7 +1456,6 @@ class ButterworthFilter(BaseWaveformTransform):
             Must be a multiple of 6
         :param p: The probability of applying this transform
         """
-        super().__init__(p)
 
         self.min_cutoff_freq = min_cutoff_freq
         self.max_cutoff_freq = max_cutoff_freq
@@ -1481,7 +1479,6 @@ class ButterworthFilter(BaseWaveformTransform):
         max_center_freq=1000.0,
         min_bandwidth=1.0,
         max_bandwidth=2.0,
-        p=0.5,
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
@@ -1494,7 +1491,6 @@ class ButterworthFilter(BaseWaveformTransform):
             Must be a multiple of 6
         :param p: The probability of applying this transform
         """
-        super().__init__(p)
 
         self.min_center_freq = min_center_freq
         self.max_center_freq = max_center_freq
@@ -1769,7 +1765,8 @@ class BandPassFilter(ButterworthFilter):
 class PeakingFilter(BaseWaveformTransform):
     """
     Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
-    of a specific gain in db, and a quality factor parameter.
+    of a specific gain in db, and a quality factor parameter.Filter coefficients are taken
+    from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
     supports_multichannel = True
@@ -1784,6 +1781,14 @@ class PeakingFilter(BaseWaveformTransform):
         max_q=10,
         p=0.5,
     ):
+        """
+        :param min_center_freq: The minimum center frequency of the peaking filter
+        :param max_center_freq: The maximum center frequency of the peaking filter
+        :param min_gain_db: The minimum gain at center frequency in db
+        :param max_gain_db: The maximum gain at center frequency in db
+        :param min_q: The minimum quality factor q
+        :param max_q: The maximum quality factor q
+        """
 
         assert (
             min_center_freq <= max_center_freq
@@ -1880,6 +1885,15 @@ class LowShelfFilter(BaseWaveformTransform):
         p=0.5,
     ):
 
+        """
+        :param min_center_freq: The minimum center frequency of the shelving filter
+        :param max_center_freq: The maximum center frequency of the shelving filter
+        :param min_gain_db: The minimum gain at dc
+        :param max_gain_db: The maximum gain at dc
+        :param min_q: The minimum quality factor q
+        :param max_q: The maximum quality factor q
+        """
+
         assert (
             min_center_freq <= max_center_freq
         ), "`min_center_freq` should be no greater than `max_center_freq`"
@@ -1933,6 +1947,129 @@ class LowShelfFilter(BaseWaveformTransform):
         a2 = (
             (gain + 1)
             + (gain - 1) * np.cos(normalized_frequency)
+            - 2 * np.sqrt(gain) * alpha
+        )
+
+        # Return it in `sos` format
+        sos = np.array([[b0 / a0, b1 / a0, b2 / a0, 1, a1 / a0, a2 / a0]])
+
+        return sos
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+
+        self.parameters["center_freq"] = random.uniform(
+            self.min_center_freq, self.max_center_freq
+        )
+        self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
+        self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
+
+    def apply(self, samples, sample_rate):
+        assert samples.dtype == np.float32
+
+        sos = self._get_biquad_coefficients_from_input_parameters(
+            self.parameters["center_freq"],
+            self.parameters["gain_db"],
+            self.parameters["q_factor"],
+            sample_rate,
+        )
+
+        # The processing takes place here
+        zi = sosfilt_zi(sos)
+        if len(samples.shape) == 1:
+            processed_samples, _ = sosfilt(sos, samples, zi=zi * samples[0])
+            processed_samples = processed_samples.astype(np.float32)
+        else:
+            processed_samples = np.zeros_like(samples, dtype=np.float32)
+            for chn_idx in range(samples.shape[0]):
+                processed_samples[chn_idx, :], _ = sosfilt(
+                    sos, samples[chn_idx, :], zi=zi * samples[chn_idx, 0]
+                )
+
+        return processed_samples
+
+
+class HighShelfFilter(BaseWaveformTransform):
+    """
+    Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
+    of a specific gain in db, and a quality factor parameter. Filter coefficients are taken
+    from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
+    """
+
+    supports_multichannel = True
+
+    def __init__(
+        self,
+        min_center_freq=100.0,
+        max_center_freq=1000.0,
+        min_gain_db=-12,
+        max_gain_db=12,
+        min_q=0.1,
+        max_q=0.999,
+        p=0.5,
+    ):
+        """
+        :param min_center_freq: The minimum center frequency of the shelving filter
+        :param max_center_freq: The maximum center frequency of the shelving filter
+        :param min_gain_db: The minimum gain at nyquist frequency
+        :param max_gain_db: The maximum gain at nyquist frequency
+        :param min_q: The minimum quality factor q
+        :param max_q: The maximum quality factor q
+        """
+
+        assert (
+            min_center_freq <= max_center_freq
+        ), "`min_center_freq` should be no greater than `max_center_freq`"
+        assert (
+            min_gain_db <= max_gain_db
+        ), "`min_gain_db` should be no greater than `max_gain_db`"
+
+        assert min_q > 0, "`min_q` should be greater than 0"
+        assert max_q > 0, "`max_q` should be greater than 0"
+
+        super().__init__(p)
+
+        self.min_center_freq = min_center_freq
+        self.max_center_freq = max_center_freq
+
+        self.min_gain_db = min_gain_db
+        self.max_gain_db = max_gain_db
+
+        self.min_q = min_q
+        self.max_q = max_q
+
+    def _get_biquad_coefficients_from_input_parameters(
+        self, center_freq, gain_db, q_factor, sample_rate
+    ):
+        normalized_frequency = 2 * np.pi * center_freq / sample_rate
+        gain = 10 ** (gain_db / 40)
+        alpha = np.sin(normalized_frequency) / 2 / q_factor
+
+        b0 = gain * (
+            (gain + 1)
+            + (gain - 1) * np.cos(normalized_frequency)
+            + 2 * np.sqrt(gain) * alpha
+        )
+
+        b1 = -2 * gain * ((gain - 1) + (gain + 1) * np.cos(normalized_frequency))
+
+        b2 = gain * (
+            (gain + 1)
+            + (gain - 1) * np.cos(normalized_frequency)
+            - 2 * np.sqrt(gain) * alpha
+        )
+
+        a0 = (
+            (gain + 1)
+            - (gain - 1) * np.cos(normalized_frequency)
+            + 2 * np.sqrt(gain) * alpha
+        )
+
+        a1 = 2 * ((gain - 1) - (gain + 1) * np.cos(normalized_frequency))
+
+        a2 = (
+            (gain + 1)
+            - (gain - 1) * np.cos(normalized_frequency)
             - 2 * np.sqrt(gain) * alpha
         )
 

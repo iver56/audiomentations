@@ -13,6 +13,8 @@ from .augmentations.transforms import (
     FrequencyMask,
     Gain,
     HighPassFilter,
+    LowShelfFilter,
+    HighShelfFilter,
     LoudnessNormalization,
     LowPassFilter,
     Mp3Compression,

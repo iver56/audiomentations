@@ -204,12 +204,26 @@ Updated in v0.21.0_
 
 Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
+## `HighShelfFilter`
+
+Added in v0.21.0_
+
+Apply high-shelf filtering to the input audio.
+
+
 
 ## `LowPassFilter`
 
 _Updated in v0.21.0_
 
 Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
+
+## `LowShelfFilter`
+
+Added in v0.21.0_
+
+Apply Low-shelf filtering to the input audio.
+
 
 ## `Mp3Compression`
 
@@ -372,8 +386,10 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 | FrequencyMask | Yes |
 | Gain | Yes |
 | HighPassFilter | Yes |
+| HighShelfFilter | Yes |
 | LoudnessNormalization | Yes, up to 5 channels |
 | LowPassFilter | Yes |
+| LowShelfFilter | Yes |
 | Mp3Compression | No, 1D only |
 | Normalize | Yes |
 | PeakingFilter | yes |
@@ -398,7 +414,7 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
  `BandStopFilter`) filter transforms.
 * Added `BandStopFilter`
 * Added the `ButterworthFilter` class for Butterworth-based filters.
-* Added `PeakingFilter` 
+* Added `PeakingFilter`, `LowShelfFilter` and `HighShelfFilter`.
 ### Changed
 * Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. They Inherit the `ButterworthFilter` class. Now they support multichannel, parametrized roll-off, zero-phase filtering, and they're almost 60 times faster than before. 
 

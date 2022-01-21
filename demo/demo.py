@@ -27,6 +27,7 @@ from audiomentations import (
     Trim,
     LowPassFilter,
     LowShelfFilter,
+    HighShelfFilter,
     HighPassFilter,
     BandPassFilter,
     ApplyImpulseResponse,
@@ -199,7 +200,9 @@ if __name__ == "__main__":
         },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
         {"instance": HighPassFilter(p=1.0), "num_runs": 5},
+        {"instance": HighShelfFilter(p=1.0), "num_runs": 5},
         {"instance": LowPassFilter(p=1.0), "num_runs": 5},
+        {"instance": LowShelfFilter(p=1.0), "num_runs": 5},
         {
             "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
             "num_runs": 5,

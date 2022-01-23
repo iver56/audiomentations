@@ -1444,8 +1444,8 @@ class ButterworthFilter(BaseWaveformTransform):
 
     def initialize_one_sided_filter(
         self,
-        min_cutoff_freq=20,
-        max_cutoff_freq=2400,
+        min_cutoff_freq,
+        max_cutoff_freq,
     ):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
@@ -1475,10 +1475,10 @@ class ButterworthFilter(BaseWaveformTransform):
 
     def initialize_two_sided_filter(
         self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_bandwidth=1.0,
-        max_bandwidth=2.0,
+        min_center_freq,
+        max_center_freq,
+        min_bandwidth,
+        max_bandwidth,
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
@@ -1721,7 +1721,7 @@ class BandPassFilter(ButterworthFilter):
 
     def __init__(
         self,
-        min_center_freq=100.0,
+        min_center_freq=150.0,
         max_center_freq=1000.0,
         min_bandwidth=100.0,
         max_bandwidth=300.0,

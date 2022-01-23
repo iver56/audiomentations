@@ -13,7 +13,7 @@ from audiomentations.augmentations.transforms import (
     HighShelfFilter,
 )
 
-DEBUG = True
+DEBUG = False
 
 
 def get_chirp_test(sample_rate, duration):
@@ -223,62 +223,6 @@ class TestLowShelfFilterTransform:
             window="hann",
         )
 
-        # Compute gains (db) at the center, dc, and nyquist frequencies
-        samples_at_0db_gain = np.max(10 * np.log10(samples_pxx))
-
-        samples_db_at_center_freq = 10 * np.log10(
-            samples_pxx[
-                int(np.round(nfft / sample_rate * augment.parameters["center_freq"]))
-            ]
-        )
-
-        # Theoretically, the frequency close to dc should be gain_db, unfortunately
-        # we will have abrupt drop at the periodograms at these points so we pick
-        # a frequency very close.
-
-        frequency_close_to_dc = 10
-
-        samples_db_at_dc = 10 * np.log10(
-            samples_pxx[int(np.round(nfft / sample_rate * frequency_close_to_dc))]
-        )
-
-        processed_samples_db_at_dc = 10 * np.log10(
-            processed_samples_pxx[
-                int(np.round(nfft / sample_rate * frequency_close_to_dc))
-            ]
-        )
-
-        processed_samples_db_at_center_freq = 10 * np.log10(
-            processed_samples_pxx[
-                int(np.round(nfft / sample_rate * augment.parameters["center_freq"]))
-            ]
-        )
-
-        samples_db_at_nyquist = 10 * np.log10(
-            samples_pxx[int(np.round(nfft / sample_rate * sample_rate // 2))]
-        )
-
-        processed_samples_db_at_nyquist = 10 * np.log10(
-            processed_samples_pxx[int(np.round(nfft / sample_rate * sample_rate // 2))]
-        )
-
-        # At dc frequency, we should be at gain db
-        assert np.isclose(
-            samples_db_at_dc + gain_db, processed_samples_db_at_dc, atol=0.5
-        )
-
-        # At center freq, the output is at half gain
-        assert np.isclose(
-            samples_db_at_center_freq + gain_db / 2,
-            processed_samples_db_at_center_freq,
-            atol=0.5,
-        )
-
-        # At nyquist, we should be at equal gains
-        assert np.isclose(
-            samples_db_at_nyquist, processed_samples_db_at_nyquist, atol=0.5
-        )
-
         if DEBUG:
             import matplotlib.pyplot as plt
 
@@ -291,12 +235,27 @@ class TestLowShelfFilterTransform:
                     f"Peaking with center freq {augment.parameters['center_freq']:.2f}",
                 ]
             )
-
-            plt.axhline(samples_at_0db_gain + gain_db, color="red", linestyle=":")
-
             plt.xlabel("Frequency (Hz)")
             plt.ylabel("Magnitude (dB)")
             plt.show()
+
+        frequencies_of_interest = np.array([0.0, center_freq, sample_rate / 2])
+        expected_differences = np.array([-gain_db, -gain_db / 2, 0.0])
+
+        for n, freq in enumerate(frequencies_of_interest):
+            input_value_db = 10 * np.log10(
+                samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
+
+            output_value_db = 10 * np.log10(
+                processed_samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
+
+            assert np.isclose(
+                input_value_db - output_value_db,
+                expected_differences[n],
+                atol=1.0,
+            )
 
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])

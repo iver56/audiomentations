@@ -545,13 +545,12 @@ class TestHighPassFilterTransform:
         "samples",
         [get_chirp_test(8000, 40)],
     )
-    @pytest.mark.parametrize("filter_type", ["lowpass", "highpass"])
     @pytest.mark.parametrize(
         "rolloff",
         [12, 120],
     )
     @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_two_channel_input(self, samples, filter_type, rolloff, zero_phase):
+    def test_two_channel_input(self, samples, rolloff, zero_phase):
 
         sample_rate = 8000
         samples = get_randn_test(sample_rate, 10)
@@ -559,12 +558,7 @@ class TestHighPassFilterTransform:
         # Convert to 2D two channels
         two_channels = np.vstack([samples, samples])
 
-        if filter_type == "highpass":
-            FilterTransform = HighPassFilter
-        elif filter_type == "lowpass":
-            FilterTransform = LowPassFilter
-
-        augment = FilterTransform(
+        augment = HighPassFilter(
             min_cutoff_freq=1000,
             max_cutoff_freq=1000,
             min_rolloff=rolloff,
@@ -588,7 +582,7 @@ class TestHighPassFilterTransform:
                 import matplotlib.pyplot as plt
 
                 plt.title(
-                    f"Filter type:{filter_type} Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                    f"Filter type: Highpass Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
                 )
                 plt.plot(processed_samples)
                 plt.plot(channel, "r--")
@@ -598,16 +592,17 @@ class TestHighPassFilterTransform:
             assert np.allclose(channel, processed_samples)
 
 
-class TestLowPassFilterTransform:
-    @pytest.mark.parametrize("cutoff_frequency", [1000])
+class TestBandPassFilterTransform:
+    @pytest.mark.parametrize("center_frequency", [3000])
+    @pytest.mark.parametrize("bandwidth", [2000])
     @pytest.mark.parametrize(
         "rolloff",
         [6, 24],
     )
     @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_one_single_input(self, cutoff_frequency, rolloff, zero_phase):
+    def test_one_single_input(self, center_frequency, bandwidth, rolloff, zero_phase):
 
-        sample_rate = 8000
+        sample_rate = 16000
 
         # Parameters for computing periodograms.
         # When examining lower frequencies we need to have
@@ -626,184 +621,9 @@ class TestLowPassFilterTransform:
 
         if zero_phase and rolloff % 12 != 0:
             with pytest.raises(AssertionError):
-                augment = LowPassFilter(
-                    min_cutoff_freq=cutoff_frequency,
-                    max_cutoff_freq=cutoff_frequency,
-                    min_rolloff=rolloff,
-                    max_rolloff=rolloff,
-                    zero_phase=zero_phase,
-                    p=1.0,
-                )
-            return
-        else:
-            augment = LowPassFilter(
-                min_cutoff_freq=cutoff_frequency,
-                max_cutoff_freq=cutoff_frequency,
-                min_rolloff=rolloff,
-                max_rolloff=rolloff,
-                zero_phase=zero_phase,
-                p=1.0,
-            )
-
-        processed_samples = augment(samples=samples, sample_rate=sample_rate)
-
-        # Compute periodograms
-        wx, samples_pxx = scipy.signal.welch(
-            samples,
-            fs=sample_rate,
-            nfft=nfft,
-            nperseg=nperseg,
-            scaling="spectrum",
-            window="hann",
-        )
-        _, processed_samples_pxx = scipy.signal.welch(
-            processed_samples,
-            fs=sample_rate,
-            nperseg=nperseg,
-            nfft=nfft,
-            scaling="spectrum",
-            window="hann",
-        )
-
-        if DEBUG:
-            import matplotlib.pyplot as plt
-
-            plt.title(
-                f"Filter type: Lowpass Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
-            )
-            plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
-            plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
-            plt.legend(["Input signal", f"Highpassed at f_c={cutoff_frequency:.2f}"])
-            plt.axvline(cutoff_frequency, color="red", linestyle=":")
-            plt.xlabel("Frequency (Hz)")
-            plt.ylabel("Magnitude (dB)")
-            plt.show()
-
-        assert processed_samples.shape == samples.shape
-        assert processed_samples.dtype == np.float32
-
-        frequencies_of_interest = np.array([0, cutoff_frequency, 2 * cutoff_frequency])
-        expected_differences = np.array(
-            [0, expected_db_drop, expected_db_drop + rolloff]
-        )
-
-        # Tolerances for the differences in db
-        tolerances = np.array([1.0, 2.0, 5.0])
-
-        for n, freq in enumerate(frequencies_of_interest):
-            input_value_db = 10 * np.log10(
-                samples_pxx[int(np.round(nfft / sample_rate * freq))]
-            )
-
-            output_value_db = 10 * np.log10(
-                processed_samples_pxx[int(np.round(nfft / sample_rate * freq))]
-            )
-
-            assert np.isclose(
-                input_value_db - output_value_db,
-                expected_differences[n],
-                atol=tolerances[n],
-            )
-
-    @pytest.mark.parametrize(
-        "samples",
-        [get_chirp_test(8000, 40)],
-    )
-    @pytest.mark.parametrize("filter_type", ["lowpass", "highpass"])
-    @pytest.mark.parametrize(
-        "rolloff",
-        [12, 120],
-    )
-    @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_two_channel_input(self, samples, filter_type, rolloff, zero_phase):
-
-        sample_rate = 8000
-        samples = get_randn_test(sample_rate, 10)
-
-        # Convert to 2D two channels
-        two_channels = np.vstack([samples, samples])
-
-        if filter_type == "highpass":
-            FilterTransform = HighPassFilter
-        elif filter_type == "lowpass":
-            FilterTransform = LowPassFilter
-
-        augment = FilterTransform(
-            min_cutoff_freq=1000,
-            max_cutoff_freq=1000,
-            min_rolloff=rolloff,
-            max_rolloff=rolloff,
-            zero_phase=zero_phase,
-            p=1.0,
-        )
-
-        processed_samples = augment(samples=samples, sample_rate=sample_rate)
-
-        processed_two_channels = augment(samples=two_channels, sample_rate=sample_rate)
-
-        assert processed_two_channels.shape[0] == 2
-        assert processed_two_channels.shape == two_channels.shape
-        assert processed_two_channels.dtype == np.float32
-
-        # Check that the processed 2D channel version applies the same effect
-        # as the passband version.
-        for _, channel in enumerate(processed_two_channels):
-            if DEBUG:
-                import matplotlib.pyplot as plt
-
-                plt.title(
-                    f"Filter type:{filter_type} Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
-                )
-                plt.plot(processed_samples)
-                plt.plot(channel, "r--")
-
-                plt.legend(["1D", "2D"])
-                plt.show()
-            assert np.allclose(channel, processed_samples)
-
-
-class TestTwoSidedFilterTransforms:
-    @pytest.mark.parametrize("filter_type", ["bandstop", "bandpass"])
-    @pytest.mark.parametrize("center_freq", [500, 1000])
-    @pytest.mark.parametrize("bandwidth", [200])
-    @pytest.mark.parametrize(
-        "rolloff",
-        [12, 24],
-    )
-    @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_one_single_input(
-        self, filter_type, center_freq, bandwidth, rolloff, zero_phase
-    ):
-
-        np.random.seed(1)
-
-        sample_rate = 8000
-
-        # Parameters for computing periodograms.
-        # When examining lower frequencies we need to have
-        # a high nfft number.
-
-        nfft = 4096
-        nperseg = 1024
-
-        samples = get_chirp_test(sample_rate, 40)
-
-        # Expected db drop at f_c's
-        if zero_phase:
-            expected_db_drop = 6
-        else:
-            expected_db_drop = 3
-
-        if filter_type == "bandstop":
-            FilterTransform = BandStopFilter
-        elif filter_type == "bandpass":
-            FilterTransform = BandPassFilter
-
-        if zero_phase and rolloff % 12 != 0:
-            with pytest.raises(AssertionError):
-                augment = FilterTransform(
-                    min_center_freq=center_freq,
-                    max_center_freq=center_freq,
+                augment = BandPassFilter(
+                    min_center_freq=center_frequency,
+                    max_center_freq=center_frequency,
                     min_bandwidth=bandwidth,
                     max_bandwidth=bandwidth,
                     min_rolloff=rolloff,
@@ -813,9 +633,9 @@ class TestTwoSidedFilterTransforms:
                 )
             return
         else:
-            augment = FilterTransform(
-                min_center_freq=center_freq,
-                max_center_freq=center_freq,
+            augment = BandPassFilter(
+                min_center_freq=center_frequency,
+                max_center_freq=center_frequency,
                 min_bandwidth=bandwidth,
                 max_bandwidth=bandwidth,
                 min_rolloff=rolloff,
@@ -844,134 +664,85 @@ class TestTwoSidedFilterTransforms:
             window="hann",
         )
 
-        # Compute db at cutoffs at the input as well as the filtered signals
-        samples_db_at_center_freq = 10 * np.log10(
-            samples_pxx[int(np.round(nfft / sample_rate * center_freq))]
-        )
-        processed_samples_db_at_center_freq = 10 * np.log10(
-            processed_samples_pxx[int(np.round(nfft / sample_rate * center_freq))]
-        )
-
         if DEBUG:
             import matplotlib.pyplot as plt
 
             plt.title(
-                f"Filter type:{filter_type} Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                f"Filter type: Band-pass Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
             )
             plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
             plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
-            plt.axvline(center_freq, color="red", linestyle=":")
-
+            plt.legend(["Input signal", f"Highpassed at f_c={center_frequency:.2f}"])
+            plt.axvline(center_frequency, color="red", linestyle=":")
             plt.xlabel("Frequency (Hz)")
             plt.ylabel("Magnitude (dB)")
             plt.show()
 
-        for n, fc in enumerate(
+        assert processed_samples.shape == samples.shape
+        assert processed_samples.dtype == np.float32
+
+        left_cutoff_freq = center_frequency - bandwidth / 2
+        right_cutoff_freq = center_frequency + bandwidth / 2
+
+        frequencies_of_interest = np.array(
             [
-                augment.parameters["center_freq"] - augment.parameters["bandwidth"] / 2,
-                augment.parameters["center_freq"] + augment.parameters["bandwidth"] / 2,
+                left_cutoff_freq,
+                center_frequency,
+                right_cutoff_freq,
             ]
-        ):
-
-            # Compute db at cutoffs at the input as well as the filtered signals
-            samples_db_at_fc = 10 * np.log10(
-                samples_pxx[int(np.round(nfft / sample_rate * fc))]
-            )
-
-            samples_db_below_fc = 10 * np.log10(
-                samples_pxx[int(np.round(nfft / sample_rate * fc / 2))]
-            )
-
-            processed_sample_db_at_fc = 10 * np.log10(
-                processed_samples_pxx[int(np.round(nfft / sample_rate * fc))]
-            )
-
-            processed_sample_db_below_fc = 10 * np.log10(
-                processed_samples_pxx[int(np.round(nfft / sample_rate * fc / 2))]
-            )
-
-            assert processed_samples.shape == samples.shape
-            assert processed_samples.dtype == np.float32
-
-            # Assert that at fc we are at the 3db (6dB at the zero-phase case) point give or take half a db.
-            assert np.isclose(
-                samples_db_at_fc - processed_sample_db_at_fc,
+        )
+        expected_differences = np.array(
+            [
                 expected_db_drop,
-                atol=1,
+                0,
+                expected_db_drop,
+            ]
+        )
+
+        # Tolerances for the differences in db
+        tolerances = np.array([2.0, 1.0, 2.0])
+
+        for n, freq in enumerate(frequencies_of_interest):
+            input_value_db = 10 * np.log10(
+                samples_pxx[int(np.round(nfft / sample_rate * freq))]
             )
 
-            # For all cases below, f_c is the cutoff point, Compare region A for
-            # the original and the processed version.
-            if filter_type == "bandpass":
+            output_value_db = 10 * np.log10(
+                processed_samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
 
-                if n == 0:
-                    #      -------
-                    # ..../       \.....
-                    #    ^
-                    # A  |
-                    #   f_c
+            assert np.isclose(
+                input_value_db - output_value_db,
+                expected_differences[n],
+                atol=tolerances[n],
+            )
 
-                    assert samples_db_below_fc > processed_sample_db_below_fc
-                else:
-                    #      -------
-                    # ..../       \.....
-                    #             ^
-                    #          A  |
-                    #            f_c
-
-                    assert np.isclose(
-                        samples_db_at_center_freq,
-                        processed_samples_db_at_center_freq,
-                        atol=1,
-                    )
-
-            elif filter_type == "bandstop":
-                if n == 0:
-                    # ---           ----
-                    #    \_________/
-                    #    ^
-                    # A  |
-                    #   f_c
-                    assert np.isclose(
-                        samples_db_below_fc,
-                        processed_sample_db_below_fc,
-                        atol=1.0,
-                    )
-
-                else:
-                    # ---           ----
-                    #    \_________/
-                    #              ^
-                    #           A  |
-                    #             f_c
-                    assert (
-                        samples_db_at_center_freq > processed_samples_db_at_center_freq
-                    )
-
-    @pytest.mark.parametrize("filter_type", ["bandpass", "bandstop"])
+    @pytest.mark.parametrize("center_frequency", [3000])
+    @pytest.mark.parametrize("bandwidth", [2000])
+    @pytest.mark.parametrize(
+        "samples",
+        [get_chirp_test(8000, 40)],
+    )
     @pytest.mark.parametrize(
         "rolloff",
         [12, 120],
     )
     @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_two_channel_input(self, filter_type, rolloff, zero_phase):
+    def test_two_channel_input(
+        self, center_frequency, bandwidth, samples, rolloff, zero_phase
+    ):
 
-        sample_rate = 8000
-        samples = get_randn_test(sample_rate, 20)
+        sample_rate = 16000
+        samples = get_randn_test(sample_rate, 10)
 
         # Convert to 2D two channels
         two_channels = np.vstack([samples, samples])
 
-        if filter_type == "bandpass":
-            FilterTransform = BandPassFilter
-        elif filter_type == "bandstop":
-            FilterTransform = BandStopFilter
-
-        augment = FilterTransform(
-            min_center_freq=1000,
-            max_center_freq=1000,
-            min_bandwidth=100,
-            max_bandwidth=100,
+        augment = BandPassFilter(
+            min_center_freq=center_frequency,
+            max_center_freq=center_frequency,
+            min_bandwidth=bandwidth,
+            max_bandwidth=bandwidth,
             min_rolloff=rolloff,
             max_rolloff=rolloff,
             zero_phase=zero_phase,
@@ -986,8 +757,177 @@ class TestTwoSidedFilterTransforms:
         assert processed_two_channels.shape == two_channels.shape
         assert processed_two_channels.dtype == np.float32
 
-        # Check that the two channels are equal
-        assert np.allclose(processed_two_channels[0], processed_two_channels[1])
+        # Check that the processed 2D channel version applies the same effect
+        # as the passband version.
+        for _, channel in enumerate(processed_two_channels):
+            if DEBUG:
+                import matplotlib.pyplot as plt
+
+                plt.title(
+                    f"Filter type: Band-pass Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                )
+                plt.plot(processed_samples)
+                plt.plot(channel, "r--")
+
+                plt.legend(["1D", "2D"])
+                plt.show()
+            assert np.allclose(channel, processed_samples)
+
+
+class TestBandStopFilterTransform:
+    @pytest.mark.parametrize("center_frequency", [3000])
+    @pytest.mark.parametrize("bandwidth", [2000])
+    @pytest.mark.parametrize(
+        "rolloff",
+        [6, 24],
+    )
+    @pytest.mark.parametrize("zero_phase", [False, True])
+    def test_one_single_input(self, center_frequency, bandwidth, rolloff, zero_phase):
+
+        sample_rate = 16000
+
+        # Parameters for computing periodograms.
+        # When examining lower frequencies we need to have
+        # a high nfft number.
+
+        nfft = 2048 * 2
+        nperseg = 128
+
+        samples = get_chirp_test(sample_rate, 10)
+
+        # Expected db drop at fc
+        if zero_phase:
+            expected_db_drop = 6
+        else:
+            expected_db_drop = 3
+
+        if zero_phase and rolloff % 12 != 0:
+            with pytest.raises(AssertionError):
+                augment = BandStopFilter(
+                    min_center_freq=center_frequency,
+                    max_center_freq=center_frequency,
+                    min_bandwidth=bandwidth,
+                    max_bandwidth=bandwidth,
+                    min_rolloff=rolloff,
+                    max_rolloff=rolloff,
+                    zero_phase=zero_phase,
+                    p=1.0,
+                )
+            return
+        else:
+            augment = BandStopFilter(
+                min_center_freq=center_frequency,
+                max_center_freq=center_frequency,
+                min_bandwidth=bandwidth,
+                max_bandwidth=bandwidth,
+                min_rolloff=rolloff,
+                max_rolloff=rolloff,
+                zero_phase=zero_phase,
+                p=1.0,
+            )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        # Compute periodograms
+        wx, samples_pxx = scipy.signal.welch(
+            samples,
+            fs=sample_rate,
+            nfft=nfft,
+            nperseg=nperseg,
+            scaling="spectrum",
+            window="hann",
+        )
+        _, processed_samples_pxx = scipy.signal.welch(
+            processed_samples,
+            fs=sample_rate,
+            nperseg=nperseg,
+            nfft=nfft,
+            scaling="spectrum",
+            window="hann",
+        )
+
+        if DEBUG:
+            import matplotlib.pyplot as plt
+
+            plt.title(
+                f"Filter type: Band-stop Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+            )
+            plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
+            plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
+            plt.legend(["Input signal", f"Highpassed at f_c={center_frequency:.2f}"])
+            plt.axvline(center_frequency, color="red", linestyle=":")
+            plt.xlabel("Frequency (Hz)")
+            plt.ylabel("Magnitude (dB)")
+            plt.show()
+
+        assert processed_samples.shape == samples.shape
+        assert processed_samples.dtype == np.float32
+
+        left_cutoff_freq = center_frequency - bandwidth / 2
+        right_cutoff_freq = center_frequency + bandwidth / 2
+
+        frequencies_of_interest = np.array(
+            [0, left_cutoff_freq, right_cutoff_freq, sample_rate / 2]
+        )
+        expected_differences = np.array([0, expected_db_drop, expected_db_drop, 0.0])
+
+        # Tolerances for the differences in db
+        tolerances = np.array([1.0, 2.0, 2.0, 1.0])
+
+        for n, freq in enumerate(frequencies_of_interest):
+            input_value_db = 10 * np.log10(
+                samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
+
+            output_value_db = 10 * np.log10(
+                processed_samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
+
+            assert np.isclose(
+                input_value_db - output_value_db,
+                expected_differences[n],
+                atol=tolerances[n],
+            )
+
+    @pytest.mark.parametrize("center_frequency", [3000])
+    @pytest.mark.parametrize("bandwidth", [2000])
+    @pytest.mark.parametrize(
+        "samples",
+        [get_chirp_test(8000, 40)],
+    )
+    @pytest.mark.parametrize(
+        "rolloff",
+        [12, 120],
+    )
+    @pytest.mark.parametrize("zero_phase", [False, True])
+    def test_two_channel_input(
+        self, center_frequency, bandwidth, samples, rolloff, zero_phase
+    ):
+
+        sample_rate = 16000
+        samples = get_randn_test(sample_rate, 10)
+
+        # Convert to 2D two channels
+        two_channels = np.vstack([samples, samples])
+
+        augment = BandStopFilter(
+            min_center_freq=center_frequency,
+            max_center_freq=center_frequency,
+            min_bandwidth=bandwidth,
+            max_bandwidth=bandwidth,
+            min_rolloff=rolloff,
+            max_rolloff=rolloff,
+            zero_phase=zero_phase,
+            p=1.0,
+        )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        processed_two_channels = augment(samples=two_channels, sample_rate=sample_rate)
+
+        assert processed_two_channels.shape[0] == 2
+        assert processed_two_channels.shape == two_channels.shape
+        assert processed_two_channels.dtype == np.float32
 
         # Check that the processed 2D channel version applies the same effect
         # as the passband version.
@@ -995,7 +935,12 @@ class TestTwoSidedFilterTransforms:
             if DEBUG:
                 import matplotlib.pyplot as plt
 
-                plt.plot(channel)
+                plt.title(
+                    f"Filter type: Band-stop Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                )
                 plt.plot(processed_samples)
+                plt.plot(channel, "r--")
+
+                plt.legend(["1D", "2D"])
                 plt.show()
-            assert np.allclose(channel, processed_samples, rtol=1e-5)
+            assert np.allclose(channel, processed_samples)

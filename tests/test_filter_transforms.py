@@ -13,7 +13,7 @@ from audiomentations.augmentations.transforms import (
     HighShelfFilter,
 )
 
-DEBUG = False
+DEBUG = True
 
 
 def get_chirp_test(sample_rate, duration):
@@ -39,19 +39,19 @@ def get_randn_test(sample_rate, duration):
 
 
 class TestPeakingFilterTransforms:
-    @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
-    @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
-    @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
+    @pytest.mark.parametrize("center_freq", [4000.0])
+    @pytest.mark.parametrize("gain_db", [-6.0, +6.0])
+    @pytest.mark.parametrize("q_factor", [1.0])
     def test_one_single_input(self, center_freq, gain_db, q_factor):
         np.random.seed(1)
 
-        sample_rate = 8000
+        sample_rate = 16000
 
         # Parameters for computing periodograms.
         # When examining lower frequencies we need to have
         # a high nfft number.
 
-        nfft = 4096
+        nfft = 1024
         nperseg = 1024
 
         samples = get_chirp_test(sample_rate, 40)
@@ -89,70 +89,7 @@ class TestPeakingFilterTransforms:
             window="hann",
         )
 
-        # Compute db at cutoffs at the input as well as the filtered signals
-        samples_at_0db_gain = np.max(10 * np.log10(samples_pxx))
-        samples_db_at_center_freq = 10 * np.log10(
-            samples_pxx[
-                int(np.round(nfft / sample_rate * augment.parameters["center_freq"]))
-            ]
-        )
-
-        processed_samples_db_at_center_freq = 10 * np.log10(
-            processed_samples_pxx[
-                int(np.round(nfft / sample_rate * augment.parameters["center_freq"]))
-            ]
-        )
-
-        # At center frequency, we have to be at `gain_db` gain (in... db)
-        assert np.isclose(
-            samples_db_at_center_freq + gain_db,
-            processed_samples_db_at_center_freq,
-            0.5,
-        )
-
-        # Bandwidth is defined as the frequency range between the midpointspoints
-
-        # Q Factor -> BW (in Octaves)
-        bw_in_octaves = (
-            2 / np.log(2) * np.log(0.5 / q_factor + np.sqrt(1 + 0.25 / q_factor ** 2))
-        )
-
-        # BW (in Octaves) -> gain midpoints (frequencies where the gain in db is half)
-        c1 = np.exp(
-            np.log(2) / 2 * bw_in_octaves + np.log(augment.parameters["center_freq"])
-        )
-
-        c2 = np.exp(
-            np.log(augment.parameters["center_freq"]) - np.log(2) / 2 * bw_in_octaves
-        )
-
-        assert c2 < c1
-
-        if c1 < sample_rate / 2:
-            samples_db_at_lower_cutoff = 10 * np.log10(
-                samples_pxx[int(np.round(nfft / sample_rate * c1))]
-            )
-            processed_samples_db_at_lower_cutoff = 10 * np.log10(
-                processed_samples_pxx[int(np.round(nfft / sample_rate * c1))]
-            )
-            assert np.isclose(
-                processed_samples_db_at_lower_cutoff,
-                samples_db_at_lower_cutoff + gain_db / 2,
-                1,
-            )
-
-        if c2 < sample_rate / 2:
-            samples_db_at_upper_cutoff = 10 * np.log10(
-                samples_pxx[int(np.round(nfft / sample_rate * c2))]
-            )
-            processed_samples_db_at_upper_cutoff = 10 * np.log10(
-                processed_samples_pxx[int(np.round(nfft / sample_rate * c2))]
-            )
-            assert np.isclose(
-                processed_samples_db_at_upper_cutoff,
-                samples_db_at_upper_cutoff + gain_db / 2,
-                1,
-            )
+        center_freq = augment.parameters["center_freq"]
 
         if DEBUG:
             import matplotlib.pyplot as plt
@@ -167,32 +104,28 @@ class TestPeakingFilterTransforms:
                 ]
             )
             plt.axvline(augment.parameters["center_freq"], color="red", linestyle=":")
-            plt.axhline(
-                samples_at_0db_gain + gain_db,
-                color="red",
-                linestyle=":",
-            )
-            plt.axhline(
-                samples_at_0db_gain + gain_db / 2,
-                color="green",
-                linestyle=":",
-            )
-
-            plt.axvline(
-                c1,
-                color="green",
-                linestyle=":",
-            )
-
-            plt.axvline(
-                c2,
-                color="green",
-                linestyle=":",
-            )
 
             plt.xlabel("Frequency (Hz)")
             plt.ylabel("Magnitude (dB)")
             plt.show()
+
+        frequencies_of_interest = np.array([0.0, center_freq, sample_rate / 2])
+        expected_differences = np.array([0.0, -gain_db, 0.0])
+
+        for n, freq in enumerate(frequencies_of_interest):
+            input_value_db = 10 * np.log10(
+                samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
+
+            output_value_db = 10 * np.log10(
+                processed_samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
+
+            assert np.isclose(
+                input_value_db - output_value_db,
+                expected_differences[n],
+                atol=1.0,
+            )
 
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])

@@ -1777,7 +1777,7 @@ class PeakingFilter(BaseWaveformTransform):
         max_center_freq=1000.0,
         min_gain_db=-12,
         max_gain_db=12,
-        min_q=0.1,
+        min_q=1.0,
         max_q=10,
         p=0.5,
     ):
@@ -1867,8 +1867,8 @@ class PeakingFilter(BaseWaveformTransform):
 
 class LowShelfFilter(BaseWaveformTransform):
     """
-    Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
-    of a specific gain in db, and a quality factor parameter. Filter coefficients are taken
+    Low-shelf filter transform. Applies a low-shelf filter at a specific center frequency in hertz.
+    The gain at dc frequency is controlled by `{min,max}_gain_db`. Filter coefficients are taken
     from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
@@ -1901,8 +1901,8 @@ class LowShelfFilter(BaseWaveformTransform):
             min_gain_db <= max_gain_db
         ), "`min_gain_db` should be no greater than `max_gain_db`"
 
-        assert min_q > 0, "`min_q` should be greater than 0"
-        assert max_q > 0, "`max_q` should be greater than 0"
+        assert 1 >= min_q > 0, "`min_q` should be greater than 0 and less or equal to 1"
+        assert 1 >= max_q > 0, "`max_q` should be greater than 0 and less or equal to 1"
 
         super().__init__(p)
 
@@ -1991,8 +1991,8 @@ class LowShelfFilter(BaseWaveformTransform):
 
 class HighShelfFilter(BaseWaveformTransform):
     """
-    Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
-    of a specific gain in db, and a quality factor parameter. Filter coefficients are taken
+    High-shelf filter transform. Applies a high-shelf filter at a specific center frequency in hertz.
+    The gain at nyquist frequency is controlled by `{min,max}_gain_db`. Filter coefficients are taken
     from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
@@ -2024,8 +2024,8 @@ class HighShelfFilter(BaseWaveformTransform):
             min_gain_db <= max_gain_db
         ), "`min_gain_db` should be no greater than `max_gain_db`"
 
-        assert min_q > 0, "`min_q` should be greater than 0"
-        assert max_q > 0, "`max_q` should be greater than 0"
+        assert 1 >= min_q > 0, "`min_q` should be greater than 0 and less or equal to 1"
+        assert 1 >= max_q > 0, "`max_q` should be greater than 0 and less or equal to 1"
 
         super().__init__(p)
 

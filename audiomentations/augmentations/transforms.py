@@ -1698,8 +1698,10 @@ class HighPassFilter(ButterworthFilter):
 
 class BandStopFilter(ButterworthFilter):
     """
-    Apply band-stop filtering to the input audio. Also known as notch filter,
-    band reject filter and frequency mask.
+    Apply band-stop filtering to the input audio. Also known as notch filter or
+    band reject filter. It relates to the frequency mask idea in the SpecAugment paper.
+    Filter steepness (6/12/18... dB / octave) is parametrized. Can also be set for
+    zero-phase filtering (will result in a 6db drop at cutoffs).
     """
 
     supports_multichannel = True
@@ -1750,7 +1752,9 @@ class BandStopFilter(ButterworthFilter):
 
 class BandPassFilter(ButterworthFilter):
     """
-    Apply band-pass filtering to the input audio.
+    Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / octave)
+    is parametrized. Can also be set for zero-phase filtering (will result in a 6db drop at
+    cutoffs).
     """
 
     supports_multichannel = True

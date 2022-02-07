@@ -140,17 +140,20 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `BandPassFilter`
 
-_Updated in v0.21.0_
+_Added in v0.18.0, updated in v0.21.0_
 
-Apply band-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoffs).
-
+Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / octave)
+is parametrized. Can also be set for zero-phase filtering (will result in a 6db drop at
+cutoffs).
 
 ## `BandStopFilter`
 
 _Added in v0.21.0_
 
-Apply band-stop filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoffs).
-
+Apply band-stop filtering to the input audio. Also known as notch filter or
+band reject filter. It relates to the frequency mask idea in the SpecAugment paper.
+Filter steepness (6/12/18... dB / octave) is parametrized. Can also be set for
+zero-phase filtering (will result in a 6db drop at cutoffs).
 
 ## `Clip`
 
@@ -200,27 +203,25 @@ See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
 ## `HighPassFilter`
 
-Updated in v0.21.0_
+_Added in v0.18.0, updated in v0.21.0_
 
 Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
 ## `HighShelfFilter`
 
-Added in v0.21.0_
+_Added in v0.21.0_
 
 Apply high-shelf filtering to the input audio.
 
-
-
 ## `LowPassFilter`
 
-_Updated in v0.21.0_
+_Added in v0.18.0, updated in v0.21.0_
 
 Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
 ## `LowShelfFilter`
 
-Added in v0.21.0_
+_Added in v0.21.0_
 
 Apply Low-shelf filtering to the input audio.
 

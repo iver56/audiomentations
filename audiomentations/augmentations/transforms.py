@@ -1613,15 +1613,16 @@ class ButterworthFilter(BaseWaveformTransform):
 
 class LowPassFilter(ButterworthFilter):
     """
-    Apply high-pass filtering to the input audio.
+    Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+    Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_cutoff_freq=20,
-        max_cutoff_freq=2400,
+        min_cutoff_freq=150,
+        max_cutoff_freq=7500,
         min_rolloff=12,
         max_rolloff=24,
         zero_phase=False,
@@ -1656,7 +1657,8 @@ class LowPassFilter(ButterworthFilter):
 
 class HighPassFilter(ButterworthFilter):
     """
-    Apply high-pass filtering to the input audio.
+    Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+    Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
     """
 
     supports_multichannel = True
@@ -1912,18 +1914,18 @@ class PeakingFilter(BaseWaveformTransform):
 class LowShelfFilter(BaseWaveformTransform):
     """
     Low-shelf filter transform. Applies a low-shelf filter at a specific center frequency in hertz.
-    The gain at dc frequency is controlled by `{min,max}_gain_db`. Filter coefficients are taken
-    from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
+    The gain at DC frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+    Filter coefficients are taken from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_gain_db=-12,
-        max_gain_db=12,
+        min_center_freq=50.0,
+        max_center_freq=7500.0,
+        min_gain_db=-18.0,
+        max_gain_db=18.0,
         min_q=0.1,
         max_q=0.999,
         p=0.5,
@@ -1932,8 +1934,8 @@ class LowShelfFilter(BaseWaveformTransform):
         """
         :param min_center_freq: The minimum center frequency of the shelving filter
         :param max_center_freq: The maximum center frequency of the shelving filter
-        :param min_gain_db: The minimum gain at dc
-        :param max_gain_db: The maximum gain at dc
+        :param min_gain_db: The minimum gain at DC (0 hz)
+        :param max_gain_db: The maximum gain at DC (0 hz)
         :param min_q: The minimum quality factor q
         :param max_q: The maximum quality factor q
         """
@@ -2036,18 +2038,18 @@ class LowShelfFilter(BaseWaveformTransform):
 class HighShelfFilter(BaseWaveformTransform):
     """
     High-shelf filter transform. Applies a high-shelf filter at a specific center frequency in hertz.
-    The gain at nyquist frequency is controlled by `{min,max}_gain_db`. Filter coefficients are taken
-    from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
+    The gain at nyquist frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+    Filter coefficients are taken from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_gain_db=-12,
-        max_gain_db=12,
+        min_center_freq=50.0,
+        max_center_freq=7500.0,
+        min_gain_db=-18.0,
+        max_gain_db=18.0,
         min_q=0.1,
         max_q=0.999,
         p=0.5,
@@ -2055,8 +2057,8 @@ class HighShelfFilter(BaseWaveformTransform):
         """
         :param min_center_freq: The minimum center frequency of the shelving filter
         :param max_center_freq: The maximum center frequency of the shelving filter
-        :param min_gain_db: The minimum gain at nyquist frequency
-        :param max_gain_db: The maximum gain at nyquist frequency
+        :param min_gain_db: The minimum gain at the nyquist frequency
+        :param max_gain_db: The maximum gain at the nyquist frequency
         :param min_q: The minimum quality factor q
         :param max_q: The maximum quality factor q
         """

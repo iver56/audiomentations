@@ -97,6 +97,7 @@ if __name__ == "__main__":
     sound_file_paths = [
         Path(os.path.join(DEMO_DIR, "acoustic_guitar_0.wav")),
         Path(os.path.join(DEMO_DIR, "perfect-alley1.ogg")),
+        Path(os.path.join(DEMO_DIR, "p286_011.wav")),
     ]
 
     transforms = [

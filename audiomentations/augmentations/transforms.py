@@ -119,6 +119,8 @@ class FrequencyMask(BaseWaveformTransform):
     """
     Mask some frequency band on the spectrogram.
     Inspired by https://arxiv.org/pdf/1904.08779.pdf
+
+    See also BandStopFilter
     """
 
     supports_multichannel = True
@@ -1425,8 +1427,8 @@ class ButterworthFilter(BaseWaveformTransform):
         assert ("min_cutoff_freq" in kwargs and "max_cutoff_freq" in kwargs) or (
             "min_center_freq" in kwargs
             and "max_center_freq" in kwargs
-            and "min_bandwidth" in kwargs
-            and "max_bandwidth" in kwargs
+            and "min_bandwidth_fraction" in kwargs
+            and "max_bandwidth_fraction" in kwargs
         ), "Arguments for either a one-sided, or a two-sided filter must be given"
 
         if "min_cutoff_freq" in kwargs:
@@ -1438,8 +1440,8 @@ class ButterworthFilter(BaseWaveformTransform):
             self.initialize_two_sided_filter(
                 min_center_freq=kwargs["min_center_freq"],
                 max_center_freq=kwargs["max_center_freq"],
-                min_bandwidth=kwargs["min_bandwidth"],
-                max_bandwidth=kwargs["max_bandwidth"],
+                min_bandwidth_fraction=kwargs["min_bandwidth_fraction"],
+                max_bandwidth_fraction=kwargs["max_bandwidth_fraction"],
             )
 
     def initialize_one_sided_filter(
@@ -1477,14 +1479,16 @@ class ButterworthFilter(BaseWaveformTransform):
         self,
         min_center_freq,
         max_center_freq,
-        min_bandwidth,
-        max_bandwidth,
+        min_bandwidth_fraction,
+        max_bandwidth_fraction,
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
-        :param min_bandwidth: Minimum bandwidth
-        :param max_bandwidth: Maximum bandwidth
+        :param min_bandwidth_fraction: Minimum bandwidth fraction relative to center
+            frequency (number between 0 and 1)
+        :param max_bandwidth_fraction: Maximum bandwidth fraction relative to center
+            frequency (number between 0 and 1)
         :param min_rolloff: Minimum filter roll-off (in db/octave).
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
@@ -1494,13 +1498,13 @@ class ButterworthFilter(BaseWaveformTransform):
 
         self.min_center_freq = min_center_freq
         self.max_center_freq = max_center_freq
-        self.min_bandwidth = min_bandwidth
-        self.max_bandwidth = max_bandwidth
+        self.min_bandwidth_fraction = min_bandwidth_fraction
+        self.max_bandwidth_fraction = max_bandwidth_fraction
 
         if self.min_center_freq > self.max_center_freq:
             raise ValueError("min_center_freq must not be greater than max_center_freq")
-        if self.min_bandwidth > self.max_bandwidth:
-            raise ValueError("min_q must not be greater than max_q")
+        if self.min_bandwidth_fraction > self.max_bandwidth_fraction:
+            raise ValueError("min_bandwidth_fraction must not be greater than max_bandwidth_fraction")
 
     def randomize_parameters(self, samples: np.array, sample_rate: int = None):
 
@@ -1522,9 +1526,11 @@ class ButterworthFilter(BaseWaveformTransform):
             self.parameters["center_freq"] = np.random.uniform(
                 low=self.min_center_freq, high=self.max_center_freq
             )
-            self.parameters["bandwidth"] = np.random.uniform(
-                low=self.min_bandwidth, high=self.max_bandwidth
+
+            bandwidth_fraction = np.random.uniform(
+                low=self.min_bandwidth_fraction, high=self.max_bandwidth_fraction
             )
+            self.parameters["bandwidth"] = self.parameters["center_freq"] * bandwidth_fraction
 
     def apply(self, samples: np.array, sample_rate: int = None):
         assert samples.dtype == np.float32
@@ -1665,17 +1671,18 @@ class HighPassFilter(ButterworthFilter):
 
 class BandStopFilter(ButterworthFilter):
     """
-    Apply band-stop filtering to the input audio.
+    Apply band-stop filtering to the input audio. Also known as notch filter,
+    band reject filter and frequency mask.
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_bandwidth=100.0,
-        max_bandwidth=300.0,
+        min_center_freq=200.0,
+        max_center_freq=4000.0,
+        min_bandwidth_fraction=0.25,
+        max_bandwidth_fraction=0.99,
         min_rolloff=12,
         max_rolloff=24,
         zero_phase=False,
@@ -1684,8 +1691,10 @@ class BandStopFilter(ButterworthFilter):
         """
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
-        :param min_bandwidth: Minimum bandwidth
-        :param max_bandwidth: Maximum bandwidth
+        :param min_bandwidth_fraction: Minimum bandwidth fraction relative to center
+            frequency (number between 0 and 1)
+        :param max_bandwidth_fraction: Maximum bandwidth fraction relative to center
+            frequency (number between 0 and 1)
         :param min_rolloff: Minimum filter roll-off (in db/octave).
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
@@ -1702,8 +1711,8 @@ class BandStopFilter(ButterworthFilter):
         super().__init__(
             min_center_freq=min_center_freq,
             max_center_freq=max_center_freq,
-            min_bandwidth=min_bandwidth,
-            max_bandwidth=max_bandwidth,
+            min_bandwidth_fraction=min_bandwidth_fraction,
+            max_bandwidth_fraction=max_bandwidth_fraction,
             min_rolloff=min_rolloff,
             max_rolloff=max_rolloff,
             zero_phase=zero_phase,
@@ -1721,10 +1730,10 @@ class BandPassFilter(ButterworthFilter):
 
     def __init__(
         self,
-        min_center_freq=150.0,
-        max_center_freq=1000.0,
-        min_bandwidth=100.0,
-        max_bandwidth=300.0,
+        min_center_freq=200,
+        max_center_freq=4000,
+        min_bandwidth_fraction=0.25,
+        max_bandwidth_fraction=0.99,
         min_rolloff=12,
         max_rolloff=24,
         zero_phase=False,
@@ -1733,8 +1742,8 @@ class BandPassFilter(ButterworthFilter):
         """
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
-        :param min_bandwidth: Minimum bandwidth
-        :param max_bandwidth: Maximum bandwidth
+        :param min_bandwidth_fraction: Minimum bandwidth relative to center frequency
+        :param max_bandwidth_fraction: Maximum bandwidth relative to center frequency
         :param min_rolloff: Minimum filter roll-off (in db/octave).
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
@@ -1752,8 +1761,8 @@ class BandPassFilter(ButterworthFilter):
         super().__init__(
             min_center_freq=min_center_freq,
             max_center_freq=max_center_freq,
-            min_bandwidth=min_bandwidth,
-            max_bandwidth=max_bandwidth,
+            min_bandwidth_fraction=min_bandwidth_fraction,
+            max_bandwidth_fraction=max_bandwidth_fraction,
             min_rolloff=min_rolloff,
             max_rolloff=max_rolloff,
             zero_phase=zero_phase,

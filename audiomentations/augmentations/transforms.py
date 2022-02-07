@@ -1789,8 +1789,9 @@ class BandPassFilter(ButterworthFilter):
 class PeakingFilter(BaseWaveformTransform):
     """
     Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
-    of a specific gain in db, and a quality factor parameter. Filter coefficients are taken
-    from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
+    of a specific gain in db (note: can be positive or negative!), and a quality factor
+    parameter. Filter coefficients are taken from the W3 Audio EQ Cookbook:
+    https://www.w3.org/TR/audio-eq-cookbook/
     """
 
     supports_multichannel = True

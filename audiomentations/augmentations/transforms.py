@@ -1560,12 +1560,18 @@ class ButterworthFilter(BaseWaveformTransform):
                 output="sos",
             )
         elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
+            low_freq = self.parameters["center_freq"] - self.parameters["bandwidth"] / 2
+            high_freq = (
+                self.parameters["center_freq"] + self.parameters["bandwidth"] / 2
+            )
+            nyquist_freq = sample_rate // 2
+            if high_freq > nyquist_freq:
+                # Ensure that the upper critical frequency does not exceed the nyquist
+                # frequency to avoid an exception from scipy
+                high_freq = nyquist_freq * 0.9999
             sos = butter(
                 self.parameters["rolloff"] // (12 if self.zero_phase else 6),
-                [
-                    self.parameters["center_freq"] - self.parameters["bandwidth"] / 2,
-                    self.parameters["center_freq"] + self.parameters["bandwidth"] / 2,
-                ],
+                [low_freq, high_freq],
                 btype=self.filter_type,
                 analog=False,
                 fs=sample_rate,

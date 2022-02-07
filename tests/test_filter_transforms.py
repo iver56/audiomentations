@@ -434,10 +434,7 @@ class TestHighShelfFilterTransform:
 
 class TestHighPassFilterTransform:
     @pytest.mark.parametrize("cutoff_frequency", [1000])
-    @pytest.mark.parametrize(
-        "rolloff",
-        [6, 24],
-    )
+    @pytest.mark.parametrize("rolloff", [6, 24])
     @pytest.mark.parametrize("zero_phase", [False, True])
     def test_one_single_input(self, cutoff_frequency, rolloff, zero_phase):
 
@@ -541,14 +538,8 @@ class TestHighPassFilterTransform:
                 atol=tolerances[n],
             )
 
-    @pytest.mark.parametrize(
-        "samples",
-        [get_chirp_test(8000, 40)],
-    )
-    @pytest.mark.parametrize(
-        "rolloff",
-        [12, 120],
-    )
+    @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
+    @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
     def test_two_channel_input(self, samples, rolloff, zero_phase):
 
@@ -595,12 +586,11 @@ class TestHighPassFilterTransform:
 class TestBandPassFilterTransform:
     @pytest.mark.parametrize("center_frequency", [3000])
     @pytest.mark.parametrize("bandwidth_fraction", [0.666])
-    @pytest.mark.parametrize(
-        "rolloff",
-        [6, 24],
-    )
+    @pytest.mark.parametrize("rolloff", [6, 24])
     @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_one_single_input(self, center_frequency, bandwidth_fraction, rolloff, zero_phase):
+    def test_one_single_input(
+        self, center_frequency, bandwidth_fraction, rolloff, zero_phase
+    ):
 
         sample_rate = 16000
 
@@ -720,14 +710,8 @@ class TestBandPassFilterTransform:
 
     @pytest.mark.parametrize("center_frequency", [3000])
     @pytest.mark.parametrize("bandwidth_fraction", [0.666])
-    @pytest.mark.parametrize(
-        "samples",
-        [get_chirp_test(8000, 40)],
-    )
-    @pytest.mark.parametrize(
-        "rolloff",
-        [12, 120],
-    )
+    @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
+    @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
     def test_two_channel_input(
         self, center_frequency, bandwidth_fraction, samples, rolloff, zero_phase
@@ -774,16 +758,43 @@ class TestBandPassFilterTransform:
                 plt.show()
             assert np.allclose(channel, processed_samples)
 
+    @pytest.mark.parametrize("center_frequency", [7000])
+    @pytest.mark.parametrize("bandwidth_fraction", [0.666])
+    @pytest.mark.parametrize("rolloff", [6])
+    @pytest.mark.parametrize("zero_phase", [False])
+    def test_nyquist_limit(
+        self, center_frequency, bandwidth_fraction, rolloff, zero_phase
+    ):
+        # Test that the filter doesn't raise an exception when
+        # center_freq + bandwidth / 2 is over the nyquist frequency
+
+        sample_rate = 16000
+
+        samples = get_chirp_test(sample_rate, 3)
+
+        augment = BandPassFilter(
+            min_center_freq=center_frequency,
+            max_center_freq=center_frequency,
+            min_bandwidth_fraction=bandwidth_fraction,
+            max_bandwidth_fraction=bandwidth_fraction,
+            min_rolloff=rolloff,
+            max_rolloff=rolloff,
+            zero_phase=zero_phase,
+            p=1.0,
+        )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert processed_samples.shape == samples.shape
+
 
 class TestBandStopFilterTransform:
     @pytest.mark.parametrize("center_frequency", [3000])
     @pytest.mark.parametrize("bandwidth_fraction", [0.666])
-    @pytest.mark.parametrize(
-        "rolloff",
-        [6, 24],
-    )
+    @pytest.mark.parametrize("rolloff", [6, 24])
     @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_one_single_input(self, center_frequency, bandwidth_fraction, rolloff, zero_phase):
+    def test_one_single_input(
+        self, center_frequency, bandwidth_fraction, rolloff, zero_phase
+    ):
 
         sample_rate = 16000
 
@@ -893,14 +904,8 @@ class TestBandStopFilterTransform:
 
     @pytest.mark.parametrize("center_frequency", [3000])
     @pytest.mark.parametrize("bandwidth_fraction", [0.666])
-    @pytest.mark.parametrize(
-        "samples",
-        [get_chirp_test(8000, 40)],
-    )
-    @pytest.mark.parametrize(
-        "rolloff",
-        [12, 120],
-    )
+    @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
+    @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
     def test_two_channel_input(
         self, center_frequency, bandwidth_fraction, samples, rolloff, zero_phase

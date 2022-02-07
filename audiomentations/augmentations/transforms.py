@@ -122,7 +122,8 @@ class FrequencyMask(BaseWaveformTransform):
     Mask some frequency band on the spectrogram.
     Inspired by https://arxiv.org/pdf/1904.08779.pdf
 
-    See also BandStopFilter
+    This transform does basically the same as BandStopFilter, and may be deprecated in
+    the future.
     """
 
     supports_multichannel = True

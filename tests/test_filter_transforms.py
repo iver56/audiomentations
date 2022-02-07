@@ -582,6 +582,29 @@ class TestHighPassFilterTransform:
                 plt.show()
             assert np.allclose(channel, processed_samples)
 
+    @pytest.mark.parametrize("cutoff_frequency", [5000])
+    @pytest.mark.parametrize("rolloff", [6])
+    @pytest.mark.parametrize("zero_phase", [False])
+    def test_nyquist_limit(self, cutoff_frequency, rolloff, zero_phase):
+        # Test that the filter doesn't raise an exception when
+        # cutoff_frequency is greater than the nyquist frequency
+
+        sample_rate = 8000
+
+        samples = get_chirp_test(sample_rate, 3)
+
+        augment = HighPassFilter(
+            min_cutoff_freq=cutoff_frequency,
+            max_cutoff_freq=cutoff_frequency,
+            min_rolloff=rolloff,
+            max_rolloff=rolloff,
+            zero_phase=zero_phase,
+            p=1.0,
+        )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert processed_samples.shape == samples.shape
+
 
 class TestBandPassFilterTransform:
     @pytest.mark.parametrize("center_frequency", [3000])
@@ -766,7 +789,7 @@ class TestBandPassFilterTransform:
         self, center_frequency, bandwidth_fraction, rolloff, zero_phase
     ):
         # Test that the filter doesn't raise an exception when
-        # center_freq + bandwidth / 2 is over the nyquist frequency
+        # center_freq + bandwidth / 2 is greater than the nyquist frequency
 
         sample_rate = 16000
 

@@ -1551,9 +1551,15 @@ class ButterworthFilter(BaseWaveformTransform):
         assert samples.dtype == np.float32
 
         if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
+            cutoff_freq = self.parameters["cutoff_freq"]
+            nyquist_freq = sample_rate // 2
+            if cutoff_freq > nyquist_freq:
+                # Ensure that the cutoff frequency does not exceed the nyquist
+                # frequency to avoid an exception from scipy
+                cutoff_freq = nyquist_freq * 0.9999
             sos = butter(
                 self.parameters["rolloff"] // (12 if self.zero_phase else 6),
-                self.parameters["cutoff_freq"],
+                cutoff_freq,
                 btype=self.filter_type,
                 analog=False,
                 fs=sample_rate,

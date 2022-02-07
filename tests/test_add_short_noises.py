@@ -1,6 +1,7 @@
 import json
 import os
 import pickle
+import random
 import unittest
 
 import numpy as np
@@ -209,6 +210,8 @@ class TestAddShortNoises(unittest.TestCase):
         self.assertGreater(rms_after, rms_before)
 
     def test_include_silence_in_noise_rms_calculation(self):
+        np.random.seed(420)
+        random.seed(420)
         sample_rate = 44100
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
             np.float32

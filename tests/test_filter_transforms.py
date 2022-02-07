@@ -809,6 +809,28 @@ class TestBandPassFilterTransform:
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert processed_samples.shape == samples.shape
 
+    def test_too_extreme_bandwidth_fractions(self):
+        with pytest.raises(ValueError):
+            BandPassFilter(
+                min_bandwidth_fraction=0.0,
+                max_bandwidth_fraction=1.0,
+                p=1.0,
+            )
+
+        with pytest.raises(ValueError):
+            BandPassFilter(
+                min_bandwidth_fraction=0.1,
+                max_bandwidth_fraction=3.0,
+                p=1.0,
+            )
+
+        with pytest.raises(ValueError):
+            BandPassFilter(
+                min_bandwidth_fraction=0.5,
+                max_bandwidth_fraction=0.1,
+                p=1.0,
+            )
+
 
 class TestBandStopFilterTransform:
     @pytest.mark.parametrize("center_frequency", [3000])

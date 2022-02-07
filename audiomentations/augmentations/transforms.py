@@ -1519,7 +1519,6 @@ class ButterworthFilter(BaseWaveformTransform):
             )
 
     def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-
         super().randomize_parameters(samples, sample_rate)
         if self.zero_phase:
             random_order = random.randint(
@@ -1531,9 +1530,11 @@ class ButterworthFilter(BaseWaveformTransform):
             self.parameters["rolloff"] = random_order * 6
 
         if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
-            self.parameters["cutoff_freq"] = np.random.uniform(
-                low=self.min_cutoff_freq, high=self.max_cutoff_freq
+            cutoff_mel = np.random.uniform(
+                low=convert_frequency_to_mel(self.min_cutoff_freq),
+                high=convert_frequency_to_mel(self.max_cutoff_freq),
             )
+            self.parameters["cutoff_freq"] = convert_mel_to_frequency(cutoff_mel)
         elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
             center_mel = np.random.uniform(
                 low=convert_frequency_to_mel(self.min_center_freq),
@@ -1923,7 +1924,7 @@ class LowShelfFilter(BaseWaveformTransform):
     def __init__(
         self,
         min_center_freq=50.0,
-        max_center_freq=7500.0,
+        max_center_freq=4000.0,
         min_gain_db=-18.0,
         max_gain_db=18.0,
         min_q=0.1,
@@ -2046,7 +2047,7 @@ class HighShelfFilter(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_center_freq=50.0,
+        min_center_freq=300.0,
         max_center_freq=7500.0,
         min_gain_db=-18.0,
         max_gain_db=18.0,

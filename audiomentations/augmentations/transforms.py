@@ -1,13 +1,13 @@
 import functools
 import os
 import random
-import sys
 import tempfile
 import uuid
 import warnings
 
 import librosa
 import numpy as np
+import sys
 from scipy.signal import butter, convolve, sosfilt, sosfiltfilt, sosfilt_zi
 
 from audiomentations.core.audio_loading_utils import load_sound_file
@@ -1797,12 +1797,12 @@ class PeakingFilter(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_center_freq=100.0,
-        max_center_freq=4000.0,
-        min_gain_db=-18,
-        max_gain_db=18,
+        min_center_freq=50.0,
+        max_center_freq=7500.0,
+        min_gain_db=-24,
+        max_gain_db=24,
         min_q=0.5,
-        max_q=10,
+        max_q=5.0,
         p=0.5,
     ):
         """

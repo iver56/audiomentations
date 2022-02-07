@@ -19,6 +19,8 @@ from audiomentations.core.utils import (
     convert_decibels_to_amplitude_ratio,
     convert_float_samples_to_int16,
     get_file_paths,
+    convert_frequency_to_mel,
+    convert_mel_to_frequency,
 )
 
 
@@ -1486,9 +1488,9 @@ class ButterworthFilter(BaseWaveformTransform):
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
         :param min_bandwidth_fraction: Minimum bandwidth fraction relative to center
-            frequency (number between 0 and 2)
+            frequency (number between 0.0 and 2.0)
         :param max_bandwidth_fraction: Maximum bandwidth fraction relative to center
-            frequency (number between 0 and 2)
+            frequency (number between 0.0 and 2.0)
         :param min_rolloff: Minimum filter roll-off (in db/octave).
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
@@ -1505,6 +1507,11 @@ class ButterworthFilter(BaseWaveformTransform):
             raise ValueError("min_center_freq must not be greater than max_center_freq")
         if self.min_bandwidth_fraction <= 0.0:
             raise ValueError("min_bandwidth_fraction must be a positive number")
+        if self.max_bandwidth_fraction >= 2.0:
+            raise ValueError(
+                "max_bandwidth_fraction should be smaller than 2.0, since otherwise"
+                " the low cut frequency of the band can be smaller than 0 Hz."
+            )
         if self.min_bandwidth_fraction > self.max_bandwidth_fraction:
             raise ValueError(
                 "min_bandwidth_fraction must not be greater than max_bandwidth_fraction"
@@ -1527,9 +1534,11 @@ class ButterworthFilter(BaseWaveformTransform):
                 low=self.min_cutoff_freq, high=self.max_cutoff_freq
             )
         elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
-            self.parameters["center_freq"] = np.random.uniform(
-                low=self.min_center_freq, high=self.max_center_freq
+            center_mel = np.random.uniform(
+                low=convert_frequency_to_mel(self.min_center_freq),
+                high=convert_frequency_to_mel(self.max_center_freq),
             )
+            self.parameters["center_freq"] = convert_mel_to_frequency(center_mel)
 
             bandwidth_fraction = np.random.uniform(
                 low=self.min_bandwidth_fraction, high=self.max_bandwidth_fraction
@@ -1736,8 +1745,8 @@ class BandPassFilter(ButterworthFilter):
 
     def __init__(
         self,
-        min_center_freq=200,
-        max_center_freq=4000,
+        min_center_freq=200.0,
+        max_center_freq=4000.0,
         min_bandwidth_fraction=0.5,
         max_bandwidth_fraction=1.99,
         min_rolloff=12,
@@ -1780,7 +1789,7 @@ class BandPassFilter(ButterworthFilter):
 class PeakingFilter(BaseWaveformTransform):
     """
     Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
-    of a specific gain in db, and a quality factor parameter.Filter coefficients are taken
+    of a specific gain in db, and a quality factor parameter. Filter coefficients are taken
     from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
@@ -1790,9 +1799,9 @@ class PeakingFilter(BaseWaveformTransform):
         self,
         min_center_freq=100.0,
         max_center_freq=4000.0,
-        min_gain_db=-12,
-        max_gain_db=12,
-        min_q=1.0,
+        min_gain_db=-18,
+        max_gain_db=18,
+        min_q=0.5,
         max_q=10,
         p=0.5,
     ):
@@ -1849,9 +1858,11 @@ class PeakingFilter(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
 
-        self.parameters["center_freq"] = random.uniform(
-            self.min_center_freq, self.max_center_freq
+        center_mel = np.random.uniform(
+            low=convert_frequency_to_mel(self.min_center_freq),
+            high=convert_frequency_to_mel(self.max_center_freq),
         )
+        self.parameters["center_freq"] = convert_mel_to_frequency(center_mel)
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 

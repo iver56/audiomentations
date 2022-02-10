@@ -419,6 +419,8 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 
 ## Unreleased
 
+## v0.21.0 (2022-02-10)
+
 ### Added
 
 * Add support for multichannel audio in `ApplyImpulseResponse`, `BandPassFilter`, `HighPassFilter` and `LowPassFilter`

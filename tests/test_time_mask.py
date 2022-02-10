@@ -2,8 +2,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import TimeMask
-from audiomentations.core.composition import Compose
+from audiomentations import TimeMask, Compose
 
 
 class TestTimeMask(unittest.TestCase):

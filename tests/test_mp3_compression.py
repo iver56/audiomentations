@@ -2,8 +2,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import Mp3Compression
-from audiomentations.core.composition import Compose
+from audiomentations import Mp3Compression, Compose
 
 
 class TestMp3Compression(unittest.TestCase):

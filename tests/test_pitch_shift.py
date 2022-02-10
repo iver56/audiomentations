@@ -4,8 +4,7 @@ from copy import deepcopy
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.transforms import PitchShift
-from audiomentations.core.composition import Compose
+from audiomentations import PitchShift, Compose
 
 
 class TestPitchShift(unittest.TestCase):

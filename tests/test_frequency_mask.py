@@ -2,8 +2,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.filters import FrequencyMask
-from audiomentations.core.composition import Compose
+from audiomentations import FrequencyMask, Compose
 
 
 class TestFrequencyMask:

@@ -1,6 +1,6 @@
 import unittest
 
-from audiomentations.augmentations.transforms import Normalize
+from audiomentations import Normalize
 
 
 class TestTransformsInterface(unittest.TestCase):

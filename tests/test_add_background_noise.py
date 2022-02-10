@@ -6,8 +6,7 @@ import warnings
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import AddBackgroundNoise
-from audiomentations.core.composition import Compose
+from audiomentations import AddBackgroundNoise, Compose
 from demo.demo import DEMO_DIR
 
 

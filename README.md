@@ -76,7 +76,7 @@ spectrogram = np.random.random((1025, 256, 2))
 augmented_spectrogram = augment(spectrogram)
 ```
 
-See [audiomentations/augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/spectrogram_transforms.py) for spectrogram transforms. 
+See [audiomentations/spec_augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/spec_augmentations/spectrogram_transforms.py) for spectrogram transforms. 
 
 # Waveform transforms
 

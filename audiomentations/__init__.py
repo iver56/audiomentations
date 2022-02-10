@@ -25,11 +25,12 @@ from .augmentations.polarity_inversion import PolarityInversion
 from .augmentations.resample import Resample
 from .augmentations.reverse import Reverse
 from .augmentations.shift import Shift
-from .augmentations.spectrogram_transforms import SpecFrequencyMask, SpecChannelShuffle
 from .augmentations.tanh_distortion import TanhDistortion
 from .augmentations.time_mask import TimeMask
 from .augmentations.time_stretch import TimeStretch
 from .augmentations.trim import Trim
 from .core.composition import Compose, SpecCompose, OneOf, SomeOf
+from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle
+from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask
 
 __version__ = "0.21.0"

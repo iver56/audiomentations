@@ -140,17 +140,23 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `BandPassFilter`
 
-_Updated in v0.21.0_
+_Added in v0.18.0, updated in v0.21.0_
 
-Apply band-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoffs).
-
+Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / octave)
+is parametrized. Can also be set for zero-phase filtering (will result in a 6db drop at
+cutoffs).
 
 ## `BandStopFilter`
 
 _Added in v0.21.0_
 
-Apply band-stop filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoffs).
-
+Apply band-stop filtering to the input audio. Also known as notch filter or
+band reject filter. It relates to the frequency mask idea in the SpecAugment paper.
+This transform is similar to FrequencyMask, but has overhauled default parameters
+and parameter randomization - center frequency gets picked in mel space so it is
+more aligned with human hearing, which is not linear. Filter steepness
+(6/12/18... dB / octave) is parametrized. Can also be set for zero-phase filtering
+(will result in a 6db drop at cutoffs).
 
 ## `Clip`
 
@@ -200,30 +206,33 @@ See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
 ## `HighPassFilter`
 
-Updated in v0.21.0_
+_Added in v0.18.0, updated in v0.21.0_
 
-Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
+Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
 ## `HighShelfFilter`
 
-Added in v0.21.0_
+_Added in v0.21.0_
 
-Apply high-shelf filtering to the input audio.
-
-
+High-shelf filter transform. Applies a high-shelf filter at a specific center frequency in hertz.
+The gain at nyquist frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+Filter coefficients are taken from [the W3 Audio EQ Cookbook](https://www.w3.org/TR/audio-eq-cookbook/)
 
 ## `LowPassFilter`
 
-_Updated in v0.21.0_
+_Added in v0.18.0, updated in v0.21.0_
 
-Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave). Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
+Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
 ## `LowShelfFilter`
 
-Added in v0.21.0_
+_Added in v0.21.0_
 
-Apply Low-shelf filtering to the input audio.
-
+Low-shelf filter transform. Applies a low-shelf filter at a specific center frequency in hertz.
+The gain at DC frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+Filter coefficients are taken from [the W3 Audio EQ Cookbook](https://www.w3.org/TR/audio-eq-cookbook/)
 
 ## `Mp3Compression`
 
@@ -259,6 +268,7 @@ Apply a constant amount of gain, so that highest signal level present in the sou
 as peak normalization.
 
 ## `PeakingFilter`
+
 _Added in v0.21.0_
 
 Add a biquad peaking filter transform
@@ -410,13 +420,16 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 ## Unreleased
 
 ### Added
-* Added magnitude response tests for one-sided (`HighPassFilter`, `LowPassFilter`) and two-sided (`BandPassFilter`,
- `BandStopFilter`) filter transforms.
-* Added `BandStopFilter`
-* Added the `ButterworthFilter` class for Butterworth-based filters.
-* Added `PeakingFilter`, `LowShelfFilter` and `HighShelfFilter`.
+
+* Add support for multichannel audio in `BandPassFilter`, `HighPassFilter` and `LowPassFilter`
+* Added `BandStopFilter` (similar to FrequencyMask, but with overhauled defaults and parameter randomization behavior), `PeakingFilter`, `LowShelfFilter` and `HighShelfFilter`
+
 ### Changed
-* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, `BandStopFilter` to use scipy's butterworth filters. They Inherit the `ButterworthFilter` class. Now they support multichannel, parametrized roll-off, zero-phase filtering, and they're almost 60 times faster than before. 
+
+* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, to use scipy's butterworth
+ filters instead of pydub. Now they have parametrized roll-off. Filters are now steeper
+ than before by default - set `min_rolloff=6, max_rolloff=6` to get the old behavior.
+ They also support zero-phase filtering now. And they're at least ~25x times faster than before! 
 
 ## v0.20.0 (2021-11-18)
 

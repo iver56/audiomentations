@@ -1,13 +1,13 @@
 import functools
 import os
 import random
-import sys
 import tempfile
 import uuid
 import warnings
 
 import librosa
 import numpy as np
+import sys
 from scipy.signal import butter, convolve, sosfilt, sosfiltfilt, sosfilt_zi
 
 from audiomentations.core.audio_loading_utils import load_sound_file
@@ -19,6 +19,8 @@ from audiomentations.core.utils import (
     convert_decibels_to_amplitude_ratio,
     convert_float_samples_to_int16,
     get_file_paths,
+    convert_frequency_to_mel,
+    convert_mel_to_frequency,
 )
 
 
@@ -119,6 +121,9 @@ class FrequencyMask(BaseWaveformTransform):
     """
     Mask some frequency band on the spectrogram.
     Inspired by https://arxiv.org/pdf/1904.08779.pdf
+
+    This transform does basically the same as BandStopFilter, and may be deprecated in
+    the future.
     """
 
     supports_multichannel = True
@@ -1425,8 +1430,8 @@ class ButterworthFilter(BaseWaveformTransform):
         assert ("min_cutoff_freq" in kwargs and "max_cutoff_freq" in kwargs) or (
             "min_center_freq" in kwargs
             and "max_center_freq" in kwargs
-            and "min_bandwidth" in kwargs
-            and "max_bandwidth" in kwargs
+            and "min_bandwidth_fraction" in kwargs
+            and "max_bandwidth_fraction" in kwargs
         ), "Arguments for either a one-sided, or a two-sided filter must be given"
 
         if "min_cutoff_freq" in kwargs:
@@ -1438,8 +1443,8 @@ class ButterworthFilter(BaseWaveformTransform):
             self.initialize_two_sided_filter(
                 min_center_freq=kwargs["min_center_freq"],
                 max_center_freq=kwargs["max_center_freq"],
-                min_bandwidth=kwargs["min_bandwidth"],
-                max_bandwidth=kwargs["max_bandwidth"],
+                min_bandwidth_fraction=kwargs["min_bandwidth_fraction"],
+                max_bandwidth_fraction=kwargs["max_bandwidth_fraction"],
             )
 
     def initialize_one_sided_filter(
@@ -1477,14 +1482,16 @@ class ButterworthFilter(BaseWaveformTransform):
         self,
         min_center_freq,
         max_center_freq,
-        min_bandwidth,
-        max_bandwidth,
+        min_bandwidth_fraction,
+        max_bandwidth_fraction,
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
-        :param min_bandwidth: Minimum bandwidth
-        :param max_bandwidth: Maximum bandwidth
+        :param min_bandwidth_fraction: Minimum bandwidth fraction relative to center
+            frequency (number between 0.0 and 2.0)
+        :param max_bandwidth_fraction: Maximum bandwidth fraction relative to center
+            frequency (number between 0.0 and 2.0)
         :param min_rolloff: Minimum filter roll-off (in db/octave).
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
@@ -1494,16 +1501,24 @@ class ButterworthFilter(BaseWaveformTransform):
 
         self.min_center_freq = min_center_freq
         self.max_center_freq = max_center_freq
-        self.min_bandwidth = min_bandwidth
-        self.max_bandwidth = max_bandwidth
+        self.min_bandwidth_fraction = min_bandwidth_fraction
+        self.max_bandwidth_fraction = max_bandwidth_fraction
 
         if self.min_center_freq > self.max_center_freq:
             raise ValueError("min_center_freq must not be greater than max_center_freq")
-        if self.min_bandwidth > self.max_bandwidth:
-            raise ValueError("min_q must not be greater than max_q")
+        if self.min_bandwidth_fraction <= 0.0:
+            raise ValueError("min_bandwidth_fraction must be a positive number")
+        if self.max_bandwidth_fraction >= 2.0:
+            raise ValueError(
+                "max_bandwidth_fraction should be smaller than 2.0, since otherwise"
+                " the low cut frequency of the band can be smaller than 0 Hz."
+            )
+        if self.min_bandwidth_fraction > self.max_bandwidth_fraction:
+            raise ValueError(
+                "min_bandwidth_fraction must not be greater than max_bandwidth_fraction"
+            )
 
     def randomize_parameters(self, samples: np.array, sample_rate: int = None):
-
         super().randomize_parameters(samples, sample_rate)
         if self.zero_phase:
             random_order = random.randint(
@@ -1515,36 +1530,56 @@ class ButterworthFilter(BaseWaveformTransform):
             self.parameters["rolloff"] = random_order * 6
 
         if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
-            self.parameters["cutoff_freq"] = np.random.uniform(
-                low=self.min_cutoff_freq, high=self.max_cutoff_freq
+            cutoff_mel = np.random.uniform(
+                low=convert_frequency_to_mel(self.min_cutoff_freq),
+                high=convert_frequency_to_mel(self.max_cutoff_freq),
             )
+            self.parameters["cutoff_freq"] = convert_mel_to_frequency(cutoff_mel)
         elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
-            self.parameters["center_freq"] = np.random.uniform(
-                low=self.min_center_freq, high=self.max_center_freq
+            center_mel = np.random.uniform(
+                low=convert_frequency_to_mel(self.min_center_freq),
+                high=convert_frequency_to_mel(self.max_center_freq),
             )
-            self.parameters["bandwidth"] = np.random.uniform(
-                low=self.min_bandwidth, high=self.max_bandwidth
+            self.parameters["center_freq"] = convert_mel_to_frequency(center_mel)
+
+            bandwidth_fraction = np.random.uniform(
+                low=self.min_bandwidth_fraction, high=self.max_bandwidth_fraction
+            )
+            self.parameters["bandwidth"] = (
+                self.parameters["center_freq"] * bandwidth_fraction
             )
 
     def apply(self, samples: np.array, sample_rate: int = None):
         assert samples.dtype == np.float32
 
         if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
+            cutoff_freq = self.parameters["cutoff_freq"]
+            nyquist_freq = sample_rate // 2
+            if cutoff_freq > nyquist_freq:
+                # Ensure that the cutoff frequency does not exceed the nyquist
+                # frequency to avoid an exception from scipy
+                cutoff_freq = nyquist_freq * 0.9999
             sos = butter(
                 self.parameters["rolloff"] // (12 if self.zero_phase else 6),
-                self.parameters["cutoff_freq"],
+                cutoff_freq,
                 btype=self.filter_type,
                 analog=False,
                 fs=sample_rate,
                 output="sos",
             )
         elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
+            low_freq = self.parameters["center_freq"] - self.parameters["bandwidth"] / 2
+            high_freq = (
+                self.parameters["center_freq"] + self.parameters["bandwidth"] / 2
+            )
+            nyquist_freq = sample_rate // 2
+            if high_freq > nyquist_freq:
+                # Ensure that the upper critical frequency does not exceed the nyquist
+                # frequency to avoid an exception from scipy
+                high_freq = nyquist_freq * 0.9999
             sos = butter(
                 self.parameters["rolloff"] // (12 if self.zero_phase else 6),
-                [
-                    self.parameters["center_freq"] - self.parameters["bandwidth"] / 2,
-                    self.parameters["center_freq"] + self.parameters["bandwidth"] / 2,
-                ],
+                [low_freq, high_freq],
                 btype=self.filter_type,
                 analog=False,
                 fs=sample_rate,
@@ -1579,15 +1614,16 @@ class ButterworthFilter(BaseWaveformTransform):
 
 class LowPassFilter(ButterworthFilter):
     """
-    Apply high-pass filtering to the input audio.
+    Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+    Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_cutoff_freq=20,
-        max_cutoff_freq=2400,
+        min_cutoff_freq=150,
+        max_cutoff_freq=7500,
         min_rolloff=12,
         max_rolloff=24,
         zero_phase=False,
@@ -1622,7 +1658,8 @@ class LowPassFilter(ButterworthFilter):
 
 class HighPassFilter(ButterworthFilter):
     """
-    Apply high-pass filtering to the input audio.
+    Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+    Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
     """
 
     supports_multichannel = True
@@ -1665,17 +1702,23 @@ class HighPassFilter(ButterworthFilter):
 
 class BandStopFilter(ButterworthFilter):
     """
-    Apply band-stop filtering to the input audio.
+    Apply band-stop filtering to the input audio. Also known as notch filter or
+    band reject filter. It relates to the frequency mask idea in the SpecAugment paper.
+    This transform is similar to FrequencyMask, but has overhauled default parameters
+    and parameter randomization - center frequency gets picked in mel space so it is
+    more aligned with human hearing, which is not linear. Filter steepness
+    (6/12/18... dB / octave) is parametrized. Can also be set for zero-phase filtering
+    (will result in a 6db drop at cutoffs).
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_bandwidth=100.0,
-        max_bandwidth=300.0,
+        min_center_freq=200.0,
+        max_center_freq=4000.0,
+        min_bandwidth_fraction=0.5,
+        max_bandwidth_fraction=1.99,
         min_rolloff=12,
         max_rolloff=24,
         zero_phase=False,
@@ -1684,8 +1727,10 @@ class BandStopFilter(ButterworthFilter):
         """
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
-        :param min_bandwidth: Minimum bandwidth
-        :param max_bandwidth: Maximum bandwidth
+        :param min_bandwidth_fraction: Minimum bandwidth fraction relative to center
+            frequency (number between 0 and 2)
+        :param max_bandwidth_fraction: Maximum bandwidth fraction relative to center
+            frequency (number between 0 and 2)
         :param min_rolloff: Minimum filter roll-off (in db/octave).
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
@@ -1702,8 +1747,8 @@ class BandStopFilter(ButterworthFilter):
         super().__init__(
             min_center_freq=min_center_freq,
             max_center_freq=max_center_freq,
-            min_bandwidth=min_bandwidth,
-            max_bandwidth=max_bandwidth,
+            min_bandwidth_fraction=min_bandwidth_fraction,
+            max_bandwidth_fraction=max_bandwidth_fraction,
             min_rolloff=min_rolloff,
             max_rolloff=max_rolloff,
             zero_phase=zero_phase,
@@ -1714,17 +1759,19 @@ class BandStopFilter(ButterworthFilter):
 
 class BandPassFilter(ButterworthFilter):
     """
-    Apply band-pass filtering to the input audio.
+    Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / octave)
+    is parametrized. Can also be set for zero-phase filtering (will result in a 6db drop at
+    cutoffs).
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_center_freq=150.0,
-        max_center_freq=1000.0,
-        min_bandwidth=100.0,
-        max_bandwidth=300.0,
+        min_center_freq=200.0,
+        max_center_freq=4000.0,
+        min_bandwidth_fraction=0.5,
+        max_bandwidth_fraction=1.99,
         min_rolloff=12,
         max_rolloff=24,
         zero_phase=False,
@@ -1733,8 +1780,8 @@ class BandPassFilter(ButterworthFilter):
         """
         :param min_center_freq: Minimum center frequency in hertz
         :param max_center_freq: Maximum center frequency in hertz
-        :param min_bandwidth: Minimum bandwidth
-        :param max_bandwidth: Maximum bandwidth
+        :param min_bandwidth_fraction: Minimum bandwidth relative to center frequency
+        :param max_bandwidth_fraction: Maximum bandwidth relative to center frequency
         :param min_rolloff: Minimum filter roll-off (in db/octave).
             Must be a multiple of 6
         :param max_rolloff: Maximum filter roll-off (in db/octave)
@@ -1752,8 +1799,8 @@ class BandPassFilter(ButterworthFilter):
         super().__init__(
             min_center_freq=min_center_freq,
             max_center_freq=max_center_freq,
-            min_bandwidth=min_bandwidth,
-            max_bandwidth=max_bandwidth,
+            min_bandwidth_fraction=min_bandwidth_fraction,
+            max_bandwidth_fraction=max_bandwidth_fraction,
             min_rolloff=min_rolloff,
             max_rolloff=max_rolloff,
             zero_phase=zero_phase,
@@ -1765,20 +1812,21 @@ class BandPassFilter(ButterworthFilter):
 class PeakingFilter(BaseWaveformTransform):
     """
     Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
-    of a specific gain in db, and a quality factor parameter.Filter coefficients are taken
-    from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
+    of a specific gain in db (note: can be positive or negative!), and a quality factor
+    parameter. Filter coefficients are taken from the W3 Audio EQ Cookbook:
+    https://www.w3.org/TR/audio-eq-cookbook/
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_gain_db=-12,
-        max_gain_db=12,
-        min_q=1.0,
-        max_q=10,
+        min_center_freq=50.0,
+        max_center_freq=7500.0,
+        min_gain_db=-24,
+        max_gain_db=24,
+        min_q=0.5,
+        max_q=5.0,
         p=0.5,
     ):
         """
@@ -1786,8 +1834,10 @@ class PeakingFilter(BaseWaveformTransform):
         :param max_center_freq: The maximum center frequency of the peaking filter
         :param min_gain_db: The minimum gain at center frequency in db
         :param max_gain_db: The maximum gain at center frequency in db
-        :param min_q: The minimum quality factor q
-        :param max_q: The maximum quality factor q
+        :param min_q: The minimum quality factor Q. The higher the Q, the steeper the
+            transition band will be.
+        :param max_q: The maximum quality factor Q. The higher the Q, the steeper the
+            transition band will be.
         """
 
         assert (
@@ -1834,9 +1884,11 @@ class PeakingFilter(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
 
-        self.parameters["center_freq"] = random.uniform(
-            self.min_center_freq, self.max_center_freq
+        center_mel = np.random.uniform(
+            low=convert_frequency_to_mel(self.min_center_freq),
+            high=convert_frequency_to_mel(self.max_center_freq),
         )
+        self.parameters["center_freq"] = convert_mel_to_frequency(center_mel)
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
@@ -1868,18 +1920,18 @@ class PeakingFilter(BaseWaveformTransform):
 class LowShelfFilter(BaseWaveformTransform):
     """
     Low-shelf filter transform. Applies a low-shelf filter at a specific center frequency in hertz.
-    The gain at dc frequency is controlled by `{min,max}_gain_db`. Filter coefficients are taken
-    from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
+    The gain at DC frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+    Filter coefficients are taken from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_gain_db=-12,
-        max_gain_db=12,
+        min_center_freq=50.0,
+        max_center_freq=4000.0,
+        min_gain_db=-18.0,
+        max_gain_db=18.0,
         min_q=0.1,
         max_q=0.999,
         p=0.5,
@@ -1888,8 +1940,8 @@ class LowShelfFilter(BaseWaveformTransform):
         """
         :param min_center_freq: The minimum center frequency of the shelving filter
         :param max_center_freq: The maximum center frequency of the shelving filter
-        :param min_gain_db: The minimum gain at dc
-        :param max_gain_db: The maximum gain at dc
+        :param min_gain_db: The minimum gain at DC (0 hz)
+        :param max_gain_db: The maximum gain at DC (0 hz)
         :param min_q: The minimum quality factor q
         :param max_q: The maximum quality factor q
         """
@@ -1901,8 +1953,8 @@ class LowShelfFilter(BaseWaveformTransform):
             min_gain_db <= max_gain_db
         ), "`min_gain_db` should be no greater than `max_gain_db`"
 
-        assert 1 >= min_q > 0, "`min_q` should be greater than 0 and less or equal to 1"
-        assert 1 >= max_q > 0, "`max_q` should be greater than 0 and less or equal to 1"
+        assert 0 < min_q <= 1, "`min_q` should be greater than 0 and less or equal to 1"
+        assert 0 < max_q <= 1, "`max_q` should be greater than 0 and less or equal to 1"
 
         super().__init__(p)
 
@@ -1958,9 +2010,11 @@ class LowShelfFilter(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
 
-        self.parameters["center_freq"] = random.uniform(
-            self.min_center_freq, self.max_center_freq
+        center_mel = np.random.uniform(
+            low=convert_frequency_to_mel(self.min_center_freq),
+            high=convert_frequency_to_mel(self.max_center_freq),
         )
+        self.parameters["center_freq"] = convert_mel_to_frequency(center_mel)
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
@@ -1992,18 +2046,18 @@ class LowShelfFilter(BaseWaveformTransform):
 class HighShelfFilter(BaseWaveformTransform):
     """
     High-shelf filter transform. Applies a high-shelf filter at a specific center frequency in hertz.
-    The gain at nyquist frequency is controlled by `{min,max}_gain_db`. Filter coefficients are taken
-    from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
+    The gain at nyquist frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+    Filter coefficients are taken from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_center_freq=100.0,
-        max_center_freq=1000.0,
-        min_gain_db=-12,
-        max_gain_db=12,
+        min_center_freq=300.0,
+        max_center_freq=7500.0,
+        min_gain_db=-18.0,
+        max_gain_db=18.0,
         min_q=0.1,
         max_q=0.999,
         p=0.5,
@@ -2011,10 +2065,12 @@ class HighShelfFilter(BaseWaveformTransform):
         """
         :param min_center_freq: The minimum center frequency of the shelving filter
         :param max_center_freq: The maximum center frequency of the shelving filter
-        :param min_gain_db: The minimum gain at nyquist frequency
-        :param max_gain_db: The maximum gain at nyquist frequency
-        :param min_q: The minimum quality factor q
-        :param max_q: The maximum quality factor q
+        :param min_gain_db: The minimum gain at the nyquist frequency
+        :param max_gain_db: The maximum gain at the nyquist frequency
+        :param min_q: The minimum quality factor Q. The higher the Q, the steeper the
+            transition band will be.
+        :param max_q: The maximum quality factor Q. The higher the Q, the steeper the
+            transition band will be.
         """
 
         assert (
@@ -2024,8 +2080,8 @@ class HighShelfFilter(BaseWaveformTransform):
             min_gain_db <= max_gain_db
         ), "`min_gain_db` should be no greater than `max_gain_db`"
 
-        assert 1 >= min_q > 0, "`min_q` should be greater than 0 and less or equal to 1"
-        assert 1 >= max_q > 0, "`max_q` should be greater than 0 and less or equal to 1"
+        assert 0 < min_q <= 1, "`min_q` should be greater than 0 and less or equal to 1"
+        assert 0 < max_q <= 1, "`max_q` should be greater than 0 and less or equal to 1"
 
         super().__init__(p)
 
@@ -2081,9 +2137,11 @@ class HighShelfFilter(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
 
-        self.parameters["center_freq"] = random.uniform(
-            self.min_center_freq, self.max_center_freq
+        center_mel = np.random.uniform(
+            low=convert_frequency_to_mel(self.min_center_freq),
+            high=convert_frequency_to_mel(self.max_center_freq),
         )
+        self.parameters["center_freq"] = convert_mel_to_frequency(center_mel)
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 

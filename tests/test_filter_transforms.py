@@ -434,10 +434,7 @@ class TestHighShelfFilterTransform:
 
 class TestHighPassFilterTransform:
     @pytest.mark.parametrize("cutoff_frequency", [1000])
-    @pytest.mark.parametrize(
-        "rolloff",
-        [6, 24],
-    )
+    @pytest.mark.parametrize("rolloff", [6, 24])
     @pytest.mark.parametrize("zero_phase", [False, True])
     def test_one_single_input(self, cutoff_frequency, rolloff, zero_phase):
 
@@ -541,14 +538,8 @@ class TestHighPassFilterTransform:
                 atol=tolerances[n],
             )
 
-    @pytest.mark.parametrize(
-        "samples",
-        [get_chirp_test(8000, 40)],
-    )
-    @pytest.mark.parametrize(
-        "rolloff",
-        [12, 120],
-    )
+    @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
+    @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
     def test_two_channel_input(self, samples, rolloff, zero_phase):
 
@@ -591,16 +582,38 @@ class TestHighPassFilterTransform:
                 plt.show()
             assert np.allclose(channel, processed_samples)
 
+    @pytest.mark.parametrize("cutoff_frequency", [5000])
+    @pytest.mark.parametrize("rolloff", [6])
+    @pytest.mark.parametrize("zero_phase", [False])
+    def test_nyquist_limit(self, cutoff_frequency, rolloff, zero_phase):
+        # Test that the filter doesn't raise an exception when
+        # cutoff_frequency is greater than the nyquist frequency
+
+        sample_rate = 8000
+
+        samples = get_chirp_test(sample_rate, 3)
+
+        augment = HighPassFilter(
+            min_cutoff_freq=cutoff_frequency,
+            max_cutoff_freq=cutoff_frequency,
+            min_rolloff=rolloff,
+            max_rolloff=rolloff,
+            zero_phase=zero_phase,
+            p=1.0,
+        )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert processed_samples.shape == samples.shape
+
 
 class TestBandPassFilterTransform:
     @pytest.mark.parametrize("center_frequency", [3000])
-    @pytest.mark.parametrize("bandwidth", [2000])
-    @pytest.mark.parametrize(
-        "rolloff",
-        [6, 24],
-    )
+    @pytest.mark.parametrize("bandwidth_fraction", [0.666])
+    @pytest.mark.parametrize("rolloff", [6, 24])
     @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_one_single_input(self, center_frequency, bandwidth, rolloff, zero_phase):
+    def test_one_single_input(
+        self, center_frequency, bandwidth_fraction, rolloff, zero_phase
+    ):
 
         sample_rate = 16000
 
@@ -624,8 +637,8 @@ class TestBandPassFilterTransform:
                 augment = BandPassFilter(
                     min_center_freq=center_frequency,
                     max_center_freq=center_frequency,
-                    min_bandwidth=bandwidth,
-                    max_bandwidth=bandwidth,
+                    min_bandwidth_fraction=bandwidth_fraction,
+                    max_bandwidth_fraction=bandwidth_fraction,
                     min_rolloff=rolloff,
                     max_rolloff=rolloff,
                     zero_phase=zero_phase,
@@ -636,8 +649,8 @@ class TestBandPassFilterTransform:
             augment = BandPassFilter(
                 min_center_freq=center_frequency,
                 max_center_freq=center_frequency,
-                min_bandwidth=bandwidth,
-                max_bandwidth=bandwidth,
+                min_bandwidth_fraction=bandwidth_fraction,
+                max_bandwidth_fraction=bandwidth_fraction,
                 min_rolloff=rolloff,
                 max_rolloff=rolloff,
                 zero_phase=zero_phase,
@@ -681,6 +694,7 @@ class TestBandPassFilterTransform:
         assert processed_samples.shape == samples.shape
         assert processed_samples.dtype == np.float32
 
+        bandwidth = bandwidth_fraction * center_frequency
         left_cutoff_freq = center_frequency - bandwidth / 2
         right_cutoff_freq = center_frequency + bandwidth / 2
 
@@ -718,18 +732,12 @@ class TestBandPassFilterTransform:
             )
 
     @pytest.mark.parametrize("center_frequency", [3000])
-    @pytest.mark.parametrize("bandwidth", [2000])
-    @pytest.mark.parametrize(
-        "samples",
-        [get_chirp_test(8000, 40)],
-    )
-    @pytest.mark.parametrize(
-        "rolloff",
-        [12, 120],
-    )
+    @pytest.mark.parametrize("bandwidth_fraction", [0.666])
+    @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
+    @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
     def test_two_channel_input(
-        self, center_frequency, bandwidth, samples, rolloff, zero_phase
+        self, center_frequency, bandwidth_fraction, samples, rolloff, zero_phase
     ):
 
         sample_rate = 16000
@@ -741,8 +749,8 @@ class TestBandPassFilterTransform:
         augment = BandPassFilter(
             min_center_freq=center_frequency,
             max_center_freq=center_frequency,
-            min_bandwidth=bandwidth,
-            max_bandwidth=bandwidth,
+            min_bandwidth_fraction=bandwidth_fraction,
+            max_bandwidth_fraction=bandwidth_fraction,
             min_rolloff=rolloff,
             max_rolloff=rolloff,
             zero_phase=zero_phase,
@@ -773,16 +781,65 @@ class TestBandPassFilterTransform:
                 plt.show()
             assert np.allclose(channel, processed_samples)
 
+    @pytest.mark.parametrize("center_frequency", [7000])
+    @pytest.mark.parametrize("bandwidth_fraction", [0.666])
+    @pytest.mark.parametrize("rolloff", [6])
+    @pytest.mark.parametrize("zero_phase", [False])
+    def test_nyquist_limit(
+        self, center_frequency, bandwidth_fraction, rolloff, zero_phase
+    ):
+        # Test that the filter doesn't raise an exception when
+        # center_freq + bandwidth / 2 is greater than the nyquist frequency
+
+        sample_rate = 16000
+
+        samples = get_chirp_test(sample_rate, 3)
+
+        augment = BandPassFilter(
+            min_center_freq=center_frequency,
+            max_center_freq=center_frequency,
+            min_bandwidth_fraction=bandwidth_fraction,
+            max_bandwidth_fraction=bandwidth_fraction,
+            min_rolloff=rolloff,
+            max_rolloff=rolloff,
+            zero_phase=zero_phase,
+            p=1.0,
+        )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert processed_samples.shape == samples.shape
+
+    def test_too_extreme_bandwidth_fractions(self):
+        with pytest.raises(ValueError):
+            BandPassFilter(
+                min_bandwidth_fraction=0.0,
+                max_bandwidth_fraction=1.0,
+                p=1.0,
+            )
+
+        with pytest.raises(ValueError):
+            BandPassFilter(
+                min_bandwidth_fraction=0.1,
+                max_bandwidth_fraction=3.0,
+                p=1.0,
+            )
+
+        with pytest.raises(ValueError):
+            BandPassFilter(
+                min_bandwidth_fraction=0.5,
+                max_bandwidth_fraction=0.1,
+                p=1.0,
+            )
+
 
 class TestBandStopFilterTransform:
     @pytest.mark.parametrize("center_frequency", [3000])
-    @pytest.mark.parametrize("bandwidth", [2000])
-    @pytest.mark.parametrize(
-        "rolloff",
-        [6, 24],
-    )
+    @pytest.mark.parametrize("bandwidth_fraction", [0.666])
+    @pytest.mark.parametrize("rolloff", [6, 24])
     @pytest.mark.parametrize("zero_phase", [False, True])
-    def test_one_single_input(self, center_frequency, bandwidth, rolloff, zero_phase):
+    def test_one_single_input(
+        self, center_frequency, bandwidth_fraction, rolloff, zero_phase
+    ):
 
         sample_rate = 16000
 
@@ -806,8 +863,8 @@ class TestBandStopFilterTransform:
                 augment = BandStopFilter(
                     min_center_freq=center_frequency,
                     max_center_freq=center_frequency,
-                    min_bandwidth=bandwidth,
-                    max_bandwidth=bandwidth,
+                    min_bandwidth_fraction=bandwidth_fraction,
+                    max_bandwidth_fraction=bandwidth_fraction,
                     min_rolloff=rolloff,
                     max_rolloff=rolloff,
                     zero_phase=zero_phase,
@@ -818,8 +875,8 @@ class TestBandStopFilterTransform:
             augment = BandStopFilter(
                 min_center_freq=center_frequency,
                 max_center_freq=center_frequency,
-                min_bandwidth=bandwidth,
-                max_bandwidth=bandwidth,
+                min_bandwidth_fraction=bandwidth_fraction,
+                max_bandwidth_fraction=bandwidth_fraction,
                 min_rolloff=rolloff,
                 max_rolloff=rolloff,
                 zero_phase=zero_phase,
@@ -863,6 +920,7 @@ class TestBandStopFilterTransform:
         assert processed_samples.shape == samples.shape
         assert processed_samples.dtype == np.float32
 
+        bandwidth = bandwidth_fraction * center_frequency
         left_cutoff_freq = center_frequency - bandwidth / 2
         right_cutoff_freq = center_frequency + bandwidth / 2
 
@@ -890,18 +948,12 @@ class TestBandStopFilterTransform:
             )
 
     @pytest.mark.parametrize("center_frequency", [3000])
-    @pytest.mark.parametrize("bandwidth", [2000])
-    @pytest.mark.parametrize(
-        "samples",
-        [get_chirp_test(8000, 40)],
-    )
-    @pytest.mark.parametrize(
-        "rolloff",
-        [12, 120],
-    )
+    @pytest.mark.parametrize("bandwidth_fraction", [0.666])
+    @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
+    @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
     def test_two_channel_input(
-        self, center_frequency, bandwidth, samples, rolloff, zero_phase
+        self, center_frequency, bandwidth_fraction, samples, rolloff, zero_phase
     ):
 
         sample_rate = 16000
@@ -913,8 +965,8 @@ class TestBandStopFilterTransform:
         augment = BandStopFilter(
             min_center_freq=center_frequency,
             max_center_freq=center_frequency,
-            min_bandwidth=bandwidth,
-            max_bandwidth=bandwidth,
+            min_bandwidth_fraction=bandwidth_fraction,
+            max_bandwidth_fraction=bandwidth_fraction,
             min_rolloff=rolloff,
             max_rolloff=rolloff,
             zero_phase=zero_phase,

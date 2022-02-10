@@ -1,3 +1,4 @@
+import math
 import os
 from pathlib import Path
 
@@ -116,3 +117,21 @@ def convert_int16_samples_to_float(y):
     if not issubclass(y.dtype.type, np.int16):
         raise ValueError("input samples not int16")
     return (y / np.iinfo(np.int16).max).astype(np.float32)
+
+
+def convert_frequency_to_mel(f: float) -> float:
+    """
+    Convert f hertz to mels
+
+    https://en.wikipedia.org/wiki/Mel_scale#Formula
+    """
+    return 2595.0 * math.log10(1.0 + f / 700.0)
+
+
+def convert_mel_to_frequency(m: float) -> float:
+    """
+    Convert m mels to hertz
+
+    https://en.wikipedia.org/wiki/Mel_scale#History_and_other_formulas
+    """
+    return 700.0 * (10 ** (m / 2595.0) - 1.0)

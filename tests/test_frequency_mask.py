@@ -1,13 +1,12 @@
-import unittest
-
 import numpy as np
+import pytest
 from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.transforms import FrequencyMask
+from audiomentations.augmentations.filters import FrequencyMask
 from audiomentations.core.composition import Compose
 
 
-class TestFrequencyMask(unittest.TestCase):
+class TestFrequencyMask:
     def test_apply_frequency_mask(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
@@ -18,15 +17,15 @@ class TestFrequencyMask(unittest.TestCase):
         )
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(len(samples_out), sample_len)
+        assert samples_out.dtype == np.float32
+        assert len(samples_out) == sample_len
 
         # Check that the input is left untouched
         assert_array_equal(samples_in, samples_in_copy)
 
         std_in = np.mean(np.abs(samples_in))
         std_out = np.mean(np.abs(samples_out))
-        self.assertLess(std_out, std_in)
+        assert std_out < std_in
 
     def test_apply_frequency_mask_stereo(self):
         np.random.seed(42)
@@ -39,15 +38,15 @@ class TestFrequencyMask(unittest.TestCase):
         augmenter = FrequencyMask(min_frequency_band=0.3, max_frequency_band=0.3, p=1.0)
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(samples_out.shape, samples_in.shape)
+        assert samples_out.dtype == np.float32
+        assert samples_out.shape == samples_in.shape
 
         # Check that the input is left untouched
         assert_array_equal(samples_in, samples_in_copy)
 
         std_in = np.mean(np.abs(samples_in))
         std_out = np.mean(np.abs(samples_out))
-        self.assertLess(std_out, std_in)
+        assert std_out < std_in
 
         augmenter.freeze_parameters()
         samples_only_1st_channel = augmenter(
@@ -75,4 +74,8 @@ class TestFrequencyMask(unittest.TestCase):
         augmenter.freeze_parameters()
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertFalse(np.isnan(samples_out).any())
+        assert not np.isnan(samples_out).any()
+
+    def test_legacy_class_warning(self):
+        with pytest.warns(DeprecationWarning):
+            FrequencyMask(p=1.0)

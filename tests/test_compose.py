@@ -1,21 +1,20 @@
 import os
-import unittest
 
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.transforms import (
+from audiomentations import (
     ClippingDistortion,
     AddBackgroundNoise,
     FrequencyMask,
     TimeMask,
     Shift,
+    Compose,
 )
-from audiomentations.core.composition import Compose
 from demo.demo import DEMO_DIR
 
 
-class TestCompose(unittest.TestCase):
+class TestCompose:
     def test_freeze_and_unfreeze_parameters(self):
         samples = np.zeros((20,), dtype=np.float32)
         sample_rate = 44100
@@ -33,14 +32,14 @@ class TestCompose(unittest.TestCase):
         perturbed_samples1 = augmenter(samples=samples, sample_rate=sample_rate)
         augmenter.freeze_parameters()
         for transform in augmenter.transforms:
-            self.assertTrue(transform.are_parameters_frozen)
+            assert transform.are_parameters_frozen
         perturbed_samples2 = augmenter(samples=samples, sample_rate=sample_rate)
 
         assert_array_equal(perturbed_samples1, perturbed_samples2)
 
         augmenter.unfreeze_parameters()
         for transform in augmenter.transforms:
-            self.assertFalse(transform.are_parameters_frozen)
+            assert not transform.are_parameters_frozen
 
     def test_randomize_parameters_and_apply(self):
         samples = 1.0 / np.arange(1, 21, dtype=np.float32)
@@ -73,5 +72,5 @@ class TestCompose(unittest.TestCase):
         augmenter.unfreeze_parameters()
 
         for transform_parameters, transform in zip(parameters, augmenter.transforms):
-            self.assertTrue(transform_parameters == transform.parameters)
-            self.assertFalse(transform.are_parameters_frozen)
+            assert transform_parameters == transform.parameters
+            assert not transform.are_parameters_frozen

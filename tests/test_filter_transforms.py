@@ -3,11 +3,10 @@ import pytest
 import scipy
 import scipy.signal
 
-from audiomentations.augmentations.transforms import (
+from audiomentations import (
     BandPassFilter,
     BandStopFilter,
     HighPassFilter,
-    LowPassFilter,
     PeakingFilter,
     LowShelfFilter,
     HighShelfFilter,

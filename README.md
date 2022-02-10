@@ -54,7 +54,7 @@ samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32
 augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
-Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see the waveform transforms you can apply, and what arguments they have.
+Check out the source code at [audiomentations/augmentations/](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/) to see the waveform transforms you can apply, and what arguments they have.
 
 ## Spectrogram
 

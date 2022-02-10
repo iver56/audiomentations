@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import TimeStretch
+from audiomentations import TimeStretch
 
 
 class TestTimeStretch(unittest.TestCase):

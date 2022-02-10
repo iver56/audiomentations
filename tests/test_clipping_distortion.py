@@ -2,8 +2,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import ClippingDistortion
-from audiomentations.core.composition import Compose
+from audiomentations import ClippingDistortion, Compose
 
 
 class TestClippingDistortion(unittest.TestCase):

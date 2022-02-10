@@ -3,8 +3,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import Resample
-from audiomentations.core.composition import Compose
+from audiomentations import Resample, Compose
 
 
 class TestResample(unittest.TestCase):

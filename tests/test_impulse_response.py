@@ -1,15 +1,15 @@
 import os
 import pickle
-import unittest
 
 import numpy as np
+import pytest
 
 from audiomentations import AddImpulseResponse, ApplyImpulseResponse
 from audiomentations.core.composition import Compose
 from demo.demo import DEMO_DIR
 
 
-class TestImpulseResponse(unittest.TestCase):
+class TestImpulseResponse:
     def test_apply_impulse_response(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
@@ -20,23 +20,21 @@ class TestImpulseResponse(unittest.TestCase):
         )
 
         # Check that misc_file.txt is not one of the IR file candidates, as it's not audio
-        self.assertEqual(len(add_ir_transform.ir_files), 1)
+        assert len(add_ir_transform.ir_files) == 1
 
         augmenter = Compose([add_ir_transform])
 
-        self.assertEqual(len(samples_in), sample_len)
+        assert len(samples_in) == sample_len
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
 
         # Check parameters
-        self.assertTrue(augmenter.transforms[0].parameters["should_apply"])
-        self.assertEqual(
-            augmenter.transforms[0].parameters["ir_file_path"],
-            os.path.join(DEMO_DIR, "ir", "impulse_response_0.wav"),
+        assert augmenter.transforms[0].parameters["should_apply"]
+        assert augmenter.transforms[0].parameters["ir_file_path"] == os.path.join(
+            DEMO_DIR, "ir", "impulse_response_0.wav"
         )
 
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertGreater(len(samples_out), len(samples_in))
-
+        assert samples_out.dtype == np.float32
+        assert len(samples_out) > len(samples_in)
 
     def test_apply_impulse_response_multi_channel(self):
         sample_len = 1024
@@ -51,22 +49,21 @@ class TestImpulseResponse(unittest.TestCase):
         )
 
         # Check that misc_file.txt is not one of the IR file candidates, as it's not audio
-        self.assertEqual(len(add_ir_transform.ir_files), 1)
+        assert len(add_ir_transform.ir_files) == 1
 
         augmenter = Compose([add_ir_transform])
 
-        self.assertEqual(samples_in.shape[1], sample_len)
+        assert samples_in.shape[1] == sample_len
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
 
         # Check parameters
-        self.assertTrue(augmenter.transforms[0].parameters["should_apply"])
-        self.assertEqual(
-            augmenter.transforms[0].parameters["ir_file_path"],
-            os.path.join(DEMO_DIR, "ir", "impulse_response_0.wav"),
+        assert augmenter.transforms[0].parameters["should_apply"]
+        assert augmenter.transforms[0].parameters["ir_file_path"] == os.path.join(
+            DEMO_DIR, "ir", "impulse_response_0.wav"
         )
 
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertGreater(samples_out.shape[1], len(samples_in))
+        assert samples_out.dtype == np.float32
+        assert samples_out.shape[1] > len(samples_in)
 
     def test_leave_length_unchanged(self):
         sample_len = 1024
@@ -79,8 +76,8 @@ class TestImpulseResponse(unittest.TestCase):
 
         samples_out = add_ir_transform(samples=samples_in, sample_rate=sample_rate)
 
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(len(samples_out), len(samples_in))
+        assert samples_out.dtype == np.float32
+        assert len(samples_out) == len(samples_in)
 
     def test_picklability(self):
         add_ir_transform = ApplyImpulseResponse(
@@ -88,10 +85,8 @@ class TestImpulseResponse(unittest.TestCase):
         )
         pickled = pickle.dumps(add_ir_transform)
         unpickled = pickle.loads(pickled)
-        self.assertEqual(add_ir_transform.ir_files, unpickled.ir_files)
+        assert add_ir_transform.ir_files == unpickled.ir_files
 
     def test_legacy_class_warning(self):
-        with self.assertWarns(DeprecationWarning):
-            AddImpulseResponse(
-                ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0
-            )
+        with pytest.warns(DeprecationWarning):
+            AddImpulseResponse(ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0)

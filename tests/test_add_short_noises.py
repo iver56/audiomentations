@@ -7,8 +7,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.transforms import AddShortNoises
-from audiomentations.core.composition import Compose
+from audiomentations import AddShortNoises, Compose
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
 )

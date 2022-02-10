@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
-from audiomentations.augmentations.transforms import Reverse
+from audiomentations import Reverse
 
 
 class TestReverse(unittest.TestCase):

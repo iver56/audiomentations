@@ -1,22 +1,23 @@
 import os
-import unittest
 
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 
-from audiomentations import Gain, SpecFrequencyMask, SomeOf
-from audiomentations.augmentations.transforms import (
+from audiomentations import (
     ClippingDistortion,
     AddBackgroundNoise,
     FrequencyMask,
     TimeMask,
     Shift,
     PolarityInversion,
+    Gain,
+    SpecFrequencyMask,
+    SomeOf,
 )
 from demo.demo import DEMO_DIR
 
 
-class TestSomeOf(unittest.TestCase):
+class TestSomeOf:
     def test_right_number_of_transforms_applied(self):
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
         sample_rate = 44100
@@ -66,14 +67,14 @@ class TestSomeOf(unittest.TestCase):
             perturbed_samples1 = augmenter(samples=samples, sample_rate=sample_rate)
             augmenter.freeze_parameters()
             for transform in augmenter.transforms:
-                self.assertTrue(transform.are_parameters_frozen)
+                assert transform.are_parameters_frozen
             perturbed_samples2 = augmenter(samples=samples, sample_rate=sample_rate)
 
             assert_array_equal(perturbed_samples1, perturbed_samples2)
 
             augmenter.unfreeze_parameters()
             for transform in augmenter.transforms:
-                self.assertFalse(transform.are_parameters_frozen)
+                assert not transform.are_parameters_frozen
 
     def test_freeze_and_unfreeze_own_parameters(self):
         augmenter = SomeOf(

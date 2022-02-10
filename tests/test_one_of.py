@@ -1,22 +1,23 @@
 import os
-import unittest
 
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 
-from audiomentations import Gain, SpecFrequencyMask, OneOf
-from audiomentations.augmentations.transforms import (
+from audiomentations import (
     ClippingDistortion,
     AddBackgroundNoise,
     FrequencyMask,
     TimeMask,
     Shift,
     PolarityInversion,
+    Gain,
+    SpecFrequencyMask,
+    OneOf,
 )
 from demo.demo import DEMO_DIR
 
 
-class TestOneOf(unittest.TestCase):
+class TestOneOf:
     def test_exactly_one_transform_applied(self):
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
         sample_rate = 44100
@@ -55,14 +56,14 @@ class TestOneOf(unittest.TestCase):
             perturbed_samples1 = augmenter(samples=samples, sample_rate=sample_rate)
             augmenter.freeze_parameters()
             for transform in augmenter.transforms:
-                self.assertTrue(transform.are_parameters_frozen)
+                assert transform.are_parameters_frozen
             perturbed_samples2 = augmenter(samples=samples, sample_rate=sample_rate)
 
             assert_array_equal(perturbed_samples1, perturbed_samples2)
 
             augmenter.unfreeze_parameters()
             for transform in augmenter.transforms:
-                self.assertFalse(transform.are_parameters_frozen)
+                assert not transform.are_parameters_frozen
 
     def test_freeze_and_unfreeze_own_parameters(self):
         augmenter = OneOf(
@@ -182,7 +183,7 @@ class TestOneOf(unittest.TestCase):
                 SpecFrequencyMask(fill_mode="mean", p=1.0),
                 SpecFrequencyMask(fill_mode="constant", p=1.0),
             ],
-            p=0.0
+            p=0.0,
         )
 
         # Positional argument

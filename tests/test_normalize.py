@@ -3,8 +3,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.transforms import Normalize
-from audiomentations.core.composition import Compose
+from audiomentations import Normalize, Compose
 
 
 class TestNormalize(unittest.TestCase):

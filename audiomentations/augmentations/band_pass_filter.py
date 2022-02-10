@@ -1,7 +1,7 @@
-from audiomentations.augmentations.filters import ButterworthFilter
+from audiomentations.augmentations.base_butterword_filter import BaseButterworthFilter
 
 
-class BandPassFilter(ButterworthFilter):
+class BandPassFilter(BaseButterworthFilter):
     """
     Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / octave)
     is parametrized. Can also be set for zero-phase filtering (will result in a 6db drop at

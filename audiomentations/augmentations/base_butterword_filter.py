@@ -10,7 +10,7 @@ from audiomentations.core.utils import (
 )
 
 
-class ButterworthFilter(BaseWaveformTransform):
+class BaseButterworthFilter(BaseWaveformTransform):
     """
     A `scipy.signal.butter`-based generic filter class.
     """
@@ -53,9 +53,9 @@ class ButterworthFilter(BaseWaveformTransform):
             ), "Non zero phase filters can only have a steepness which is a multiple of 6db/octave"
 
         assert (
-            self.filter_type in ButterworthFilter.ALLOWED_FILTER_TYPES
+            self.filter_type in BaseButterworthFilter.ALLOWED_FILTER_TYPES
         ), "Filter type must be one of: " + ", ".join(
-            ButterworthFilter.ALLOWED_FILTER_TYPES
+            BaseButterworthFilter.ALLOWED_FILTER_TYPES
         )
 
         assert ("min_cutoff_freq" in kwargs and "max_cutoff_freq" in kwargs) or (
@@ -160,13 +160,13 @@ class ButterworthFilter(BaseWaveformTransform):
             random_order = random.randint(self.min_rolloff // 6, self.max_rolloff // 6)
             self.parameters["rolloff"] = random_order * 6
 
-        if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
+        if self.filter_type in BaseButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
             cutoff_mel = np.random.uniform(
                 low=convert_frequency_to_mel(self.min_cutoff_freq),
                 high=convert_frequency_to_mel(self.max_cutoff_freq),
             )
             self.parameters["cutoff_freq"] = convert_mel_to_frequency(cutoff_mel)
-        elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
+        elif self.filter_type in BaseButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
             center_mel = np.random.uniform(
                 low=convert_frequency_to_mel(self.min_center_freq),
                 high=convert_frequency_to_mel(self.max_center_freq),
@@ -183,7 +183,7 @@ class ButterworthFilter(BaseWaveformTransform):
     def apply(self, samples: np.array, sample_rate: int = None):
         assert samples.dtype == np.float32
 
-        if self.filter_type in ButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
+        if self.filter_type in BaseButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:
             cutoff_freq = self.parameters["cutoff_freq"]
             nyquist_freq = sample_rate // 2
             if cutoff_freq > nyquist_freq:
@@ -198,7 +198,7 @@ class ButterworthFilter(BaseWaveformTransform):
                 fs=sample_rate,
                 output="sos",
             )
-        elif self.filter_type in ButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
+        elif self.filter_type in BaseButterworthFilter.ALLOWED_TWO_SIDE_FILTER_TYPES:
             low_freq = self.parameters["center_freq"] - self.parameters["bandwidth"] / 2
             high_freq = (
                 self.parameters["center_freq"] + self.parameters["bandwidth"] / 2

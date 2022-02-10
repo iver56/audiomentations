@@ -1,7 +1,7 @@
-from audiomentations.augmentations.filters import ButterworthFilter
+from audiomentations.augmentations.base_butterword_filter import BaseButterworthFilter
 
 
-class HighPassFilter(ButterworthFilter):
+class HighPassFilter(BaseButterworthFilter):
     """
     Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
     Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).

@@ -1,7 +1,7 @@
-from audiomentations.augmentations.filters import ButterworthFilter
+from audiomentations.augmentations.base_butterword_filter import BaseButterworthFilter
 
 
-class BandStopFilter(ButterworthFilter):
+class BandStopFilter(BaseButterworthFilter):
     """
     Apply band-stop filtering to the input audio. Also known as notch filter or
     band reject filter. It relates to the frequency mask idea in the SpecAugment paper.

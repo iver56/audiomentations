@@ -1831,8 +1831,10 @@ class PeakingFilter(BaseWaveformTransform):
         :param max_center_freq: The maximum center frequency of the peaking filter
         :param min_gain_db: The minimum gain at center frequency in db
         :param max_gain_db: The maximum gain at center frequency in db
-        :param min_q: The minimum quality factor q
-        :param max_q: The maximum quality factor q
+        :param min_q: The minimum quality factor Q. The higher the Q, the steeper the
+            transition band will be.
+        :param max_q: The maximum quality factor Q. The higher the Q, the steeper the
+            transition band will be.
         """
 
         assert (
@@ -1948,8 +1950,8 @@ class LowShelfFilter(BaseWaveformTransform):
             min_gain_db <= max_gain_db
         ), "`min_gain_db` should be no greater than `max_gain_db`"
 
-        assert 1 >= min_q > 0, "`min_q` should be greater than 0 and less or equal to 1"
-        assert 1 >= max_q > 0, "`max_q` should be greater than 0 and less or equal to 1"
+        assert 0 < min_q <= 1, "`min_q` should be greater than 0 and less or equal to 1"
+        assert 0 < max_q <= 1, "`max_q` should be greater than 0 and less or equal to 1"
 
         super().__init__(p)
 
@@ -2005,9 +2007,11 @@ class LowShelfFilter(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
 
-        self.parameters["center_freq"] = random.uniform(
-            self.min_center_freq, self.max_center_freq
+        center_mel = np.random.uniform(
+            low=convert_frequency_to_mel(self.min_center_freq),
+            high=convert_frequency_to_mel(self.max_center_freq),
         )
+        self.parameters["center_freq"] = convert_mel_to_frequency(center_mel)
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
@@ -2060,8 +2064,10 @@ class HighShelfFilter(BaseWaveformTransform):
         :param max_center_freq: The maximum center frequency of the shelving filter
         :param min_gain_db: The minimum gain at the nyquist frequency
         :param max_gain_db: The maximum gain at the nyquist frequency
-        :param min_q: The minimum quality factor q
-        :param max_q: The maximum quality factor q
+        :param min_q: The minimum quality factor Q. The higher the Q, the steeper the
+            transition band will be.
+        :param max_q: The maximum quality factor Q. The higher the Q, the steeper the
+            transition band will be.
         """
 
         assert (
@@ -2071,8 +2077,8 @@ class HighShelfFilter(BaseWaveformTransform):
             min_gain_db <= max_gain_db
         ), "`min_gain_db` should be no greater than `max_gain_db`"
 
-        assert 1 >= min_q > 0, "`min_q` should be greater than 0 and less or equal to 1"
-        assert 1 >= max_q > 0, "`max_q` should be greater than 0 and less or equal to 1"
+        assert 0 < min_q <= 1, "`min_q` should be greater than 0 and less or equal to 1"
+        assert 0 < max_q <= 1, "`max_q` should be greater than 0 and less or equal to 1"
 
         super().__init__(p)
 
@@ -2128,9 +2134,11 @@ class HighShelfFilter(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
 
-        self.parameters["center_freq"] = random.uniform(
-            self.min_center_freq, self.max_center_freq
+        center_mel = np.random.uniform(
+            low=convert_frequency_to_mel(self.min_center_freq),
+            high=convert_frequency_to_mel(self.max_center_freq),
         )
+        self.parameters["center_freq"] = convert_mel_to_frequency(center_mel)
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 

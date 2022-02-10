@@ -32,4 +32,4 @@ from .augmentations.transforms import (
 )
 from .core.composition import Compose, SpecCompose, OneOf, SomeOf
 
-__version__ = "0.20.0"
+__version__ = "0.21.0"

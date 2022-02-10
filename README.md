@@ -380,7 +380,7 @@ Contributions are welcome!
 
 Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
 
-_The following table is valid for new versions of audiomentations, like >=0.18.0_
+_The following table is valid for new versions of audiomentations, like >=0.21.0_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
@@ -388,7 +388,7 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 | AddGaussianNoise | Yes |
 | AddGaussianSNR | Yes |
 | AddShortNoises | No, 1D only |
-| ApplyImpulseResponse | Yes (unreleased as of December 2021) |
+| ApplyImpulseResponse | Yes |
 | BandPassFilter | Yes |
 | BandStopFilter | Yes |
 | Clip | Yes |
@@ -402,7 +402,7 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 | LowShelfFilter | Yes |
 | Mp3Compression | No, 1D only |
 | Normalize | Yes |
-| PeakingFilter | yes |
+| PeakingFilter | Yes |
 | PitchShift | Yes |
 | PolarityInversion | Yes |
 | Resample | No, 1D only |
@@ -421,15 +421,20 @@ _The following table is valid for new versions of audiomentations, like >=0.18.0
 
 ### Added
 
-* Add support for multichannel audio in `BandPassFilter`, `HighPassFilter` and `LowPassFilter`
-* Added `BandStopFilter` (similar to FrequencyMask, but with overhauled defaults and parameter randomization behavior), `PeakingFilter`, `LowShelfFilter` and `HighShelfFilter`
+* Add support for multichannel audio in `ApplyImpulseResponse`, `BandPassFilter`, `HighPassFilter` and `LowPassFilter`
+* Add `BandStopFilter` (similar to FrequencyMask, but with overhauled defaults and parameter randomization behavior), `PeakingFilter`, `LowShelfFilter` and `HighShelfFilter`
+* Add parameter `add_all_noises_with_same_level` in `AddShortNoises`
 
 ### Changed
 
-* Changed `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, to use scipy's butterworth
+* Change `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, to use scipy's butterworth
  filters instead of pydub. Now they have parametrized roll-off. Filters are now steeper
  than before by default - set `min_rolloff=6, max_rolloff=6` to get the old behavior.
  They also support zero-phase filtering now. And they're at least ~25x times faster than before! 
+
+### Removed
+
+* Remove optional `wavio` dependency for audio loading
 
 ## v0.20.0 (2021-11-18)
 

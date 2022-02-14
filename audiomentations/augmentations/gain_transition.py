@@ -60,6 +60,8 @@ class GainTransition(BaseWaveformTransform):
         """
         super().__init__(p)
         assert min_gain_in_db <= max_gain_in_db
+        assert min_duration > 0
+        assert min_duration <= max_duration
         self.min_gain_in_db = min_gain_in_db
         self.max_gain_in_db = max_gain_in_db
         self.min_duration = min_duration

@@ -37,6 +37,7 @@ from audiomentations import (
     SomeOf,
     OneOf,
     BandStopFilter,
+    GainTransition,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
@@ -202,6 +203,7 @@ if __name__ == "__main__":
             "num_runs": 5,
         },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
+        {"instance": GainTransition(p=1.0), "num_runs": 5},
         {"instance": HighPassFilter(p=1.0), "num_runs": 5},
         {"instance": HighShelfFilter(p=1.0), "num_runs": 5},
         {"instance": LowPassFilter(p=1.0), "num_runs": 5},

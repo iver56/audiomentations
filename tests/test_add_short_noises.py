@@ -185,6 +185,8 @@ class TestAddShortNoises(unittest.TestCase):
         self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)
 
     def test_absolute_parameter(self):
+        np.random.seed(80085)
+        random.seed("ling")
         sample_rate = 44100
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
             np.float32
@@ -244,7 +246,7 @@ class TestAddShortNoises(unittest.TestCase):
             add_all_noises_with_same_level=True,
             min_time_between_sounds=0.5,
             max_time_between_sounds=1,
-            p=1
+            p=1,
         )
 
         transform_different_noise_level = AddShortNoises(
@@ -254,18 +256,22 @@ class TestAddShortNoises(unittest.TestCase):
             add_all_noises_with_same_level=False,
             min_time_between_sounds=0.5,
             max_time_between_sounds=1,
-            p=1
+            p=1,
         )
 
         for i in range(3):
-            transform_same_noise_level.randomize_parameters(dummy_audio, sample_rate=44100)
+            transform_same_noise_level.randomize_parameters(
+                dummy_audio, sample_rate=44100
+            )
             sounds = transform_same_noise_level.parameters["sounds"]
             snr_sounds_same_level = [sounds[j]["snr_in_db"] for j in range(len(sounds))]
-            transform_different_noise_level.randomize_parameters(dummy_audio, sample_rate=44100)
+            transform_different_noise_level.randomize_parameters(
+                dummy_audio, sample_rate=44100
+            )
             sounds = transform_different_noise_level.parameters["sounds"]
-            snr_sounds_different_level = [sounds[j]["snr_in_db"] for j in range(len(sounds))]
+            snr_sounds_different_level = [
+                sounds[j]["snr_in_db"] for j in range(len(sounds))
+            ]
 
             assert len(set(snr_sounds_same_level)) == 1
             assert len(set(snr_sounds_different_level)) > 1
-
-

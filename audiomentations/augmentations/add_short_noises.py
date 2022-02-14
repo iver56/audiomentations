@@ -284,8 +284,8 @@ class AddShortNoises(BaseWaveformTransform):
                 # crop noise_samples: shave off a chunk in the end
                 num_samples_to_shave_off = end_sample_index - num_samples
                 noise_samples = noise_samples[
-                                : len(noise_samples) - num_samples_to_shave_off
-                                ]
+                    : len(noise_samples) - num_samples_to_shave_off
+                ]
                 end_sample_index = num_samples
 
             clean_rms = calculate_rms(samples[start_sample_index:end_sample_index])
@@ -306,7 +306,7 @@ class AddShortNoises(BaseWaveformTransform):
                     noise_samples = noise_samples * (desired_noise_rms / noise_rms)
 
                     noise_placeholder[
-                    start_sample_index:end_sample_index
+                        start_sample_index:end_sample_index
                     ] += noise_samples
                 if self.noise_rms == "absolute":
                     desired_noise_rms_db = sound_params["rms_in_db"]
@@ -317,7 +317,7 @@ class AddShortNoises(BaseWaveformTransform):
                     noise_samples = noise_samples * gain
 
                     noise_placeholder[
-                    start_sample_index:end_sample_index
+                        start_sample_index:end_sample_index
                     ] += noise_samples
         # Return a mix of the input sound and the added sounds
         return samples + noise_placeholder

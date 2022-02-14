@@ -204,6 +204,14 @@ Warning: This transform can return samples outside the [-1, 1] range, which may 
 clipping or wrap distortion, depending on what you do with the audio in a later stage.
 See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
+## `GainTransition`
+
+_To be released in v0.22.0_
+
+Gradually change the volume up or down over a random time span. Also known as
+fade in and fade out. The fade works on a logarithmic scale, which is natural to
+human hearing.
+
 ## `HighPassFilter`
 
 _Added in v0.18.0, updated in v0.21.0_
@@ -418,6 +426,10 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 # Changelog
 
 ## Unreleased
+
+### Added
+
+* Implement `GainTransition`
 
 ## v0.21.0 (2022-02-10)
 

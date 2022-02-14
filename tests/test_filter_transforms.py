@@ -16,25 +16,17 @@ DEBUG = False
 
 
 def get_chirp_test(sample_rate, duration):
-    """
-    Create a `duration` seconds chirp from 0Hz to `nyquist frequency`
-    """
-
+    """Create a `duration` seconds chirp from 0Hz to `nyquist frequency`"""
     n = np.arange(0, duration, 1 / sample_rate)
     samples = scipy.signal.chirp(n, 0, duration, sample_rate // 2, method="linear")
-    return samples
+    return samples.astype(np.float32)
 
 
 def get_randn_test(sample_rate, duration):
-    """
-    Create a random noise test stimulus
-    """
-
+    """Create a random noise test stimulus"""
     n_samples = int(duration * sample_rate)
-
     samples = np.random.randn(n_samples)
-
-    return samples
+    return samples.astype(np.float32)
 
 
 class TestPeakingFilterTransforms:

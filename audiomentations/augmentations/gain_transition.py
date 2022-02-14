@@ -41,9 +41,9 @@ class GainTransition(BaseWaveformTransform):
         self,
         min_gain_in_db: float = -24.0,
         max_gain_in_db: float = 6.0,
-        min_duration: Union[float, int] = 0.1,
-        max_duration: Union[float, int] = 0.8,
-        duration_unit: str = "fraction",
+        min_duration: Union[float, int] = 0.2,
+        max_duration: Union[float, int] = 6,
+        duration_unit: str = "seconds",
         p: float = 0.5,
     ):
         """

@@ -1288,7 +1288,7 @@ class InterruptPulse(BaseWaveformTransform):
         interruption_start_times = num_samples * np.random.random(np.ceil(self.parameters["num_interruptions"]*4/5).astype(int)).astype(int)
         for interruption in interruption_start_times:
             interruption_len = int(num_samples*np.random.random()//5)
-            interruption_val = np.random.random_sample(min_peak, max_peak)
+            interruption_val = np.random.uniform(min_peak, max_peak)
             samples[interruption:interruption+interruption_len] = interruption_val+np.random.normal(0, 1, interruption_len)*self.noise_level
         return samples
 

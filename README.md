@@ -430,6 +430,7 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 ### Added
 
 * Implement `GainTransition`
+* Add support for librosa 0.9
 
 ## v0.21.0 (2022-02-10)
 

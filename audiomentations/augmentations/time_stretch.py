@@ -37,7 +37,7 @@ class TimeStretch(BaseWaveformTransform):
             time_stretched_channels = []
             for i in range(samples.shape[0]):
                 time_stretched_samples = librosa.effects.time_stretch(
-                    samples[i], self.parameters["rate"]
+                    samples[i], rate=self.parameters["rate"]
                 )
                 time_stretched_channels.append(time_stretched_samples)
             time_stretched_samples = np.array(
@@ -45,7 +45,7 @@ class TimeStretch(BaseWaveformTransform):
             )
         else:
             time_stretched_samples = librosa.effects.time_stretch(
-                samples, self.parameters["rate"]
+                samples, rate=self.parameters["rate"]
             )
         if self.leave_length_unchanged:
             # Apply zero padding if the time stretched audio is not long enough to fill the

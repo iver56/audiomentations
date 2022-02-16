@@ -127,7 +127,7 @@ class Mp3Compression(BaseWaveformTransform):
         with open(tmp_file_path, "wb") as f:
             f.write(mp3_data)
 
-        degraded_samples, _ = librosa.load(tmp_file_path, sample_rate)
+        degraded_samples, _ = librosa.load(tmp_file_path, sr=sample_rate)
 
         os.unlink(tmp_file_path)
 
@@ -167,7 +167,7 @@ class Mp3Compression(BaseWaveformTransform):
         file_handle = audio_segment.export(tmp_file_path, bitrate=bitrate_string)
         file_handle.close()
 
-        degraded_samples, _ = librosa.load(tmp_file_path, sample_rate)
+        degraded_samples, _ = librosa.load(tmp_file_path, sr=sample_rate)
 
         os.unlink(tmp_file_path)
 

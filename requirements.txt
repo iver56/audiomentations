@@ -5,7 +5,7 @@ lameenc==1.2.2
 librosa>=0.6.1,<0.10.0
 matplotlib>=3.0.0,<4
 numba>=0.48,<0.50
-numpy==1.18.5
+numpy==1.21.5
 pydub==0.23.1
 pyloudnorm==0.1.0
 pytest==5.3.4

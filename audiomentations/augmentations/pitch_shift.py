@@ -36,11 +36,11 @@ class PitchShift(BaseWaveformTransform):
             for i in range(samples.shape[0]):
                 pitch_shifted_samples[i] = librosa.effects.pitch_shift(
                     pitch_shifted_samples[i],
-                    sample_rate,
+                    sr=sample_rate,
                     n_steps=self.parameters["num_semitones"],
                 )
         else:
             pitch_shifted_samples = librosa.effects.pitch_shift(
-                samples, sample_rate, n_steps=self.parameters["num_semitones"]
+                samples, sr=sample_rate, n_steps=self.parameters["num_semitones"]
             )
         return pitch_shifted_samples

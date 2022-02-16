@@ -6,3 +6,4 @@
 * `python setup.py sdist bdist_wheel`
 * `python -m twine upload dist/*`
 * Add and push a git tag to the release commit
+* Add a release here: https://github.com/iver56/audiomentations/releases/new

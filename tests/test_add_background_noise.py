@@ -6,8 +6,7 @@ import warnings
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import AddBackgroundNoise
-from audiomentations.core.composition import Compose
+from audiomentations import AddBackgroundNoise, Compose
 from demo.demo import DEMO_DIR
 
 
@@ -104,3 +103,18 @@ class TestAddBackgroundNoise(unittest.TestCase):
         pickled = pickle.dumps(transform)
         unpickled = pickle.loads(pickled)
         self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)
+
+    def test_absolute_option(self):
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 22500)).astype(np.float32)
+        sample_rate = 44100
+        augmenter = Compose(
+            [
+                AddBackgroundNoise(
+                    sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+                    noise_rms="absolute",
+                    p=1.0,
+                )
+            ]
+        )
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        assert not np.allclose(samples, samples_out)

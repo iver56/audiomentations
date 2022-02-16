@@ -2,8 +2,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import Trim
-from audiomentations.core.composition import Compose
+from audiomentations import Trim, Compose
 
 
 class TestTrim(unittest.TestCase):

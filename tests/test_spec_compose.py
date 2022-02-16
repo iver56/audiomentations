@@ -3,11 +3,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.spectrogram_transforms import (
-    SpecChannelShuffle,
-    SpecFrequencyMask,
-)
-from audiomentations.core.composition import SpecCompose
+from audiomentations import SpecChannelShuffle, SpecFrequencyMask, SpecCompose
 
 
 class TestSpecCompose(unittest.TestCase):

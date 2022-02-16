@@ -3,8 +3,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from audiomentations.augmentations.transforms import Shift
-from audiomentations.core.composition import Compose
+from audiomentations import Shift, Compose
 
 
 class TestShift(unittest.TestCase):

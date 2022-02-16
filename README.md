@@ -1,6 +1,6 @@
 # Audiomentations
 
-[![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg)](https://circleci.com/gh/iver56/audiomentations) [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations) [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black) [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/master/LICENSE)
+[![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg)](https://circleci.com/gh/iver56/audiomentations) [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations) [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black) [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5470338.svg)](https://doi.org/10.5281/zenodo.5470338)
 
 A Python library for audio data augmentation. Inspired by
 [albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
@@ -27,7 +27,6 @@ Some features have extra dependencies. Extra python package dependencies can be 
 
 | Feature | Extra dependencies |
 | ------- | ---------------- |
-| Load 24-bit wav files fast | `wavio` |
 | `LoudnessNormalization` | `pyloudnorm` |
 | `Mp3Compression` | `ffmpeg` and [`pydub` or `lameenc`] |
 
@@ -35,11 +34,11 @@ Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg down
 
 # Usage example
 
+## Waveform
+
 ```python
 from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift, Shift
 import numpy as np
-
-SAMPLE_RATE = 16000
 
 augment = Compose([
     AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
@@ -52,12 +51,32 @@ augment = Compose([
 samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
 
 # Augment/transform/perturb the audio data
-augmented_samples = augment(samples=samples, sample_rate=SAMPLE_RATE)
+augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
-Go to [audiomentations/augmentations/transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/transforms.py) to see the waveform transforms you can apply, and what arguments they have.
+Check out the source code at [audiomentations/augmentations/](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/) to see the waveform transforms you can apply, and what arguments they have.
 
-See [audiomentations/augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/spectrogram_transforms.py) for spectrogram transforms. 
+## Spectrogram
+
+```python
+from audiomentations import SpecCompose, SpecChannelShuffle, SpecFrequencyMask
+import numpy as np
+
+augment = SpecCompose(
+    [
+        SpecChannelShuffle(p=0.5),
+        SpecFrequencyMask(p=0.5),
+    ]
+)
+
+# Example spectrogram with 1025 frequency bins, 256 time steps and 2 audio channels
+spectrogram = np.random.random((1025, 256, 2))
+
+# Augment/transform/perturb the spectrogram
+augmented_spectrogram = augment(spectrogram)
+```
+
+See [audiomentations/spec_augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/spec_augmentations/spectrogram_transforms.py) for spectrogram transforms. 
 
 # Waveform transforms
 
@@ -78,6 +97,11 @@ sound will be repeated, which may sound unnatural.
 
 Note that the gain of the added noise is relative to the amount of signal in the input. This
 implies that if the input is completely silent, no noise will be added.
+
+Here are some examples of datasets that can be downloaded and used as background noise:
+
+* https://github.com/karolpiczak/ESC-50#download
+* https://github.com/microsoft/DNS-Challenge/
 
 ## `AddGaussianNoise`
 
@@ -116,9 +140,23 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 ## `BandPassFilter`
 
-_To be added in v0.18.0_
+_Added in v0.18.0, updated in v0.21.0_
 
-Apply band-pass filtering to the input audio. The filter steepness is 6 dB per octave.
+Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / octave)
+is parametrized. Can also be set for zero-phase filtering (will result in a 6db drop at
+cutoffs).
+
+## `BandStopFilter`
+
+_Added in v0.21.0_
+
+Apply band-stop filtering to the input audio. Also known as notch filter or
+band reject filter. It relates to the frequency mask idea in the SpecAugment paper.
+This transform is similar to FrequencyMask, but has overhauled default parameters
+and parameter randomization - center frequency gets picked in mel space so it is
+more aligned with human hearing, which is not linear. Filter steepness
+(6/12/18... dB / octave) is parametrized. Can also be set for zero-phase filtering
+(will result in a 6db drop at cutoffs).
 
 ## `Clip`
 
@@ -166,19 +204,43 @@ Warning: This transform can return samples outside the [-1, 1] range, which may 
 clipping or wrap distortion, depending on what you do with the audio in a later stage.
 See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
+## `GainTransition`
+
+_To be released in v0.22.0_
+
+Gradually change the volume up or down over a random time span. Also known as
+fade in and fade out. The fade works on a logarithmic scale, which is natural to
+human hearing.
+
 ## `HighPassFilter`
 
-_To be added in v0.18.0_
+_Added in v0.18.0, updated in v0.21.0_
 
-Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
-octave below the cutoff frequency, so this filter is fairly gentle.
+Apply high-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
+
+## `HighShelfFilter`
+
+_Added in v0.21.0_
+
+High-shelf filter transform. Applies a high-shelf filter at a specific center frequency in hertz.
+The gain at nyquist frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+Filter coefficients are taken from [the W3 Audio EQ Cookbook](https://www.w3.org/TR/audio-eq-cookbook/)
 
 ## `LowPassFilter`
 
-_To be added in v0.18.0_
+_Added in v0.18.0, updated in v0.21.0_
 
-Apply low-pass filtering to the input audio. The signal will be reduced by 6 dB per
-octave above the cutoff frequency, so this filter is fairly gentle.
+Apply low-pass filtering to the input audio of parametrized filter steepness (6/12/18... dB / octave).
+Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
+
+## `LowShelfFilter`
+
+_Added in v0.21.0_
+
+Low-shelf filter transform. Applies a low-shelf filter at a specific center frequency in hertz.
+The gain at DC frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+Filter coefficients are taken from [the W3 Audio EQ Cookbook](https://www.w3.org/TR/audio-eq-cookbook/)
 
 ## `Mp3Compression`
 
@@ -213,6 +275,12 @@ Apply a constant amount of gain, so that highest signal level present in the sou
 0 dBFS, i.e. the loudest level allowed if all samples must be between -1 and 1. Also known
 as peak normalization.
 
+## `PeakingFilter`
+
+_Added in v0.21.0_
+
+Add a biquad peaking filter transform
+
 ## `PitchShift`
 
 _Added in v0.4.0_
@@ -242,7 +310,7 @@ sampling rate and vice versa to do upsampling only.
 
 ## `Reverse`
 
-_To be added in v0.18.0_
+_Added in v0.18.0_
 
 Reverse the audio. Also known as time inversion. Inversion of an audio track along its time
 axis relates to the random flip of an image, which is an augmentation technique that is
@@ -258,7 +326,7 @@ Shift the samples forwards or backwards, with or without rollover
 
 ## `TanhDistortion`
 
-_To be added in v0.18.0_
+_Added in v0.19.0_
 
 Apply tanh (hyperbolic tangent) distortion to the audio. This technique is sometimes
 used for adding distortion to guitar recordings. The tanh() function can give a rounded
@@ -320,25 +388,29 @@ Contributions are welcome!
 
 Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
 
-_The following table is valid for new versions of audiomentations, like >=0.17.0_
+_The following table is valid for new versions of audiomentations, like >=0.21.0_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
 | AddBackgroundNoise | No, 1D only |
 | AddGaussianNoise | Yes |
 | AddGaussianSNR | Yes |
-| AddImpulseResponse | No, 1D only |
 | AddShortNoises | No, 1D only |
-| BandPassFilter | No, 1D only |
+| ApplyImpulseResponse | Yes |
+| BandPassFilter | Yes |
+| BandStopFilter | Yes |
 | Clip | Yes |
 | ClippingDistortion | Yes |
 | FrequencyMask | Yes |
 | Gain | Yes |
-| HighPassFilter | No, 1D only |
+| HighPassFilter | Yes |
+| HighShelfFilter | Yes |
 | LoudnessNormalization | Yes, up to 5 channels |
-| LowPassFilter | No, 1D only |
+| LowPassFilter | Yes |
+| LowShelfFilter | Yes |
 | Mp3Compression | No, 1D only |
 | Normalize | Yes |
+| PeakingFilter | Yes |
 | PitchShift | Yes |
 | PolarityInversion | Yes |
 | Resample | No, 1D only |
@@ -357,7 +429,62 @@ _The following table is valid for new versions of audiomentations, like >=0.17.0
 
 ### Added
 
-* Implement `BandPassFilter`, `HighPassFilter`, `LowPassFilter`, `Reverse` and `TanhDistortion`. Thanks to atamazian.
+* Implement `GainTransition`
+
+## v0.21.0 (2022-02-10)
+
+### Added
+
+* Add support for multichannel audio in `ApplyImpulseResponse`, `BandPassFilter`, `HighPassFilter` and `LowPassFilter`
+* Add `BandStopFilter` (similar to FrequencyMask, but with overhauled defaults and parameter randomization behavior), `PeakingFilter`, `LowShelfFilter` and `HighShelfFilter`
+* Add parameter `add_all_noises_with_same_level` in `AddShortNoises`
+
+### Changed
+
+* Change `BandPassFilter`, `LowPassFilter`, `HighPassFilter`, to use scipy's butterworth
+ filters instead of pydub. Now they have parametrized roll-off. Filters are now steeper
+ than before by default - set `min_rolloff=6, max_rolloff=6` to get the old behavior.
+ They also support zero-phase filtering now. And they're at least ~25x times faster than before! 
+
+### Removed
+
+* Remove optional `wavio` dependency for audio loading
+
+## v0.20.0 (2021-11-18)
+
+### Added
+
+* Implement `OneOf` and `SomeOf` for applying one of or some of many transforms. Transforms are randomly
+ chosen every call. Inspired by augly. Thanks to Cangonin and iver56.
+* Add a new argument `apply_to_children` (bool) in `randomize_parameters`,
+ `freeze_parameters` and `unfreeze_parameters` in `Compose` and `SpecCompose`.
+
+### Changed
+
+* Insert three new parameters in `AddBackgroundNoise`: `noise_rms` (defaults to "relative", which is 
+ the old behavior), `min_absolute_rms_in_db` and `max_absolute_rms_in_db`. This **may be a breaking
+ change** if you used `AddBackgroundNoise` with positional arguments in earlier versions of audiomentations!
+ Please use keyword arguments to be on the safe side - it should be backwards compatible then.
+
+### Fixed
+
+* Remove global `pydub` import which was accidentally introduced in v0.18.0. `pydub` is
+ considered an optional dependency and is imported only on demand now.
+
+## v0.19.0 (2021-10-18)
+
+### Added
+
+* Implement `TanhDistortion`. Thanks to atamazian and iver56.
+* Add a `noise_rms` parameter to `AddShortNoises`. It defaults to `relative`, which
+ is the old behavior. `absolute` allows for adding loud noises to parts that are
+ relatively silent in the input.
+
+## v0.18.0 (2021-08-05)
+
+### Added
+
+* Implement `BandPassFilter`, `HighPassFilter`, `LowPassFilter` and `Reverse`. Thanks to atamazian.
 
 ## v0.17.0 (2021-06-25)
 
@@ -616,14 +743,16 @@ augmentation/degradation! Here's an overview:
 | [kapre](https://github.com/keunwoochoi/kapre) | ![Github stars](https://img.shields.io/github/stars/keunwoochoi/kapre) | ![License](https://img.shields.io/github/license/keunwoochoi/kapre) | ![Last commit](https://img.shields.io/github/last-commit/keunwoochoi/kapre) | ![Yes, Keras/Tensorflow](https://img.shields.io/badge/GPU-Keras%2FTensorflow-green) |
 | [muda](https://github.com/bmcfee/muda) | ![Github stars](https://img.shields.io/github/stars/bmcfee/muda) | ![License](https://img.shields.io/github/license/bmcfee/muda) | ![Last commit](https://img.shields.io/github/last-commit/bmcfee/muda) | ![No](https://img.shields.io/badge/GPU-No-red) |
 | [nlpaug](https://github.com/makcedward/nlpaug) | ![Github stars](https://img.shields.io/github/stars/makcedward/nlpaug) | ![License](https://img.shields.io/github/license/makcedward/nlpaug) | ![Last commit](https://img.shields.io/github/last-commit/makcedward/nlpaug) | ![No](https://img.shields.io/badge/GPU-No-red) |
+| [pedalboard](https://github.com/spotify/pedalboard) | ![Github stars](https://img.shields.io/github/stars/spotify/pedalboard) | ![License](https://img.shields.io/github/license/spotify/pedalboard) | ![Last commit](https://img.shields.io/github/last-commit/spotify/pedalboard) | ![No](https://img.shields.io/badge/GPU-No-red) |
 | [pydiogment](https://github.com/SuperKogito/pydiogment) | ![Github stars](https://img.shields.io/github/stars/SuperKogito/pydiogment) | ![License](https://img.shields.io/github/license/SuperKogito/pydiogment) | ![Last commit](https://img.shields.io/github/last-commit/SuperKogito/pydiogment) | ![No](https://img.shields.io/badge/GPU-No-red) |
 | [python-audio-effects](https://github.com/carlthome/python-audio-effects) | ![Github stars](https://img.shields.io/github/stars/carlthome/python-audio-effects) | ![License](https://img.shields.io/github/license/carlthome/python-audio-effects) | ![Last commit](https://img.shields.io/github/last-commit/carlthome/python-audio-effects) | ![No](https://img.shields.io/badge/GPU-No-red) |
 | [sigment](https://github.com/eonu/sigment) | ![Github stars](https://img.shields.io/github/stars/eonu/sigment) | ![License](https://img.shields.io/github/license/eonu/sigment) | ![Last commit](https://img.shields.io/github/last-commit/eonu/sigment) | ![No](https://img.shields.io/badge/GPU-No-red) |
 | [SpecAugment](https://github.com/DemisEom/SpecAugment) | ![Github stars](https://img.shields.io/github/stars/DemisEom/SpecAugment) | ![License](https://img.shields.io/github/license/DemisEom/SpecAugment) | ![Last commit](https://img.shields.io/github/last-commit/DemisEom/SpecAugment) | ![Yes, Pytorch & Tensorflow](https://img.shields.io/badge/GPU-Pytorch%20%26%20Tensorflow-green) |
 | [spec_augment](https://github.com/zcaceres/spec_augment) | ![Github stars](https://img.shields.io/github/stars/zcaceres/spec_augment) | ![License](https://img.shields.io/github/license/zcaceres/spec_augment) | ![Last commit](https://img.shields.io/github/last-commit/zcaceres/spec_augment) | ![Yes, Pytorch](https://img.shields.io/badge/GPU-Pytorch-green) |
+| [teal](https://github.com/am1tyadav/teal) | ![Github stars](https://img.shields.io/github/stars/am1tyadav/teal) | ![License](https://img.shields.io/github/license/am1tyadav/teal) | ![Last commit](https://img.shields.io/github/last-commit/am1tyadav/teal) | ![Yes, Keras/Tensorflow](https://img.shields.io/badge/GPU-Keras%2FTensorflow-green) |
 | [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations) | ![Github stars](https://img.shields.io/github/stars/asteroid-team/torch-audiomentations) | ![License](https://img.shields.io/github/license/asteroid-team/torch-audiomentations) | ![Last commit](https://img.shields.io/github/last-commit/asteroid-team/torch-audiomentations) | ![Yes, Pytorch](https://img.shields.io/badge/GPU-Pytorch-green) |
 | [torchaudio-augmentations](https://github.com/Spijkervet/torchaudio-augmentations) | ![Github stars](https://img.shields.io/github/stars/Spijkervet/torchaudio-augmentations) | ![License](https://img.shields.io/github/license/Spijkervet/torchaudio-augmentations) | ![Last commit](https://img.shields.io/github/last-commit/Spijkervet/torchaudio-augmentations) | ![Yes, Pytorch](https://img.shields.io/badge/GPU-Pytorch-green) |
-| [WavAugment](https://github.com/facebookresearch/WavAugment) | ![Github stars](https://img.shields.io/github/stars/facebookresearch/WavAugment) | ![License](https://img.shields.io/github/license/facebookresearch/WavAugment) | ![Last commit](https://img.shields.io/github/last-commit/facebookresearch/WavAugment) | ![Yes, Pytorch](https://img.shields.io/badge/GPU-Pytorch-green) |
+| [WavAugment](https://github.com/facebookresearch/WavAugment) | ![Github stars](https://img.shields.io/github/stars/facebookresearch/WavAugment) | ![License](https://img.shields.io/github/license/facebookresearch/WavAugment) | ![Last commit](https://img.shields.io/github/last-commit/facebookresearch/WavAugment) | ![No](https://img.shields.io/badge/GPU-No-red) |
 
 # Acknowledgements
 

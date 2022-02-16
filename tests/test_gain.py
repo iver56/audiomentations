@@ -4,8 +4,7 @@ import warnings
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from audiomentations.augmentations.transforms import Gain
-from audiomentations.core.composition import Compose
+from audiomentations import Gain, Compose
 
 
 class TestGain(unittest.TestCase):

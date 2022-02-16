@@ -7,7 +7,7 @@ import random
 
 from audiomentations.core.utils import calculate_rms
 
-from audiomentations.augmentations.transforms import AddGaussianSNR
+from audiomentations import AddGaussianSNR
 
 
 class TestGaussianSNR(unittest.TestCase):

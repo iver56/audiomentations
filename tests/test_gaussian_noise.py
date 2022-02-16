@@ -2,8 +2,7 @@ import unittest
 
 import numpy as np
 
-from audiomentations.augmentations.transforms import AddGaussianNoise
-from audiomentations.core.composition import Compose
+from audiomentations import AddGaussianNoise, Compose
 
 
 class TestGaussianNoise(unittest.TestCase):

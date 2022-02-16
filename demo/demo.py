@@ -19,18 +19,25 @@ from audiomentations import (
     ClippingDistortion,
     AddBackgroundNoise,
     AddShortNoises,
+    PeakingFilter,
     PolarityInversion,
     Gain,
     Mp3Compression,
     LoudnessNormalization,
     Trim,
-)
-from audiomentations.augmentations.transforms import (
     LowPassFilter,
+    LowShelfFilter,
+    HighShelfFilter,
     HighPassFilter,
     BandPassFilter,
     ApplyImpulseResponse,
     Reverse,
+    TanhDistortion,
+    Compose,
+    SomeOf,
+    OneOf,
+    BandStopFilter,
+    GainTransition,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
@@ -85,12 +92,13 @@ if __name__ == "__main__":
     output_dir = os.path.join(DEMO_DIR, "output")
     os.makedirs(output_dir, exist_ok=True)
 
-    np.random.seed(42)
-    random.seed(42)
+    np.random.seed(420)
+    random.seed(420)
 
     sound_file_paths = [
         Path(os.path.join(DEMO_DIR, "acoustic_guitar_0.wav")),
         Path(os.path.join(DEMO_DIR, "perfect-alley1.ogg")),
+        Path(os.path.join(DEMO_DIR, "p286_011.wav")),
     ]
 
     transforms = [
@@ -99,6 +107,18 @@ if __name__ == "__main__":
                 sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
             ),
             "num_runs": 5,
+            "name": "AddBackgroundNoiseRelative",
+        },
+        {
+            "instance": AddBackgroundNoise(
+                sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+                noise_rms="absolute",
+                min_absolute_rms_in_db=-30,
+                max_absolute_rms_in_db=-10,
+                p=1.0,
+            ),
+            "num_runs": 5,
+            "name": "AddBackgroundNoiseAbsolute",
         },
         {
             "instance": AddGaussianNoise(
@@ -134,6 +154,9 @@ if __name__ == "__main__":
                 sounds_path=os.path.join(DEMO_DIR, "short_noises"),
                 min_snr_in_db=0,
                 max_snr_in_db=8,
+                min_absolute_noise_rms_db=-30,
+                max_absolute_noise_rms_db=-10,
+                noise_rms="absolute",
                 min_time_between_sounds=2.0,
                 max_time_between_sounds=4.0,
                 burst_probability=0.4,
@@ -146,8 +169,32 @@ if __name__ == "__main__":
                 p=1.0,
             ),
             "num_runs": 5,
+            "name": "AddShortNoisesAbsolute",
+        },
+        {
+            "instance": AddShortNoises(
+                sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                min_snr_in_db=0,
+                max_snr_in_db=8,
+                min_absolute_noise_rms_db=-30,
+                max_absolute_noise_rms_db=-10,
+                noise_rms="relative",
+                min_time_between_sounds=2.0,
+                max_time_between_sounds=4.0,
+                burst_probability=0.4,
+                min_pause_factor_during_burst=0.01,
+                max_pause_factor_during_burst=0.95,
+                min_fade_in_time=0.005,
+                max_fade_in_time=0.08,
+                min_fade_out_time=0.01,
+                max_fade_out_time=0.1,
+                p=1.0,
+            ),
+            "num_runs": 5,
+            "name": "AddShortNoisesRelative",
         },
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
+        {"instance": BandStopFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
         {
             "instance": FrequencyMask(
@@ -156,8 +203,11 @@ if __name__ == "__main__":
             "num_runs": 5,
         },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
+        {"instance": GainTransition(p=1.0), "num_runs": 5},
         {"instance": HighPassFilter(p=1.0), "num_runs": 5},
+        {"instance": HighShelfFilter(p=1.0), "num_runs": 5},
         {"instance": LowPassFilter(p=1.0), "num_runs": 5},
+        {"instance": LowShelfFilter(p=1.0), "num_runs": 5},
         {
             "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
             "num_runs": 5,
@@ -174,6 +224,7 @@ if __name__ == "__main__":
             "name": "Mp3CompressionPydub",
         },
         {"instance": Normalize(p=1.0), "num_runs": 1},
+        {"instance": PeakingFilter(p=1.0), "num_runs": 5},
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
         {"instance": Resample(p=1.0), "num_runs": 5},
         {"instance": Reverse(p=1.0), "num_runs": 1},
@@ -199,10 +250,28 @@ if __name__ == "__main__":
             "num_runs": 5,
             "name": "ShiftWithoutRolloverWithLongFade",
         },
-        # {"instance": TanhDistortion(p=1.0), "num_runs": 5},  # TODO: Uncomment this later
+        {"instance": TanhDistortion(p=1.0), "num_runs": 5},
         {"instance": TimeMask(p=1.0), "num_runs": 5},
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
         {"instance": Trim(p=1.0), "num_runs": 1},
+        {
+            "instance": Compose(
+                [
+                    AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
+                    SomeOf(
+                        (0, 2),
+                        [
+                            TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
+                            PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
+                        ],
+                    ),
+                    Shift(min_fraction=-0.5, max_fraction=0.5, p=0.5),
+                    OneOf([TanhDistortion(p=1.0), ClippingDistortion(p=1.0)], p=0.25),
+                ]
+            ),
+            "num_runs": 10,
+            "name": "BigCompose",
+        },
     ]
 
     for sound_file_path in sound_file_paths:

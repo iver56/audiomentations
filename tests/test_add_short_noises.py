@@ -1,13 +1,13 @@
 import json
 import os
 import pickle
+import random
 import unittest
 
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from audiomentations.augmentations.transforms import AddShortNoises
-from audiomentations.core.composition import Compose
+from audiomentations import AddShortNoises, Compose
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
 )
@@ -183,3 +183,95 @@ class TestAddShortNoises(unittest.TestCase):
         pickled = pickle.dumps(transform)
         unpickled = pickle.loads(pickled)
         self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)
+
+    def test_absolute_parameter(self):
+        np.random.seed(80085)
+        random.seed("ling")
+        sample_rate = 44100
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
+            np.float32
+        )
+        rms_before = calculate_rms(samples)
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=8.0,
+                    noise_rms="absolute",
+                    p=1.0,
+                )
+            ]
+        )
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        self.assertEqual(samples_out.dtype, np.float32)
+        self.assertEqual(samples_out.shape, samples.shape)
+
+        rms_after = calculate_rms(samples_out)
+        self.assertGreater(rms_after, rms_before)
+
+    def test_include_silence_in_noise_rms_calculation(self):
+        np.random.seed(420)
+        random.seed(420)
+        sample_rate = 44100
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
+            np.float32
+        )
+        rms_before = calculate_rms(samples)
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=4.0,
+                    noise_rms="absolute",
+                    include_silence_in_noise_rms_estimation=False,
+                    p=1.0,
+                )
+            ]
+        )
+
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+
+        rms_after = calculate_rms(samples_out)
+        self.assertGreater(rms_after, rms_before)
+
+    def test_add_noises_with_same_level(self):
+        dummy_audio = np.random.randint(1, 5, 250000)
+        transform_same_noise_level = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_snr_in_db=15,
+            max_snr_in_db=30,
+            noise_rms="relative",
+            add_all_noises_with_same_level=True,
+            min_time_between_sounds=0.5,
+            max_time_between_sounds=1,
+            p=1,
+        )
+
+        transform_different_noise_level = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_snr_in_db=15,
+            max_snr_in_db=30,
+            add_all_noises_with_same_level=False,
+            min_time_between_sounds=0.5,
+            max_time_between_sounds=1,
+            p=1,
+        )
+
+        for i in range(3):
+            transform_same_noise_level.randomize_parameters(
+                dummy_audio, sample_rate=44100
+            )
+            sounds = transform_same_noise_level.parameters["sounds"]
+            snr_sounds_same_level = [sounds[j]["snr_in_db"] for j in range(len(sounds))]
+            transform_different_noise_level.randomize_parameters(
+                dummy_audio, sample_rate=44100
+            )
+            sounds = transform_different_noise_level.parameters["sounds"]
+            snr_sounds_different_level = [
+                sounds[j]["snr_in_db"] for j in range(len(sounds))
+            ]
+
+            assert len(set(snr_sounds_same_level)) == 1
+            assert len(set(snr_sounds_different_level)) > 1

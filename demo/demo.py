@@ -121,6 +121,17 @@ if __name__ == "__main__":
             "name": "AddBackgroundNoiseAbsolute",
         },
         {
+            "instance": AddBackgroundNoise(
+                sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+                min_snr_in_db=2,
+                max_snr_in_db=4,
+                noise_transform=Reverse(p=1.0),
+                p=1.0,
+            ),
+            "num_runs": 5,
+            "name": "AddBackgroundNoiseWithTransform",
+        },
+        {
             "instance": AddGaussianNoise(
                 min_amplitude=0.001, max_amplitude=0.015, p=1.0
             ),

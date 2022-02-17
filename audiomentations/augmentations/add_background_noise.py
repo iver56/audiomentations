@@ -1,6 +1,7 @@
 import functools
 import random
 import warnings
+from typing import Optional, Callable
 
 import numpy as np
 
@@ -41,6 +42,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
         noise_rms="relative",
         min_absolute_rms_in_db=-45,
         max_absolute_rms_in_db=-15,
+        noise_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
         p=0.5,
         lru_cache_size=2,
     ):
@@ -59,6 +61,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param max_absolute_rms_in_db: Is only used if noise_rms is set to "absolute". It is
             the maximum rms value in dB that the added noise can take. Note that this value
             can not exceed 0.
+        :param noise_transform: A callable waveform transform (or composition of transforms) that
+            gets applied to the noise before it gets mixed in.
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
@@ -78,6 +82,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddBackgroundNoise._load_sound
         )
+        self.noise_transform = noise_transform
 
     @staticmethod
     def _load_sound(file_path, sample_rate):
@@ -114,8 +119,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
             self.parameters["noise_file_path"], sample_rate
         )
         noise_sound = noise_sound[
-                      self.parameters["noise_start_index"] : self.parameters["noise_end_index"]
-                      ]
+            self.parameters["noise_start_index"] : self.parameters["noise_end_index"]
+        ]
 
         noise_rms = calculate_rms(noise_sound)
         if noise_rms < 1e-9:
@@ -124,6 +129,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
                 " unchanged.".format(self.parameters["noise_file_path"])
             )
             return samples
+
+        if self.noise_transform:
+            noise_sound = self.noise_transform(noise_sound, sample_rate)
 
         clean_rms = calculate_rms(samples)
 

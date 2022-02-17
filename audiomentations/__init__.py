@@ -15,6 +15,7 @@ from .augmentations.gain import Gain
 from .augmentations.gain_transition import GainTransition
 from .augmentations.high_pass_filter import HighPassFilter
 from .augmentations.high_shelf_filter import HighShelfFilter
+from .augmentations.interrupt_pulse import InterruptPulse
 from .augmentations.loudness_normalization import LoudnessNormalization
 from .augmentations.low_pass_filter import LowPassFilter
 from .augmentations.low_shelf_filter import LowShelfFilter

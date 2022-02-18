@@ -108,7 +108,7 @@ class Mp3Compression(BaseWaveformTransform):
 
         assert samples.dtype == np.float32
 
-        int_samples = convert_float_samples_to_int16(samples)
+        int_samples = convert_float_samples_to_int16(samples).T
 
         num_channels = 1 if samples.ndim == 1 else samples.shape[0]
 
@@ -157,7 +157,7 @@ class Mp3Compression(BaseWaveformTransform):
 
         assert samples.dtype == np.float32
 
-        int_samples = convert_float_samples_to_int16(samples)
+        int_samples = convert_float_samples_to_int16(samples).T
         num_channels = 1 if samples.ndim == 1 else samples.shape[0]
         audio_segment = pydub.AudioSegment(
             int_samples.tobytes(),

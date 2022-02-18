@@ -28,6 +28,8 @@ class Mp3Compression(BaseWaveformTransform):
     in memory. Contributions are welcome.
     """
 
+    supports_multichannel = True
+
     SUPPORTED_BITRATES = [
         8,
         16,
@@ -104,15 +106,16 @@ class Mp3Compression(BaseWaveformTransform):
             )
             raise
 
-        assert len(samples.shape) == 1
         assert samples.dtype == np.float32
 
         int_samples = convert_float_samples_to_int16(samples)
 
+        num_channels = 1 if samples.ndim == 1 else samples.shape[0]
+
         encoder = lameenc.Encoder()
         encoder.set_bit_rate(self.parameters["bitrate"])
         encoder.set_in_sample_rate(sample_rate)
-        encoder.set_channels(1)
+        encoder.set_channels(num_channels)
         encoder.set_quality(7)  # 2 = highest, 7 = fastest
         encoder.silence()
 
@@ -127,9 +130,15 @@ class Mp3Compression(BaseWaveformTransform):
         with open(tmp_file_path, "wb") as f:
             f.write(mp3_data)
 
-        degraded_samples, _ = librosa.load(tmp_file_path, sr=sample_rate)
+        degraded_samples, _ = librosa.load(tmp_file_path, sr=sample_rate, mono=False)
 
         os.unlink(tmp_file_path)
+
+        if num_channels == 1:
+            if int_samples.ndim == 1 and degraded_samples.ndim == 2:
+                degraded_samples = degraded_samples.flatten()
+            elif int_samples.ndim == 2 and degraded_samples.ndim == 1:
+                degraded_samples = degraded_samples.reshape((1, -1))
 
         return degraded_samples
 
@@ -146,16 +155,15 @@ class Mp3Compression(BaseWaveformTransform):
             )
             raise
 
-        assert len(samples.shape) == 1
         assert samples.dtype == np.float32
 
         int_samples = convert_float_samples_to_int16(samples)
-
+        num_channels = 1 if samples.ndim == 1 else samples.shape[0]
         audio_segment = pydub.AudioSegment(
             int_samples.tobytes(),
             frame_rate=sample_rate,
             sample_width=int_samples.dtype.itemsize,
-            channels=1,
+            channels=num_channels,
         )
 
         tmp_dir = tempfile.gettempdir()
@@ -167,8 +175,14 @@ class Mp3Compression(BaseWaveformTransform):
         file_handle = audio_segment.export(tmp_file_path, bitrate=bitrate_string)
         file_handle.close()
 
-        degraded_samples, _ = librosa.load(tmp_file_path, sr=sample_rate)
+        degraded_samples, _ = librosa.load(tmp_file_path, sr=sample_rate, mono=False)
 
         os.unlink(tmp_file_path)
+
+        if num_channels == 1:
+            if int_samples.ndim == 1 and degraded_samples.ndim == 2:
+                degraded_samples = degraded_samples.flatten()
+            elif int_samples.ndim == 2 and degraded_samples.ndim == 1:
+                degraded_samples = degraded_samples.reshape((1, -1))
 
         return degraded_samples

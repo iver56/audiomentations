@@ -24,7 +24,7 @@ class TestMp3Compression:
         assert len(shape) == len(samples_out.shape)
         assert samples_out.dtype == np.float32
         assert samples_out.shape[-1] >= shape[-1]
-        assert samples_out.shape[-1] < shape[-1] + 2700
+        assert samples_out.shape[-1] < shape[-1] + 3000
         if len(shape) == 2:
             assert samples_out.shape[0] == shape[0]
 
@@ -47,7 +47,7 @@ class TestMp3Compression:
         assert len(shape) == len(samples_out.shape)
         assert samples_out.dtype == np.float32
         assert samples_out.shape[-1] >= shape[-1]
-        assert samples_out.shape[-1] < shape[-1] + 2500
+        assert samples_out.shape[-1] < shape[-1] + 3100
         if len(shape) == 2:
             assert samples_out.shape[0] == shape[0]
 

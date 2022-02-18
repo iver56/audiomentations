@@ -1,6 +1,7 @@
 import json
 import os
 import pickle
+import random
 import warnings
 
 import numpy as np
@@ -103,10 +104,14 @@ class TestAddBackgroundNoise:
         assert not np.allclose(samples, samples_out)
 
     def test_noise_transform(self):
+        np.random.seed(3650)
+        random.seed(3650)
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 22500)).astype(np.float32)
         sample_rate = 44100
         augmenter = AddBackgroundNoise(
             sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+            min_snr_in_db=3,
+            max_snr_in_db=6,
             p=1.0,
         )
         samples_out_without_transform = augmenter(

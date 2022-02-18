@@ -414,7 +414,7 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 | PeakingFilter | Yes |
 | PitchShift | Yes |
 | PolarityInversion | Yes |
-| Resample | No, 1D only |
+| Resample | Yes, up to 2 channels (requires audiomentations>0.21.0) |
 | Reverse | Yes |
 | Shift | Yes |
 | SpecChannelShuffle | Yes |

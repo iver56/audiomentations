@@ -432,7 +432,7 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 
 * Implement `GainTransition`
 * Add support for librosa 0.9
-* Add support for stereo audio in `Trim`
+* Add support for stereo audio in `Resample` and `Trim`
 
 ### Changed
 

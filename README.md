@@ -434,6 +434,7 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 * Add support for librosa 0.9
 * Add support for stereo audio in `Mp3Compression`, `Resample` and `Trim`
 * Add `"relative_to_whole_input"` option for `noise_rms` parameter in `AddShortNoises`
+* Add optional `noise_transform` in `AddBackgroundNoise`
 
 ### Changed
 

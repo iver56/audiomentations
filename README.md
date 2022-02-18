@@ -9,7 +9,7 @@ integrated in training pipelines in e.g. Tensorflow/Keras or Pytorch. Has helped
 world-class results in Kaggle competitions. Is used by companies making next-generation audio
 products.
 
-Need a Pytorch alternative with GPU support? Check out [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)!
+Need a Pytorch-specific alternative with GPU support? Check out [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)!
 
 # Setup
 

@@ -409,7 +409,7 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 | LoudnessNormalization | Yes, up to 5 channels |
 | LowPassFilter | Yes |
 | LowShelfFilter | Yes |
-| Mp3Compression | No, 1D only |
+| Mp3Compression | Yes, up to 2 channels (requires audiomentations>0.21.0) |
 | Normalize | Yes |
 | PeakingFilter | Yes |
 | PitchShift | Yes |
@@ -432,7 +432,7 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 
 * Implement `GainTransition`
 * Add support for librosa 0.9
-* Add support for stereo audio in `Resample` and `Trim`
+* Add support for stereo audio in `Mp3Compression`, `Resample` and `Trim`
 * Add `"relative_to_whole_input"` option for `noise_rms` parameter in `AddShortNoises`
 
 ### Changed

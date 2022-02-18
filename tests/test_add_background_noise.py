@@ -1,68 +1,55 @@
 import json
 import os
 import pickle
-import unittest
 import warnings
 
 import numpy as np
 
-from audiomentations import AddBackgroundNoise, Compose
+from audiomentations import AddBackgroundNoise, Compose, Reverse
 from demo.demo import DEMO_DIR
 
 
-class TestAddBackgroundNoise(unittest.TestCase):
+class TestAddBackgroundNoise:
     def test_add_background_noise(self):
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 22500)).astype(np.float32)
         sample_rate = 44100
-        augmenter = Compose(
-            [
-                AddBackgroundNoise(
-                    sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    min_snr_in_db=15,
-                    max_snr_in_db=35,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+            min_snr_in_db=15,
+            max_snr_in_db=35,
+            p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         assert not np.allclose(samples, samples_out)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
 
     def test_add_background_noise_when_noise_sound_is_too_short(self):
         sample_rate = 44100
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 14 * sample_rate)).astype(
             np.float32
         )
-        augmenter = Compose(
-            [
-                AddBackgroundNoise(
-                    sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    min_snr_in_db=15,
-                    max_snr_in_db=35,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+            min_snr_in_db=15,
+            max_snr_in_db=35,
+            p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         assert not np.allclose(samples, samples_out)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
 
     def test_try_add_almost_silent_file(self):
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 30000)).astype(np.float32)
         sample_rate = 48000
-        augmenter = Compose(
-            [
-                AddBackgroundNoise(
-                    sounds_path=os.path.join(DEMO_DIR, "almost_silent"),
-                    min_snr_in_db=15,
-                    max_snr_in_db=35,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "almost_silent"),
+            min_snr_in_db=15,
+            max_snr_in_db=35,
+            p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         assert not np.allclose(samples, samples_out)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
 
     def test_try_add_digital_silence(self):
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 40000)).astype(np.float32)
@@ -86,7 +73,7 @@ class TestAddBackgroundNoise(unittest.TestCase):
             assert "is too silent to be added as noise" in str(w[-1].message)
 
         assert np.allclose(samples, samples_out)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
 
     def test_serialize_parameters(self):
         transform = AddBackgroundNoise(
@@ -102,19 +89,33 @@ class TestAddBackgroundNoise(unittest.TestCase):
         )
         pickled = pickle.dumps(transform)
         unpickled = pickle.loads(pickled)
-        self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)
+        assert transform.sound_file_paths == unpickled.sound_file_paths
 
     def test_absolute_option(self):
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 22500)).astype(np.float32)
         sample_rate = 44100
-        augmenter = Compose(
-            [
-                AddBackgroundNoise(
-                    sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    noise_rms="absolute",
-                    p=1.0,
-                )
-            ]
+        augmenter = AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+            noise_rms="absolute",
+            p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         assert not np.allclose(samples, samples_out)
+
+    def test_noise_transform(self):
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 22500)).astype(np.float32)
+        sample_rate = 44100
+        augmenter = AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+            p=1.0,
+        )
+        samples_out_without_transform = augmenter(
+            samples=samples, sample_rate=sample_rate
+        )
+        augmenter.freeze_parameters()
+        augmenter.noise_transform = Reverse()
+        samples_out_with_transform = augmenter(samples=samples, sample_rate=sample_rate)
+
+        assert not np.allclose(
+            samples_out_without_transform, samples_out_with_transform
+        )

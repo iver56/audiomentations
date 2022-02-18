@@ -206,7 +206,7 @@ See also https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping
 
 ## `GainTransition`
 
-_To be released in v0.22.0_
+_Added in v0.22.0_
 
 Gradually change the volume up or down over a random time span. Also known as
 fade in and fade out. The fade works on a logarithmic scale, which is natural to
@@ -388,7 +388,7 @@ Contributions are welcome!
 
 Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
 
-_The following table is valid for new versions of audiomentations, like >=0.21.0_
+_The following table is valid for new versions of audiomentations, like >=0.22.0_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
@@ -409,12 +409,12 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 | LoudnessNormalization | Yes, up to 5 channels |
 | LowPassFilter | Yes |
 | LowShelfFilter | Yes |
-| Mp3Compression | Yes, up to 2 channels (requires audiomentations>0.21.0) |
+| Mp3Compression | Yes, up to 2 channels |
 | Normalize | Yes |
 | PeakingFilter | Yes |
 | PitchShift | Yes |
 | PolarityInversion | Yes |
-| Resample | Yes, up to 2 channels (requires audiomentations>0.21.0) |
+| Resample | Yes, up to 2 channels |
 | Reverse | Yes |
 | Shift | Yes |
 | SpecChannelShuffle | Yes |
@@ -422,11 +422,13 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 | TanhDistortion | Yes |
 | TimeMask | Yes |
 | TimeStretch | Yes |
-| Trim | Yes, up to 2 channels (requires audiomentations>0.21.0) |
+| Trim | Yes, up to 2 channels |
 
 # Changelog
 
 ## Unreleased
+
+## v0.22.0 (2022-02-18)
 
 ### Added
 

@@ -439,6 +439,10 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 
 * Improve speed of `PitchShift` by 6-18% when the input audio is stereo
 
+### Removed
+
+* Remove support for librosa<=0.6.1
+
 ## v0.21.0 (2022-02-10)
 
 ### Added

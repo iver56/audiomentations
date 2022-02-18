@@ -192,7 +192,7 @@ class TestAddShortNoises(unittest.TestCase):
             np.float32
         )
         rms_before = calculate_rms(samples)
-        augmenter_relative_to_whole_file = Compose(
+        augmenter_relative_to_whole_input = Compose(
             [
                 AddShortNoises(
                     sounds_path=os.path.join(DEMO_DIR, "short_noises"),
@@ -200,7 +200,7 @@ class TestAddShortNoises(unittest.TestCase):
                     max_time_between_sounds=8.0,
                     min_snr_in_db=5,
                     max_snr_in_db=5,
-                    noise_rms="relative_to_whole_file",
+                    noise_rms="relative_to_whole_input",
                     p=1.0,
                 )
             ]
@@ -219,10 +219,10 @@ class TestAddShortNoises(unittest.TestCase):
         )
 
         samples_out_absolute = augmenter_absolute(samples=samples, sample_rate=sample_rate)
-        samples_out_relative_to_whole_file = augmenter_relative_to_whole_file(samples=samples, sample_rate=sample_rate)
+        samples_out_relative_to_whole_input = augmenter_relative_to_whole_input(samples=samples, sample_rate=sample_rate)
         self.assertEqual(samples_out_absolute.dtype, np.float32)
         self.assertEqual(samples_out_absolute.shape, samples.shape)
-        rms_after_relative_to_whole_path = calculate_rms(samples_out_relative_to_whole_file)
+        rms_after_relative_to_whole_path = calculate_rms(samples_out_relative_to_whole_input)
         rms_after_absolute = calculate_rms(samples_out_absolute)
         self.assertGreater(rms_after_absolute, rms_before)
         self.assertGreater(rms_after_relative_to_whole_path, rms_before)

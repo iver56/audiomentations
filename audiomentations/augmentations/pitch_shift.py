@@ -1,4 +1,5 @@
 import random
+import warnings
 
 import librosa
 import numpy as np
@@ -27,11 +28,19 @@ class PitchShift(BaseWaveformTransform):
             )
 
     def apply(self, samples, sample_rate):
-        if samples.ndim == 2:
-            # librosa's pitch_shift function doesn't natively support multichannel audio.
-            # Here we use a workaround that simply loops over the channels. It's not perfect.
-            # TODO: When librosa has closed the following issue, we can remove our workaround:
-            # https://github.com/librosa/librosa/issues/1085
+        try:
+            pitch_shifted_samples = librosa.effects.pitch_shift(
+                samples, sr=sample_rate, n_steps=self.parameters["num_semitones"]
+            )
+        except librosa.util.exceptions.ParameterError:
+            warnings.warn(
+                "Warning: You are probably using an old version of librosa. Upgrade to"
+                " 0.9.0 or later for better performance when applying PitchShift to"
+                " stereo audio."
+            )
+            # In librosa<0.9.0 pitch_shift doesn't natively support multichannel audio.
+            # Here we use a workaround that simply loops over the channels instead.
+            # TODO: Remove this workaround when we remove support for librosa<0.9.0
             pitch_shifted_samples = np.copy(samples)
             for i in range(samples.shape[0]):
                 pitch_shifted_samples[i] = librosa.effects.pitch_shift(
@@ -39,8 +48,5 @@ class PitchShift(BaseWaveformTransform):
                     sr=sample_rate,
                     n_steps=self.parameters["num_semitones"],
                 )
-        else:
-            pitch_shifted_samples = librosa.effects.pitch_shift(
-                samples, sr=sample_rate, n_steps=self.parameters["num_semitones"]
-            )
+
         return pitch_shifted_samples

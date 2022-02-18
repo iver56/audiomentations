@@ -184,7 +184,7 @@ class TestAddShortNoises(unittest.TestCase):
         unpickled = pickle.loads(pickled)
         self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)
 
-    def test_absolute_parameter(self):
+    def test_noise_rms_parameter(self):
         np.random.seed(80085)
         random.seed("ling")
         sample_rate = 44100
@@ -192,7 +192,21 @@ class TestAddShortNoises(unittest.TestCase):
             np.float32
         )
         rms_before = calculate_rms(samples)
-        augmenter = Compose(
+        augmenter_relative_to_whole_input = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=8.0,
+                    min_snr_in_db=5,
+                    max_snr_in_db=5,
+                    noise_rms="relative_to_whole_input",
+                    p=1.0,
+                )
+            ]
+        )
+
+        augmenter_absolute = Compose(
             [
                 AddShortNoises(
                     sounds_path=os.path.join(DEMO_DIR, "short_noises"),
@@ -203,12 +217,15 @@ class TestAddShortNoises(unittest.TestCase):
                 )
             ]
         )
-        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(samples_out.shape, samples.shape)
 
-        rms_after = calculate_rms(samples_out)
-        self.assertGreater(rms_after, rms_before)
+        samples_out_absolute = augmenter_absolute(samples=samples, sample_rate=sample_rate)
+        samples_out_relative_to_whole_input = augmenter_relative_to_whole_input(samples=samples, sample_rate=sample_rate)
+        self.assertEqual(samples_out_absolute.dtype, np.float32)
+        self.assertEqual(samples_out_absolute.shape, samples.shape)
+        rms_after_relative_to_whole_path = calculate_rms(samples_out_relative_to_whole_input)
+        rms_after_absolute = calculate_rms(samples_out_absolute)
+        self.assertGreater(rms_after_absolute, rms_before)
+        self.assertGreater(rms_after_relative_to_whole_path, rms_before)
 
     def test_include_silence_in_noise_rms_calculation(self):
         np.random.seed(420)

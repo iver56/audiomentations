@@ -56,25 +56,25 @@ class AddShortNoises(BaseWaveformTransform):
         :param max_time_between_sounds: Maximum pause time between the added sounds/noises
         :param noise_rms: To choose in ["relative", "absolute", "relative_to_whole_input"].
             Defines how the noises will be added to the audio input.
-            "relative": the rms value of the added noise will be proportional to the rms value of
+            "relative": the RMS value of the added noise will be proportional to the RMS value of
             the input sound calculated only for the samples where the noise is added.
-            "absolute": the added noises will have a rms independent of the rms of the input audio
+            "absolute": the added noises will have a RMS independent of the RMS of the input audio
             file.
-            "relative_to_whole_input": the rms of the added noises will be
-            proportional to the rms of the input sound calculated for the whole file.
+            "relative_to_whole_input": the RMS of the added noises will be
+            proportional to the RMS of the whole input sound.
         :param min_absolute_noise_rms_db: Is only used if noise_rms is set to "absolute". It is
-            the minimum rms value in dB that the added noise can take. The lower the rms is, the
+            the minimum RMS value in dB that the added noise can take. The lower the RMS is, the
             lower will the added sound be.
         :param max_absolute_noise_rms_db: Is only used if noise_rms is set to "absolute". It is
-            the maximum rms value in dB that the added noise can take. Note that this value
+            the maximum RMS value in dB that the added noise can take. Note that this value
             can not exceed 0.
         : param add_all_noises_with_same_level: add all the short noises with the same snr.
             The latter will be included between min_snr_in_db and max_snr_in_db. If
-            noise_rms == "absolute", the rms is used instead of the snr.This snr value
+            noise_rms == "absolute", the RMS is used instead of the snr.This snr value
             will change each time the parameters of the transform are randomized.
-        :param include_silence_in_noise_rms_estimation: A boolean. It chooses how the rms of
+        :param include_silence_in_noise_rms_estimation: A boolean. It chooses how the RMS of
             the noises to be added will be calculated. If this option is set to False, the silence
-            in the noise files will be removed before the rms calculation. It is useful for
+            in the noise files will be removed before the RMS calculation. It is useful for
             non-stationary noises where silent periods occur.
         :param burst_probability: The probability of adding an extra sound/noise that overlaps
         :param min_pause_factor_during_burst: Min value of how far into the current sound (as

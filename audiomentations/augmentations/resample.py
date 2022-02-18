@@ -13,6 +13,8 @@ class Resample(BaseWaveformTransform):
     sampling rate and vice versa to do upsampling only.
     """
 
+    supports_multichannel = True
+
     def __init__(self, min_sample_rate=8000, max_sample_rate=44100, p=0.5):
         """
         :param min_sample_rate: int, Minimum sample rate

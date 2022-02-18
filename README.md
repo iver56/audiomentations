@@ -441,7 +441,7 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 
 ### Removed
 
-* Remove support for librosa<=0.6.1
+* Remove support for librosa<=0.7.2
 
 ## v0.21.0 (2022-02-10)
 

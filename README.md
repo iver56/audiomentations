@@ -388,7 +388,7 @@ Contributions are welcome!
 
 Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
 
-_The following table is valid for new versions of audiomentations, like >=0.21.0_
+_The following table is valid for new versions of audiomentations, like >0.21.0_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
@@ -421,7 +421,7 @@ _The following table is valid for new versions of audiomentations, like >=0.21.0
 | TanhDistortion | Yes |
 | TimeMask | Yes |
 | TimeStretch | Yes |
-| Trim | No, 1D only |
+| Trim | Yes |
 
 # Changelog
 

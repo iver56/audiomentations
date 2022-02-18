@@ -34,9 +34,9 @@ class PitchShift(BaseWaveformTransform):
             )
         except librosa.util.exceptions.ParameterError:
             warnings.warn(
-                "Warning: You are probably using an old version of librosa. Upgrade to"
-                " 0.9.0 or later for better performance when applying PitchShift to"
-                " stereo audio."
+                "Warning: You are probably using an old version of librosa. Upgrade"
+                " librosa to 0.9.0 or later for better performance when applying"
+                " PitchShift to stereo audio."
             )
             # In librosa<0.9.0 pitch_shift doesn't natively support multichannel audio.
             # Here we use a workaround that simply loops over the channels instead.

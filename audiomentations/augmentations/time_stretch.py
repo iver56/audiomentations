@@ -1,4 +1,5 @@
 import random
+import warnings
 
 import librosa
 import numpy as np
@@ -30,10 +31,14 @@ class TimeStretch(BaseWaveformTransform):
             self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
 
     def apply(self, samples, sample_rate):
-        if samples.ndim == 2:
-            # librosa's pitch_shift function doesn't natively support multichannel audio.
-            # Here we use a workaround that simply loops over the channels. It's not perfect.
-            # TODO: When librosa natively supports multichannel audio, remove our workaround
+        try:
+            time_stretched_samples = librosa.effects.time_stretch(
+                samples, rate=self.parameters["rate"]
+            )
+        except librosa.util.exceptions.ParameterError:
+            # In librosa<0.9.0 time_stretch doesn't natively support multichannel audio.
+            # Here we use a workaround that simply loops over the channels instead.
+            # TODO: Remove this workaround when we remove support for librosa<0.9.0
             time_stretched_channels = []
             for i in range(samples.shape[0]):
                 time_stretched_samples = librosa.effects.time_stretch(
@@ -43,10 +48,7 @@ class TimeStretch(BaseWaveformTransform):
             time_stretched_samples = np.array(
                 time_stretched_channels, dtype=samples.dtype
             )
-        else:
-            time_stretched_samples = librosa.effects.time_stretch(
-                samples, rate=self.parameters["rate"]
-            )
+
         if self.leave_length_unchanged:
             # Apply zero padding if the time stretched audio is not long enough to fill the
             # whole space, or crop the time stretched audio if it ended up too long.

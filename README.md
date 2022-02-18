@@ -388,7 +388,7 @@ Contributions are welcome!
 
 Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
 
-_The following table is valid for new versions of audiomentations, like >0.21.0_
+_The following table is valid for new versions of audiomentations, like >=0.21.0_
 
 | Transform | Supports multichannel audio? |
 | --------- | ---------------------------- |
@@ -403,6 +403,7 @@ _The following table is valid for new versions of audiomentations, like >0.21.0_
 | ClippingDistortion | Yes |
 | FrequencyMask | Yes |
 | Gain | Yes |
+| GainTransition | Yes |
 | HighPassFilter | Yes |
 | HighShelfFilter | Yes |
 | LoudnessNormalization | Yes, up to 5 channels |
@@ -421,7 +422,7 @@ _The following table is valid for new versions of audiomentations, like >0.21.0_
 | TanhDistortion | Yes |
 | TimeMask | Yes |
 | TimeStretch | Yes |
-| Trim | Yes |
+| Trim | Yes, up to 2 channels (requires audiomentations>0.21.0) |
 
 # Changelog
 
@@ -431,6 +432,11 @@ _The following table is valid for new versions of audiomentations, like >0.21.0_
 
 * Implement `GainTransition`
 * Add support for librosa 0.9
+* Add support for stereo audio in `Trim`
+
+### Changed
+
+* Improve speed of `PitchShift` by 6-18% when the input audio is stereo
 
 ## v0.21.0 (2022-02-10)
 

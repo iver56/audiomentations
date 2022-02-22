@@ -20,13 +20,21 @@ class Padding(BaseWaveformTransform):
 
     def apply(self, samples, sample_rate):
         orig_len = samples.shape[-1]
+        if len(samples.shape) > 1:
+            n_channels = samples.shape[0]
+        else:
+            n_channels = 1
         skip_idx = np.random.randint(1, orig_len-1)
         r = np.random.random()
         if r < 0.5:
             samples = samples[..., :skip_idx]
         else:
             samples = samples[..., -skip_idx:]
-        pad_width = orig_len - samples.shape[-1]
+            
+        if n_channels > 1:
+            pad_width =  ((0, 0)*(n_channels-1), (orig_len, orig_len - samples.shape[-1]))
+        else:
+            pad_width = orig_len, orig_len - samples.shape[-1]
         samples = np.pad(samples, pad_width, self.mode)
         if r < 0.5:
             samples = samples[..., :orig_len]

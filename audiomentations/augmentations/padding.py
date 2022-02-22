@@ -16,7 +16,7 @@ class Padding(BaseWaveformTransform):
 
     def apply(self, samples, sample_rate):
         orig_len = len(samples)
-        skip_idx = np.random.randint(orig_len-1)
+        skip_idx = np.random.randint(1, orig_len-1)
         r = np.random.random()
         if r < 0.5:
             samples = samples[:skip_idx]

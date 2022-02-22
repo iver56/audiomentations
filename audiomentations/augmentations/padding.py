@@ -15,7 +15,7 @@ class Padding(BaseWaveformTransform):
         self.mode = mode
 
     def apply(self, samples, sample_rate):
-        orig_len = len(samples)
+        orig_len = samples.shape[0]
         skip_idx = np.random.randint(1, orig_len-1)
         r = np.random.random()
         if r < 0.5:

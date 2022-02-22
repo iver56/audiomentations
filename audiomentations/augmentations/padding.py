@@ -10,13 +10,22 @@ class Padding(BaseWaveformTransform):
     
     supports_multichannel = True
     
-    def __init__(self, mode='constant', p=0.5):
+    def __init__(self, mode='constant', min_fraction=0.1, max_fraction=0.5, p=0.5):
         """
         :param mode: Padding mode. Must be one of 'constant', 'edge', 'wrap', 'reflect'
         :param p: The probability of applying this transform
         """
         super().__init__(p)
+    
+        assert mode == 'constant' or mode == 'edge' or mode == 'wrap' \
+                or mode == 'reflect'
+        assert min_fraction < 1. and max_fraction < 1.
+        assert min_fraction > 0 and max_fraction > 0    
+        assert min_fraction < max_fraction
+         
         self.mode = mode
+        self.min_fraction = min_fraction
+        self.max_fraction = max_fraction
 
     def apply(self, samples, sample_rate):
         orig_len = samples.shape[-1]
@@ -24,7 +33,15 @@ class Padding(BaseWaveformTransform):
             n_channels = samples.shape[0]
         else:
             n_channels = 1
-        skip_idx = np.random.randint(1, orig_len-1)
+        
+        
+        
+        a = int(self.min_fraction*orig_len)
+        b = int(self.max_fraction*orig_len)
+        
+         
+        
+        skip_idx = np.random.randint(a, b)
         r = np.random.random()
         if r < 0.5:
             samples = samples[..., :skip_idx]

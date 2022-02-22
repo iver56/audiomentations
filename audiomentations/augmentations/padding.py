@@ -11,6 +11,10 @@ class Padding(BaseWaveformTransform):
     supports_multichannel = True
     
     def __init__(self, mode='constant', p=0.5):
+        """
+        :param mode: Padding mode. Must be one of 'constant', 'edge', 'wrap', 'reflect'
+        :param p: The probability of applying this transform
+        """
         super().__init__(p)
         self.mode = mode
 

@@ -49,7 +49,7 @@ class Padding(BaseWaveformTransform):
         if n_channels > 1:
             pad_width =  ((0, 0)*(n_channels-1), (orig_len, orig_len - samples.shape[-1]))
         else:
-            pad_width = orig_len, orig_len - samples.shape[-1]
+            pad_width = orig_len - samples.shape[-1]
         samples = np.pad(samples, pad_width, self.mode)
         if r < 0.5:
             samples = samples[..., :orig_len]

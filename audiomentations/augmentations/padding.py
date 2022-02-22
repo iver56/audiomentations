@@ -10,11 +10,22 @@ class Padding(BaseWaveformTransform):
     
     supports_multichannel = True
     
-    def __init__(self, pad_width, mode='constant', p=0.5):
+    def __init__(self, mode='constant', p=0.5):
         super().__init__(p)
-        self.pad_width = pad_width
         self.mode = mode
 
     def apply(self, samples, sample_rate):
-        samples = np.pad(samples, self.pad_width, self.mode)
+        orig_len = len(samples)
+        skip_idx = np.random.randint(orig_len-1)
+        r = np.random.random()
+        if r < 0.5:
+            sample = sample[:skip_idx]
+        else:
+            sample = sample[-skip_idx:]
+        pad_width = orig_len - len(samples)
+        samples = np.pad(samples, pad_width, self.mode)
+        if r < 0.5:
+            samples = samples[:orig_len]
+        else:
+            samples = samples[-orig_len:]
         return samples

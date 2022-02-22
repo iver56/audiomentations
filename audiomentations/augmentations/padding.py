@@ -13,6 +13,8 @@ class Padding(BaseWaveformTransform):
     def __init__(self, mode='constant', min_fraction=0.1, max_fraction=0.5, p=0.5):
         """
         :param mode: Padding mode. Must be one of 'constant', 'edge', 'wrap', 'reflect'
+        :param min_fraction: Minimum part of signal to be padded
+        :param max_fraction: Maximum part of signal to be padded
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -34,12 +36,8 @@ class Padding(BaseWaveformTransform):
         else:
             n_channels = 1
         
-        
-        
         a = int(self.min_fraction*orig_len)
         b = int(self.max_fraction*orig_len)
-        
-         
         
         skip_idx = np.random.randint(a, b)
         r = np.random.random()

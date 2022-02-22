@@ -36,7 +36,7 @@ class Padding(BaseWaveformTransform):
         else:
             n_channels = 1
         
-        a = int(np.ceil(self.min_fraction*orig_len))
+        a = int(np.ceil(self.min_fraction*orig_len) + 1)
         b = int(np.floor(self.max_fraction*orig_len))
         
         skip_idx = np.random.randint(a, b)

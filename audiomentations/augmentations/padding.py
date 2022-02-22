@@ -36,10 +36,10 @@ class Padding(BaseWaveformTransform):
         else:
             n_channels = 1
         
-        a = int(self.min_fraction*orig_len + 1)
-        b = int(self.max_fraction*orig_len)
+        a = self.min_fraction*orig_len
+        b = self.max_fraction*orig_len
         
-        skip_idx = np.random.randint(a, b)
+        skip_idx = int(np.random.uniform(a, b))
         r = np.random.random()
         if r < 0.5:
             samples = samples[..., :skip_idx]

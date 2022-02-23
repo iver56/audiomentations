@@ -48,10 +48,16 @@ class Padding(BaseWaveformTransform):
             samples = samples[..., -skip_idx:]
        
         pad_width = orig_len - samples.shape[-1]
+        
         if n_channels > 1:
             if r < 0.5:
                 pad_width =  ((0, 0)*(n_channels-1), (pad_width, 0))
             else:
                 pad_width =  ((0, 0)*(n_channels-1), (0, pad_width))
+        else:
+            if r < 0.5:
+                pad_width = (pad_width, 0)
+            else:
+                pad_width = (0, pad_width)
         samples = np.pad(samples, pad_width, self.mode)
         return samples

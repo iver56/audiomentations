@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 import pytest
 
-from audiomentations import AddImpulseResponse, ApplyImpulseResponse
+from audiomentations import ApplyImpulseResponse
 from audiomentations.core.composition import Compose
 from demo.demo import DEMO_DIR
 
@@ -86,7 +86,3 @@ class TestImpulseResponse:
         pickled = pickle.dumps(add_ir_transform)
         unpickled = pickle.loads(pickled)
         assert add_ir_transform.ir_files == unpickled.ir_files
-
-    def test_legacy_class_warning(self):
-        with pytest.warns(DeprecationWarning):
-            AddImpulseResponse(ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0)

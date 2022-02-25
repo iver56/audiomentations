@@ -115,7 +115,7 @@ _Added in v0.7.0_
 
 Add gaussian noise to the samples with random Signal to Noise Ratio (SNR)
 
-## `AddImpulseResponse`
+## `ApplyImpulseResponse`
 
 _Added in v0.7.0_ 
 
@@ -391,6 +391,10 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 # Changelog
 
 ## Unreleased
+
+### Removed
+
+* Remove the deprecated `AddImpulseResponse` alias. Use `ApplyImpulseResponse` instead.
 
 ## v0.22.0 (2022-02-18)
 

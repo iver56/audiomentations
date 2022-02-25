@@ -91,15 +91,3 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         )
         del state["_ApplyImpulseResponse__load_ir"]
         return state
-
-
-class AddImpulseResponse(ApplyImpulseResponse):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        warnings.warn(
-            "The AddImpulseResponse class has been renamed to ApplyImpulseResponse "
-            "This alias will be removed in future versions."
-            " Use ApplyImpulseResponse directly instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )

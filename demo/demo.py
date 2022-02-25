@@ -158,7 +158,7 @@ if __name__ == "__main__":
                 p=1.0, ir_path=os.path.join(DEMO_DIR, "ir"), leave_length_unchanged=True
             ),
             "num_runs": 1,
-            "name": "AddImpulseResponseLeaveLengthUnchanged",
+            "name": "ApplyImpulseResponseLeaveLengthUnchanged",
         },
         {
             "instance": AddShortNoises(

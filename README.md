@@ -4,7 +4,7 @@
 
 A Python library for audio data augmentation. Inspired by
 [albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
-CPU. Supports mono audio and [partially multichannel audio](#multichannel-audio). Can be
+CPU. Supports mono audio and [multichannel audio](#multichannel-audio). Can be
 integrated in training pipelines in e.g. Tensorflow/Keras or Pytorch. Has helped people get
 world-class results in Kaggle competitions. Is used by companies making next-generation audio
 products.
@@ -386,43 +386,7 @@ Contributions are welcome!
 
 # Multichannel audio
 
-Most transforms, but not all, support 2D numpy arrays with shapes like `(num_channels, num_samples)`
-
-_The following table is valid for new versions of audiomentations, like >=0.22.0_
-
-| Transform | Supports multichannel audio? |
-| --------- | ---------------------------- |
-| AddBackgroundNoise | No, 1D only |
-| AddGaussianNoise | Yes |
-| AddGaussianSNR | Yes |
-| AddShortNoises | No, 1D only |
-| ApplyImpulseResponse | Yes |
-| BandPassFilter | Yes |
-| BandStopFilter | Yes |
-| Clip | Yes |
-| ClippingDistortion | Yes |
-| FrequencyMask | Yes |
-| Gain | Yes |
-| GainTransition | Yes |
-| HighPassFilter | Yes |
-| HighShelfFilter | Yes |
-| LoudnessNormalization | Yes, up to 5 channels |
-| LowPassFilter | Yes |
-| LowShelfFilter | Yes |
-| Mp3Compression | Yes, up to 2 channels |
-| Normalize | Yes |
-| PeakingFilter | Yes |
-| PitchShift | Yes |
-| PolarityInversion | Yes |
-| Resample | Yes, up to 2 channels |
-| Reverse | Yes |
-| Shift | Yes |
-| SpecChannelShuffle | Yes |
-| SpecFrequencyMask | Yes |
-| TanhDistortion | Yes |
-| TimeMask | Yes |
-| TimeStretch | Yes |
-| Trim | Yes, up to 2 channels |
+As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` support not only mono audio (1-dimensional numpy arrays), but also stereo audio, i.e. 2D arrays with shape like `(num_channels, num_samples)`
 
 # Changelog
 

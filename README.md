@@ -397,6 +397,7 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 ### Removed
 
 * Remove the deprecated `AddImpulseResponse` alias. Use `ApplyImpulseResponse` instead.
+* Removed support for the legacy parameters `min_SNR` and `max_SNR` in `AddGaussianSNR`
 
 ## v0.22.0 (2022-02-18)
 

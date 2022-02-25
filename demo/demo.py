@@ -38,6 +38,7 @@ from audiomentations import (
     OneOf,
     BandStopFilter,
     GainTransition,
+    Padding,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
@@ -230,6 +231,18 @@ if __name__ == "__main__":
             "name": "Mp3CompressionPydub",
         },
         {"instance": Normalize(p=1.0), "num_runs": 1},
+        {
+            "instance": Padding(mode="constant", p=1.0),
+            "num_runs": 5,
+            "name": "PaddingConstant",
+        },
+        {"instance": Padding(mode="edge", p=1.0), "num_runs": 5, "name": "PaddingEdge"},
+        {"instance": Padding(mode="wrap", p=1.0), "num_runs": 5, "name": "PaddingWrap"},
+        {
+            "instance": Padding(mode="reflect", p=1.0),
+            "num_runs": 5,
+            "name": "PaddingReflect",
+        },
         {"instance": PeakingFilter(p=1.0), "num_runs": 5},
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
         {"instance": Resample(p=1.0), "num_runs": 5},

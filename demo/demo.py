@@ -140,12 +140,7 @@ if __name__ == "__main__":
         {
             "instance": AddGaussianSNR(p=1.0),
             "num_runs": 5,
-            "name": "AddGaussianSNRLegacy",
-        },
-        {
-            "instance": AddGaussianSNR(min_snr_in_db=0, max_snr_in_db=35, p=1.0),
-            "num_runs": 5,
-            "name": "AddGaussianSNRNew",
+            "name": "AddGaussianSNR",
         },
         {
             "instance": ApplyImpulseResponse(

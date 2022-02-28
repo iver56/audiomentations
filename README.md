@@ -402,6 +402,15 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+### Added
+
+* Add `Padding` transform
+
+### Changed
+
+* Not specifying a value for `leave_length_unchanged` in `AddImpulseResponse` now emits
+ a warning, as the default value will change from `False` to `True` in a future version.
+
 ### Removed
 
 * Remove the deprecated `AddImpulseResponse` alias. Use `ApplyImpulseResponse` instead.

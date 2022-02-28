@@ -146,7 +146,9 @@ if __name__ == "__main__":
         },
         {
             "instance": ApplyImpulseResponse(
-                p=1.0, ir_path=os.path.join(DEMO_DIR, "ir"), leave_length_unchanged=False
+                p=1.0,
+                ir_path=os.path.join(DEMO_DIR, "ir"),
+                leave_length_unchanged=False,
             ),
             "num_runs": 1,
             "name": "ApplyImpulseResponseWithTail",
@@ -234,16 +236,29 @@ if __name__ == "__main__":
         },
         {"instance": Normalize(p=1.0), "num_runs": 1},
         {
-            "instance": Padding(mode="constant", p=1.0),
+            "instance": Padding(mode="silence", pad_section="end", p=1.0),
             "num_runs": 5,
-            "name": "PaddingConstant",
+            "name": "PaddingSilenceEnd",
         },
-        {"instance": Padding(mode="edge", p=1.0), "num_runs": 5, "name": "PaddingEdge"},
-        {"instance": Padding(mode="wrap", p=1.0), "num_runs": 5, "name": "PaddingWrap"},
         {
-            "instance": Padding(mode="reflect", p=1.0),
+            "instance": Padding(mode="wrap", pad_section="end", p=1.0),
             "num_runs": 5,
-            "name": "PaddingReflect",
+            "name": "PaddingWrapEnd",
+        },
+        {
+            "instance": Padding(mode="reflect", pad_section="end", p=1.0),
+            "num_runs": 5,
+            "name": "PaddingReflectEnd",
+        },
+        {
+            "instance": Padding(mode="silence", pad_section="start", p=1.0),
+            "num_runs": 5,
+            "name": "PaddingSilenceStart",
+        },
+        {
+            "instance": Padding(mode="wrap", pad_section="start", p=1.0),
+            "num_runs": 5,
+            "name": "PaddingWrapStart",
         },
         {"instance": PeakingFilter(p=1.0), "num_runs": 5},
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},

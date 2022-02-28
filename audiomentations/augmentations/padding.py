@@ -1,63 +1,88 @@
+import random
+
 import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
+
 class Padding(BaseWaveformTransform):
     """
-    Apply padding to the audio signal -  take a fraction of the end or the start of the audio
-    and treat that part as padding.
+    Apply padding to the audio signal - take a fraction of the end or the start of the
+    audio and replace that part as padding. This can be useful for preparing models with
+    constant input length for padded inputs.
     """
-    
+
     supports_multichannel = True
-    
-    def __init__(self, mode='constant', min_fraction=0.1, max_fraction=0.5, p=0.5):
+
+    def __init__(
+        self,
+        mode="silence",
+        min_fraction=0.01,
+        max_fraction=0.7,
+        pad_section="end",
+        p=0.5,
+    ):
         """
-        :param mode: Padding mode. Must be one of 'constant', 'edge', 'wrap', 'reflect'
-        :param min_fraction: Minimum part of signal to be padded
-        :param max_fraction: Maximum part of signal to be padded
+        :param mode: Padding mode. Must be one of "silence", "wrap", "reflect"
+        :param min_fraction: Minimum fraction of the signal duration to be padded
+        :param max_fraction: Maximum fraction of the signal duration to be padded
+        :param pad_section: Which part of the signal should be replaced with padding:
+            "start" or "end"
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-    
-        assert mode == 'constant' or mode == 'edge' or mode == 'wrap' \
-                or mode == 'reflect'
-        assert min_fraction < 1. and max_fraction < 1.
-        assert min_fraction > 0 and max_fraction > 0    
-        assert min_fraction < max_fraction
-         
+
+        assert mode in ("silence", "wrap", "reflect")
         self.mode = mode
+
+        assert max_fraction <= 1.0
+        assert min_fraction >= 0
+        assert min_fraction <= max_fraction
         self.min_fraction = min_fraction
         self.max_fraction = max_fraction
 
+        assert pad_section in ("start", "end")
+        self.pad_section = pad_section
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+        if self.parameters["should_apply"]:
+            input_length = samples.shape[-1]
+            self.parameters["padding_length"] = random.randint(
+                int(round(self.min_fraction * input_length)),
+                int(round(self.max_fraction * input_length)),
+            )
+
     def apply(self, samples, sample_rate):
-        orig_len = samples.shape[-1]
-        if len(samples.shape) > 1:
-            n_channels = samples.shape[0]
-        else:
-            n_channels = 1
-        
-        a = self.min_fraction*orig_len
-        b = self.max_fraction*orig_len
-        
-        skip_idx = int(np.ceil(np.random.uniform(a, b)))
-   
-        r = np.random.random()
-        if r < 0.5:
-            samples = samples[..., :skip_idx]
-        else:
-            samples = samples[..., -skip_idx:]
-       
-        pad_width = orig_len - samples.shape[-1]
-        
-        if n_channels > 1:
-            if r < 0.5:
-                pad_width =  ((0, 0)*(n_channels-1), (pad_width, 0))
+        padding_length = self.parameters["padding_length"]
+        if padding_length == 0:
+            return samples
+
+        untouched_length = samples.shape[-1] - padding_length
+
+        if self.mode == "silence":
+            samples = np.copy(samples)
+            if self.pad_section == "start":
+                samples[..., :padding_length] = 0.0
             else:
-                pad_width =  ((0, 0)*(n_channels-1), (0, pad_width))
+                samples[..., -padding_length:] = 0.0
         else:
-            if r < 0.5:
-                pad_width = (pad_width, 0)
+            if samples.ndim == 1:
+                if self.pad_section == "start":
+                    pad_width = (padding_length, 0)
+                else:
+                    pad_width = (0, padding_length)
             else:
-                pad_width = (0, pad_width)
-        samples = np.pad(samples, pad_width, self.mode)
+                if self.pad_section == "start":
+                    pad_width = ((0, 0), (padding_length, 0))
+                else:
+                    pad_width = ((0, 0), (0, padding_length))
+
+            if self.pad_section == "start":
+                samples = samples[..., -untouched_length:]
+            else:
+                samples = samples[..., :untouched_length]
+
+            samples = np.pad(samples, pad_width, self.mode)
+
         return samples

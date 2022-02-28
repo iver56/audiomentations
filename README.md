@@ -320,6 +320,14 @@ widely used in the visual domain. This can be relevant in the context of audio
 classification. It was successfully applied in the paper
 [AudioCLIP: Extending CLIP to Image, Text and Audio](https://arxiv.org/pdf/2106.13043.pdf).
 
+## `RoomSimulator`
+
+_To be added in v0.23.0_
+
+Shoebox Room simulator using `pyroomacoustics`. It simulates a shoebox room with parameters its size,
+the position of a source in the room, the position of a microphone in the room, and the average absorption
+coefficient. This is useful for artificially simulating reverberation.
+
 ## `Shift`
 
 _Added in v0.5.0_

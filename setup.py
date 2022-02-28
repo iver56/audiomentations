@@ -40,6 +40,7 @@ setup(
             "lameenc>=1.2.0,<2",
             "pydub>=0.22.0,<1",
             "pyloudnorm>=0.1.0",
+            "pyroomacoustics>=0.6.0",
         ]
     },
     python_requires=">=3.6",

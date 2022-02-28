@@ -8,8 +8,8 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 class Padding(BaseWaveformTransform):
     """
     Apply padding to the audio signal - take a fraction of the end or the start of the
-    audio and replace that part as padding. This can be useful for preparing models with
-    constant input length for padded inputs.
+    audio and replace that part with padding. This can be useful for preparing ML models
+    with constant input length for padded inputs.
     """
 
     supports_multichannel = True

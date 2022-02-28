@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import time
 from scipy.io import wavfile
+from tqdm import tqdm
 
 from audiomentations import (
     AddGaussianNoise,
@@ -145,9 +146,10 @@ if __name__ == "__main__":
         },
         {
             "instance": ApplyImpulseResponse(
-                p=1.0, ir_path=os.path.join(DEMO_DIR, "ir")
+                p=1.0, ir_path=os.path.join(DEMO_DIR, "ir"), leave_length_unchanged=False
             ),
             "num_runs": 1,
+            "name": "ApplyImpulseResponseWithTail",
         },
         {
             "instance": ApplyImpulseResponse(
@@ -307,7 +309,7 @@ if __name__ == "__main__":
         )
         execution_times = {}
 
-        for transform in transforms:
+        for transform in tqdm(transforms):
             augmenter = transform["instance"]
             run_name = (
                 transform.get("name")

@@ -7,6 +7,7 @@ from audiomentations import (
     BandPassFilter,
     BandStopFilter,
     HighPassFilter,
+    LowPassFilter,
     PeakingFilter,
     LowShelfFilter,
     HighShelfFilter,
@@ -422,6 +423,111 @@ class TestHighShelfFilterTransform:
                 plt.show()
             assert np.allclose(channel, processed_samples)
 
+class TestLowPassFilterTransform:
+    @pytest.mark.parametrize("cutoff_frequency", [1000])
+    @pytest.mark.parametrize("rolloff", [6, 24])
+    @pytest.mark.parametrize("zero_phase", [False, True])
+    def test_one_single_input(self, cutoff_frequency, rolloff, zero_phase):
+
+        sample_rate = 8000
+
+        # Parameters for computing periodograms.
+        # When examining lower frequencies we need to have
+        # a high nfft number.
+
+        nfft = 2048 * 2
+        nperseg = 128
+
+        samples = get_chirp_test(sample_rate, 10)
+
+        # Expected db drop at fc
+        if zero_phase:
+            expected_db_drop = 6
+        else:
+            expected_db_drop = 3
+
+        if zero_phase and rolloff % 12 != 0:
+            with pytest.raises(AssertionError):
+                augment = LowPassFilter(
+                    min_cutoff_freq=cutoff_frequency,
+                    max_cutoff_freq=cutoff_frequency,
+                    min_rolloff=rolloff,
+                    max_rolloff=rolloff,
+                    zero_phase=zero_phase,
+                    p=1.0,
+                )
+            return
+        else:
+            augment = LowPassFilter(
+                min_cutoff_freq=cutoff_frequency,
+                max_cutoff_freq=cutoff_frequency,
+                min_rolloff=rolloff,
+                max_rolloff=rolloff,
+                zero_phase=zero_phase,
+                p=1.0,
+            )
+
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        # Compute periodograms
+        wx, samples_pxx = scipy.signal.welch(
+            samples,
+            fs=sample_rate,
+            nfft=nfft,
+            nperseg=nperseg,
+            scaling="spectrum",
+            window="hann",
+        )
+        _, processed_samples_pxx = scipy.signal.welch(
+            processed_samples,
+            fs=sample_rate,
+            nperseg=nperseg,
+            nfft=nfft,
+            scaling="spectrum",
+            window="hann",
+        )
+
+        if DEBUG:
+            import matplotlib.pyplot as plt
+
+            plt.title(
+                f"Filter type: High Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+            )
+            plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
+            plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
+            plt.legend(["Input signal", f"Lowpassed at f_c={cutoff_frequency:.2f}"])
+            plt.axvline(cutoff_frequency, color="red", linestyle=":")
+            plt.xlabel("Frequency (Hz)")
+            plt.ylabel("Magnitude (dB)")
+            plt.show()
+
+        assert processed_samples.shape == samples.shape
+        assert processed_samples.dtype == np.float32
+
+        frequencies_of_interest = np.array(
+            [0, cutoff_frequency, cutoff_frequency*2]
+        )
+        expected_differences = np.array(
+            [0.0, expected_db_drop, expected_db_drop + rolloff]
+        )
+
+        # Tolerances for the differences in db
+        tolerances = np.array([1.0, 2.0, 5.0])
+
+        for n, freq in enumerate(frequencies_of_interest):
+            input_value_db = 10 * np.log10(
+                samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
+
+            output_value_db = 10 * np.log10(
+                processed_samples_pxx[int(np.round(nfft / sample_rate * freq))]
+            )
+
+            assert np.isclose(
+                input_value_db - output_value_db,
+                expected_differences[n],
+                atol=tolerances[n],
+            )
 
 class TestHighPassFilterTransform:
     @pytest.mark.parametrize("cutoff_frequency", [1000])

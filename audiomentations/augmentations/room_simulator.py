@@ -7,6 +7,7 @@ except ImportError:
     raise
 
 
+from typing import Optional
 import numpy as np
 import random
 
@@ -30,8 +31,8 @@ class RoomSimulator(BaseWaveformTransform):
         max_size_y: float = 1.0,
         min_size_z: float = 1.0,
         max_size_z: float = 1.0,
-        min_absorption_value: float = 0.15,
-        max_absorption_value: float = 0.45,
+        min_absorption_value_or_rt60: float = 0.15,
+        max_absorption_value_or_rt60: float = 0.45,
         min_source_x: float = 0.5,
         max_source_x: float = 0.5,
         min_source_y: float = 0.5,
@@ -44,9 +45,10 @@ class RoomSimulator(BaseWaveformTransform):
         max_mic_azimuth: float = 3.1419,
         min_mic_elevation: float = 0.0,
         max_mic_elevation: float = 3.1419,
-        absorption_mode: float = "absorption",
-        use_ray_tracing: float = False,
+        calculate_by_absorption_or_rt60: float = "absorption",
+        use_ray_tracing: float = True,
         max_order: int or None = None,
+        leave_length_unchanged: Optional[bool] = None,
         p: float = 0.5,
     ):
         """
@@ -57,9 +59,10 @@ class RoomSimulator(BaseWaveformTransform):
         :param max_size_y: Maximum depth of the room in meters
         :param min_size_z: Minimum height (z coordinate) of the room in meters
         :param max_size_z: Maximum height of the room in meters
-        :param min_absorption_value: Minimum absorption value of the room
-            (either average surface absorption coefficient or reverberation time in seconds)
-        :param min_absorption_value: Maximum absorption value of the room
+        :param min_absorption_value_or_rt60: Minimum absorption or rt60 of the room
+            (either average surface absorption coefficient or reverberation time in seconds
+            depending on the value of `calculate_by_absorption_or_rt60`)
+        :param max_absorption_value_or_rt60: Minimum absorption or rt60 of the room
         :param min_source_x: Minimum x location of the source (meters)
         :param max_source_x: Minimum x location of the source (meters)
         :param min_source_y:
@@ -75,22 +78,26 @@ class RoomSimulator(BaseWaveformTransform):
                                 Minimum elevation of the microphon relative to the source, in
                                 radians.
         :param max_mic_elevation:
-        :param use_ray_tracing: Whether to use ray_tracing or not (slower but more accurate)
+        :param use_ray_tracing: Whether to use ray_tracing or not (slower but much more accurate).
+                          Disable this if you need speed but do not really care for incorrect results.
         :param max_order: Maximum order of the Image Source Model. Higher is more accurate but
                           slower. Leave this None if you supply reverberation times instead.
+        :param leave_length_unchanged: When set to True, the tail of the sound (e.g. reverb at
+            the end) will be chopped off so that the length of the output is equal to the
+            length of the input.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
 
-        assert absorption_mode in [
+        assert calculate_by_absorption_or_rt60 in [
             "rt60",
             "absorption",
-        ], "`absorption_mode` should either be `rt60` or `absorption`"
+        ], "`calculate_by_absorption_or_rt60` should either be `rt60` or `absorption`"
 
         self.max_order = max_order
-        self.absorption_mode = absorption_mode
-        self.min_absorption_value = min_absorption_value
-        self.max_absorption_value = max_absorption_value
+        self.absorption_mode = calculate_by_absorption_or_rt60
+        self.min_absorption_value_or_rt60 = min_absorption_value_or_rt60
+        self.max_absorption_value_or_rt60 = max_absorption_value_or_rt60
 
         self.use_ray_tracing = use_ray_tracing
         self.max_order = max_order
@@ -129,8 +136,10 @@ class RoomSimulator(BaseWaveformTransform):
         self.min_mic_elevation = min_mic_elevation
         self.max_mic_elevation = max_mic_elevation
 
-    def randomize_parameters(self, samples: np.array, sample_rate: int):
+        self.leave_length_unchanged = leave_length_unchanged
 
+    def randomize_parameters(self, samples: np.array, sample_rate: int):
+        super().randomize_parameters(samples, sample_rate)
         self.parameters["size_x"] = random.uniform(self.min_size_x, self.max_size_x)
         self.parameters["size_y"] = random.uniform(self.min_size_y, self.max_size_y)
         self.parameters["size_z"] = random.uniform(self.min_size_z, self.max_size_z)
@@ -143,24 +152,29 @@ class RoomSimulator(BaseWaveformTransform):
             ]
         )
 
-        self.parameters["absorption_coefficient"] = random.uniform(
-            self.min_absorption_value, self.max_absorption_value
+        # absorption_value_or_rt60 is the absorption coefficient when the mode is `absorption`
+        # otherwise it is `rt60`
+        absorption_value_or_rt60 = random.uniform(
+            self.min_absorption_value_or_rt60, self.max_absorption_value_or_rt60
         )
 
         self.parameters["max_order"] = self.max_order
 
         if self.absorption_mode == "rt60":
+            self.parameters["target_rt60"] = absorption_value_or_rt60
 
             # If we are in rt60 mode, estimate the absorption coefficient on a sampled desired
             # rt60 value.
             self.parameters["absorption_coefficient"], max_order = pra.inverse_sabine(
-                self.parameters["absorption_coefficient"], room_dim
+                self.parameters["target_rt60"], room_dim
             )
 
             # Prioritise manually set `max_order` if it is set, over the one
             # calculated by the inverse sabine formula.
             if not self.max_order:
                 self.parameters["max_order"] = max_order
+        else:
+            self.parameters["absorption_coefficient"] = absorption_value_or_rt60
 
         self.parameters["source_x"] = random.uniform(
             self.min_source_x, self.max_source_x
@@ -199,6 +213,7 @@ class RoomSimulator(BaseWaveformTransform):
         self.parameters["mic_z"] = max(0, min(self.parameters["size_z"], mic_z))
 
     def apply(self, samples, sample_rate):
+
         assert samples.dtype == np.float32
 
         # It makes no sense to use stereo data.
@@ -209,14 +224,14 @@ class RoomSimulator(BaseWaveformTransform):
                 samples = samples.mean(0)
 
         # Construct room
-        room = pra.Room.from_corners(
+        self.room = pra.Room.from_corners(
             np.array(
                 [
                     [0, 0],
                     [0, self.parameters["size_x"]],
                     [self.parameters["size_x"], self.parameters["size_y"]],
                 ]
-            ),
+            ).T,
             fs=sample_rate,
             materials=pra.Material(self.parameters["absorption_coefficient"]),
             ray_tracing=self.use_ray_tracing,
@@ -225,15 +240,17 @@ class RoomSimulator(BaseWaveformTransform):
 
         if self.use_ray_tracing:
             # TODO: Somehow make those parameters
-            room.set_ray_tracing(receiver_radius=0.5, n_rays=10000, energy_thres=1e-5)
+            self.room.set_ray_tracing(
+                receiver_radius=0.5, n_rays=10000, energy_thres=1e-5
+            )
 
-        room.extrude(
+        self.room.extrude(
             height=self.parameters["size_z"],
             materials=pra.Material(self.parameters["absorption_coefficient"]),
         )
 
         # Add the point source
-        room.add_source(
+        self.room.add_source(
             np.array(
                 [
                     self.parameters["source_x"],
@@ -245,7 +262,7 @@ class RoomSimulator(BaseWaveformTransform):
         )
 
         # Add the microphone
-        room.add_microphone_array(
+        self.room.add_microphone_array(
             pra.MicrophoneArray(
                 np.array(
                     [
@@ -256,17 +273,17 @@ class RoomSimulator(BaseWaveformTransform):
                         ]
                     ]
                 ).T,
-                room.fs,
+                self.room.fs,
             )
         )
 
         # Do the simulation
-        room.compute_rir()
+        self.room.compute_rir()
+        self.room.simulate()
+        result = self.room.mic_array.signals.astype(np.float32).flatten()
 
-        # Store a measured rt60 parameter
-        self.parameters["theoretical_rt60"] = room.rt60_theory()
-        self.parameters["measured_rt60"] = room.measure_rt60()
+        num_samples = max(samples.shape)
 
-        room.simulate()
-
-        return room.mic_array.signals
+        if self.leave_length_unchanged:
+            return result[:num_samples]
+        return result

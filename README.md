@@ -402,6 +402,9 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+### Added
+* Implemented `RoomSimulator` for simulating shoebox rooms using `pyroomacoustics`.
+
 ### Removed
 
 * Remove the deprecated `AddImpulseResponse` alias. Use `ApplyImpulseResponse` instead.

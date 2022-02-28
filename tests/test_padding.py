@@ -35,8 +35,9 @@ class TestPadding:
         assert samples.dtype == np.float32
         assert samples.shape == input_shape
 
+    @pytest.mark.parametrize("mode", ["silence", "wrap", "reflect"])
     @pytest.mark.parametrize("pad_section", ["start", "end"])
-    def test_padding_multichannel(self, pad_section):
+    def test_padding_multichannel(self, mode, pad_section):
         samples = np.array(
             [
                 [0.9, 0.5, -0.25, -0.125, 0.0],
@@ -48,7 +49,7 @@ class TestPadding:
         sample_rate = 16000
         input_shape = samples.shape
 
-        augmenter = Padding(pad_section=pad_section, p=1.0)
+        augmenter = Padding(mode=mode, pad_section=pad_section, p=1.0)
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         assert samples.dtype == np.float32

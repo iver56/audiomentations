@@ -55,7 +55,7 @@ class BaseWaveformTransform(BaseTransform):
     def __call__(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         if samples.dtype == np.float64:
             warnings.warn(
-                "Warning: input samples have np.float64 dtype. Converting to np.float32..."
+                "Warning: input samples dtype is np.float64. Converting to np.float32"
             )
             samples = np.float32(samples)
         if not self.are_parameters_frozen:

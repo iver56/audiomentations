@@ -1,6 +1,8 @@
 import os
+import random
 
 import numpy as np
+import pytest
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 
 from audiomentations import (
@@ -19,44 +21,104 @@ from demo.demo import DEMO_DIR
 
 class TestSomeOf:
     def test_right_number_of_transforms_applied(self):
+        random.seed(23)
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
         sample_rate = 44100
-        num_transforms_applied = []
+        num_transforms_applied_list = []
         num_runs = 30
-        num_augmenters = 4
         list_transforms = [
             Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
             PolarityInversion(p=1.0),
         ]
+        augmenter = SomeOf(1, list_transforms)
 
-        for i in range(0, num_augmenters):
-            num_transforms_applied_one_augmenter = 0
-            for _ in range(num_runs):
-                augmenter1 = SomeOf(1, list_transforms)
-                augmenter2 = SomeOf((1, 2), list_transforms)
-                augmenter3 = SomeOf((2, None), list_transforms)
-                augmenter4 = SomeOf((0, None), list_transforms)
-                augmenters = [augmenter1, augmenter2, augmenter3, augmenter4]
-                augmenter = augmenters[i]
-                perturbed_samples = augmenter(samples=samples, sample_rate=sample_rate)
+        for _ in range(num_runs):
+            perturbed_samples = augmenter(samples=samples, sample_rate=sample_rate)
+            was_gain_applied = 0.0 < abs(perturbed_samples[0]) < 0.25
+            was_polarity_inversion_applied = perturbed_samples[0] < 0.0
+            num_transforms_applied = sum(
+                [
+                    1 if was_gain_applied else 0,
+                    1 if was_polarity_inversion_applied else 0,
+                ]
+            )
+            num_transforms_applied_list.append(num_transforms_applied)
+        assert np.mean(num_transforms_applied_list) == 1
 
-                was_gain_applied = 0.0 < abs(perturbed_samples[0]) < 0.25
-                was_polarity_inversion_applied = perturbed_samples[0] < 0.0
+    def test_right_number_of_transforms_applied2(self):
+        random.seed(23)
+        samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
+        sample_rate = 44100
+        num_transforms_applied_list = []
+        num_runs = 30
+        list_transforms = [
+            Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
+            PolarityInversion(p=1.0),
+        ]
+        augmenter = SomeOf((1, 2), list_transforms)
 
-                num_transforms_applied_one_iteration = sum(
-                    [
-                        1 if was_gain_applied else 0,
-                        1 if was_polarity_inversion_applied else 0,
-                    ]
-                )
-                num_transforms_applied_one_augmenter += (
-                    num_transforms_applied_one_iteration
-                )
-            num_transforms_applied.append(num_transforms_applied_one_augmenter)
-        assert num_transforms_applied[0] / num_runs == 1
-        assert 1 < num_transforms_applied[1] / num_runs < 2
-        assert num_transforms_applied[2] / num_runs == 2
-        assert 1 < num_transforms_applied[3] / num_runs < 2
+        for _ in range(num_runs):
+            perturbed_samples = augmenter(samples=samples, sample_rate=sample_rate)
+            was_gain_applied = 0.0 < abs(perturbed_samples[0]) < 0.25
+            was_polarity_inversion_applied = perturbed_samples[0] < 0.0
+            num_transforms_applied = sum(
+                [
+                    1 if was_gain_applied else 0,
+                    1 if was_polarity_inversion_applied else 0,
+                ]
+            )
+            num_transforms_applied_list.append(num_transforms_applied)
+        assert np.mean(num_transforms_applied_list) == pytest.approx(1.5, abs=0.1)
+
+    def test_right_number_of_transforms_applied3(self):
+        random.seed(23)
+        samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
+        sample_rate = 44100
+        num_transforms_applied_list = []
+        num_runs = 30
+        list_transforms = [
+            Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
+            PolarityInversion(p=1.0),
+        ]
+        augmenter = SomeOf((2, None), list_transforms)
+
+        for _ in range(num_runs):
+            perturbed_samples = augmenter(samples=samples, sample_rate=sample_rate)
+            was_gain_applied = 0.0 < abs(perturbed_samples[0]) < 0.25
+            was_polarity_inversion_applied = perturbed_samples[0] < 0.0
+            num_transforms_applied = sum(
+                [
+                    1 if was_gain_applied else 0,
+                    1 if was_polarity_inversion_applied else 0,
+                ]
+            )
+            num_transforms_applied_list.append(num_transforms_applied)
+        assert np.mean(num_transforms_applied_list) == 2
+
+    def test_right_number_of_transforms_applied4(self):
+        random.seed(345)
+        samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)
+        sample_rate = 44100
+        num_transforms_applied_list = []
+        num_runs = 30
+        list_transforms = [
+            Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
+            PolarityInversion(p=1.0),
+        ]
+        augmenter = SomeOf((0, None), list_transforms)
+
+        for _ in range(num_runs):
+            perturbed_samples = augmenter(samples=samples, sample_rate=sample_rate)
+            was_gain_applied = 0.0 < abs(perturbed_samples[0]) < 0.25
+            was_polarity_inversion_applied = perturbed_samples[0] < 0.0
+            num_transforms_applied = sum(
+                [
+                    1 if was_gain_applied else 0,
+                    1 if was_polarity_inversion_applied else 0,
+                ]
+            )
+            num_transforms_applied_list.append(num_transforms_applied)
+        assert np.mean(num_transforms_applied_list) == pytest.approx(1.0, abs=0.3)
 
     def test_freeze_and_unfreeze_all_parameters(self):
         samples = np.array([0.25, 0.0, 0.1, -0.4], dtype=np.float32)

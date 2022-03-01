@@ -1,12 +1,4 @@
-try:
-    import pyroomacoustics as pra
-except ImportError:
-    print(
-        "Error importing `pyroomacoustics`. You should probably run `pip install audiomentations[extra]`"
-    )
-    raise
-
-
+import sys
 from typing import Optional
 import numpy as np
 import random
@@ -19,6 +11,25 @@ class RoomSimulator(BaseWaveformTransform):
     A ShoeBox Room Simulator. Simulates a cuboid of parametrized size and 
     average surface absorption coefficient. It also includes a source \
     and microphones in parametrized locations.
+
+    Use it when you want a ton of synthetic room impulse responses of specific configurations
+    characteristics or simply to quickly add reverb for augmentation purposes
+
+    Some examples:
+
+    > augment = RoomSimulator(use_ray_tracing=False)
+    Quickly add reverberation without caring for accuracy.
+
+    > augment = RoomSimulator(calculate_by_absorption_or_rt60="rt60", min_absorption_value_or_rt60=0.06, max_absorption_value_or_rt60=0.06, min_size_x = ...)
+    Augment with randomly selected room impulse responses that have an RT60 of 0.06.
+
+    > augment = RoomSimulator(min_mic_radius=1.0, max_min_radius=1.0)
+    Augment with a RIR captured by all positions of the microphone on a sphere, centred around the source at 1m
+
+    > augment = RoomSimulator(min_mic_radius=1.0, max_min_radius=1.0, min_mic_elevation=0.0, max_mic_elevation=0.0)
+    Augment with a RIR captured by all positions of the microphone on a circle, centred around the source at 1m
+    
+    Additionally, RoomSimulator.parameters["measured_rt60"] can then be used to map augmented audio to measured rt60 (for e.g. blind RT60 estimation using deep learning)
     """
 
     supports_multichannel = True
@@ -41,9 +52,9 @@ class RoomSimulator(BaseWaveformTransform):
         max_source_z: float = 0.5,
         min_mic_radius: float = 0.25,
         max_mic_radius: float = 0.5,
-        min_mic_azimuth: float = 0.0,
+        min_mic_azimuth: float = -3.1419,
         max_mic_azimuth: float = 3.1419,
-        min_mic_elevation: float = 0.0,
+        min_mic_elevation: float = -3.1419,
         max_mic_elevation: float = 3.1419,
         calculate_by_absorption_or_rt60: float = "absorption",
         use_ray_tracing: float = True,
@@ -139,6 +150,20 @@ class RoomSimulator(BaseWaveformTransform):
         self.leave_length_unchanged = leave_length_unchanged
 
     def randomize_parameters(self, samples: np.array, sample_rate: int):
+
+        try:
+            import pyroomacoustics as pra
+        except ImportError:
+
+            print(
+                "Failed to import pyroomacoustics. Maybe it is not installed? "
+                "To install the optional pyroomacoustics dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` or simply "
+                " `pip install pyroomacoustics`",
+                file=sys.stderr,
+            )
+            raise
+
         super().randomize_parameters(samples, sample_rate)
         self.parameters["size_x"] = random.uniform(self.min_size_x, self.max_size_x)
         self.parameters["size_y"] = random.uniform(self.min_size_y, self.max_size_y)
@@ -213,6 +238,18 @@ class RoomSimulator(BaseWaveformTransform):
         self.parameters["mic_z"] = max(0, min(self.parameters["size_z"], mic_z))
 
     def apply(self, samples, sample_rate):
+        try:
+            import pyroomacoustics as pra
+        except ImportError:
+
+            print(
+                "Failed to import pyroomacoustics. Maybe it is not installed? "
+                "To install the optional pyroomacoustics dependency of audiomentations,"
+                " do `pip install audiomentations[extras]` or simply "
+                " `pip install pyroomacoustics`",
+                file=sys.stderr,
+            )
+            raise
 
         assert samples.dtype == np.float32
 

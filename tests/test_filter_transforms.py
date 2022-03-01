@@ -122,13 +122,14 @@ class TestPeakingFilterTransforms:
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
     @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
-    def test_two_channel_input(self, center_freq, gain_db, q_factor):
+    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    def test_multi_channel_input(self, center_freq, gain_db, q_factor, num_channels):
 
         sample_rate = 8000
         samples = get_randn_test(sample_rate, 10)
 
-        # Convert to 2D two channels
-        two_channels = np.vstack([samples, samples])
+        # Convert to 2D N channels
+        n_channels = np.tile(samples, (num_channels, 1))
 
         augment = PeakingFilter(
             min_center_freq=center_freq,
@@ -142,15 +143,15 @@ class TestPeakingFilterTransforms:
 
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
-        processed_two_channels = augment(samples=two_channels, sample_rate=sample_rate)
+        processed_n_channels = augment(samples=n_channels, sample_rate=sample_rate)
 
-        assert processed_two_channels.shape[0] == 2
-        assert processed_two_channels.shape == two_channels.shape
-        assert processed_two_channels.dtype == np.float32
+        assert processed_n_channels.shape[0] == num_channels
+        assert processed_n_channels.shape == n_channels.shape
+        assert processed_n_channels.dtype == np.float32
 
         # Check that the processed 2D channel version applies the same effect
         # as the passband version.
-        for _, channel in enumerate(processed_two_channels):
+        for _, channel in enumerate(processed_n_channels):
             if DEBUG:
                 import matplotlib.pyplot as plt
 
@@ -252,13 +253,14 @@ class TestLowShelfFilterTransform:
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
     @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
-    def test_two_channel_input(self, center_freq, gain_db, q_factor):
+    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    def test_two_channel_input(self, center_freq, gain_db, q_factor, num_channels):
 
         sample_rate = 8000
         samples = get_randn_test(sample_rate, 10)
 
-        # Convert to 2D two channels
-        two_channels = np.vstack([samples, samples])
+        # Convert to 2D N channels
+        n_channels = np.tile(samples, (num_channels, 1))
 
         augment = PeakingFilter(
             min_center_freq=center_freq,
@@ -272,15 +274,15 @@ class TestLowShelfFilterTransform:
 
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
-        processed_two_channels = augment(samples=two_channels, sample_rate=sample_rate)
+        processed_n_channels = augment(samples=n_channels, sample_rate=sample_rate)
 
-        assert processed_two_channels.shape[0] == 2
-        assert processed_two_channels.shape == two_channels.shape
-        assert processed_two_channels.dtype == np.float32
+        assert processed_n_channels.shape[0] == num_channels
+        assert processed_n_channels.shape == n_channels.shape
+        assert processed_n_channels.dtype == np.float32
 
         # Check that the processed 2D channel version applies the same effect
         # as the passband version.
-        for _, channel in enumerate(processed_two_channels):
+        for _, channel in enumerate(processed_n_channels):
             if DEBUG:
                 import matplotlib.pyplot as plt
 
@@ -423,6 +425,7 @@ class TestHighShelfFilterTransform:
                 plt.show()
             assert np.allclose(channel, processed_samples)
 
+
 class TestLowPassFilterTransform:
     @pytest.mark.parametrize("cutoff_frequency", [1000])
     @pytest.mark.parametrize("rolloff", [6, 24])
@@ -504,9 +507,7 @@ class TestLowPassFilterTransform:
         assert processed_samples.shape == samples.shape
         assert processed_samples.dtype == np.float32
 
-        frequencies_of_interest = np.array(
-            [0, cutoff_frequency, cutoff_frequency*2]
-        )
+        frequencies_of_interest = np.array([0, cutoff_frequency, cutoff_frequency * 2])
         expected_differences = np.array(
             [0.0, expected_db_drop, expected_db_drop + rolloff]
         )
@@ -528,6 +529,7 @@ class TestLowPassFilterTransform:
                 expected_differences[n],
                 atol=tolerances[n],
             )
+
 
 class TestHighPassFilterTransform:
     @pytest.mark.parametrize("cutoff_frequency", [1000])

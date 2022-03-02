@@ -211,6 +211,17 @@ class RoomSimulator(BaseWaveformTransform):
             self.min_source_z, self.max_source_z
         )
 
+        # Clamp between 0 and room dimensions
+        self.parameters["source_x"] = max(
+            0, min(self.parameters["size_x"], self.parameters["source_x"])
+        )
+        self.parameters["source_y"] = max(
+            0, min(self.parameters["size_y"], self.parameters["source_y"])
+        )
+        self.parameters["source_z"] = max(
+            0, min(self.parameters["size_z"], self.parameters["source_z"])
+        )
+
         self.parameters["mic_radius"] = random.uniform(
             self.min_mic_radius, self.max_mic_radius
         )
@@ -255,10 +266,7 @@ class RoomSimulator(BaseWaveformTransform):
 
         # It makes no sense to use stereo data.
         if len(samples.shape) > 1:
-            if samples.shape[0] > samples.shape[1]:
-                samples = samples.mean(1)
-            else:
-                samples = samples.mean(0)
+            samples = samples.mean(0)
 
         # Construct room
         self.room = pra.Room.from_corners(

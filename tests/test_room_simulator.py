@@ -27,6 +27,19 @@ class TestRoomSimulatorTransform:
                 augment = RoomSimulator()
                 augment(samples=samples, sample_rate=sample_rate)
 
+    @pytest.mark.parametrize("num_channels", [1, 2, 3])
+    def test_multichannel_input(self, num_channels):
+        random.seed(1)
+        sample_rate = 16000
+        samples = get_sinc_impulse(sample_rate, 10)
+        n_channels = np.tile(samples, (num_channels, 1))
+        augment = RoomSimulator()
+        augment.freeze_parameters()
+        augmented_samples = augment(samples=samples, sample_rate=sample_rate)
+        augmented_n_channels = augment(samples=n_channels, sample_rate=sample_rate)
+
+        assert np.allclose(augmented_samples, augmented_n_channels)
+
     def test_input_with_absorption(self):
         random.seed(1)
         sample_rate = 16000

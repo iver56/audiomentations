@@ -262,7 +262,7 @@ class TestLowShelfFilterTransform:
         # Convert to 2D N channels
         n_channels = np.tile(samples, (num_channels, 1))
 
-        augment = PeakingFilter(
+        augment = LowShelfFilter(
             min_center_freq=center_freq,
             max_center_freq=center_freq,
             min_gain_db=gain_db,
@@ -393,7 +393,7 @@ class TestHighShelfFilterTransform:
         # Convert to 2D N channels
         n_channels = np.tile(samples, (num_channels, 1))
 
-        augment = PeakingFilter(
+        augment = HighShelfFilter(
             min_center_freq=center_freq,
             max_center_freq=center_freq,
             min_gain_db=gain_db,

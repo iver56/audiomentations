@@ -32,6 +32,7 @@ from audiomentations import (
     BandPassFilter,
     ApplyImpulseResponse,
     Reverse,
+    RoomSimulator,
     TanhDistortion,
     Compose,
     SomeOf,
@@ -247,6 +248,7 @@ if __name__ == "__main__":
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
         {"instance": Resample(p=1.0), "num_runs": 5},
         {"instance": Reverse(p=1.0), "num_runs": 1},
+        {"instance": RoomSimulator(p=1.0, leave_length_unchanged=True), "num_runs": 5},
         {
             "instance": Shift(min_fraction=-0.5, max_fraction=0.5, fade=False, p=1.0),
             "num_runs": 5,

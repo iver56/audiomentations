@@ -252,7 +252,7 @@ class TestLowShelfFilterTransform:
 
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
-    @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
+    @pytest.mark.parametrize("q_factor", [0.1, 1.0])
     @pytest.mark.parametrize("num_channels", [2, 3, 4])
     def test_n_channel_input(self, center_freq, gain_db, q_factor, num_channels):
 
@@ -383,7 +383,7 @@ class TestHighShelfFilterTransform:
 
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
-    @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
+    @pytest.mark.parametrize("q_factor", [0.1, 1.0])
     @pytest.mark.parametrize("num_channels", [2, 3, 4])
     def test_n_channel_input(self, center_freq, gain_db, q_factor, num_channels):
 

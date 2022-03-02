@@ -277,6 +277,14 @@ Apply a constant amount of gain, so that highest signal level present in the sou
 0 dBFS, i.e. the loudest level allowed if all samples must be between -1 and 1. Also known
 as peak normalization.
 
+## `Padding`
+
+_To be released in v0.23.0_
+
+Apply padding to the audio signal - take a fraction of the end or the start of the
+audio and replace that part with padding. This can be useful for preparing ML models
+with constant input length for padded inputs.
+
 ## `PeakingFilter`
 
 _Added in v0.21.0_
@@ -403,7 +411,13 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 ## Unreleased
 
 ### Added
+
 * Implemented `RoomSimulator` for simulating shoebox rooms using `pyroomacoustics`.
+
+### Changed
+
+* Not specifying a value for `leave_length_unchanged` in `AddImpulseResponse` now emits
+ a warning, as the default value will change from `False` to `True` in a future version.
 
 ### Removed
 

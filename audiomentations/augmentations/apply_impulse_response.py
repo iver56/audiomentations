@@ -1,6 +1,7 @@
 import functools
 import random
 import warnings
+from typing import Optional
 
 import numpy as np
 from scipy.signal import convolve
@@ -25,7 +26,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         ir_path="/tmp/ir",
         p=0.5,
         lru_cache_size=128,
-        leave_length_unchanged: bool = False,
+        leave_length_unchanged: Optional[bool] = None,
     ):
         """
         :param ir_path: Path to a folder that contains one or more wav files of impulse
@@ -44,6 +45,14 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(
             ApplyImpulseResponse.__load_ir
         )
+        if leave_length_unchanged is None:
+            warnings.warn(
+                "The default value of leave_length_unchanged will change from False to"
+                " True in a future version of audiomentations. You can set the value"
+                " explicitly to remove this warning for now."
+            )
+            leave_length_unchanged = False
+
         self.leave_length_unchanged = leave_length_unchanged
 
     @staticmethod

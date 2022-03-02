@@ -42,6 +42,31 @@ class TestRoomSimulatorTransform:
             with unittest.mock.patch.dict("sys.modules", {"pyroomacoustics": None}):
                 augment(samples=samples, sample_rate=sample_rate)
 
+    def test_failing_case(self):
+        """Failed case which identified a bug where the room created was not rectangular"""
+        sample_rate = 16000
+
+        samples = get_sinc_impulse(sample_rate, 10)
+
+        augment = RoomSimulator(
+            min_size_x=3.0,
+            min_size_y=4.0,
+            min_size_z=3.0,
+            max_size_x=3.0,
+            max_size_y=4.0,
+            max_size_z=3.0,
+            min_source_x=0.5,
+            min_source_y=0.5,
+            min_source_z=1.8,
+            max_source_x=0.5,
+            max_source_y=0.5,
+            max_source_z=1.8,
+            min_mic_radius=0.1,
+            max_mic_radius=0.1,
+            p=1.0,
+        )
+        augment(samples=samples, sample_rate=sample_rate)
+
     @pytest.mark.parametrize("num_channels", [1, 2, 3])
     def test_multichannel_input(self, num_channels):
         random.seed(1)
@@ -103,8 +128,8 @@ class TestRoomSimulatorTransform:
 
         # Experimentally set that in this case. Target t60
         # is expected to deviate quite a bit.
-        assert np.isclose(0.06, measured_rt60, atol=0.02)
-        assert np.isclose(theoretical_rt60, measured_rt60, atol=0.005)
+        assert np.isclose(0.06, theoretical_rt60, atol=0.0005)
+        assert np.isclose(theoretical_rt60, measured_rt60, atol=0.02)
         assert processed_samples.dtype == samples.dtype
         assert not np.allclose(processed_samples[: len(samples)], samples)
         assert len(processed_samples.shape) == 1

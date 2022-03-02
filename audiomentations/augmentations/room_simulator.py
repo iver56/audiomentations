@@ -295,6 +295,7 @@ class RoomSimulator(BaseWaveformTransform):
                     [0, 0],
                     [0, self.parameters["size_x"]],
                     [self.parameters["size_x"], self.parameters["size_y"]],
+                    [self.parameters["size_y"], 0],
                 ]
             ).T,
             fs=sample_rate,

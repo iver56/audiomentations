@@ -122,7 +122,7 @@ class TestPeakingFilterTransforms:
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
     @pytest.mark.parametrize("q_factor", [0.1, 1.0, 10.0])
-    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    @pytest.mark.parametrize("num_channels", [1, 2, 3])
     def test_multi_channel_input(self, center_freq, gain_db, q_factor, num_channels):
 
         sample_rate = 8000
@@ -253,7 +253,7 @@ class TestLowShelfFilterTransform:
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
     @pytest.mark.parametrize("q_factor", [0.1, 1.0])
-    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    @pytest.mark.parametrize("num_channels", [1, 2, 3])
     def test_n_channel_input(self, center_freq, gain_db, q_factor, num_channels):
 
         sample_rate = 8000
@@ -384,7 +384,7 @@ class TestHighShelfFilterTransform:
     @pytest.mark.parametrize("center_freq", [10.0, 2000.0, 3900.0])
     @pytest.mark.parametrize("gain_db", [0.0, -6.0, +6.0])
     @pytest.mark.parametrize("q_factor", [0.1, 1.0])
-    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    @pytest.mark.parametrize("num_channels", [1, 2, 3])
     def test_n_channel_input(self, center_freq, gain_db, q_factor, num_channels):
 
         sample_rate = 8000
@@ -539,7 +539,7 @@ class TestLowPassFilterTransform:
     @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
     @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
-    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    @pytest.mark.parametrize("num_channels", [1, 2, 3])
     def test_n_channel_input(self, samples, rolloff, zero_phase, num_channels):
 
         sample_rate = 8000
@@ -691,7 +691,7 @@ class TestHighPassFilterTransform:
     @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
     @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
-    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    @pytest.mark.parametrize("num_channels", [1, 2, 3])
     def test_n_channel_input(self, samples, rolloff, zero_phase, num_channels):
 
         sample_rate = 8000
@@ -887,7 +887,7 @@ class TestBandPassFilterTransform:
     @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
     @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
-    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    @pytest.mark.parametrize("num_channels", [1, 2, 3])
     def test_two_channel_input(
         self,
         center_frequency,
@@ -1110,7 +1110,7 @@ class TestBandStopFilterTransform:
     @pytest.mark.parametrize("samples", [get_chirp_test(8000, 40)])
     @pytest.mark.parametrize("rolloff", [12, 120])
     @pytest.mark.parametrize("zero_phase", [False, True])
-    @pytest.mark.parametrize("num_channels", [2, 3, 4])
+    @pytest.mark.parametrize("num_channels", [1, 2, 3])
     def test_two_channel_input(
         self,
         center_frequency,

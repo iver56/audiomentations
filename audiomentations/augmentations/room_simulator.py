@@ -27,9 +27,7 @@ class RoomSimulator(BaseWaveformTransform):
     Augment with a RIR captured by all positions of the microphone on a sphere, centred around the source at 1m
 
     > augment = RoomSimulator(min_mic_radius=1.0, max_min_radius=1.0, min_mic_elevation=0.0, max_mic_elevation=0.0)
-    Augment with a RIR captured by all positions of the microphone on a circle, centred around the source at 1m
-    
-    Additionally, RoomSimulator.parameters["measured_rt60"] can then be used to map augmented audio to measured rt60 (for e.g. blind RT60 estimation using deep learning)
+    Augment with a RIR captured by all positions of the microphone on a circle, centred around the source at 1m    
     """
 
     supports_multichannel = True
@@ -60,6 +58,7 @@ class RoomSimulator(BaseWaveformTransform):
         use_ray_tracing: float = True,
         max_order: int or None = None,
         leave_length_unchanged: Optional[bool] = None,
+        padding: float = 0.1,
         p: float = 0.5,
     ):
         """
@@ -96,6 +95,7 @@ class RoomSimulator(BaseWaveformTransform):
         :param leave_length_unchanged: When set to True, the tail of the sound (e.g. reverb at
             the end) will be chopped off so that the length of the output is equal to the
             length of the input.
+        :param padding: Minimum distance between source or mic and the room walls, floor or ceiling.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -148,6 +148,8 @@ class RoomSimulator(BaseWaveformTransform):
         self.max_mic_elevation = max_mic_elevation
 
         self.leave_length_unchanged = leave_length_unchanged
+
+        self.padding = padding
 
     def randomize_parameters(self, samples: np.array, sample_rate: int):
 
@@ -213,13 +215,25 @@ class RoomSimulator(BaseWaveformTransform):
 
         # Clamp between 0 and room dimensions
         self.parameters["source_x"] = max(
-            0, min(self.parameters["size_x"], self.parameters["source_x"])
+            0,
+            min(
+                self.parameters["size_x"] - self.padding,
+                self.parameters["source_x"],
+            ),
         )
         self.parameters["source_y"] = max(
-            0, min(self.parameters["size_y"], self.parameters["source_y"])
+            0,
+            min(
+                self.parameters["size_y"] - self.padding,
+                self.parameters["source_y"],
+            ),
         )
         self.parameters["source_z"] = max(
-            0, min(self.parameters["size_z"], self.parameters["source_z"])
+            0,
+            min(
+                self.parameters["size_z"] - self.padding,
+                self.parameters["source_z"],
+            ),
         )
 
         self.parameters["mic_radius"] = random.uniform(
@@ -244,9 +258,15 @@ class RoomSimulator(BaseWaveformTransform):
         )
 
         # Clamp between 0 and room dimensions
-        self.parameters["mic_x"] = max(0, min(self.parameters["size_x"], mic_x))
-        self.parameters["mic_y"] = max(0, min(self.parameters["size_y"], mic_y))
-        self.parameters["mic_z"] = max(0, min(self.parameters["size_z"], mic_z))
+        self.parameters["mic_x"] = max(
+            0, min(self.parameters["size_x"] - self.padding, mic_x)
+        )
+        self.parameters["mic_y"] = max(
+            0, min(self.parameters["size_y"] - self.padding, mic_y)
+        )
+        self.parameters["mic_z"] = max(
+            0, min(self.parameters["size_z"] - self.padding, mic_z)
+        )
 
     def apply(self, samples, sample_rate):
         try:

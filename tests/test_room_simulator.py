@@ -19,12 +19,27 @@ def get_sinc_impulse(sample_rate, duration):
 
 class TestRoomSimulatorTransform:
     def test_pyroomacoustics_not_found(self):
+        """
+        Test raising ImportError when pyroomacoustics is not found on
+        randomize_parameters
+        """
         random.seed(1)
         sample_rate = 16000
         samples = get_sinc_impulse(sample_rate, 10)
         with pytest.raises(ImportError):
             with unittest.mock.patch.dict("sys.modules", {"pyroomacoustics": None}):
                 augment = RoomSimulator()
+                augment(samples=samples, sample_rate=sample_rate)
+                augment.freeze_parameters()
+
+        """
+        Test raising ImportError when pyroomacoustics is not found on apply
+        """
+        with pytest.raises(ImportError):
+            augment = RoomSimulator()
+            augment(samples=samples, sample_rate=sample_rate)
+            augment.freeze_parameters()
+            with unittest.mock.patch.dict("sys.modules", {"pyroomacoustics": None}):
                 augment(samples=samples, sample_rate=sample_rate)
 
     @pytest.mark.parametrize("num_channels", [1, 2, 3])
@@ -40,14 +55,15 @@ class TestRoomSimulatorTransform:
 
         assert np.allclose(augmented_samples, augmented_n_channels)
 
-    def test_input_with_absorption(self):
+    @pytest.mark.parametrize("leave_length_unchanged", [True, False])
+    def test_input_with_absorption(self, leave_length_unchanged):
         random.seed(1)
         sample_rate = 16000
         samples = get_sinc_impulse(sample_rate, 10)
 
         augment = RoomSimulator(
             p=1.0,
-            leave_length_unchanged=True,
+            leave_length_unchanged=leave_length_unchanged,
         )
 
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
@@ -59,10 +75,11 @@ class TestRoomSimulatorTransform:
         # Experimentally set that in this case
         assert np.isclose(theoretical_rt60, measured_rt60, atol=0.015)
         assert processed_samples.dtype == samples.dtype
-        assert not np.allclose(processed_samples, samples)
+        assert not np.allclose(processed_samples[: len(samples)], samples)
         assert len(processed_samples.shape) == 1
 
-    def test_input_with_rt60(self):
+    @pytest.mark.parametrize("leave_length_unchanged", [True, False])
+    def test_input_with_rt60(self, leave_length_unchanged):
         random.seed(1)
         sample_rate = 16000
         samples = get_sinc_impulse(sample_rate, 10)
@@ -72,7 +89,7 @@ class TestRoomSimulatorTransform:
             calculate_by_absorption_or_rt60="rt60",
             min_absorption_value_or_rt60=0.06,
             max_absorption_value_or_rt60=0.06,
-            leave_length_unchanged=True,
+            leave_length_unchanged=leave_length_unchanged,
         )
 
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
@@ -86,5 +103,5 @@ class TestRoomSimulatorTransform:
         assert np.isclose(0.06, measured_rt60, atol=0.02)
         assert np.isclose(theoretical_rt60, measured_rt60, atol=0.005)
         assert processed_samples.dtype == samples.dtype
-        assert not np.allclose(processed_samples, samples)
+        assert not np.allclose(processed_samples[: len(samples)], samples)
         assert len(processed_samples.shape) == 1

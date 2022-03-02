@@ -1,7 +1,8 @@
 from audiomentations import RoomSimulator
 import numpy as np
 import random
-
+import unittest.mock
+import pytest
 
 DEBUG = False
 
@@ -17,6 +18,15 @@ def get_sinc_impulse(sample_rate, duration):
 
 
 class TestRoomSimulatorTransform:
+    def test_pyroomacoustics_not_found(self):
+        random.seed(1)
+        sample_rate = 16000
+        samples = get_sinc_impulse(sample_rate, 10)
+        with pytest.raises(ImportError):
+            with unittest.mock.patch.dict("sys.modules", {"pyroomacoustics": None}):
+                augment = RoomSimulator()
+                augment(samples=samples, sample_rate=sample_rate)
+
     def test_input_with_absorption(self):
         random.seed(1)
         sample_rate = 16000

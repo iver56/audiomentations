@@ -49,8 +49,11 @@ class TestRoomSimulatorTransform:
         samples = get_sinc_impulse(sample_rate, 10)
         n_channels = np.tile(samples, (num_channels, 1))
         augment = RoomSimulator()
-        augment.freeze_parameters()
+        # Setting the seed is important for reproduction
+        np.random.seed(1)
         augmented_samples = augment(samples=samples, sample_rate=sample_rate)
+        augment.freeze_parameters()
+        np.random.seed(1)
         augmented_n_channels = augment(samples=n_channels, sample_rate=sample_rate)
 
         assert np.allclose(augmented_samples, augmented_n_channels)

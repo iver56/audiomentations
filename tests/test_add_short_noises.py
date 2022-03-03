@@ -39,6 +39,32 @@ class TestAddShortNoises(unittest.TestCase):
         rms_after = calculate_rms(samples_out)
         self.assertGreater(rms_after, rms_before)
 
+    def test_add_short_noises_with_signal_gain_during_noise(self):
+        sample_rate = 44100
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
+            np.float32
+        )
+        rms_before = calculate_rms(samples)
+        augmenter = Compose(
+            [
+                AddShortNoises(
+                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                    min_snr_in_db=50.0,
+                    max_snr_in_db=50.0,
+                    min_time_between_sounds=2.0,
+                    max_time_between_sounds=4.0,
+                    signal_gain_in_db_during_noise=-100,
+                    p=1.0,
+                )
+            ]
+        )
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        self.assertEqual(samples_out.dtype, np.float32)
+        self.assertEqual(samples_out.shape, samples.shape)
+
+        rms_after = calculate_rms(samples_out)
+        self.assertLess(rms_after, rms_before)
+
     def test_input_shorter_than_noise(self):
         """
         Verify correct behavior when the input sound is shorter than the added noise sounds.
@@ -218,11 +244,17 @@ class TestAddShortNoises(unittest.TestCase):
             ]
         )
 
-        samples_out_absolute = augmenter_absolute(samples=samples, sample_rate=sample_rate)
-        samples_out_relative_to_whole_input = augmenter_relative_to_whole_input(samples=samples, sample_rate=sample_rate)
+        samples_out_absolute = augmenter_absolute(
+            samples=samples, sample_rate=sample_rate
+        )
+        samples_out_relative_to_whole_input = augmenter_relative_to_whole_input(
+            samples=samples, sample_rate=sample_rate
+        )
         self.assertEqual(samples_out_absolute.dtype, np.float32)
         self.assertEqual(samples_out_absolute.shape, samples.shape)
-        rms_after_relative_to_whole_path = calculate_rms(samples_out_relative_to_whole_input)
+        rms_after_relative_to_whole_path = calculate_rms(
+            samples_out_relative_to_whole_input
+        )
         rms_after_absolute = calculate_rms(samples_out_absolute)
         self.assertGreater(rms_after_absolute, rms_before)
         self.assertGreater(rms_after_relative_to_whole_path, rms_before)

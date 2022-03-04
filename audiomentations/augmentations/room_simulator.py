@@ -82,11 +82,11 @@ class RoomSimulator(BaseWaveformTransform):
         :param max_size_z: Maximum height of the room in meters
         :param min_absorption_value: When `calculation_mode` is 'absorption' it will set
             a given coefficient value for the surfaces of the room (walls, ceilings, and floor).
-            This coefficient takes values between 0 (fully reflective surface) and 1 (fully absorbing surface). 
-            
+            This coefficient takes values between 0 (fully reflective surface) and 1 (fully absorbing surface).
+
             Example values (May differ!):
-                Studio w acoustic panels > 0.40 
-                Office / Library         ~ 0.15 
+                Studio w acoustic panels > 0.40
+                Office / Library         ~ 0.15
                 Factory                  ~ 0.05
         :param max_absorption_value:
 
@@ -108,24 +108,27 @@ class RoomSimulator(BaseWaveformTransform):
         :param min_mic_distance: Minimum distance of the microphone from the source in meters
         :param max_mic_distance:
         :param min_mic_azimuth: Minimum azimuth (angle around z axis) of the microphone
-                                relative to the source, in radians.
+            relative to the source, in radians.
         :param max_mic_azimuth:
         :param min_mic_elevation:
-                                Minimum elevation of the microphon relative to the source, in
-                                radians.
+            Minimum elevation of the microphon relative to the source, in
+            radians.
         :param max_mic_elevation:
+        :param calculation_mode: When set to `absorption`, it will create the room with surfaces based on
+            `min_absorption_value` and `max_absorption_value`. If set to `rt60` it will try to assign surface
+            materials that lead to a room impulse response with target rt60 given by `min_target_rt60` and `max_target_rt60`
         :param use_ray_tracing: Whether to use ray_tracing or not (slower but much more accurate).
-                          Disable this if you need speed but do not really care for incorrect results.
-        :param max_order: Maximum order of reflections for the Image Source Model. E.g. a value of 
-                         1 will only add first order reflections while a value of 30 will add a
-                         diffuse reverberation tail.
+            Disable this if you need speed but do not really care for incorrect results.
+        :param max_order: Maximum order of reflections for the Image Source Model. E.g. a value of
+            1 will only add first order reflections while a value of 30 will add a
+            diffuse reverberation tail.
         :param leave_length_unchanged: When set to True, the tail of the sound (e.g. reverb at
             the end) will be chopped off so that the length of the output is equal to the
             length of the input.
         :param padding: Minimum distance in meters between source or mic and the room walls, floor or ceiling.
         :param p: The probability of applying this transform
         :param ray_tracing_options: Options for the ray tracer. See `set_ray_tracing` here:
-            https://github.com/LCAV/pyroomacoustics/blob/master/pyroomacoustics/room.py 
+            https://github.com/LCAV/pyroomacoustics/blob/master/pyroomacoustics/room.py
         """
         super().__init__(p)
 

@@ -61,8 +61,8 @@ class TestRoomSimulatorTransform:
             max_source_x=0.5,
             max_source_y=0.5,
             max_source_z=1.8,
-            min_mic_radius=0.1,
-            max_mic_radius=0.1,
+            min_mic_distance=0.1,
+            max_mic_distance=0.1,
             p=1.0,
         )
         augment(samples=samples, sample_rate=sample_rate)
@@ -101,7 +101,7 @@ class TestRoomSimulatorTransform:
         measured_rt60 = augment.room.measure_rt60()[0][0]
 
         # Experimentally set that in this case
-        assert np.isclose(theoretical_rt60, measured_rt60, atol=0.015)
+        assert np.isclose(theoretical_rt60, measured_rt60, atol=0.065)
         assert processed_samples.dtype == samples.dtype
         assert not np.allclose(processed_samples[: len(samples)], samples)
         assert len(processed_samples.shape) == 1
@@ -114,9 +114,9 @@ class TestRoomSimulatorTransform:
 
         augment = RoomSimulator(
             p=1.0,
-            calculate_by_absorption_or_rt60="rt60",
-            min_absorption_value_or_rt60=0.06,
-            max_absorption_value_or_rt60=0.06,
+            calculation_mode="rt60",
+            min_target_rt60=0.3,
+            max_target_rt60=0.3,
             leave_length_unchanged=leave_length_unchanged,
         )
 
@@ -128,8 +128,8 @@ class TestRoomSimulatorTransform:
 
         # Experimentally set that in this case. Target t60
         # is expected to deviate quite a bit.
-        assert np.isclose(0.06, theoretical_rt60, atol=0.0005)
-        assert np.isclose(theoretical_rt60, measured_rt60, atol=0.02)
+        assert np.isclose(0.3, theoretical_rt60, atol=0.05)
+        assert np.isclose(theoretical_rt60, measured_rt60, atol=0.065)
         assert processed_samples.dtype == samples.dtype
         assert not np.allclose(processed_samples[: len(samples)], samples)
         assert len(processed_samples.shape) == 1

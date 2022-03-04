@@ -1,14 +1,15 @@
-import math
 import os
 from pathlib import Path
+from typing import Union
 
+import math
 import numpy as np
 
 AUDIO_FILENAME_ENDINGS = (".aiff", ".flac", ".m4a", ".mp3", ".ogg", ".opus", ".wav")
 
 
 def get_file_paths(
-    root_path,
+    root_path: Union[str, Path],
     filename_endings=AUDIO_FILENAME_ENDINGS,
     traverse_subdirectories=True,
     follow_symlinks=True,

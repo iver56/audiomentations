@@ -1,7 +1,8 @@
 import functools
 import random
 import warnings
-from typing import Optional, Callable
+from pathlib import Path
+from typing import Optional, Callable, Union
 
 import numpy as np
 
@@ -36,7 +37,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
 
     def __init__(
         self,
-        sounds_path=None,
+        sounds_path: Union[str, Path],
         min_snr_in_db=3,
         max_snr_in_db=30,
         noise_rms="relative",

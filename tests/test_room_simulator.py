@@ -33,16 +33,6 @@ class TestRoomSimulatorTransform:
                 augment(samples=samples, sample_rate=sample_rate)
                 augment.freeze_parameters()
 
-        """
-        Test raising ImportError when pyroomacoustics is not found on apply
-        """
-        with pytest.raises(ImportError):
-            augment = RoomSimulator()
-            augment(samples=samples, sample_rate=sample_rate)
-            augment.freeze_parameters()
-            with unittest.mock.patch.dict("sys.modules", {"pyroomacoustics": None}):
-                augment(samples=samples, sample_rate=sample_rate)
-
     def test_simulate_apply_parity(self):
         """
         Tests whether RoomSimulator.apply gives the same result as Roomsimulator.room.simulate() in the 1D case.

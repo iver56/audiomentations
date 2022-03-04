@@ -1,5 +1,6 @@
+from ast import Str
 import sys
-from typing import Optional
+from typing import Optional, Dict
 import numpy as np
 import random
 
@@ -65,6 +66,11 @@ class RoomSimulator(BaseWaveformTransform):
         leave_length_unchanged: Optional[bool] = None,
         padding: float = 0.1,
         p: float = 0.5,
+        ray_tracing_options: Dict = {
+            "receiver_radius": 0.5,
+            "n_rays": 10000,
+            "energy_thres": 1e-5,
+        },
     ):
         """
 
@@ -118,6 +124,8 @@ class RoomSimulator(BaseWaveformTransform):
             length of the input.
         :param padding: Minimum distance in meters between source or mic and the room walls, floor or ceiling.
         :param p: The probability of applying this transform
+        :param ray_tracing_options: Options for the ray tracer. See `set_ray_tracing` here:
+            https://github.com/LCAV/pyroomacoustics/blob/master/pyroomacoustics/room.py 
         """
         super().__init__(p)
 
@@ -127,7 +135,7 @@ class RoomSimulator(BaseWaveformTransform):
         ], "`calculate_by_absorption_or_rt60` should either be `rt60` or `absorption`"
 
         self.max_order = max_order
-        self.absorption_mode = calculation_mode
+        self.calculation_mode = calculation_mode
         self.min_absorption_value = min_absorption_value
         self.max_absorption_value = max_absorption_value
 
@@ -162,8 +170,8 @@ class RoomSimulator(BaseWaveformTransform):
         assert min_mic_azimuth <= max_mic_azimuth
         assert min_mic_elevation <= max_mic_elevation
 
-        self.min_mic_radius = min_mic_distance
-        self.max_mic_radius = max_mic_distance
+        self.min_mic_distance = min_mic_distance
+        self.max_mic_distance = max_mic_distance
 
         self.min_mic_azimuth = min_mic_azimuth
         self.max_mic_azimuth = max_mic_azimuth
@@ -174,6 +182,8 @@ class RoomSimulator(BaseWaveformTransform):
         self.leave_length_unchanged = leave_length_unchanged
 
         self.padding = padding
+
+        self.ray_tracing_options = ray_tracing_options
 
     def randomize_parameters(self, samples: np.array, sample_rate: int):
 
@@ -205,7 +215,7 @@ class RoomSimulator(BaseWaveformTransform):
 
         self.parameters["max_order"] = self.max_order
 
-        if self.absorption_mode == "rt60":
+        if self.calculation_mode == "rt60":
             target_rt60 = random.uniform(self.min_target_rt60, self.max_target_rt60)
             self.parameters["target_rt60"] = target_rt60
 
@@ -238,7 +248,7 @@ class RoomSimulator(BaseWaveformTransform):
         )
 
         self.parameters["mic_radius"] = random.uniform(
-            self.min_mic_radius, self.max_mic_radius
+            self.min_mic_distance, self.max_mic_distance
         )
         self.parameters["mic_azimuth"] = random.uniform(
             self.min_mic_azimuth, self.max_mic_azimuth
@@ -269,22 +279,6 @@ class RoomSimulator(BaseWaveformTransform):
             self.padding, min(self.parameters["size_z"] - self.padding, mic_z)
         )
 
-    def apply(self, samples, sample_rate):
-        try:
-            import pyroomacoustics as pra
-        except ImportError:
-
-            print(
-                "Failed to import pyroomacoustics. Maybe it is not installed? "
-                "To install the optional pyroomacoustics dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` or simply "
-                " `pip install pyroomacoustics`",
-                file=sys.stderr,
-            )
-            raise
-
-        assert samples.dtype == np.float32
-
         # Construct room
         self.room = pra.Room.from_corners(
             np.array(
@@ -303,9 +297,7 @@ class RoomSimulator(BaseWaveformTransform):
 
         if self.use_ray_tracing:
             # TODO: Somehow make those parameters
-            self.room.set_ray_tracing(
-                receiver_radius=0.5, n_rays=10000, energy_thres=1e-5
-            )
+            self.room.set_ray_tracing(**self.ray_tracing_options)
 
         self.room.extrude(
             height=self.parameters["size_z"],
@@ -342,6 +334,9 @@ class RoomSimulator(BaseWaveformTransform):
 
         # Do the simulation
         self.room.compute_rir()
+
+    def apply(self, samples, sample_rate):
+        assert samples.dtype == np.float32
 
         rir = self.room.rir[0][0]
 

@@ -405,6 +405,7 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 ### Added
 
 * Add `Padding` transform
+* Add parameter `signal_gain_in_db_during_noise` in `AddShortNoises`
 
 ### Changed
 
@@ -415,7 +416,7 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 * Remove the deprecated `AddImpulseResponse` alias. Use `ApplyImpulseResponse` instead.
 * Remove support for the legacy parameters `min_SNR` and `max_SNR` in `AddGaussianSNR`
-* Remove the useless default path values in `ApplyImpulseResponse` and `AddBackgroundNoise`
+* Remove useless default path value in `AddBackgroundNoise`, `AddShortNoises` and `ApplyImpulseResponse`
 
 ## v0.22.0 (2022-02-18)
 

@@ -80,7 +80,7 @@ class RoomSimulator(BaseWaveformTransform):
         :param max_size_y: Maximum depth of the room in meters
         :param min_size_z: Minimum height (z coordinate) of the room in meters
         :param max_size_z: Maximum height of the room in meters
-        :param min_absorption_value: When `calculation_mode` is 'absorption' it will set room 
+        :param min_absorption_value: When `calculation_mode` is 'absorption' it will set
             a given coefficient value for the surfaces of the room (walls, ceilings, and floor). \
             This coefficient takes values between 0 (fully reflective surface) and 1 (fully absorbing surface). 
             

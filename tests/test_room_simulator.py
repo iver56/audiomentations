@@ -4,6 +4,7 @@ import random
 import unittest.mock
 import pytest
 
+
 DEBUG = False
 
 
@@ -42,6 +43,36 @@ class TestRoomSimulatorTransform:
             with unittest.mock.patch.dict("sys.modules", {"pyroomacoustics": None}):
                 augment(samples=samples, sample_rate=sample_rate)
 
+    def test_simulate_apply_parity(self):
+        """
+        Tests whether RoomSimulator.apply gives the same result as Roomsimulator.room.simulate() in the 1D case.
+
+        This mainly tests that we took into consideration and compensated about the delays introduced when pyroomacoustics
+        computes the room impulse response.
+
+        See:[Create the Room Impulse Response](https://pyroomacoustics.readthedocs.io/en/pypi-release/pyroomacoustics.room.html?highlight=simulate#)
+        """
+
+        random.seed(1)
+        sample_rate = 16000
+        samples = get_sinc_impulse(sample_rate, 10)
+
+        augment = RoomSimulator()
+        augmented_samples_apply = augment(samples=samples, sample_rate=sample_rate)
+        augment.room.simulate()
+        augmented_samples_simulate = augment.room.mic_array.signals.astype(
+            np.float32
+        ).flatten()
+
+        max_value = max(
+            np.amax(augmented_samples_simulate), -np.amin(augmented_samples_simulate)
+        )
+        if max_value > 0.0:
+            scale = 0.5 / max_value
+            augmented_samples_simulate *= scale
+
+        assert np.all(augmented_samples_apply == augmented_samples_simulate)
+
     def test_failing_case(self):
         """Failed case which identified a bug where the room created was not rectangular"""
         sample_rate = 16000
@@ -73,15 +104,20 @@ class TestRoomSimulatorTransform:
         sample_rate = 16000
         samples = get_sinc_impulse(sample_rate, 10)
         n_channels = np.tile(samples, (num_channels, 1))
-        augment = RoomSimulator()
+        augment = RoomSimulator(leave_length_unchanged=True)
         # Setting the seed is important for reproduction
         np.random.seed(1)
         augmented_samples = augment(samples=samples, sample_rate=sample_rate)
+
+        assert augmented_samples.shape == samples.shape
+
         augment.freeze_parameters()
         np.random.seed(1)
         augmented_n_channels = augment(samples=n_channels, sample_rate=sample_rate)
 
-        assert np.allclose(augmented_samples, augmented_n_channels)
+        assert augmented_n_channels.shape == n_channels.shape
+
+        assert np.allclose(augmented_samples, augmented_n_channels[0])
 
     @pytest.mark.parametrize("leave_length_unchanged", [True, False])
     def test_input_with_absorption(self, leave_length_unchanged):

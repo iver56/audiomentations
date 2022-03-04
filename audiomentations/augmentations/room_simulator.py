@@ -3,6 +3,9 @@ from typing import Optional
 import numpy as np
 import random
 
+from scipy.signal import convolve
+
+
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 
@@ -282,10 +285,6 @@ class RoomSimulator(BaseWaveformTransform):
 
         assert samples.dtype == np.float32
 
-        # It makes no sense to use stereo data.
-        if samples.ndim > 1:
-            samples = samples.mean(0)
-
         # Construct room
         self.room = pra.Room.from_corners(
             np.array(
@@ -343,11 +342,23 @@ class RoomSimulator(BaseWaveformTransform):
 
         # Do the simulation
         self.room.compute_rir()
-        self.room.simulate()
-        result = self.room.mic_array.signals.astype(np.float32).flatten()
 
-        num_samples = max(samples.shape)
+        rir = self.room.rir[0][0]
+
+        if samples.ndim > 1:
+            signal_ir = []
+            for i in range(samples.shape[0]):
+                channel_conv = convolve(samples[i], rir)
+                signal_ir.append(channel_conv)
+            signal_ir = np.array(signal_ir, dtype=samples.dtype)
+        else:
+            signal_ir = convolve(samples, rir).astype(samples.dtype)
+
+        max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
+        if max_value > 0.0:
+            scale = 0.5 / max_value
+            signal_ir *= scale
 
         if self.leave_length_unchanged:
-            return result[:num_samples]
-        return result
+            signal_ir = signal_ir[..., : samples.shape[-1]]
+        return signal_ir

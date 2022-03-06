@@ -1,16 +1,15 @@
 import functools
 import random
 import warnings
-from typing import Optional
+from pathlib import Path
+from typing import Optional, Union
 
 import numpy as np
 from scipy.signal import convolve
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import (
-    get_file_paths,
-)
+from audiomentations.core.utils import get_file_paths
 
 
 class ApplyImpulseResponse(BaseWaveformTransform):
@@ -23,7 +22,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
 
     def __init__(
         self,
-        ir_path="/tmp/ir",
+        ir_path: Union[str, Path],
         p=0.5,
         lru_cache_size=128,
         leave_length_unchanged: Optional[bool] = None,

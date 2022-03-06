@@ -1,6 +1,6 @@
 # Audiomentations
 
-[![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg)](https://circleci.com/gh/iver56/audiomentations) [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations) [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black) [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5470338.svg)](https://doi.org/10.5281/zenodo.5470338)
+[![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg)](https://circleci.com/gh/iver56/audiomentations) [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations) [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black) [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6142831.svg)](https://doi.org/10.5281/zenodo.6142831)
 
 A Python library for audio data augmentation. Inspired by
 [albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
@@ -417,6 +417,7 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 * Add `Padding` transform
 * Implemented `RoomSimulator` for simulating shoebox rooms using `pyroomacoustics`.
+* Add parameter `signal_gain_in_db_during_noise` in `AddShortNoises`
 
 ### Changed
 
@@ -426,7 +427,8 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 ### Removed
 
 * Remove the deprecated `AddImpulseResponse` alias. Use `ApplyImpulseResponse` instead.
-* Removed support for the legacy parameters `min_SNR` and `max_SNR` in `AddGaussianSNR`
+* Remove support for the legacy parameters `min_SNR` and `max_SNR` in `AddGaussianSNR`
+* Remove useless default path value in `AddBackgroundNoise`, `AddShortNoises` and `ApplyImpulseResponse`
 
 ## v0.22.0 (2022-02-18)
 

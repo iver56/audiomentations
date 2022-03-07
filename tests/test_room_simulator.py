@@ -54,13 +54,6 @@ class TestRoomSimulatorTransform:
             np.float32
         ).flatten()
 
-        max_value = max(
-            np.amax(augmented_samples_simulate), -np.amin(augmented_samples_simulate)
-        )
-        if max_value > 0.0:
-            scale = 0.5 / max_value
-            augmented_samples_simulate *= scale
-
         assert np.all(augmented_samples_apply == augmented_samples_simulate)
 
     def test_failing_case(self):

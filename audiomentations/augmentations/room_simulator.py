@@ -343,6 +343,7 @@ class RoomSimulator(BaseWaveformTransform):
 
         rir = self.room.rir[0][0]
 
+        # This is the same as ApplyImpulseResponse transform
         if samples.ndim > 1:
             signal_ir = []
             for i in range(samples.shape[0]):
@@ -351,11 +352,6 @@ class RoomSimulator(BaseWaveformTransform):
             signal_ir = np.array(signal_ir, dtype=samples.dtype)
         else:
             signal_ir = convolve(samples, rir).astype(samples.dtype)
-
-        max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
-        if max_value > 0.0:
-            scale = 0.5 / max_value
-            signal_ir *= scale
 
         if self.leave_length_unchanged:
             signal_ir = signal_ir[..., : samples.shape[-1]]

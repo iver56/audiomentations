@@ -280,7 +280,7 @@ as peak normalization.
 
 ## `Padding`
 
-_To be released in v0.23.0_
+_Added in v0.23.0_
 
 Apply padding to the audio signal - take a fraction of the end or the start of the
 audio and replace that part with padding. This can be useful for preparing ML models
@@ -331,7 +331,7 @@ classification. It was successfully applied in the paper
 
 ## `RoomSimulator`
 
-_To be added in v0.23.0_
+_Added in v0.23.0_
 
   A ShoeBox Room Simulator. Simulates a cuboid of parametrized size and average surface absorption coefficient. It also includes a source
   and microphones in parametrized locations.
@@ -413,10 +413,12 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+## v0.23.0 (2022-03-07)
+
 ### Added
 
 * Add `Padding` transform
-* Implemented `RoomSimulator` for simulating shoebox rooms using `pyroomacoustics`.
+* Add `RoomSimulator` transform for simulating shoebox rooms using `pyroomacoustics`
 * Add parameter `signal_gain_in_db_during_noise` in `AddShortNoises`
 
 ### Changed

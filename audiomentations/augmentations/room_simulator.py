@@ -24,7 +24,7 @@ class RoomSimulator(BaseWaveformTransform):
     > augment = RoomSimulator(use_ray_tracing=False)
     Quickly add reverberation without caring for accuracy.
 
-    > augment = RoomSimulator(calculate_by_absorption_or_rt60="rt60", min_absorption_value_or_rt60=0.06, max_absorption_value_or_rt60=0.06, min_size_x = ...)
+    > augment = RoomSimulator(calculation_mode="rt60", min_target_rt60=0.06, max_target_rt60=0.06, min_size_x = ...)
     Augment with randomly selected room impulse responses that have an RT60 of 0.06.
 
     > augment = RoomSimulator(min_mic_radius=1.0, max_min_radius=1.0)
@@ -44,10 +44,10 @@ class RoomSimulator(BaseWaveformTransform):
         max_size_y: float = 3.9,
         min_size_z: float = 2.4,
         max_size_z: float = 3.0,
-        min_absorption_value: float = 0.15,
-        max_absorption_value: float = 0.45,
+        min_absorption_value: float = 0.075,
+        max_absorption_value: float = 0.4,
         min_target_rt60: float = 0.15,
-        max_target_rt60: float = 0.45,
+        max_target_rt60: float = 0.8,
         min_source_x: float = 0.1,
         max_source_x: float = 3.5,
         min_source_y: float = 0.1,
@@ -131,7 +131,7 @@ class RoomSimulator(BaseWaveformTransform):
         assert calculation_mode in [
             "rt60",
             "absorption",
-        ], "`calculate_by_absorption_or_rt60` should either be `rt60` or `absorption`"
+        ], "`calculation_mode` should either be `rt60` or `absorption`"
 
         self.max_order = max_order
         self.calculation_mode = calculation_mode

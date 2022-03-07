@@ -29,6 +29,7 @@ Some features have extra dependencies. Extra python package dependencies can be 
 | ------- | ---------------- |
 | `LoudnessNormalization` | `pyloudnorm` |
 | `Mp3Compression` | `ffmpeg` and [`pydub` or `lameenc`] |
+| `RoomSimulator` | `pyroomacoustics` |
 
 Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
 
@@ -328,6 +329,16 @@ widely used in the visual domain. This can be relevant in the context of audio
 classification. It was successfully applied in the paper
 [AudioCLIP: Extending CLIP to Image, Text and Audio](https://arxiv.org/pdf/2106.13043.pdf).
 
+## `RoomSimulator`
+
+_To be added in v0.23.0_
+
+  A ShoeBox Room Simulator. Simulates a cuboid of parametrized size and average surface absorption coefficient. It also includes a source
+  and microphones in parametrized locations.
+
+  Use it when you want a ton of synthetic room impulse responses of specific configurations
+  characteristics or simply to quickly add reverb for augmentation purposes
+
 ## `Shift`
 
 _Added in v0.5.0_
@@ -405,6 +416,7 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 ### Added
 
 * Add `Padding` transform
+* Implemented `RoomSimulator` for simulating shoebox rooms using `pyroomacoustics`.
 * Add parameter `signal_gain_in_db_during_noise` in `AddShortNoises`
 
 ### Changed

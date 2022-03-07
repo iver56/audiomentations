@@ -402,19 +402,19 @@ given constant (e.g. zero).
 
 # Composition classes
 
-## Compose
+## `Compose`
 
 Compose applies the given sequence of transforms when called, optionally shuffling the sequence for every call.
 
-## SpecCompose
+## `SpecCompose`
 
 Same as Compose, but for spectrogram transforms
 
-## OneOf
+## `OneOf`
 
 OneOf randomly picks one of the given transforms when called, and applies that transform.
 
-## SomeOf
+## `SomeOf`
 
 SomeOf randomly picks several of the given transforms when called, and applies those transforms.
 

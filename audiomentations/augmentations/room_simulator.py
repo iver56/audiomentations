@@ -66,11 +66,7 @@ class RoomSimulator(BaseWaveformTransform):
         leave_length_unchanged: Optional[bool] = None,
         padding: float = 0.1,
         p: float = 0.5,
-        ray_tracing_options: Dict = {
-            "receiver_radius": 0.5,
-            "n_rays": 10000,
-            "energy_thres": 1e-5,
-        },
+        ray_tracing_options: Dict or None = None,
     ):
         """
 
@@ -186,7 +182,14 @@ class RoomSimulator(BaseWaveformTransform):
 
         self.padding = padding
 
-        self.ray_tracing_options = ray_tracing_options
+        if ray_tracing_options is None:
+            self.ray_tracing_options = {
+                "receiver_radius": 0.5,
+                "n_rays": 10000,
+                "energy_thres": 1e-5,
+            }
+        else:
+            self.ray_tracing_options = ray_tracing_options
 
     def randomize_parameters(self, samples: np.array, sample_rate: int):
 

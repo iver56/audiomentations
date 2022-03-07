@@ -400,6 +400,24 @@ augmentation has proved to make speech recognition models more robust.
 The masked frequencies can be replaced with either the mean of the original values or a
 given constant (e.g. zero).
 
+# Composition classes
+
+## Compose
+
+Compose applies the given sequence of transforms when called, optionally shuffling the sequence for every call.
+
+## SpecCompose
+
+Same as Compose, but for spectrogram transforms
+
+## OneOf
+
+OneOf randomly picks one of the given transforms when called, and applies that transform.
+
+## SomeOf
+
+SomeOf randomly picks several of the given transforms when called, and applies those transforms.
+
 # Known limitations
 
 * Some transforms do not support multichannel audio yet. See [Multichannel audio](#multichannel-audio)

@@ -1,9 +1,6 @@
 import random
-import numpy as np
-from audiomentations.core.transforms_interface import (
-    BaseWaveformTransform,
-    BaseSpectrogramTransform,
-)
+
+from audiomentations.core.transforms_interface import BaseSpectrogramTransform
 
 
 class BaseCompose:

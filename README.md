@@ -435,6 +435,10 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+### Added
+
+* Add .aac and .aif to the list of recognized audio filename endings
+
 ## v0.23.0 (2022-03-07)
 
 ### Added

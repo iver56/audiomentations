@@ -5,7 +5,17 @@ from typing import Union
 import math
 import numpy as np
 
-AUDIO_FILENAME_ENDINGS = (".aiff", ".flac", ".m4a", ".mp3", ".ogg", ".opus", ".wav")
+AUDIO_FILENAME_ENDINGS = (
+    ".aac",
+    ".aif",
+    ".aiff",
+    ".flac",
+    ".m4a",
+    ".mp3",
+    ".ogg",
+    ".opus",
+    ".wav",
+)
 
 
 def get_file_paths(

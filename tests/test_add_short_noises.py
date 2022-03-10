@@ -5,9 +5,9 @@ import random
 import unittest
 
 import numpy as np
-from numpy.testing import assert_array_equal
+from numpy.testing import assert_array_equal, assert_array_almost_equal
 
-from audiomentations import AddShortNoises, Compose
+from audiomentations import AddShortNoises, PolarityInversion
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
 )
@@ -22,15 +22,11 @@ class TestAddShortNoises(unittest.TestCase):
             np.float32
         )
         rms_before = calculate_rms(samples)
-        augmenter = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_time_between_sounds=2.0,
-                    max_time_between_sounds=8.0,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=2.0,
+            max_time_between_sounds=8.0,
+            p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         self.assertEqual(samples_out.dtype, np.float32)
@@ -45,18 +41,14 @@ class TestAddShortNoises(unittest.TestCase):
             np.float32
         )
         rms_before = calculate_rms(samples)
-        augmenter = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_snr_in_db=50.0,
-                    max_snr_in_db=50.0,
-                    min_time_between_sounds=2.0,
-                    max_time_between_sounds=4.0,
-                    signal_gain_in_db_during_noise=-100,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_snr_in_db=50.0,
+            max_snr_in_db=50.0,
+            min_time_between_sounds=2.0,
+            max_time_between_sounds=4.0,
+            signal_gain_in_db_during_noise=-100,
+            p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         self.assertEqual(samples_out.dtype, np.float32)
@@ -64,6 +56,36 @@ class TestAddShortNoises(unittest.TestCase):
 
         rms_after = calculate_rms(samples_out)
         self.assertLess(rms_after, rms_before)
+
+    def test_add_short_noises_with_noise_transform(self):
+        sample_rate = 44100
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
+            np.float32
+        )
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_snr_in_db=50.0,
+            max_snr_in_db=50.0,
+            min_time_between_sounds=1.0,
+            max_time_between_sounds=2.0,
+            noise_transform=PolarityInversion(p=1.0),
+            p=1.0,
+        )
+        samples_out_with_noise_transform = augmenter(
+            samples=samples, sample_rate=sample_rate
+        )
+        assert samples_out_with_noise_transform.dtype == np.float32
+        assert samples_out_with_noise_transform.shape == samples.shape
+
+        augmenter.noise_transform = None
+        samples_out_without_noise_transform = augmenter(
+            samples=samples, sample_rate=sample_rate
+        )
+
+        with np.testing.assert_raises(AssertionError):
+            assert_array_almost_equal(
+                samples_out_without_noise_transform, samples_out_with_noise_transform
+            )
 
     def test_input_shorter_than_noise(self):
         """
@@ -74,15 +96,11 @@ class TestAddShortNoises(unittest.TestCase):
             np.linspace(0, 440 * 2 * np.pi, int(0.03125 * sample_rate))
         ).astype(np.float32)
         rms_before = calculate_rms(samples)
-        augmenter = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_time_between_sounds=0.00001,
-                    max_time_between_sounds=0.00002,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=0.00001,
+            max_time_between_sounds=0.00002,
+            p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         self.assertEqual(samples_out.dtype, np.float32)
@@ -128,19 +146,15 @@ class TestAddShortNoises(unittest.TestCase):
             np.float32
         )
         rms_before = calculate_rms(samples)
-        augmenter = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_time_between_sounds=2.0,
-                    max_time_between_sounds=8.0,
-                    min_fade_in_time=0.9,
-                    max_fade_in_time=0.99,
-                    min_fade_out_time=0.9,
-                    max_fade_out_time=0.99,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=2.0,
+            max_time_between_sounds=8.0,
+            min_fade_in_time=0.9,
+            max_fade_in_time=0.99,
+            min_fade_out_time=0.9,
+            max_fade_out_time=0.99,
+            p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         self.assertEqual(samples_out.dtype, np.float32)
@@ -162,15 +176,11 @@ class TestAddShortNoises(unittest.TestCase):
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
             np.float32
         )
-        augmenter = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_time_between_sounds=2.0,
-                    max_time_between_sounds=8.0,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=2.0,
+            max_time_between_sounds=8.0,
+            p=1.0,
         )
         samples_out1 = augmenter(samples=samples, sample_rate=sample_rate)
 
@@ -189,15 +199,11 @@ class TestAddShortNoises(unittest.TestCase):
         )
         samples = np.vstack((samples_chn0, samples_chn1))
 
-        augmenter = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_time_between_sounds=2.0,
-                    max_time_between_sounds=8.0,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=2.0,
+            max_time_between_sounds=8.0,
+            p=1.0,
         )
         with self.assertRaises(MultichannelAudioNotSupportedException):
             samples_out = augmenter(samples=samples, sample_rate=sample_rate)
@@ -218,30 +224,22 @@ class TestAddShortNoises(unittest.TestCase):
             np.float32
         )
         rms_before = calculate_rms(samples)
-        augmenter_relative_to_whole_input = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_time_between_sounds=2.0,
-                    max_time_between_sounds=8.0,
-                    min_snr_in_db=5,
-                    max_snr_in_db=5,
-                    noise_rms="relative_to_whole_input",
-                    p=1.0,
-                )
-            ]
+        augmenter_relative_to_whole_input = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=2.0,
+            max_time_between_sounds=8.0,
+            min_snr_in_db=5,
+            max_snr_in_db=5,
+            noise_rms="relative_to_whole_input",
+            p=1.0,
         )
 
-        augmenter_absolute = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_time_between_sounds=2.0,
-                    max_time_between_sounds=8.0,
-                    noise_rms="absolute",
-                    p=1.0,
-                )
-            ]
+        augmenter_absolute = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=2.0,
+            max_time_between_sounds=8.0,
+            noise_rms="absolute",
+            p=1.0,
         )
 
         samples_out_absolute = augmenter_absolute(
@@ -267,17 +265,13 @@ class TestAddShortNoises(unittest.TestCase):
             np.float32
         )
         rms_before = calculate_rms(samples)
-        augmenter = Compose(
-            [
-                AddShortNoises(
-                    sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                    min_time_between_sounds=2.0,
-                    max_time_between_sounds=4.0,
-                    noise_rms="absolute",
-                    include_silence_in_noise_rms_estimation=False,
-                    p=1.0,
-                )
-            ]
+        augmenter = AddShortNoises(
+            sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=2.0,
+            max_time_between_sounds=4.0,
+            noise_rms="absolute",
+            include_silence_in_noise_rms_estimation=False,
+            p=1.0,
         )
 
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)

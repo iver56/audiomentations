@@ -19,7 +19,7 @@ class TestClippingDistortion(unittest.TestCase):
         )
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertEqual(len(samples_out), sample_len)
         self.assertLess(sum(abs(samples_out)), sum(abs(samples_in)))
 
@@ -32,7 +32,7 @@ class TestClippingDistortion(unittest.TestCase):
         )
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertEqual(samples_out.shape, samples_in.shape)
         self.assertLess(np.sum(np.abs(samples_out)), np.sum(np.abs(samples_in)))
         self.assertAlmostEqual(np.amax(samples_out[0, :]), np.amax(samples_out[1, :]))

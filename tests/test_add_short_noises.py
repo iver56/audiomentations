@@ -2,9 +2,9 @@ import json
 import os
 import pickle
 import random
-import unittest
 
 import numpy as np
+import pytest
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 
 from audiomentations import AddShortNoises, PolarityInversion
@@ -15,7 +15,7 @@ from audiomentations.core.utils import calculate_rms
 from demo.demo import DEMO_DIR
 
 
-class TestAddShortNoises(unittest.TestCase):
+class TestAddShortNoises:
     def test_add_short_noises(self):
         sample_rate = 44100
         samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
@@ -29,11 +29,11 @@ class TestAddShortNoises(unittest.TestCase):
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(samples_out.shape, samples.shape)
+        assert samples_out.dtype == np.float32
+        assert samples_out.shape == samples.shape
 
         rms_after = calculate_rms(samples_out)
-        self.assertGreater(rms_after, rms_before)
+        assert rms_after > rms_before
 
     def test_add_short_noises_with_signal_gain_during_noise(self):
         sample_rate = 44100
@@ -51,11 +51,11 @@ class TestAddShortNoises(unittest.TestCase):
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(samples_out.shape, samples.shape)
+        assert samples_out.dtype == np.float32
+        assert samples_out.shape == samples.shape
 
         rms_after = calculate_rms(samples_out)
-        self.assertLess(rms_after, rms_before)
+        assert rms_after < rms_before
 
     def test_add_short_noises_with_noise_transform(self):
         sample_rate = 44100
@@ -103,11 +103,11 @@ class TestAddShortNoises(unittest.TestCase):
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(samples_out.shape, samples.shape)
+        assert samples_out.dtype == np.float32
+        assert samples_out.shape == samples.shape
 
         rms_after = calculate_rms(samples_out)
-        self.assertGreater(rms_after, rms_before)
+        assert rms_after > rms_before
 
     def test_add_silence(self):
         """Check that AddShortNoises does not crash if a noise is completely silent."""
@@ -136,8 +136,8 @@ class TestAddShortNoises(unittest.TestCase):
         augmenter.freeze_parameters()
 
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(samples_out.shape, samples.shape)
+        assert samples_out.dtype == np.float32
+        assert samples_out.shape == samples.shape
 
     def test_too_long_fade_time(self):
         """Check that a too long fade time does not result in an exception."""
@@ -157,11 +157,11 @@ class TestAddShortNoises(unittest.TestCase):
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
-        self.assertEqual(samples_out.shape, samples.shape)
+        assert samples_out.dtype == np.float32
+        assert samples_out.shape == samples.shape
 
         rms_after = calculate_rms(samples_out)
-        self.assertGreater(rms_after, rms_before)
+        assert rms_after > rms_before
 
     def test_serialize_parameters(self):
         transform = AddShortNoises(
@@ -205,8 +205,8 @@ class TestAddShortNoises(unittest.TestCase):
             max_time_between_sounds=8.0,
             p=1.0,
         )
-        with self.assertRaises(MultichannelAudioNotSupportedException):
-            samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        with pytest.raises(MultichannelAudioNotSupportedException):
+            augmenter(samples=samples, sample_rate=sample_rate)
 
     def test_picklability(self):
         transform = AddShortNoises(
@@ -214,7 +214,7 @@ class TestAddShortNoises(unittest.TestCase):
         )
         pickled = pickle.dumps(transform)
         unpickled = pickle.loads(pickled)
-        self.assertEqual(transform.sound_file_paths, unpickled.sound_file_paths)
+        assert transform.sound_file_paths == unpickled.sound_file_paths
 
     def test_noise_rms_parameter(self):
         np.random.seed(80085)
@@ -248,14 +248,14 @@ class TestAddShortNoises(unittest.TestCase):
         samples_out_relative_to_whole_input = augmenter_relative_to_whole_input(
             samples=samples, sample_rate=sample_rate
         )
-        self.assertEqual(samples_out_absolute.dtype, np.float32)
-        self.assertEqual(samples_out_absolute.shape, samples.shape)
+        assert samples_out_absolute.dtype == np.float32
+        assert samples_out_absolute.shape == samples.shape
         rms_after_relative_to_whole_path = calculate_rms(
             samples_out_relative_to_whole_input
         )
         rms_after_absolute = calculate_rms(samples_out_absolute)
-        self.assertGreater(rms_after_absolute, rms_before)
-        self.assertGreater(rms_after_relative_to_whole_path, rms_before)
+        assert rms_after_absolute > rms_before
+        assert rms_after_relative_to_whole_path > rms_before
 
     def test_include_silence_in_noise_rms_calculation(self):
         np.random.seed(420)
@@ -277,7 +277,7 @@ class TestAddShortNoises(unittest.TestCase):
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
 
         rms_after = calculate_rms(samples_out)
-        self.assertGreater(rms_after, rms_before)
+        assert rms_after > rms_before
 
     def test_add_noises_with_same_level(self):
         dummy_audio = np.random.randint(1, 5, 250000)

@@ -16,7 +16,7 @@ class TestLoadSoundFiles(unittest.TestCase):
         samples, sample_rate = load_sound_file(
             os.path.join(DEMO_DIR, "background_noises", "hens.ogg"), sample_rate=None
         )
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         # Apparently, the exact duration may vary slightly based on which decoder is used
@@ -31,7 +31,7 @@ class TestLoadSoundFiles(unittest.TestCase):
         samples, sample_rate = load_sound_file(
             os.path.join(DEMO_DIR, "bus.opus"), sample_rate=None
         )
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         # Apparently, the exact duration may vary slightly based on which decoder is used
@@ -47,7 +47,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "testing.m4a"), sample_rate=None
         )
         self.assertEqual(sample_rate, 44100)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         self.assertGreaterEqual(samples.shape[0], 141312)
@@ -62,7 +62,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "acoustic_guitar_0.wav"), sample_rate=None
         )
         self.assertEqual(sample_rate, 16000)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         self.assertEqual(samples.shape[0], 140544)
@@ -76,7 +76,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "stereo_16bit.wav"), sample_rate=None
         )
         self.assertEqual(sample_rate, 16000)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         self.assertEqual(samples.shape[0], 17833)
@@ -90,7 +90,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "signed_24bit.wav"), sample_rate=None
         )
         self.assertEqual(sample_rate, 48000)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         self.assertEqual(samples.shape[0], 54514)
@@ -104,7 +104,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "mono_int24.wav"), sample_rate=None
         )
         self.assertEqual(sample_rate, 44100)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(samples.ndim, 1)
 
         self.assertEqual(samples.shape[-1], 22)
@@ -119,7 +119,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "mono_int32.wav"), sample_rate=None
         )
         self.assertEqual(sample_rate, 44100)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(samples.ndim, 1)
 
         self.assertEqual(samples.shape[-1], 22)
@@ -134,7 +134,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "mono_float64.wav"), sample_rate=None
         )
         self.assertEqual(sample_rate, 44100)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(samples.ndim, 1)
 
         self.assertEqual(samples.shape[-1], 22)
@@ -149,7 +149,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "stereo_24bit.WAV"), sample_rate=None
         )
         self.assertEqual(sample_rate, 16000)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         self.assertEqual(samples.shape[0], 17833)
@@ -163,7 +163,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             os.path.join(DEMO_DIR, "ms_adpcm.wav"), sample_rate=None
         )
         self.assertEqual(sample_rate, 11024)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         self.assertEqual(samples.shape[0], 895500)
@@ -188,7 +188,7 @@ class TestLoadSoundFiles(unittest.TestCase):
             )
 
         self.assertEqual(sample_rate, 16000)
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples.shape), 1)
 
         self.assertEqual(samples.shape[0], math.ceil(895500 * 16000 / 11024))

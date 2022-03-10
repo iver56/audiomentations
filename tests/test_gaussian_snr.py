@@ -14,7 +14,7 @@ class TestGaussianSNR(unittest.TestCase):
         std_in = np.mean(np.abs(samples_in))
         samples_out = augmenter(samples=samples_in, sample_rate=16000)
         std_out = np.mean(np.abs(samples_out))
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertNotAlmostEqual(float(std_out), 0.0)
         self.assertGreater(std_out, std_in)
 
@@ -25,7 +25,7 @@ class TestGaussianSNR(unittest.TestCase):
         std_in = np.mean(np.abs(samples_in))
         samples_out = augmenter(samples=samples_in, sample_rate=16000)
         std_out = np.mean(np.abs(samples_out))
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertNotAlmostEqual(float(std_out), 0.0)
         self.assertGreater(std_out, std_in)
 
@@ -42,7 +42,7 @@ class TestGaussianSNR(unittest.TestCase):
         augmenter = AddGaussianSNR(min_snr_in_db=15, max_snr_in_db=35, p=1.0)
         samples_out = augmenter(samples=samples, sample_rate=16000)
 
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertGreater(
             float(np.sum(np.abs(samples_out))), float(np.sum(np.abs(samples)))
         )

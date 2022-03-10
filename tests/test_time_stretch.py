@@ -15,7 +15,7 @@ class TestTimeStretch(unittest.TestCase):
 
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertGreater(len(samples), 2048)
 
     def test_fixed_length(self):
@@ -27,7 +27,7 @@ class TestTimeStretch(unittest.TestCase):
 
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        self.assertEqual(samples.dtype, np.float32)
+        assert samples.dtype == np.float32
         self.assertEqual(len(samples), 2048)
 
     def test_multichannel(self):

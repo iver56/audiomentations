@@ -48,7 +48,7 @@ class TestUtils(unittest.TestCase):
         samples_in[0:sample_rate] = 0.4 * np.ones(sample_rate)
         rms_before = calculate_rms(samples_in)
         rms_after = calculate_rms_without_silence(samples_in, sample_rate)
-        self.assertGreater(rms_after, rms_before)
+        assert rms_after > rms_before
         self.assertAlmostEqual(rms_after, 0.4)
 
         # Check that the function works if the input is shorter than a window (25 ms)

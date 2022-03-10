@@ -1,5 +1,4 @@
 import os
-import unittest
 
 import librosa
 import numpy as np
@@ -12,7 +11,7 @@ from .utils import plot_matrix
 DEBUG = False
 
 
-class TestSpecFrequencyMask(unittest.TestCase):
+class TestSpecFrequencyMask:
     def test_fill_zeros(self):
         samples, sample_rate = load_sound_file(
             os.path.join(DEMO_DIR, "acoustic_guitar_0.wav"), sample_rate=None
@@ -42,9 +41,8 @@ class TestSpecFrequencyMask(unittest.TestCase):
             if sum(augmented_spectrogram[i]) == 0.0:
                 num_zeroed_frequencies += 1
 
-        self.assertEqual(
-            num_zeroed_frequencies,
-            int(round(magnitude_spectrogram.shape[0] * mask_fraction)),
+        assert num_zeroed_frequencies == int(
+            round(magnitude_spectrogram.shape[0] * mask_fraction)
         )
 
     def test_fill_zeros_multichannel(self):
@@ -96,9 +94,8 @@ class TestSpecFrequencyMask(unittest.TestCase):
             if np.sum(augmented_spectrogram[i]) == 0.0:
                 num_zeroed_frequencies += 1
 
-        self.assertEqual(
-            num_zeroed_frequencies,
-            int(round(multichannel_magnitude_spectrogram.shape[0] * mask_fraction)),
+        assert num_zeroed_frequencies == int(
+            round(multichannel_magnitude_spectrogram.shape[0] * mask_fraction)
         )
 
     def test_fill_mean(self):
@@ -131,13 +128,11 @@ class TestSpecFrequencyMask(unittest.TestCase):
             ):
                 num_masked_frequencies += 1
 
-        self.assertGreaterEqual(
-            num_masked_frequencies,
-            int(round(magnitude_spectrogram.shape[0] * min_mask_fraction)),
+        assert num_masked_frequencies >= int(
+            round(magnitude_spectrogram.shape[0] * min_mask_fraction)
         )
-        self.assertLessEqual(
-            num_masked_frequencies,
-            int(round(magnitude_spectrogram.shape[0] * max_mask_fraction)),
+        assert num_masked_frequencies <= int(
+            round(magnitude_spectrogram.shape[0] * max_mask_fraction)
         )
 
     def test_fill_mean_multichannel(self):
@@ -192,7 +187,6 @@ class TestSpecFrequencyMask(unittest.TestCase):
             ):
                 num_masked_frequencies += 1
 
-        self.assertEqual(
-            num_masked_frequencies,
-            int(round(multichannel_magnitude_spectrogram.shape[0] * mask_fraction)),
+        assert num_masked_frequencies == int(
+            round(multichannel_magnitude_spectrogram.shape[0] * mask_fraction)
         )

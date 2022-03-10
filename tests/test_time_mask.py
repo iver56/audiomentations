@@ -13,7 +13,7 @@ class TestTimeMask(unittest.TestCase):
         augmenter = Compose([TimeMask(min_band_part=0.2, max_band_part=0.5, p=1.0)])
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertEqual(len(samples_out), sample_len)
 
         std_in = np.mean(np.abs(samples_in))
@@ -27,7 +27,7 @@ class TestTimeMask(unittest.TestCase):
         augmenter = TimeMask(min_band_part=0.2, max_band_part=0.5, p=1.0)
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertEqual(samples_out.shape, samples_in.shape)
 
         std_in = np.mean(np.abs(samples_in))
@@ -43,7 +43,7 @@ class TestTimeMask(unittest.TestCase):
         )
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertEqual(len(samples_out), sample_len)
 
         std_in = np.mean(np.abs(samples_in))
@@ -59,7 +59,7 @@ class TestTimeMask(unittest.TestCase):
         )
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
-        self.assertEqual(samples_out.dtype, np.float32)
+        assert samples_out.dtype == np.float32
         self.assertEqual(len(samples_out), sample_len)
 
         std_in = np.mean(np.abs(samples_in))

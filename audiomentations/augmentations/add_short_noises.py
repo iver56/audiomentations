@@ -2,7 +2,7 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 import numpy as np
 
@@ -45,6 +45,7 @@ class AddShortNoises(BaseWaveformTransform):
         min_fade_out_time: float = 0.01,
         max_fade_out_time: float = 0.1,
         signal_gain_in_db_during_noise: float = 0.0,
+        noise_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
         p: float = 0.5,
         lru_cache_size: Optional[int] = 64,
     ):
@@ -101,6 +102,8 @@ class AddShortNoises(BaseWaveformTransform):
             * replace the signal with another signal of a similar class (e.g. replace some
                 speech with a cough)
             * simulate an ECG off-lead condition (electrodes are temporarily disconnected)
+        :param noise_transform: A callable waveform transform (or composition of transforms) that
+            gets applied to noises before they get mixed in.
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
@@ -147,6 +150,7 @@ class AddShortNoises(BaseWaveformTransform):
         )
         self.add_all_noises_with_same_level = add_all_noises_with_same_level
         self.signal_gain_in_db_during_noise = signal_gain_in_db_during_noise
+        self.noise_transform = noise_transform
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddShortNoises.__load_sound
         )
@@ -280,6 +284,9 @@ class AddShortNoises(BaseWaveformTransform):
                 continue
 
             noise_samples, _ = self.__load_sound(sound_params["file_path"], sample_rate)
+
+            if self.noise_transform:
+                noise_samples = self.noise_transform(noise_samples, sample_rate)
 
             # Apply fade in and fade out
             noise_gain = np.ones_like(noise_samples)

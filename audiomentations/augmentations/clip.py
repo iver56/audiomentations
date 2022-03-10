@@ -1,25 +1,6 @@
-import functools
-import os
-import random
-import tempfile
-import uuid
-import warnings
-
-import librosa
 import numpy as np
-import sys
 
-from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import (
-    calculate_desired_noise_rms,
-    calculate_rms,
-    calculate_rms_without_silence,
-    convert_decibels_to_amplitude_ratio,
-    convert_float_samples_to_int16,
-    get_file_paths,
-)
-
 
 
 class Clip(BaseWaveformTransform):

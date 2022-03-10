@@ -1,5 +1,4 @@
 import random
-import warnings
 
 import librosa
 import numpy as np

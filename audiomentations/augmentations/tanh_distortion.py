@@ -3,9 +3,7 @@ import random
 import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import (
-    calculate_rms,
-)
+from audiomentations.core.utils import calculate_rms
 
 
 class TanhDistortion(BaseWaveformTransform):
@@ -62,4 +60,3 @@ class TanhDistortion(BaseWaveformTransform):
             distorted_samples = post_gain * distorted_samples
 
         return distorted_samples
-

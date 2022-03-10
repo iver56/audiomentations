@@ -1,11 +1,9 @@
-from ast import Str
-import sys
-from typing import Optional, Dict
-import numpy as np
 import random
+from typing import Optional, Dict
 
+import numpy as np
+import sys
 from scipy.signal import convolve
-
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 

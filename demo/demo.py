@@ -222,6 +222,37 @@ if __name__ == "__main__":
             "num_runs": 5,
             "name": "AddShortNoisesWithSignalGain",
         },
+        {
+            "instance": AddShortNoises(
+                sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                min_snr_in_db=0,
+                max_snr_in_db=8,
+                noise_rms="relative",
+                min_time_between_sounds=1.0,
+                max_time_between_sounds=2.0,
+                burst_probability=0.4,
+                min_pause_factor_during_burst=0.01,
+                max_pause_factor_during_burst=0.95,
+                min_fade_in_time=0.005,
+                max_fade_in_time=0.08,
+                min_fade_out_time=0.01,
+                max_fade_out_time=0.1,
+                noise_transform=OneOf(
+                    [
+                        TanhDistortion(min_distortion=0.8, max_distortion=0.99),
+                        RoomSimulator(
+                            calculation_mode="rt60",
+                            min_target_rt60=2.2,
+                            max_target_rt60=3.0,
+                            leave_length_unchanged=False,
+                        ),
+                    ]
+                ),
+                p=1.0,
+            ),
+            "num_runs": 5,
+            "name": "AddShortNoisesWithNoiseTransform",
+        },
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": BandStopFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},

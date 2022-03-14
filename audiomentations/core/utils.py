@@ -132,7 +132,7 @@ def convert_frequency_to_mel(f: float) -> float:
     return 2595.0 * math.log10(1.0 + f / 700.0)
 
 
-def convert_mel_to_frequency(m: float) -> float:
+def convert_mel_to_frequency(m: Union[float, np.array]) -> Union[float, np.array]:
     """
     Convert m mels to hertz
 

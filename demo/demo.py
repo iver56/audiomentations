@@ -42,6 +42,7 @@ from audiomentations import (
     GainTransition,
     Padding,
 )
+from audiomentations.augmentations.equalizer import Equalizer
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
@@ -261,6 +262,11 @@ if __name__ == "__main__":
                 min_frequency_band=0.5, max_frequency_band=0.6, p=1.0
             ),
             "num_runs": 5,
+        },
+        {
+            "instance": Compose([Equalizer(p=1.0), Normalize(p=1.0)]),
+            "num_runs": 5,
+            "name": "Equalizer",
         },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
         {"instance": GainTransition(p=1.0), "num_runs": 5},

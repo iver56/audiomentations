@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from audiomentations import Mp3Compression, Compose
+from audiomentations import Mp3Compression
 
 
 class TestMp3Compression:
@@ -16,8 +16,8 @@ class TestMp3Compression:
     def test_apply_mp3_compression(self, backend: str, shape: tuple):
         samples_in = np.random.normal(0, 1, size=shape).astype(np.float32)
         sample_rate = 44100
-        augmenter = Compose(
-            [Mp3Compression(p=1.0, min_bitrate=48, max_bitrate=48, backend=backend)]
+        augmenter = Mp3Compression(
+            p=1.0, min_bitrate=48, max_bitrate=48, backend=backend
         )
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
@@ -39,9 +39,7 @@ class TestMp3Compression:
     def test_apply_mp3_compression_low_bitrate(self, backend: str, shape: tuple):
         samples_in = np.random.normal(0, 1, size=shape).astype(np.float32)
         sample_rate = 16000
-        augmenter = Compose(
-            [Mp3Compression(p=1.0, min_bitrate=8, max_bitrate=8, backend=backend)]
-        )
+        augmenter = Mp3Compression(p=1.0, min_bitrate=8, max_bitrate=8, backend=backend)
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         assert len(shape) == len(samples_out.shape)

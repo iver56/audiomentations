@@ -444,6 +444,10 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 * Add optional `noise_transform` in `AddShortNoises`
 * Add .aac and .aif to the list of recognized audio filename endings
 
+### Fixed
+
+* Fix filter instability bug related to center freq above nyquist freq in LowShelfFilter and HighShelfFilter
+
 ## v0.23.0 (2022-03-07)
 
 ### Added

@@ -115,10 +115,15 @@ class HighShelfFilter(BaseWaveformTransform):
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
     def apply(self, samples, sample_rate):
-        assert samples.dtype == np.float32
+        nyquist_freq = sample_rate // 2
+        center_freq = self.parameters["center_freq"]
+        if center_freq > nyquist_freq:
+            # Ensure that the center frequency is below the nyquist
+            # frequency to avoid filter instability
+            center_freq = nyquist_freq * 0.9999
 
         sos = self._get_biquad_coefficients_from_input_parameters(
-            self.parameters["center_freq"],
+            center_freq,
             self.parameters["gain_db"],
             self.parameters["q_factor"],
             sample_rate,

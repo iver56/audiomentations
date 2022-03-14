@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.testing import assert_almost_equal
 
 from audiomentations import PolarityInversion, Compose
 
 
-class TestPolarityInversion(unittest.TestCase):
+class TestPolarityInversion:
     def test_polarity_inversion(self):
         samples = np.array([1.0, 0.5, -0.25, -0.125, 0.0], dtype=np.float32)
         sample_rate = 16000
@@ -16,7 +14,7 @@ class TestPolarityInversion(unittest.TestCase):
         assert_almost_equal(
             inverted_samples, np.array([-1.0, -0.5, 0.25, 0.125, 0.0], dtype=np.float32)
         )
-        self.assertEqual(inverted_samples.dtype, np.float32)
+        assert inverted_samples.dtype == np.float32
 
     def test_polarity_inversion_multichannel(self):
         samples = np.array(
@@ -34,4 +32,4 @@ class TestPolarityInversion(unittest.TestCase):
                 dtype=np.float32,
             ),
         )
-        self.assertEqual(inverted_samples.dtype, np.float32)
+        assert inverted_samples.dtype == np.float32

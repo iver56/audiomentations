@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 import pytest
 
 from audiomentations import AddGaussianNoise, Compose
 
 
-class TestGaussianNoise(unittest.TestCase):
+class TestGaussianNoise:
     def test_gaussian_noise(self):
         samples = np.zeros((20,), dtype=np.float32)
         sample_rate = 16000

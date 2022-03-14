@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from audiomentations import TimeStretch
 
 
-class TestTimeStretch(unittest.TestCase):
+class TestTimeStretch:
     def test_dynamic_length(self):
         samples = np.zeros((2048,), dtype=np.float32)
         sample_rate = 16000
@@ -16,7 +14,7 @@ class TestTimeStretch(unittest.TestCase):
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         assert samples.dtype == np.float32
-        self.assertGreater(len(samples), 2048)
+        assert len(samples) > 2048
 
     def test_fixed_length(self):
         samples = np.zeros((2048,), dtype=np.float32)
@@ -28,7 +26,7 @@ class TestTimeStretch(unittest.TestCase):
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
         assert samples.dtype == np.float32
-        self.assertEqual(len(samples), 2048)
+        assert len(samples) == 2048
 
     def test_multichannel(self):
         num_channels = 3
@@ -40,7 +38,7 @@ class TestTimeStretch(unittest.TestCase):
 
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
 
-        self.assertEqual(samples.dtype, samples_out.dtype)
-        self.assertEqual(samples.shape, samples_out.shape)
+        assert samples.dtype == samples_out.dtype
+        assert samples.shape == samples_out.shape
         for i in range(num_channels):
             assert not np.allclose(samples[i], samples_out[i])

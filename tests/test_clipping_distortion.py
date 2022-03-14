@@ -1,11 +1,10 @@
-import unittest
-
 import numpy as np
+import pytest
 
 from audiomentations import ClippingDistortion, Compose
 
 
-class TestClippingDistortion(unittest.TestCase):
+class TestClippingDistortion:
     def test_distort(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
@@ -20,8 +19,8 @@ class TestClippingDistortion(unittest.TestCase):
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         assert samples_out.dtype == np.float32
-        self.assertEqual(len(samples_out), sample_len)
-        self.assertLess(sum(abs(samples_out)), sum(abs(samples_in)))
+        assert len(samples_out) == sample_len
+        assert sum(abs(samples_out)) < sum(abs(samples_in))
 
     def test_distort_multichannel(self):
         sample_len = 32000
@@ -33,6 +32,6 @@ class TestClippingDistortion(unittest.TestCase):
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         assert samples_out.dtype == np.float32
-        self.assertEqual(samples_out.shape, samples_in.shape)
-        self.assertLess(np.sum(np.abs(samples_out)), np.sum(np.abs(samples_in)))
-        self.assertAlmostEqual(np.amax(samples_out[0, :]), np.amax(samples_out[1, :]))
+        assert samples_out.shape == samples_in.shape
+        assert np.sum(np.abs(samples_out)) < np.sum(np.abs(samples_in))
+        assert np.amax(samples_out[0, :]) == pytest.approx(np.amax(samples_out[1, :]))

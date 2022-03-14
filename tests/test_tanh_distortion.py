@@ -1,5 +1,3 @@
-import unittest
-
 import numpy as np
 import pytest
 
@@ -7,7 +5,7 @@ from audiomentations import TanhDistortion
 from audiomentations.core.utils import calculate_rms
 
 
-class TestTanhDistortion(unittest.TestCase):
+class TestTanhDistortion:
     def test_single_channel(self):
         samples = np.random.normal(0, 0.1, size=(2048,)).astype(np.float32)
         sample_rate = 16000
@@ -15,8 +13,8 @@ class TestTanhDistortion(unittest.TestCase):
 
         distorted_samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        self.assertEqual(samples.dtype, distorted_samples.dtype)
-        self.assertEqual(samples.shape, distorted_samples.shape)
+        assert samples.dtype == distorted_samples.dtype
+        assert samples.shape == distorted_samples.shape
         assert np.amax(distorted_samples) < np.amax(samples)
         assert calculate_rms(distorted_samples) == pytest.approx(
             calculate_rms(samples), abs=1e-3
@@ -30,8 +28,8 @@ class TestTanhDistortion(unittest.TestCase):
 
         distorted_samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        self.assertEqual(samples.dtype, distorted_samples.dtype)
-        self.assertEqual(samples.shape, distorted_samples.shape)
+        assert samples.dtype == distorted_samples.dtype
+        assert samples.shape == distorted_samples.shape
         for i in range(num_channels):
             assert not np.allclose(samples[i], distorted_samples[i])
             assert calculate_rms(distorted_samples[i]) == pytest.approx(

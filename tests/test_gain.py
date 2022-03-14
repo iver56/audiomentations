@@ -1,4 +1,3 @@
-import unittest
 import warnings
 
 import numpy as np
@@ -7,7 +6,7 @@ from numpy.testing import assert_almost_equal
 from audiomentations import Gain, Compose
 
 
-class TestGain(unittest.TestCase):
+class TestGain:
     def test_gain(self):
         samples = np.array([1.0, 0.5, -0.25, -0.125, 0.0], dtype=np.float32)
         sample_rate = 16000
@@ -20,7 +19,7 @@ class TestGain(unittest.TestCase):
                 [0.5011872, 0.2505936, -0.1252968, -0.0626484, 0.0], dtype=np.float32
             ),
         )
-        self.assertEqual(processed_samples.dtype, np.float32)
+        assert processed_samples.dtype == np.float32
 
     def test_gain_multichannel(self):
         samples = np.array(
@@ -41,7 +40,7 @@ class TestGain(unittest.TestCase):
                 dtype=np.float32,
             ),
         )
-        self.assertEqual(processed_samples.dtype, np.float32)
+        assert processed_samples.dtype == np.float32
 
     def test_gain_multichannel_with_wrong_dimension_ordering(self):
         samples = np.array(

@@ -32,5 +32,6 @@ from .core.composition import Compose, SpecCompose, OneOf, SomeOf
 from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle
 from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask
 from .augmentations.room_simulator import RoomSimulator
+from .augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 
 __version__ = "0.23.0"

@@ -42,7 +42,7 @@ from audiomentations import (
     GainTransition,
     Padding,
 )
-from audiomentations.augmentations.equalizer import Equalizer
+from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
@@ -264,7 +264,7 @@ if __name__ == "__main__":
             "num_runs": 5,
         },
         {
-            "instance": Compose([Equalizer(p=1.0), Normalize(p=1.0)]),
+            "instance": Compose([SevenBandParametricEQ(p=1.0), Normalize(p=1.0)]),
             "num_runs": 5,
             "name": "Equalizer",
         },

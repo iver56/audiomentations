@@ -1,3 +1,5 @@
+import warnings
+
 import librosa
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -10,7 +12,15 @@ class Trim(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, top_db=20, p=1.0):
+    def __init__(self, top_db=20, p=None):
+        if p is None:
+            p = 1.0
+            warnings.warn(
+                "The default value of p in Trim will change from 1.0 to 0.5 in a future"
+                " version of audiomentations. Please specify p explicitly to make your"
+                " code more future-proof and to get rid of this warning."
+            )
+
         super().__init__(p)
         self.top_db = top_db
 

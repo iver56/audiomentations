@@ -471,7 +471,8 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ### Changed
 
-* Add warning if `p` in `Trim` is not specified because its default value will change in a future version
+* Show warning if `top_db` and `p` in `Trim` are not specified because their default
+ values will change in a future version
 
 ### Fixed
 

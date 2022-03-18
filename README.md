@@ -349,7 +349,7 @@ characteristics or simply to quickly add reverb for augmentation purposes
 
 ## `SevenBandParametricEQ`
 
-_To be released_
+_Added in v0.24.0_
 
 Adjust the volume of different frequency bands. This transform is a 7-band
 parametric equalizer - a combination of one low shelf filter, five peaking filters
@@ -463,6 +463,8 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+## v0.24.0 (2022-03-18)
+
 ### Added
 
 * Add `SevenBandParametricEQ` transform
@@ -471,7 +473,7 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ### Changed
 
-* Show warning if `top_db` and `p` in `Trim` are not specified because their default
+* Show warning if `top_db` and/or `p` in `Trim` are not specified because their default
  values will change in a future version
 
 ### Fixed

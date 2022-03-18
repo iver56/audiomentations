@@ -34,4 +34,4 @@ from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask
 from .augmentations.room_simulator import RoomSimulator
 from .augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 
-__version__ = "0.23.0"
+__version__ = "0.24.0"

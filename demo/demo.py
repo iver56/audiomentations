@@ -263,11 +263,6 @@ if __name__ == "__main__":
             ),
             "num_runs": 5,
         },
-        {
-            "instance": Compose([SevenBandParametricEQ(p=1.0), Normalize(p=1.0)]),
-            "num_runs": 5,
-            "name": "Equalizer",
-        },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
         {"instance": GainTransition(p=1.0), "num_runs": 5},
         {"instance": HighPassFilter(p=1.0), "num_runs": 5},
@@ -325,6 +320,11 @@ if __name__ == "__main__":
             ),
             "num_runs": 5,
             "name": "RoomSimulator",
+        },
+        {
+            "instance": Compose([SevenBandParametricEQ(p=1.0), Normalize(p=1.0)]),
+            "num_runs": 5,
+            "name": "SevenBandParametricEQ",
         },
         {
             "instance": Shift(min_fraction=-0.5, max_fraction=0.5, fade=False, p=1.0),

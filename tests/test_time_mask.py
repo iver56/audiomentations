@@ -1,6 +1,7 @@
 import unittest
 
 import numpy as np
+import pytest
 
 from audiomentations import TimeMask, Compose
 
@@ -19,6 +20,16 @@ class TestTimeMask(unittest.TestCase):
         std_in = np.mean(np.abs(samples_in))
         std_out = np.mean(np.abs(samples_out))
         self.assertLess(std_out, std_in)
+
+    def test_invalid_params(self):
+        with pytest.raises(ValueError):
+            TimeMask(min_band_part=0.5, max_band_part=1.5)
+
+        with pytest.raises(ValueError):
+            TimeMask(min_band_part=-0.5, max_band_part=0.5)
+
+        with pytest.raises(ValueError):
+            TimeMask(min_band_part=0.6, max_band_part=0.5)
 
     def test_apply_time_mask_multichannel(self):
         sample_len = 1024

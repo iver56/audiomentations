@@ -16,13 +16,19 @@ class TimeMask(BaseWaveformTransform):
     def __init__(self, min_band_part=0.0, max_band_part=0.5, fade=False, p=0.5):
         """
         :param min_band_part: Minimum length of the silent part as a fraction of the
-            total sound length. Float.
+            total sound length. Float. Must be between 0.0 and 1.0
         :param max_band_part: Maximum length of the silent part as a fraction of the
-            total sound length. Float.
+            total sound length. Float. Must be between 0.0 and 1.0
         :param fade: Bool, Add linear fade in and fade out of the silent part.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
+        if min_band_part < 0.0 or min_band_part > 1.0:
+            raise ValueError("min_band_part must be between 0.0 and 1.0")
+        if max_band_part < 0.0 or max_band_part > 1.0:
+            raise ValueError("max_band_part must be between 0.0 and 1.0")
+        if min_band_part > max_band_part:
+            raise ValueError("min_band_part must not be greater than max_band_part")
         self.min_band_part = min_band_part
         self.max_band_part = max_band_part
         self.fade = fade

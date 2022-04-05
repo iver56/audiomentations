@@ -463,6 +463,10 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+### Changed
+
+* Guard against invalid params in TimeMask
+
 ## v0.24.0 (2022-03-18)
 
 ### Added

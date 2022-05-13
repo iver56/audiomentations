@@ -145,6 +145,13 @@ occur.
 
 A folder of (noise) sounds to be mixed in must be specified.
 
+## `AirAbsorption`
+_Added in v.0.25.0_
+
+Apply a Lowpass-like filterbank with variable octave attenuation that simulates attenuation of 
+higher frequencies due to air absorption in some cases (10-20 degrees celcius temperature and 
+30-90% humidity).
+
 ## `BandPassFilter`
 
 _Added in v0.18.0, updated in v0.21.0_
@@ -462,6 +469,10 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 # Changelog
 
 ## Unreleased
+
+### Added
+
+* Add `AirAbsorption` transform
 
 ### Changed
 

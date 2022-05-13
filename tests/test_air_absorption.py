@@ -14,7 +14,7 @@ def get_chirp_test(sample_rate, duration):
     return samples.astype(np.float32)
 
 
-class TestWindAbsorptionTransform:
+class TestAirAbsorptionTransform:
     @pytest.mark.parametrize("temperature", [10, 20])
     @pytest.mark.parametrize("humidity", [30, 50, 70, 90])
     @pytest.mark.parametrize("distance", [5, 10, 20, 100])

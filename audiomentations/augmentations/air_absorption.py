@@ -137,10 +137,10 @@ class AirAbsorption(BaseWaveformTransform):
 
         # Calculate n_fft so that the lowest band can be stored in a single
         # fft bin.
-        first_band_bw = self.air_absorption_table["center_freqs"][0] * 2
+        first_band_bw = self.air_absorption_table["center_freqs"][0] / (2**0.5)
         n_fft = next_power_of_2(int(sample_rate / 2 / first_band_bw))
 
-        # Frequencies to calculate the attenuations caused by wind absorption
+        # Frequencies to calculate the attenuations caused by air absorption
         frequencies = librosa.fft_frequencies(sr=sample_rate, n_fft=n_fft)
 
         # Interpolate to the desired frequencies (we have to do this in dB)

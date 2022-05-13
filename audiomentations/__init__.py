@@ -33,5 +33,6 @@ from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle
 from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask
 from .augmentations.room_simulator import RoomSimulator
 from .augmentations.seven_band_parametric_eq import SevenBandParametricEQ
+from .augmentations.air_absorption import AirAbsorption
 
 __version__ = "0.24.0"

@@ -41,6 +41,7 @@ from audiomentations import (
     BandStopFilter,
     GainTransition,
     Padding,
+    AirAbsorption,
 )
 from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 from audiomentations.core.audio_loading_utils import load_sound_file
@@ -370,6 +371,7 @@ if __name__ == "__main__":
             "num_runs": 10,
             "name": "BigCompose",
         },
+        {"instance": AirAbsorption(p=1.0), "num_runs": 5},
     ]
 
     for sound_file_path in sound_file_paths:

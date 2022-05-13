@@ -74,7 +74,6 @@ class AirAbsorption(BaseWaveformTransform):
         :param max_humidity: Maximum humidity in percent %
         :param min_distance: Minimum microphone-source distance in meters.
         :param max_distance: Maximum microphone-source distance in meters.
-        :param n_fft: The number of bins in the estimated filterbank
         :param p: The probability of applying this transform
         """
         assert float(min_temperature) in [
@@ -99,7 +98,7 @@ class AirAbsorption(BaseWaveformTransform):
         self.min_distance = min_distance
         self.max_distance = max_distance
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         super().randomize_parameters(samples, sample_rate)
         self.parameters["temperature"] = 10 * np.random.randint(
             int(self.min_temperature) // 10, int(self.max_temperature) // 10 + 1
@@ -111,7 +110,7 @@ class AirAbsorption(BaseWaveformTransform):
             self.min_distance, self.max_distance
         )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         assert samples.dtype == np.float32
 
         humidity = self.parameters["humidity"]

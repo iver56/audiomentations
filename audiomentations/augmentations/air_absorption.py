@@ -13,7 +13,7 @@ def next_power_of_2(x: int) -> int:
 
 class AirAbsorption(BaseWaveformTransform):
     """
-    Applies a wind absorption transform parametrized by temperature, humidity, and distance
+    Applies an air absorption transform parametrized by temperature, humidity, and distance
     of source.
 
     This is not a scientifically accurate transform but basically applies a uniform
@@ -34,7 +34,13 @@ class AirAbsorption(BaseWaveformTransform):
     supports_multichannel = True
 
     # Table of air absorption coefficients adapted from `pyroomacoustics`.
-    # The last two columns have been extrapolated with `curve_fit`
+    # The keys are of the form:
+    #   "<degrees>C_<minimum_humidity>-<maximum_humidity>%"
+    #
+    # And the values are attenuation coefficients `coef` that attenuate the corresponding band
+    # in "center_freq" by exp(-coef * <microphone-source distance>).
+    # The original table does not have the last two columns which have been extrapolated from the
+    # pyroomacoustics table using `curve_fit`
     air_absorption_table = {
         "10C_30-50%": [
             x * 1e-3 for x in [0.1, 0.2, 0.5, 1.1, 2.7, 9.4, 29.0, 91.5, 289.0]
@@ -68,10 +74,10 @@ class AirAbsorption(BaseWaveformTransform):
         p=0.5,
     ):
         """
-        :param min_temperature: Minimum temperature in celcius
-        :param max_temperature: Maximum temperature in celsius
-        :param min_humidity: Minimum humidity in percent %
-        :param max_humidity: Maximum humidity in percent %
+        :param min_temperature: Minimum temperature in celcius (can take a value of either 10 or 20)
+        :param max_temperature: Maximum temperature in celsius (can take a value of either 10 or 20)
+        :param min_humidity: Minimum humidity in percent (between 30 and 90)
+        :param max_humidity: Maximum humidity in percent (between 30 and 90)
         :param min_distance: Minimum microphone-source distance in meters.
         :param max_distance: Maximum microphone-source distance in meters.
         :param p: The probability of applying this transform

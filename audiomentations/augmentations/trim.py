@@ -23,7 +23,8 @@ class Trim(BaseWaveformTransform):
             warnings.warn(
                 "The default value of top_db in Trim will change from 20 to 30 in a future"
                 " version of audiomentations. Please specify it explicitly to make your"
-                " code more future-proof and to get rid of this warning."
+                " code more future-proof and to get rid of this warning.",
+                FutureWarning
             )
 
         if p is None:
@@ -31,7 +32,8 @@ class Trim(BaseWaveformTransform):
             warnings.warn(
                 "The default value of p in Trim will change from 1.0 to 0.5 in a future"
                 " version of audiomentations. Please specify it explicitly to make your"
-                " code more future-proof and to get rid of this warning."
+                " code more future-proof and to get rid of this warning.",
+                FutureWarning
             )
 
         super().__init__(p)

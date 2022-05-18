@@ -48,7 +48,8 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             warnings.warn(
                 "The default value of leave_length_unchanged will change from False to"
                 " True in a future version of audiomentations. You can set the value"
-                " explicitly to remove this warning for now."
+                " explicitly to remove this warning for now.",
+                FutureWarning
             )
             leave_length_unchanged = False
 

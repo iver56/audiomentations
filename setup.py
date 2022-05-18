@@ -43,7 +43,7 @@ setup(
             "pyroomacoustics>=0.6.0",
         ]
     },
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

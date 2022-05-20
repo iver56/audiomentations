@@ -43,5 +43,5 @@ class TestGaussianSNR:
         samples_out = augmenter(samples=samples, sample_rate=16000)
 
         assert samples_out.dtype == np.float32
-        assert float(np.sum(np.abs(samples_out))) > float(np.sum(np.abs(samples_out)))
+        assert float(np.sum(np.abs(samples_out))) > float(np.sum(np.abs(samples)))
 

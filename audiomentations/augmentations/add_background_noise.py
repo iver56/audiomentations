@@ -2,7 +2,7 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, Callable, Union
+from typing import Optional, List, Callable, Union
 
 import numpy as np
 
@@ -12,32 +12,27 @@ from audiomentations.core.utils import (
     calculate_desired_noise_rms,
     calculate_rms,
     convert_decibels_to_amplitude_ratio,
-    get_file_paths,
+    find_audio_files_in_paths,
 )
 
 
 class AddBackgroundNoise(BaseWaveformTransform):
     """Mix in another sound, e.g. a background noise. Useful if your original sound is clean and
     you want to simulate an environment where background noise is present.
-
     Can also be used for mixup, as in https://arxiv.org/pdf/1710.09412.pdf
-
     A folder of (background noise) sounds to be mixed in must be specified. These sounds should
     ideally be at least as long as the input sounds to be transformed. Otherwise, the background
     sound will be repeated, which may sound unnatural.
-
     Note that the gain of the added noise is relative to the amount of signal in the input if the parameter noise_rms
     is set to "relative" (default option). This implies that if the input is completely silent, no noise will be added.
-
     Here are some examples of datasets that can be downloaded and used as background noise:
-
     * https://github.com/karolpiczak/ESC-50#download
     * https://github.com/microsoft/DNS-Challenge/
     """
 
     def __init__(
         self,
-        sounds_path: Union[str, Path],
+        sounds_path: Union[List[Path], List[str], Path, str],
         min_snr_in_db=3,
         max_snr_in_db=30,
         noise_rms="relative",
@@ -68,7 +63,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
         super().__init__(p)
-        self.sound_file_paths = get_file_paths(sounds_path)
+        self.sound_file_paths = find_audio_files_in_paths(sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
 
         assert min_absolute_rms_in_db <= max_absolute_rms_in_db <= 0

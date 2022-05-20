@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.testing import assert_almost_equal
 
 from audiomentations import Shift, Compose
 
 
-class TestShift(unittest.TestCase):
+class TestShift:
     def test_shift(self):
         samples = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
         sample_rate = 16000
@@ -18,8 +16,8 @@ class TestShift(unittest.TestCase):
         assert_almost_equal(
             forward_shifted_samples, np.array([0.25, 0.125, 1.0, 0.5], dtype=np.float32)
         )
-        self.assertEqual(forward_shifted_samples.dtype, np.float32)
-        self.assertEqual(len(forward_shifted_samples), 4)
+        assert forward_shifted_samples.dtype == np.float32
+        assert len(forward_shifted_samples) == 4
 
         backward_augmenter = Compose(
             [Shift(min_fraction=-0.25, max_fraction=-0.25, p=1.0)]
@@ -31,8 +29,8 @@ class TestShift(unittest.TestCase):
             backward_shifted_samples,
             np.array([0.5, 0.25, 0.125, 1.0], dtype=np.float32),
         )
-        self.assertEqual(backward_shifted_samples.dtype, np.float32)
-        self.assertEqual(len(backward_shifted_samples), 4)
+        assert backward_shifted_samples.dtype == np.float32
+        assert len(forward_shifted_samples) == 4
 
     def test_shift_without_rollover(self):
         samples = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
@@ -47,8 +45,8 @@ class TestShift(unittest.TestCase):
         assert_almost_equal(
             forward_shifted_samples, np.array([0.0, 0.0, 1.0, 0.5], dtype=np.float32)
         )
-        self.assertEqual(forward_shifted_samples.dtype, np.float32)
-        self.assertEqual(len(forward_shifted_samples), 4)
+        assert forward_shifted_samples.dtype == np.float32
+        assert len(forward_shifted_samples) == 4
 
         backward_augmenter = Compose(
             [Shift(min_fraction=-0.25, max_fraction=-0.25, rollover=False, p=1.0)]
@@ -60,8 +58,8 @@ class TestShift(unittest.TestCase):
             backward_shifted_samples,
             np.array([0.5, 0.25, 0.125, 0.0], dtype=np.float32),
         )
-        self.assertEqual(backward_shifted_samples.dtype, np.float32)
-        self.assertEqual(len(backward_shifted_samples), 4)
+        assert backward_shifted_samples.dtype == np.float32
+        assert len(forward_shifted_samples) == 4
 
     def test_shift_multichannel(self):
         samples = np.array(
@@ -79,7 +77,7 @@ class TestShift(unittest.TestCase):
                 dtype=np.float32,
             ),
         )
-        self.assertEqual(processed_samples.dtype, np.float32)
+        assert processed_samples.dtype == np.float32
 
     def test_shift_without_rollover_multichannel(self):
         samples = np.array(
@@ -94,7 +92,7 @@ class TestShift(unittest.TestCase):
             processed_samples,
             np.array([[0.0, 0.0, 0.75, 0.5], [0.0, 0.0, 0.9, 0.5]], dtype=np.float32),
         )
-        self.assertEqual(processed_samples.dtype, np.float32)
+        assert processed_samples.dtype == np.float32
 
     def test_shift_fade(self):
         samples = np.array(

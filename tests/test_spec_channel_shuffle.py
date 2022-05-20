@@ -1,5 +1,5 @@
 import os
-import unittest
+import pytest
 
 import librosa
 import numpy as np
@@ -13,7 +13,7 @@ from .utils import plot_matrix
 DEBUG = False
 
 
-class TestSpecChannelShuffle(unittest.TestCase):
+class TestSpecChannelShuffle:
     def test_shuffle_channels(self):
         samples, sample_rate = load_sound_file(
             os.path.join(DEMO_DIR, "background_noises", "hens.ogg"),
@@ -79,7 +79,7 @@ class TestSpecChannelShuffle(unittest.TestCase):
         )
 
         transform = SpecChannelShuffle(p=1.0)
-        with self.assertRaises(MonoAudioNotSupportedException):
+        with pytest.raises(MonoAudioNotSupportedException):
             augmented_spectrogram = transform(magnitude_spectrogram)
 
     def test_empty_spectrogram(self):

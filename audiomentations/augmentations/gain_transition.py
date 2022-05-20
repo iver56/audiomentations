@@ -14,7 +14,7 @@ def get_fade_mask(
 ):
     """
     :param start_level_in_db:
-    :param active_level_in_db:
+    :param end_level_in_db:
     :param fade_time_in_samples: How long does the fade last?
     :return:
     """

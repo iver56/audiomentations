@@ -123,6 +123,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
             self.parameters["noise_start_index"] : self.parameters["noise_end_index"]
         ]
 
+        if self.noise_transform:
+            noise_sound = self.noise_transform(noise_sound, sample_rate)
+
         noise_rms = calculate_rms(noise_sound)
         if noise_rms < 1e-9:
             warnings.warn(
@@ -130,9 +133,6 @@ class AddBackgroundNoise(BaseWaveformTransform):
                 " unchanged.".format(self.parameters["noise_file_path"])
             )
             return samples
-
-        if self.noise_transform:
-            noise_sound = self.noise_transform(noise_sound, sample_rate)
 
         clean_rms = calculate_rms(samples)
 

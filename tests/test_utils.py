@@ -4,7 +4,7 @@ import pytest
 from audiomentations.core.utils import (
     calculate_desired_noise_rms,
     convert_decibels_to_amplitude_ratio,
-    find_audio_files_in_paths,
+    get_file_paths,
     calculate_rms,
     calculate_rms_without_silence,
 )
@@ -24,7 +24,7 @@ class TestUtils:
         assert amplitude_ratio == pytest.approx(1.9952623149688795)
 
     def test_find_audio_files_in_paths_uppercase_extension(self):
-        file_paths = find_audio_files_in_paths(DEMO_DIR, traverse_subdirectories=False)
+        file_paths = get_file_paths(DEMO_DIR, traverse_subdirectories=False)
         found_it = False
         for file_path in file_paths:
             if file_path.name == "stereo_24bit.WAV":

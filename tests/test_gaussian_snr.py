@@ -1,12 +1,12 @@
 import json
-import unittest
+import pytest
 
 import numpy as np
 
 from audiomentations import AddGaussianSNR
 
 
-class TestGaussianSNR(unittest.TestCase):
+class TestGaussianSNR:
     def test_gaussian_noise_snr_defaults(self):
         np.random.seed(42)
         samples_in = np.random.normal(0, 1, size=1024).astype(np.float32)
@@ -15,8 +15,8 @@ class TestGaussianSNR(unittest.TestCase):
         samples_out = augmenter(samples=samples_in, sample_rate=16000)
         std_out = np.mean(np.abs(samples_out))
         assert samples_out.dtype == np.float32
-        self.assertNotAlmostEqual(float(std_out), 0.0)
-        self.assertGreater(std_out, std_in)
+        assert not (float(std_out) == pytest.approx(0.0))
+        assert std_out > std_in
 
     def test_gaussian_noise_snr(self):
         np.random.seed(42)
@@ -26,8 +26,8 @@ class TestGaussianSNR(unittest.TestCase):
         samples_out = augmenter(samples=samples_in, sample_rate=16000)
         std_out = np.mean(np.abs(samples_out))
         assert samples_out.dtype == np.float32
-        self.assertNotAlmostEqual(float(std_out), 0.0)
-        self.assertGreater(std_out, std_in)
+        assert not (float(std_out) == pytest.approx(0.0))
+        assert std_out > std_in
 
     def test_serialize_parameters(self):
         np.random.seed(42)
@@ -43,6 +43,5 @@ class TestGaussianSNR(unittest.TestCase):
         samples_out = augmenter(samples=samples, sample_rate=16000)
 
         assert samples_out.dtype == np.float32
-        self.assertGreater(
-            float(np.sum(np.abs(samples_out))), float(np.sum(np.abs(samples)))
-        )
+        assert float(np.sum(np.abs(samples_out))) > float(np.sum(np.abs(samples)))
+

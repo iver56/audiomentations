@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 import pytest
 
 from audiomentations import TimeMask, Compose
 
 
-class TestTimeMask(unittest.TestCase):
+class TestTimeMask:
     def test_apply_time_mask(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
@@ -15,11 +13,11 @@ class TestTimeMask(unittest.TestCase):
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         assert samples_out.dtype == np.float32
-        self.assertEqual(len(samples_out), sample_len)
+        assert len(samples_out) == sample_len
 
         std_in = np.mean(np.abs(samples_in))
         std_out = np.mean(np.abs(samples_out))
-        self.assertLess(std_out, std_in)
+        assert std_out < std_in
 
     def test_invalid_params(self):
         with pytest.raises(ValueError):
@@ -39,11 +37,11 @@ class TestTimeMask(unittest.TestCase):
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         assert samples_out.dtype == np.float32
-        self.assertEqual(samples_out.shape, samples_in.shape)
+        assert samples_out.shape == samples_in.shape
 
         std_in = np.mean(np.abs(samples_in))
         std_out = np.mean(np.abs(samples_out))
-        self.assertLess(std_out, std_in)
+        assert std_out < std_in
 
     def test_apply_time_mask_with_fade(self):
         sample_len = 1024
@@ -55,11 +53,11 @@ class TestTimeMask(unittest.TestCase):
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         assert samples_out.dtype == np.float32
-        self.assertEqual(len(samples_out), sample_len)
+        assert len(samples_out) == sample_len
 
         std_in = np.mean(np.abs(samples_in))
         std_out = np.mean(np.abs(samples_out))
-        self.assertLess(std_out, std_in)
+        assert std_out < std_in
 
     def test_apply_time_mask_with_fade_short_signal(self):
         sample_len = 100
@@ -71,8 +69,8 @@ class TestTimeMask(unittest.TestCase):
 
         samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
         assert samples_out.dtype == np.float32
-        self.assertEqual(len(samples_out), sample_len)
+        assert len(samples_out) == sample_len
 
         std_in = np.mean(np.abs(samples_in))
         std_out = np.mean(np.abs(samples_out))
-        self.assertLess(std_out, std_in)
+        assert std_out < std_in

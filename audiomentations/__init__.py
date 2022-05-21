@@ -27,6 +27,7 @@ from .augmentations.shift import Shift
 from .augmentations.tanh_distortion import TanhDistortion
 from .augmentations.time_mask import TimeMask
 from .augmentations.time_stretch import TimeStretch
+from .augmentations.sample_rate_change import SampleRateChange
 from .augmentations.trim import Trim
 from .core.composition import Compose, SpecCompose, OneOf, SomeOf
 from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle

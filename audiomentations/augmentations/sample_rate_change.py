@@ -24,8 +24,8 @@ class SampleRateChange(BaseWaveformTransform):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             """
-            If rate > 1, then the signal is sped up.
-            If rate < 1, then the signal is slowed down.
+            If rate < 1, then the signal is sped up.
+            If rate > 1, then the signal is slowed down.
             """
             self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
 

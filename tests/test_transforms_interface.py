@@ -1,16 +1,14 @@
-import unittest
-
-from audiomentations.augmentations.transforms import Normalize
+from audiomentations import Normalize
 
 
-class TestTransformsInterface(unittest.TestCase):
+class TestTransformsInterface:
     def test_freeze_and_unfreeze_parameters(self):
         normalizer = Normalize(p=1.0)
 
-        self.assertFalse(normalizer.are_parameters_frozen)
+        assert normalizer.are_parameters_frozen == False
 
         normalizer.freeze_parameters()
-        self.assertTrue(normalizer.are_parameters_frozen)
+        assert normalizer.are_parameters_frozen == True
 
         normalizer.unfreeze_parameters()
-        self.assertFalse(normalizer.are_parameters_frozen)
+        assert normalizer.are_parameters_frozen == False

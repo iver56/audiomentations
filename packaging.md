@@ -3,6 +3,8 @@
 * Bump the version number in `audiomentations/__init__.py` in accordance with the [semantic versioning specification](https://semver.org/)
 * Write a summary of the changes in the version history section in README.md
 * Commit and push the change with a commit message like this: "Release vx.y.z" (replace x.y.z with the package version)
+* Add and push a git tag to the release commit
+* Add a release here: https://github.com/iver56/audiomentations/releases/new
+* Update the Zenodo badge in README.md. Commit and push.
 * `python setup.py sdist bdist_wheel`
 * `python -m twine upload dist/*`
-* Add and push a git tag to the release commit

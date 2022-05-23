@@ -476,7 +476,19 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ### Changed
 
-* Guard against invalid params in TimeMask
+* Guard against invalid params in `TimeMask`
+* Emit `FutureWarning` instead of `UserWarning` in `Trim` and `ApplyImpulseResponse`
+
+### Fixed
+
+* Fix a bug with `noise_transform` in `AddBackgroundNoise` where some
+ SNR calculations were done before the `noise_transform` was applied. This has sometimes
+ led to incorrect SNR in the output. **This changes the behavior** of
+ `AddBackgroundNoise` (when noise_transform is used).
+
+### Removed
+
+* Remove support for Python 3.6, as it is past its end of life already. RIP.
 
 ## v0.24.0 (2022-03-18)
 

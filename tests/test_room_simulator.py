@@ -1,9 +1,9 @@
-from audiomentations import RoomSimulator
-import numpy as np
 import random
-import unittest.mock
+
+import numpy as np
 import pytest
 
+from audiomentations import RoomSimulator
 
 DEBUG = False
 
@@ -19,20 +19,6 @@ def get_sinc_impulse(sample_rate, duration):
 
 
 class TestRoomSimulatorTransform:
-    def test_pyroomacoustics_not_found(self):
-        """
-        Test raising ImportError when pyroomacoustics is not found on
-        randomize_parameters
-        """
-        random.seed(1)
-        sample_rate = 16000
-        samples = get_sinc_impulse(sample_rate, 10)
-        with pytest.raises(ImportError):
-            with unittest.mock.patch.dict("sys.modules", {"pyroomacoustics": None}):
-                augment = RoomSimulator()
-                augment(samples=samples, sample_rate=sample_rate)
-                augment.freeze_parameters()
-
     def test_simulate_apply_parity(self):
         """
         Tests whether RoomSimulator.apply gives the same result as Roomsimulator.room.simulate() in the 1D case.

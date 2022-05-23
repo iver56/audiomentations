@@ -194,7 +194,6 @@ class RoomSimulator(BaseWaveformTransform):
         try:
             import pyroomacoustics as pra
         except ImportError:
-
             print(
                 "Failed to import pyroomacoustics. Maybe it is not installed? "
                 "To install the optional pyroomacoustics dependency of audiomentations,"

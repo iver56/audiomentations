@@ -455,10 +455,10 @@ SomeOf randomly picks several of the given transforms when called, and applies t
 
 # Known limitations
 
-* Some transforms do not support multichannel audio yet. See [Multichannel audio](#multichannel-audio)
+* A few transforms do not support multichannel audio yet. See [Multichannel audio](#multichannel-audio)
 * Expects the input dtype to be float32, and have values between -1 and 1.
 * The code runs on CPU, not GPU. For a GPU-compatible version, check out [pytorch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)
-* Multiprocessing is not officially supported yet. See also [#46](https://github.com/iver56/audiomentations/issues/46)
+* Multiprocessing probably works but is not _officially_ supported yet
 
 Contributions are welcome!
 

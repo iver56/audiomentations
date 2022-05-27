@@ -2,7 +2,7 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, Union, Callable
+from typing import Optional, List, Union, Callable
 
 import numpy as np
 
@@ -13,7 +13,7 @@ from audiomentations.core.utils import (
     calculate_rms,
     calculate_rms_without_silence,
     convert_decibels_to_amplitude_ratio,
-    get_file_paths,
+    find_audio_files_in_paths,
 )
 
 
@@ -21,13 +21,12 @@ class AddShortNoises(BaseWaveformTransform):
     """Mix in various (bursts of overlapping) sounds with random pauses between. Useful if your
     original sound is clean and you want to simulate an environment where short noises sometimes
     occur.
-
     A folder of (noise) sounds to be mixed in must be specified.
     """
 
     def __init__(
         self,
-        sounds_path: Union[str, Path],
+        sounds_path: Union[List[Path], List[str], Path, str],
         min_snr_in_db: float = 0.0,
         max_snr_in_db: float = 24.0,
         min_time_between_sounds: float = 4.0,
@@ -108,7 +107,7 @@ class AddShortNoises(BaseWaveformTransform):
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
         super().__init__(p)
-        self.sound_file_paths = get_file_paths(sounds_path)
+        self.sound_file_paths = find_audio_files_in_paths(sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
         assert len(self.sound_file_paths) > 0
         assert min_snr_in_db <= max_snr_in_db

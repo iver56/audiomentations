@@ -40,7 +40,7 @@ def find_audio_files_in_paths(
             file_path = Path(os.path.abspath(p))
             file_paths.append(file_path)
         elif os.path.isdir(p):
-            file_paths += find_audio_files(
+            file_paths += find_audio_files_in_paths(
                 p,
                 filename_endings=filename_endings,
                 traverse_subdirectories=traverse_subdirectories,

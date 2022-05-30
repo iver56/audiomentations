@@ -12,10 +12,12 @@ SUPPORTED_EXTENSIONS = (
     ".flac",
     ".m4a",
     ".mp3",
+    ".mp4",
     ".ogg",
     ".opus",
     ".wav",
 )
+
 
 def find_audio_files(
     root_path,
@@ -42,7 +44,7 @@ def find_audio_files(
 
     return file_paths
 
-    
+
 def find_audio_files_in_paths(
     paths: Union[List[Path], List[str], Path, str],
     filename_endings=SUPPORTED_EXTENSIONS,
@@ -54,7 +56,6 @@ def find_audio_files_in_paths(
     """
 
     file_paths = []
-
 
     if isinstance(paths, (list, tuple, set)):
         paths = list(paths)
@@ -70,7 +71,7 @@ def find_audio_files_in_paths(
                 p,
                 filename_endings=filename_endings,
                 traverse_subdirectories=traverse_subdirectories,
-                follow_symlinks=follow_symlinks
+                follow_symlinks=follow_symlinks,
             )
     return file_paths
 
@@ -118,7 +119,7 @@ def calculate_desired_noise_rms(clean_rms, snr):
     :return:
     """
     a = float(snr) / 20
-    noise_rms = clean_rms / (10 ** a)
+    noise_rms = clean_rms / (10**a)
     return noise_rms
 
 

@@ -146,10 +146,11 @@ occur.
 A folder of (noise) sounds to be mixed in must be specified.
 
 ## `AirAbsorption`
-_Added in v.0.25.0_
+
+_Added in v0.25.0_
 
 Apply a Lowpass-like filterbank with variable octave attenuation that simulates attenuation of 
-higher frequencies due to air absorption in some cases (10-20 degrees celcius temperature and 
+higher frequencies due to air absorption in some cases (10-20 degrees Celsius temperature and 
 30-90% humidity).
 
 ## `BandPassFilter`
@@ -478,14 +479,19 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+## v0.25.0 (2022-05-30)
+
 ### Added
 
 * Add `AirAbsorption` transform
+* Add mp4 to the list of recognized audio filename extensions
 
 ### Changed
 
 * Guard against invalid params in `TimeMask`
 * Emit `FutureWarning` instead of `UserWarning` in `Trim` and `ApplyImpulseResponse`
+* Allow specifying a file path, a folder path, a list of files or a list of folders to
+ `ApplyImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises`. Previously only a path to a folder was allowed.
 
 ### Fixed
 

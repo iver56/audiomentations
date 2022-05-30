@@ -49,8 +49,9 @@ class AddShortNoises(BaseWaveformTransform):
         lru_cache_size: Optional[int] = 64,
     ):
         """
-        :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
-            files can be flac, mp3, ogg or wav.
+        :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
+            audio files. Can be str or Path instance(s). The audio files given here are
+            supposed to be (short) noises.
         :param min_snr_in_db: Minimum signal-to-noise ratio in dB. A lower value means the added
             sounds/noises will be louder.
         :param max_snr_in_db: Maximum signal-to-noise ratio in dB. A lower value means the added

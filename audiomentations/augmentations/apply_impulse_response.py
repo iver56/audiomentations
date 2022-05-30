@@ -28,8 +28,9 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         leave_length_unchanged: Optional[bool] = None,
     ):
         """
-        :param ir_path: Path to a folder that contains one or more wav files of impulse
-        responses. Must be str or a Path instance.
+        :param ir_path: A path or list of paths to audio file(s) and/or folder(s) with
+            audio files. Can be str or Path instance(s). The audio files given here are
+            supposed to be impulse responses.
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing impulse response files
         in memory.

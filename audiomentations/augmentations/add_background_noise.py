@@ -43,8 +43,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
         lru_cache_size=2,
     ):
         """
-        :param sounds_path: Path to a folder that contains sound files to randomly mix in. These
-            files can be flac, mp3, ogg or wav.
+        :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
+            audio files. Can be str or Path instance(s). The audio files given here are
+            supposed to be background noises.
         :param min_snr_in_db: Minimum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param max_snr_in_db: Maximum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param noise_rms: Defines how the background noise will be added to the audio input. If the chosen

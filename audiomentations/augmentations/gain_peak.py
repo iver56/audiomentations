@@ -10,7 +10,8 @@ class GainPeak(BaseWaveformTransform):
     
     supports_multichannel = True
     
-    def __init__(self, min_gain, min_gain_diff, max_gain_diff, p=0.5):
+    def __init__(self, min_gain, min_gain_diff, max_gain_diff, 
+            min_peak_relpos, max_peak_relpos, p=0.5):
         """
         :param p: The probability of applying this transform
         """
@@ -18,18 +19,21 @@ class GainPeak(BaseWaveformTransform):
         self.min_gain = min_gain
         self.min_gain_diff = min_gain_diff
         self.max_gain_diff = max_gain_diff
+        self.min_peak_relpos = min_peak_relpos
+        self.max_peak_relpos = max_peak_relpos
         
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["gain_diff"] = random.uniform(self.min_gain_diff, self.max_gain_diff)
+            self.parameters["peak_relpos"] = random.uniform(self.min_peak_relpos, self.max_peak_relpos)
         
     def apply(self, samples, sample_rate):
-        n_samples_half = len(samples)//2
+        peak_pos = int(len(samples)*self.parameters["peak_relpos"])
         gain_up = np.linspace(self.min_gain, self.min_gain+self.parameters["gain_diff"], 
-                        num=n_samples_half, dtype=samples.dtype)
+                        num=peak_pos, dtype=samples.dtype)
         gain_down = np.linspace(self.min_gain+self.parameters["gain_diff"], self.min_gain,
-                        num=len(samples) - n_samples_half, dtype=samples.dtype)
+                        num=len(samples) - peak_pos, dtype=samples.dtype)
         gain = np.concatenate((gain_up, gain_down))
                         
         if samples.ndim > 1:

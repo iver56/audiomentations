@@ -8,7 +8,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/python:3.8.12
+      - image: circleci/python:3.8.12
     working_directory: ~/repo
     steps:
       - checkout
@@ -16,9 +16,9 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "requirements.txt" }}
+            - v1-dependencies-{{ checksum "requirements.txt" }}
             # Fall back to using the latest cache if no exact match is found
-            - v2-dependencies-
+            - v1-dependencies-
 
       - run:
           name: install dependencies
@@ -29,12 +29,12 @@ jobs:
             pip install -r requirements.txt
             sudo apt update
             sudo apt install software-properties-common
+            sudo add-apt-repository -y ppa:jonathonf/ffmpeg-4
             sudo apt install ffmpeg
-
       - save_cache:
           paths:
             - ./venv
-          key: v2-dependencies-{{ checksum "requirements.txt" }}
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       # Run tests and measure code coverage
       - run:
@@ -42,6 +42,5 @@ jobs:
           command: |
             . venv/bin/activate
             pytest
-
       - codecov/upload:
           file: coverage.xml

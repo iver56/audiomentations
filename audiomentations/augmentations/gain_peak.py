@@ -13,6 +13,11 @@ class GainPeak(BaseWaveformTransform):
     def __init__(self, min_gain, min_gain_diff, max_gain_diff, 
             min_peak_relpos, max_peak_relpos, p=0.5):
         """
+        :param min_gain: minimal gain
+        :param min_gain_diff: minimal difference between min and max gain
+        :param max_gain_diff: maximal difference between min and max gain
+        :param min_peak_relpos: minimal peak relative position
+        :param max_peak_relpos: maximal peak relative position
         :param p: The probability of applying this transform
         """
         super().__init__(p)

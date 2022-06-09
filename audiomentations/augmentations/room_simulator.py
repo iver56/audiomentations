@@ -287,9 +287,9 @@ class RoomSimulator(BaseWaveformTransform):
             np.array(
                 [
                     [0, 0],
-                    [0, self.parameters["size_x"]],
+                    [0, self.parameters["size_y"]],
                     [self.parameters["size_x"], self.parameters["size_y"]],
-                    [self.parameters["size_y"], 0],
+                    [self.parameters["size_x"], 0],
                 ]
             ).T,
             fs=sample_rate,
@@ -334,7 +334,6 @@ class RoomSimulator(BaseWaveformTransform):
                 self.room.fs,
             )
         )
-
         # Do the simulation
         self.room.compute_rir()
 

@@ -10,8 +10,8 @@ class GainPeak(BaseWaveformTransform):
     
     supports_multichannel = True
     
-    def __init__(self, min_gain, min_gain_diff, max_gain_diff, 
-            min_peak_relpos, max_peak_relpos, p=0.5):
+    def __init__(self, min_gain=1.0, min_gain_diff=0.1, max_gain_diff=0.5, 
+            min_peak_relpos=0.3, max_peak_relpos=0.7, p=0.5):
         """
         :param min_gain: minimal gain
         :param min_gain_diff: minimal difference between min and max gain

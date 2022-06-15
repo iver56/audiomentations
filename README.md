@@ -479,6 +479,12 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+## v0.25.1 (2022-06-15)
+
+### Fixed
+
+* Fix a bug where `RoomSimulator` would treat an x value as if it was y, and vice versa
+
 ## v0.25.0 (2022-05-30)
 
 ### Added

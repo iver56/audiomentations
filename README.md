@@ -4,7 +4,7 @@
 [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
 [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/master/LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6594177.svg)](https://doi.org/10.5281/zenodo.6594177)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6645998.svg)](https://doi.org/10.5281/zenodo.6645998)
 
 A Python library for audio data augmentation. Inspired by
 [albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
@@ -478,6 +478,12 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 # Changelog
 
 ## Unreleased
+
+## v0.25.1 (2022-06-15)
+
+### Fixed
+
+* Fix a bug where `RoomSimulator` would treat an x value as if it was y, and vice versa
 
 ## v0.25.0 (2022-05-30)
 

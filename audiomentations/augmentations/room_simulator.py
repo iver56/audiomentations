@@ -58,8 +58,8 @@ class RoomSimulator(BaseWaveformTransform):
         max_mic_azimuth: float = np.pi,
         min_mic_elevation: float = -np.pi,
         max_mic_elevation: float = np.pi,
-        calculation_mode: float = "absorption",
-        use_ray_tracing: float = True,
+        calculation_mode: str = "absorption",
+        use_ray_tracing: bool = True,
         max_order: Optional[int] = None,
         leave_length_unchanged: Optional[bool] = None,
         padding: float = 0.1,
@@ -287,9 +287,9 @@ class RoomSimulator(BaseWaveformTransform):
             np.array(
                 [
                     [0, 0],
-                    [0, self.parameters["size_x"]],
+                    [0, self.parameters["size_y"]],
                     [self.parameters["size_x"], self.parameters["size_y"]],
-                    [self.parameters["size_y"], 0],
+                    [self.parameters["size_x"], 0],
                 ]
             ).T,
             fs=sample_rate,
@@ -334,7 +334,6 @@ class RoomSimulator(BaseWaveformTransform):
                 self.room.fs,
             )
         )
-
         # Do the simulation
         self.room.compute_rir()
 

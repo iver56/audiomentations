@@ -36,4 +36,4 @@ from .augmentations.room_simulator import RoomSimulator
 from .augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 from .augmentations.air_absorption import AirAbsorption
 
-__version__ = "0.25.0"
+__version__ = "0.25.1"

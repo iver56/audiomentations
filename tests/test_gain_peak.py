@@ -10,7 +10,7 @@ class TestGainPeak:
         samples = np.array([1.0, 0.5, -0.25, -0.125, 0.0], dtype=np.float32)
         sample_rate = 16000
 
-        augment = Compose([GainPeak(min_gain=1, min_gain_diff=2, max_gain_diff=10, 
+        augment = Compose([GainPeak(min_gain_diff=2, max_gain_diff=10, 
             min_peak_relpos=0.3, max_peak_relpos=0.7, p=1.0)])
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert processed_samples.dtype == np.float32
@@ -22,7 +22,7 @@ class TestGainPeak:
         )
         sample_rate = 16000
 
-        augment = Compose([GainPeak(min_gain=1, min_gain_diff=2, max_gain_diff=10, 
+        augment = Compose([GainPeak(min_gain_diff=2, max_gain_diff=10, 
             min_peak_relpos=0.3, max_peak_relpos=0.7, p=1.0)])
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert processed_samples.dtype == np.float32
@@ -35,7 +35,7 @@ class TestGainPeak:
         print(samples.shape)
         sample_rate = 16000
 
-        augment = Compose([GainPeak(min_gain=1, min_gain_diff=2, max_gain_diff=10, 
+        augment = Compose([GainPeak(min_gain_diff=2, max_gain_diff=10, 
             min_peak_relpos=0.3, max_peak_relpos=0.7, p=1.0)])
 
         with warnings.catch_warnings(record=True) as w:

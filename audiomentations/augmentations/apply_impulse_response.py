@@ -2,14 +2,14 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, List, Union
 
 import numpy as np
 from scipy.signal import convolve
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import get_file_paths
+from audiomentations.core.utils import find_audio_files_in_paths
 
 
 class ApplyImpulseResponse(BaseWaveformTransform):
@@ -22,14 +22,15 @@ class ApplyImpulseResponse(BaseWaveformTransform):
 
     def __init__(
         self,
-        ir_path: Union[str, Path],
+        ir_path: Union[List[Path], List[str], str, Path],
         p=0.5,
         lru_cache_size=128,
         leave_length_unchanged: Optional[bool] = None,
     ):
         """
-        :param ir_path: Path to a folder that contains one or more wav files of impulse
-        responses. Must be str or a Path instance.
+        :param ir_path: A path or list of paths to audio file(s) and/or folder(s) with
+            audio files. Can be str or Path instance(s). The audio files given here are
+            supposed to be impulse responses.
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing impulse response files
         in memory.
@@ -38,7 +39,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             length of the input.
         """
         super().__init__(p)
-        self.ir_files = get_file_paths(ir_path)
+        self.ir_files = find_audio_files_in_paths(ir_path)
         self.ir_files = [str(p) for p in self.ir_files]
         assert len(self.ir_files) > 0
         self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(

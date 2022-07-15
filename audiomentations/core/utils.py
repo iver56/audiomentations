@@ -1,30 +1,31 @@
 import os
 from pathlib import Path
-from typing import Union
+from typing import List, Union
 
 import math
 import numpy as np
 
-AUDIO_FILENAME_ENDINGS = (
+SUPPORTED_EXTENSIONS = (
     ".aac",
     ".aif",
     ".aiff",
     ".flac",
     ".m4a",
     ".mp3",
+    ".mp4",
     ".ogg",
     ".opus",
     ".wav",
 )
 
 
-def get_file_paths(
-    root_path: Union[str, Path],
-    filename_endings=AUDIO_FILENAME_ENDINGS,
+def find_audio_files(
+    root_path,
+    filename_endings=SUPPORTED_EXTENSIONS,
     traverse_subdirectories=True,
     follow_symlinks=True,
 ):
-    """Return a list of paths to all files with the given filename extensions in a directory.
+    """Return a list of paths to all audio files with the given extension(s) in a directory.
     Also traverses subdirectories by default.
     """
     file_paths = []
@@ -41,6 +42,37 @@ def get_file_paths(
             # prevent descending into subfolders
             break
 
+    return file_paths
+
+
+def find_audio_files_in_paths(
+    paths: Union[List[Path], List[str], Path, str],
+    filename_endings=SUPPORTED_EXTENSIONS,
+    traverse_subdirectories=True,
+    follow_symlinks=True,
+):
+    """Return a list of paths to all audio files with the given extension(s) contained in the list or in its directories.
+    Also traverses subdirectories by default.
+    """
+
+    file_paths = []
+
+    if isinstance(paths, (list, tuple, set)):
+        paths = list(paths)
+    else:
+        paths = [paths]
+
+    for p in paths:
+        if str(p).lower().endswith(SUPPORTED_EXTENSIONS):
+            file_path = Path(os.path.abspath(p))
+            file_paths.append(file_path)
+        elif os.path.isdir(p):
+            file_paths += find_audio_files(
+                p,
+                filename_endings=filename_endings,
+                traverse_subdirectories=traverse_subdirectories,
+                follow_symlinks=follow_symlinks,
+            )
     return file_paths
 
 
@@ -81,14 +113,13 @@ def calculate_desired_noise_rms(clean_rms, snr):
     """
     Given the Root Mean Square (RMS) of a clean sound and a desired signal-to-noise ratio (SNR),
     calculate the desired RMS of a noise sound to be mixed in.
-
     Based on https://github.com/Sato-Kunihiko/audio-SNR/blob/8d2c933b6c0afe6f1203251f4877e7a1068a6130/create_mixed_audio_file.py#L20
     :param clean_rms: Root Mean Square (RMS) - a value between 0.0 and 1.0
     :param snr: Signal-to-Noise (SNR) Ratio in dB - typically somewhere between -20 and 60
     :return:
     """
     a = float(snr) / 20
-    noise_rms = clean_rms / (10 ** a)
+    noise_rms = clean_rms / (10**a)
     return noise_rms
 
 
@@ -99,7 +130,6 @@ def convert_decibels_to_amplitude_ratio(decibels):
 def is_waveform_multichannel(samples):
     """
     Return bool that answers the question: Is the given ndarray a multichannel waveform or not?
-
     :param samples: numpy ndarray
     :return:
     """
@@ -109,7 +139,6 @@ def is_waveform_multichannel(samples):
 def is_spectrogram_multichannel(spectrogram):
     """
     Return bool that answers the question: Is the given ndarray a multichannel spectrogram?
-
     :param samples: numpy ndarray
     :return:
     """
@@ -126,7 +155,6 @@ def convert_float_samples_to_int16(y):
 def convert_frequency_to_mel(f: float) -> float:
     """
     Convert f hertz to mels
-
     https://en.wikipedia.org/wiki/Mel_scale#Formula
     """
     return 2595.0 * math.log10(1.0 + f / 700.0)
@@ -135,7 +163,6 @@ def convert_frequency_to_mel(f: float) -> float:
 def convert_mel_to_frequency(m: Union[float, np.array]) -> Union[float, np.array]:
     """
     Convert m mels to hertz
-
     https://en.wikipedia.org/wiki/Mel_scale#History_and_other_formulas
     """
     return 700.0 * (10 ** (m / 2595.0) - 1.0)

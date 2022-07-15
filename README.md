@@ -4,7 +4,7 @@
 [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
 [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/master/LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6367011.svg)](https://doi.org/10.5281/zenodo.6367011)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6645998.svg)](https://doi.org/10.5281/zenodo.6645998)
 
 A Python library for audio data augmentation. Inspired by
 [albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
@@ -146,10 +146,11 @@ occur.
 A folder of (noise) sounds to be mixed in must be specified.
 
 ## `AirAbsorption`
-_Added in v.0.25.0_
+
+_Added in v0.25.0_
 
 Apply a Lowpass-like filterbank with variable octave attenuation that simulates attenuation of 
-higher frequencies due to air absorption in some cases (10-20 degrees celcius temperature and 
+higher frequencies due to air absorption in some cases (10-20 degrees Celsius temperature and 
 30-90% humidity).
 
 ## `BandPassFilter`
@@ -225,6 +226,14 @@ _Added in v0.22.0_
 Gradually change the volume up or down over a random time span. Also known as
 fade in and fade out. The fade works on a logarithmic scale, which is natural to
 human hearing.
+
+The way this works is that it picks two gains: a first gain and a second gain.
+Then it picks a time range for the transition between those two gains.
+Note that this transition can start before the audio starts and/or end after the
+audio ends, so the output audio can start or end in the middle of a transition.
+The gain starts at the first gain and is held constant until the transition start.
+Then it transitions to the second gain. Then that gain is held constant until the
+end of the sound.
 
 ## `HighPassFilter`
 
@@ -455,10 +464,10 @@ SomeOf randomly picks several of the given transforms when called, and applies t
 
 # Known limitations
 
-* Some transforms do not support multichannel audio yet. See [Multichannel audio](#multichannel-audio)
+* A few transforms do not support multichannel audio yet. See [Multichannel audio](#multichannel-audio)
 * Expects the input dtype to be float32, and have values between -1 and 1.
 * The code runs on CPU, not GPU. For a GPU-compatible version, check out [pytorch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)
-* Multiprocessing is not officially supported yet. See also [#46](https://github.com/iver56/audiomentations/issues/46)
+* Multiprocessing probably works but is not _officially_ supported yet
 
 Contributions are welcome!
 
@@ -470,13 +479,36 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+## v0.25.1 (2022-06-15)
+
+### Fixed
+
+* Fix a bug where `RoomSimulator` would treat an x value as if it was y, and vice versa
+
+## v0.25.0 (2022-05-30)
+
 ### Added
 
 * Add `AirAbsorption` transform
+* Add mp4 to the list of recognized audio filename extensions
 
 ### Changed
 
-* Guard against invalid params in TimeMask
+* Guard against invalid params in `TimeMask`
+* Emit `FutureWarning` instead of `UserWarning` in `Trim` and `ApplyImpulseResponse`
+* Allow specifying a file path, a folder path, a list of files or a list of folders to
+ `ApplyImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises`. Previously only a path to a folder was allowed.
+
+### Fixed
+
+* Fix a bug with `noise_transform` in `AddBackgroundNoise` where some
+ SNR calculations were done before the `noise_transform` was applied. This has sometimes
+ led to incorrect SNR in the output. **This changes the behavior** of
+ `AddBackgroundNoise` (when noise_transform is used).
+
+### Removed
+
+* Remove support for Python 3.6, as it is past its end of life already. RIP.
 
 ## v0.24.0 (2022-03-18)
 

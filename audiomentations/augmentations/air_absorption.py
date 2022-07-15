@@ -74,8 +74,8 @@ class AirAbsorption(BaseWaveformTransform):
         p=0.5,
     ):
         """
-        :param min_temperature: Minimum temperature in celcius (can take a value of either 10 or 20)
-        :param max_temperature: Maximum temperature in celsius (can take a value of either 10 or 20)
+        :param min_temperature: Minimum temperature in Celsius (can take a value of either 10 or 20)
+        :param max_temperature: Maximum temperature in Celsius (can take a value of either 10 or 20)
         :param min_humidity: Minimum humidity in percent (between 30 and 90)
         :param max_humidity: Maximum humidity in percent (between 30 and 90)
         :param min_distance: Minimum microphone-source distance in meters.
@@ -85,11 +85,11 @@ class AirAbsorption(BaseWaveformTransform):
         assert float(min_temperature) in [
             10.0,
             20.0,
-        ], "Sorry, the only supported temperatures are either 10 or 20 degrees celcius"
+        ], "Sorry, the only supported temperatures are either 10 or 20 degrees Celsius"
         assert float(max_temperature) in [
             10.0,
             20.0,
-        ], "Sorry, the only supported temperatures are either 10 or 20 degrees celcius"
+        ], "Sorry, the only supported temperatures are either 10 or 20 degrees Celsius"
         assert min_temperature <= max_temperature
         assert 30 <= min_humidity <= max_humidity <= 90
 

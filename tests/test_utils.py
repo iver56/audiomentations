@@ -1,10 +1,12 @@
+import os
+
 import numpy as np
 import pytest
 
 from audiomentations.core.utils import (
     calculate_desired_noise_rms,
     convert_decibels_to_amplitude_ratio,
-    get_file_paths,
+    find_audio_files_in_paths,
     calculate_rms,
     calculate_rms_without_silence,
 )
@@ -23,14 +25,37 @@ class TestUtils:
         amplitude_ratio = convert_decibels_to_amplitude_ratio(decibels=6)
         assert amplitude_ratio == pytest.approx(1.9952623149688795)
 
-    def test_get_file_paths_uppercase_extension(self):
-        file_paths = get_file_paths(DEMO_DIR, traverse_subdirectories=False)
+    def test_find_audio_files_in_paths_uppercase_extension(self):
+        file_paths = find_audio_files_in_paths(DEMO_DIR, traverse_subdirectories=False)
         found_it = False
         for file_path in file_paths:
             if file_path.name == "stereo_24bit.WAV":
                 found_it = True
                 break
         assert found_it
+
+    def test_find_single_audio_file(self):
+        file_paths = find_audio_files_in_paths(
+            os.path.join(DEMO_DIR, "bus.opus"), traverse_subdirectories=False
+        )
+        assert len(file_paths) == 1
+        assert file_paths[0].name == "bus.opus"
+
+    def test_find_multiple_audio_files(self):
+        file_paths = find_audio_files_in_paths(
+            [os.path.join(DEMO_DIR, "bus.opus"), os.path.join(DEMO_DIR, "testing.m4a")]
+        )
+        assert len(file_paths) == 2
+        assert file_paths[0].name == "bus.opus"
+        assert file_paths[1].name == "testing.m4a"
+
+    def test_find_audio_files_multiple_dirs(self):
+        file_paths = find_audio_files_in_paths(
+            [os.path.join(DEMO_DIR, "short_noises"), os.path.join(DEMO_DIR, "ir")]
+        )
+        assert len(file_paths) == 6
+        assert file_paths[0].name == "130921_iPhone_rub_channel0_chunk83_aug2.wav"
+        assert file_paths[-1].name == "impulse_response_0.wav"
 
     def test_calculate_rms_stereo(self):
         np.random.seed(42)

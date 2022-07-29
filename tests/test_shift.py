@@ -138,8 +138,7 @@ class TestShift:
         assert_almost_equal(
             processed_samples,
             np.array(
-                [[2.0, 0.0, 0, 1.0, 3.0], [-2.0, 0.0, 0, -1.0, -3.0]],
-                dtype=np.float32,
+                [[2.0, 0.0, 0, 1.0, 3.0], [-2.0, 0.0, 0, -1.0, -3.0]], dtype=np.float32,
             ),
         )
 
@@ -193,3 +192,26 @@ class TestShift:
                 dtype=np.float32,
             ),
         )
+
+    def test_freeze_shift_with_different_sample_rates(self):
+        samples1 = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
+        samples2 = np.array(
+            [1.0, 0.5, 0.25, 0.125, 0.3, 0.4, 0.5, 0.2], dtype=np.float32
+        )
+        sample_rate_1 = 1
+        sample_rate_2 = 2
+
+        augment = Shift(
+            min_fraction=0.5, max_fraction=0.5, rollover=False, fade=False, p=1.0
+        )
+        augment.randomize_parameters(samples1, sample_rate_1)
+        augment.freeze_parameters()
+        shifted_samples1 = augment(samples1, sample_rate_1)
+        shifted_samples2 = augment(samples2, sample_rate_2)
+
+        num_samples1_shifted = np.count_nonzero(shifted_samples1 == 0)
+        num_samples2_shifted = np.count_nonzero(shifted_samples2 == 0)
+
+        assert num_samples1_shifted == 2
+        assert num_samples2_shifted == 4
+

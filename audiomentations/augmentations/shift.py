@@ -49,15 +49,14 @@ class Shift(BaseWaveformTransform):
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["num_places_to_shift"] = int(
-                round(
-                    random.uniform(self.min_fraction, self.max_fraction)
-                    * samples.shape[-1]
-                )
+            self.parameters["fraction_to_shift"] = random.uniform(
+                self.min_fraction, self.max_fraction
             )
 
     def apply(self, samples, sample_rate):
-        num_places_to_shift = self.parameters["num_places_to_shift"]
+        num_places_to_shift = round(
+            self.parameters["fraction_to_shift"] * samples.shape[-1]
+        )
         shifted_samples = np.roll(samples, num_places_to_shift, axis=-1)
 
         if not self.rollover:
@@ -80,10 +79,9 @@ class Shift(BaseWaveformTransform):
                 )
                 fade_in_length = fade_in_end - fade_in_start
 
-                shifted_samples[
-                ...,
-                fade_in_start:fade_in_end,
-                ] *= fade_in[:fade_in_length]
+                shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
+                    :fade_in_length
+                ]
 
                 if self.rollover:
 
@@ -92,8 +90,8 @@ class Shift(BaseWaveformTransform):
                     fade_out_length = fade_out_end - fade_out_start
 
                     shifted_samples[..., fade_out_start:fade_out_end] *= fade_out[
-                                                                         -fade_out_length:
-                                                                         ]
+                        -fade_out_length:
+                    ]
 
             elif num_places_to_shift < 0:
 
@@ -106,19 +104,18 @@ class Shift(BaseWaveformTransform):
                 fade_out_length = fade_out_end - fade_out_start
 
                 shifted_samples[..., fade_out_start:fade_out_end] *= fade_out[
-                                                                     -fade_out_length:
-                                                                     ]
+                    -fade_out_length:
+                ]
 
                 if self.rollover:
                     fade_in_start = positive_num_places_to_shift
                     fade_in_end = min(
                         positive_num_places_to_shift + fade_length,
                         shifted_samples.shape[-1],
-                        )
+                    )
                     fade_in_length = fade_in_end - fade_in_start
-                    shifted_samples[
-                    ...,
-                    fade_in_start:fade_in_end,
-                    ] *= fade_in[:fade_in_length]
+                    shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
+                        :fade_in_length
+                    ]
 
         return shifted_samples

@@ -34,5 +34,7 @@ from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask
 from .augmentations.room_simulator import RoomSimulator
 from .augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 from .augmentations.air_absorption import AirAbsorption
+from .augmentations.fnlambda import Lambda
+
 
 __version__ = "0.25.1"

@@ -13,6 +13,7 @@ from .augmentations.gain_transition import GainTransition
 from .augmentations.high_pass_filter import HighPassFilter
 from .augmentations.high_shelf_filter import HighShelfFilter
 from .augmentations.loudness_normalization import LoudnessNormalization
+from .augmentations.limiter import Limiter
 from .augmentations.low_pass_filter import LowPassFilter
 from .augmentations.low_shelf_filter import LowShelfFilter
 from .augmentations.mp3_compression import Mp3Compression

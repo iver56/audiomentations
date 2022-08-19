@@ -283,6 +283,13 @@ Note that bitrates below 32 kbps are only supported for low sample rates (up to 
 Note: When using the lameenc backend, the output may be slightly longer than the input due
 to the fact that the LAME encoder inserts some silence at the beginning of the audio.
 
+## `Limiter`
+
+_To be released in v0.26.0_
+
+A simple audio limiter (dynamic range compression).
+Note: This transform also delays the signal by a fraction of the attack time.
+
 ## `LoudnessNormalization`
 
 _Added in v0.14.0_

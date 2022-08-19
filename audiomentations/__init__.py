@@ -37,4 +37,4 @@ from .core.composition import Compose, SpecCompose, OneOf, SomeOf
 from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle
 from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask
 
-__version__ = "0.25.1"
+__version__ = "0.26.0"

@@ -42,6 +42,7 @@ from audiomentations import (
     GainTransition,
     Padding,
     AirAbsorption,
+    Lambda,
 )
 from audiomentations.augmentations.limiter import Limiter
 from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
@@ -274,6 +275,13 @@ if __name__ == "__main__":
         {
             "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
             "num_runs": 5,
+        },
+        {
+            "instance": Lambda(
+                transform=lambda samples, sample_rate: samples - 0.2,
+                p=1.0,
+            ),
+            "num_runs": 1,
         },
         {"instance": Limiter(p=1.0), "num_runs": 5},
         {"instance": LoudnessNormalization(p=1.0), "num_runs": 5},

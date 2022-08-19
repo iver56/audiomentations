@@ -1,5 +1,8 @@
-import random
+import warnings
+
 import math
+import random
+
 import sys
 
 import numpy as np
@@ -109,15 +112,16 @@ class Limiter(BaseWaveformTransform):
             threshold=self.parameters["threshold"],
         )
         if samples.ndim == 1:
-            processed_samples = np.copy(samples)
-            limiter.limit_inplace(processed_samples)
+            processed_samples = np.array(limiter.limit(samples), dtype=np.float32)
         else:
             # By default, there is no interchannel linking. The channels are processed
             # independently. Support for linking may be added in the future:
             # https://github.com/pzelasko/cylimiter/issues/4
-            processed_samples = np.copy(samples)
+            processed_samples = np.zeros_like(samples, dtype=np.float32)
             for chn_idx in range(samples.shape[0]):
                 limiter.reset()
-                limiter.limit_inplace(processed_samples[chn_idx, :])
+                processed_samples[chn_idx, :] = np.array(
+                    limiter.limit(samples[chn_idx, :]), dtype=np.float32
+                )
 
         return processed_samples

@@ -283,6 +283,12 @@ Note that bitrates below 32 kbps are only supported for low sample rates (up to 
 Note: When using the lameenc backend, the output may be slightly longer than the input due
 to the fact that the LAME encoder inserts some silence at the beginning of the audio.
 
+## `Lambda`
+
+_To be released in v0.26.0_
+
+Apply a user-defined transform (callable) to the signal.
+
 ## `Limiter`
 
 _To be released in v0.26.0_

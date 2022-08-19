@@ -5,7 +5,7 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 class Lambda(BaseWaveformTransform):
     """
-    Apply any choice of operation over the signal at user discretion.
+    Apply a user-defined transform (callable) to the signal.
     """
 
     supports_multichannel = True

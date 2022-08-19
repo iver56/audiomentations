@@ -10,15 +10,17 @@ class Lambda(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, operator: Callable, p: float = 0.5, **kwargs: dict):
+    def __init__(self, transform: Callable, p: float = 0.5, **kwargs):
         """
-        :param operator: A callable to be applied over samples
+        :param transform: A callable to be applied over samples. It should input
+            samples (ndarray), sample_rate (int) and optionally some user-defined
+            keyword arguments.
         :param p: The probability of applying this transform
-        :param **kwargs: The parameters and the values to be passed to the operator.
+        :param **kwargs: Any extra keyword arguments to be passed to the transform.
         """
         super().__init__(p=p)
-        self.operator = operator
+        self.transform = transform
         self.kwargs = kwargs
 
     def apply(self, samples, sample_rate):
-        return self.operator(samples, sample_rate, **self.kwargs)
+        return self.transform(samples, sample_rate, **self.kwargs)

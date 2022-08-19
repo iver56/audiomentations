@@ -92,14 +92,6 @@ class Limiter(BaseWaveformTransform):
             self.parameters[
                 "threshold"
             ] = threshold_factor * convert_decibels_to_amplitude_ratio(threshold_db)
-            if self.parameters["threshold"] > 1.0:
-                # TODO: If https://github.com/pzelasko/cylimiter/pull/5 gets merged, this if can be removed
-                warnings.warn(
-                    "The input audio has a peak outside the [-1, 1] range."
-                    " A threshold above 1 is not supported, so it will be set to a value just below 1."
-                    " Normalize your audio before passing it to the limiter to avoid this issue"
-                )
-                self.parameters["threshold"] = 0.9999999
 
     def apply(self, samples, sample_rate):
         try:

@@ -100,8 +100,8 @@ class Mp3Compression(BaseWaveformTransform):
             print(
                 "Failed to import the lame encoder. Maybe it is not installed? "
                 "To install the optional lameenc dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
+                " do `pip install audiomentations[extras]` or simply"
+                " `pip install lameenc`",
                 file=sys.stderr,
             )
             raise
@@ -149,8 +149,8 @@ class Mp3Compression(BaseWaveformTransform):
             print(
                 "Failed to import pydub. Maybe it is not installed? "
                 "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
+                " do `pip install audiomentations[extras]` or simply"
+                " `pip install pydub`",
                 file=sys.stderr,
             )
             raise

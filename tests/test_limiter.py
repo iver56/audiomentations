@@ -23,6 +23,10 @@ class TestLimiter:
         assert samples_out.shape == samples_in.shape
         assert std_out < std_in
 
+    def test_limiter_validation(self):
+        with pytest.raises(AssertionError):
+            Limiter(min_attack=-0.5)
+
     def test_serialize_parameters(self):
         random.seed(42)
         transform = Limiter(p=1.0)

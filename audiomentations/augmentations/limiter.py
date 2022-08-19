@@ -41,13 +41,30 @@ class Limiter(BaseWaveformTransform):
         :param max_attack: Maximum attack time in seconds
         :param min_release: Minimum release time in seconds
         :param max_release: Minimum release time in seconds
-        :param threshold_mode: "relative_to_signal_peak" or "relative_to_0dbfs"
-            "relative_to_signal_peak" means the threshold is relative to peak of the signal
-            "relative_to_0dbfs means" the threshold is "absolute" (relative to 0 dbfs),
-            so it doesn't depend on the peak of the signal
+        :param threshold_mode: "relative_to_signal_peak" or "absolute"
+            "relative_to_signal_peak" means the threshold is relative to peak of the signal.
+            "absolute" means the threshold is relative to 0 dBFS, so it doesn't depend
+            on the peak of the signal.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
+        assert min_attack > 0.0, "min_attack must be a positive number"
+        assert max_attack > 0.0, "max_attack must be a positive number"
+        assert (
+            max_attack >= min_attack
+        ), "max_attack must be greater than or equal to min_attack"
+        assert min_release > 0.0, "min_release must be a positive number"
+        assert max_release > 0.0, "max_release must be a positive number"
+        assert (
+            max_release >= min_release
+        ), "max_release must be greater than or equal to min_release"
+        assert (
+            max_threshold_db >= min_threshold_db
+        ), "max_threshold_db must be greater than or equal to min_threshold_db"
+        assert threshold_mode in (
+            "relative_to_signal_peak",
+            "absolute",
+        ), 'threshold_mode must be either "relative_to_signal_peak" or "absolute"'
         self.min_threshold_db = min_threshold_db
         self.max_threshold_db = max_threshold_db
         self.min_attack = min_attack
@@ -83,9 +100,9 @@ class Limiter(BaseWaveformTransform):
             self.parameters["delay"] = max(round(0.6 * attack_seconds * sample_rate), 1)
 
             threshold_factor = (
-                1.0
-                if self.threshold_mode == "relative_to_0dbfs"
-                else np.amax(np.abs(samples))
+                np.amax(np.abs(samples))
+                if self.threshold_mode == "relative_to_signal_peak"
+                else 1.0
             )
             threshold_db = random.uniform(self.min_threshold_db, self.max_threshold_db)
 

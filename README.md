@@ -285,13 +285,13 @@ to the fact that the LAME encoder inserts some silence at the beginning of the a
 
 ## `Lambda`
 
-_To be released in v0.26.0_
+_Added in v0.26.0_
 
 Apply a user-defined transform (callable) to the signal.
 
 ## `Limiter`
 
-_To be released in v0.26.0_
+_Added in v0.26.0_
 
 A simple audio limiter (dynamic range compression).
 Note: This transform also delays the signal by a fraction of the attack time.

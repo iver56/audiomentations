@@ -14,7 +14,6 @@ class TestLimiter:
         np.random.normal(0, 0.1, size=(3, 8888)).astype(np.float32)
     ])
     def test_limiter(self, samples_in):
-        random.seed(42)
         augmenter = Limiter(p=1.0)
         std_in = np.mean(np.abs(samples_in))
         samples_out = augmenter(samples=samples_in, sample_rate=16000)

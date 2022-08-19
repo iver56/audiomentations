@@ -492,6 +492,18 @@ As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` s
 
 ## Unreleased
 
+## v0.26.0 (2022-08-19)
+
+### Added
+
+* Add new transform `Lambda`. Thanks to Thanatoz-1.
+* Add new transform `Limiter`. Thanks to pzelasko.
+
+### Fixed
+
+* Fix incorrect type hints in `RoomSimulator`
+* Make `Shift` robust to different sample rate inputs when parameters are frozen
+
 ## v0.25.1 (2022-06-15)
 
 ### Fixed

@@ -43,6 +43,7 @@ from audiomentations import (
     Padding,
     AirAbsorption,
 )
+from audiomentations.augmentations.limiter import Limiter
 from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
@@ -274,6 +275,7 @@ if __name__ == "__main__":
             "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
             "num_runs": 5,
         },
+        {"instance": Limiter(p=1.0), "num_runs": 5},
         {"instance": LoudnessNormalization(p=1.0), "num_runs": 5},
         {
             "instance": Mp3Compression(backend="lameenc", p=1.0),

@@ -37,6 +37,7 @@ setup(
     install_requires=["numpy>=1.13.0", "librosa>0.7.2,<0.10.0", "scipy>=1.0.0,<2"],
     extras_require={
         "extras": [
+            "cylimiter==0.2.1",
             "lameenc>=1.2.0,<2",
             "pydub>=0.22.0,<1",
             "pyloudnorm>=0.1.0",

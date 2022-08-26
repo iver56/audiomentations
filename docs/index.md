@@ -81,17 +81,17 @@ spectrogram = np.random.random((1025, 256, 2))
 augmented_spectrogram = augment(spectrogram)
 ```
 
-See [audiomentations/spec_augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/spec_augmentations/spectrogram_transforms.py) for spectrogram transforms. 
+See [audiomentations/spec_augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/spec_augmentations/spectrogram_transforms.py) for spectrogram transforms.
 
 # Waveform transforms
 
 Some of the following waveform transforms can be visualized (for understanding) by the [audio-transformation-visualization GUI](https://share.streamlit.io/phrasenmaeher/audio-transformation-visualization/main/visualize_transformation.py) (made by phrasenmaeher), where you can upload your own input wav file
 
-For a list and brief explanation of all waveform transforms, see [docs/waveform_transforms.md](docs/waveform_transforms.md)
+For a list and brief explanation of all waveform transforms, see [Waveform transforms](waveform_transforms.md)
 
 # Spectrogram transforms
 
-For a list and brief explanation of all spectrogram transforms, see [docs/spectrogram_transforms.md](docs/spectrogram_transforms.md)
+For a list and brief explanation of all spectrogram transforms, see [Spectrogram transforms](spectrogram_transforms.md)
 
 # Composition classes
 
@@ -123,26 +123,6 @@ Contributions are welcome!
 # Multichannel audio
 
 As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` support not only mono audio (1-dimensional numpy arrays), but also stereo audio, i.e. 2D arrays with shape like `(num_channels, num_samples)`
-
-# Changelog
-
-See [docs/changelog.md](docs/changelog.md)
-
-# Development
-
-Install the dependencies specified in `requirements.txt`
-
-## Code style
-
-Format the code with `black`
-
-## Run tests and measure code coverage
-
-`pytest`
-
-## Generate demo sounds for empirical evaluation
-
-`python -m demo.demo`
 
 # Alternatives
 

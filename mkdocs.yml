@@ -1,0 +1,6 @@
+site_name: audiomentations
+nav:
+  - Home: index.md
+  - Waveform transforms: waveform_transforms.md
+  - Spectrogram transforms: spectrogram_transforms.md
+  - Changelog: changelog.md

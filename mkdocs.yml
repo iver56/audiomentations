@@ -1,6 +1,11 @@
 site_name: audiomentations
+site_author: 'Iver Jordal'
 nav:
   - Home: index.md
   - Waveform transforms: waveform_transforms.md
   - Spectrogram transforms: spectrogram_transforms.md
   - Changelog: changelog.md
+theme:
+  name: material
+repo_name: 'iver56/audiomentations'
+repo_url: 'https://github.com/iver56/audiomentations'

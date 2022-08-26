@@ -47,12 +47,7 @@ augmented_samples = augment(samples=samples, sample_rate=16000)
 
 # Documentation
 
-Go to [iver56.github.io/audiomentations/](iver56.github.io/audiomentations/)
-
-# Changelog
-
-See [docs/changelog.md](docs/changelog.md)
-
+See [https://iver56.github.io/audiomentations/](https://iver56.github.io/audiomentations/)
 
 # Acknowledgements
 

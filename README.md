@@ -8,7 +8,7 @@
 
 A Python library for audio data augmentation. Inspired by
 [albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
-CPU. Supports mono audio and [multichannel audio](#multichannel-audio). Can be
+CPU. Supports mono audio and multichannel audio. Can be
 integrated in training pipelines in e.g. Tensorflow/Keras or Pytorch. Has helped people get
 world-class results in Kaggle competitions. Is used by companies making next-generation audio
 products.

@@ -1,4 +1,4 @@
-audiomentations is in a very early (read: not very useful yet) stage when it comes to spectrogram transforms. Consider applying [waveform transforms](waveform_transforms.md) before converting your waveforms to spectrograms, or check out [alternative libraries](https://github.com/iver56/audiomentations#alternatives)  
+audiomentations is in a very early (read: not very useful yet) stage when it comes to spectrogram transforms. Consider applying [waveform transforms](waveform_transforms.md) before converting your waveforms to spectrograms, or check out [alternative libraries](alternatives.md)  
 
 # `SpecChannelShuffle`
 

@@ -3,7 +3,8 @@ on:
   push:
     branches:
       - ij/docs
-
+    tags:
+      - "**"
 jobs:
   build:
     name: Deploy docs

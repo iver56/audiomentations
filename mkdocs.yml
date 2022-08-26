@@ -5,6 +5,7 @@ nav:
   - Waveform transforms: waveform_transforms.md
   - Spectrogram transforms: spectrogram_transforms.md
   - Changelog: changelog.md
+  - Alternatives: alternatives.md
 theme:
   name: material
 repo_name: 'iver56/audiomentations'

@@ -43,6 +43,46 @@ samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32
 augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
+# Transforms
+
+* AddBackgroundNoise
+* AddGaussianNoise
+* AddGaussianSNR
+* ApplyImpulseResponse
+* AddShortNoises
+* AirAbsorption
+* BandPassFilter
+* BandStopFilter
+* Clip
+* ClippingDistortion
+* FrequencyMask
+* Gain
+* GainTransition
+* HighPassFilter
+* HighShelfFilter
+* LowPassFilter
+* LowShelfFilter
+* Mp3Compression
+* Lambda
+* Limiter
+* LoudnessNormalization
+* Normalize
+* Padding
+* PeakingFilter
+* PitchShift
+* PolarityInversion
+* Resample
+* Reverse
+* RoomSimulator
+* SevenBandParametricEQ
+* Shift
+* SpecChannelShuffle
+* SpecFrequencyMask
+* TanhDistortion
+* TimeMask
+* TimeStretch
+* Trim
+
 # Documentation
 
 See [https://iver56.github.io/audiomentations/](https://iver56.github.io/audiomentations/)

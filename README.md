@@ -25,8 +25,6 @@ Need a Pytorch-specific alternative with GPU support? Check out [torch-audioment
 
 # Usage example
 
-## Waveform
-
 ```python
 from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift, Shift
 import numpy as np

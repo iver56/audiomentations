@@ -63,7 +63,7 @@ class Shift(BaseWaveformTransform):
             if num_places_to_shift > 0:
                 shifted_samples[..., :num_places_to_shift] = 0.0
             elif num_places_to_shift < 0:
-                shifted_samples[..., num_places_to_shift:] = 0.0
+                shifted_samples[..., -num_places_to_shift:] = 0.0
 
         if self.fade:
             fade_length = int(sample_rate * self.fade_duration)

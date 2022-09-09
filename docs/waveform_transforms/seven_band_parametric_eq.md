@@ -14,10 +14,11 @@ the sound source, microphone type/model and the distance between the sound sourc
 and the microphone.
 
 The seven bands have center frequencies picked in the following ranges (min-max):
-42-95 hz
-91-204 hz
-196-441 hz
-421-948 hz
-909-2045 hz
-1957-4404 hz
-4216-9486 hz
+
+* 42-95 hz
+* 91-204 hz
+* 196-441 hz
+* 421-948 hz
+* 909-2045 hz
+* 1957-4404 hz
+* 4216-9486 hz

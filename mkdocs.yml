@@ -2,7 +2,42 @@ site_name: audiomentations
 site_author: 'Iver Jordal'
 nav:
   - Home: index.md
-  - Waveform transforms: waveform_transforms.md
+  - Waveform transforms:
+      - AddBackgroundNoise: waveform_transforms/add_background_noise.md
+      - AddGaussianNoise: waveform_transforms/add_gaussian_noise.md
+      - AddGaussianSNR: waveform_transforms/add_gaussian_snr.md
+      - AddShortNoises: waveform_transforms/add_short_noises.md
+      - AirAbsorption: waveform_transforms/air_absorption.md
+      - ApplyImpulseResponse: waveform_transforms/apply_impulse_response.md
+      - BandPassFilter: waveform_transforms/band_pass_filter.md
+      - BandStopFilter: waveform_transforms/band_stop_filter.md
+      - Clip: waveform_transforms/clip.md
+      - ClippingDistortion: waveform_transforms/clipping_distortion.md
+      - FrequencyMask: waveform_transforms/frequency_mask.md
+      - Gain: waveform_transforms/gain.md
+      - GainTransition: waveform_transforms/gain_transition.md
+      - HighPassFilter: waveform_transforms/high_pass_filter.md
+      - HighShelfFilter: waveform_transforms/high_shelf_filter.md
+      - Lambda: waveform_transforms/lambda.md
+      - Limiter: waveform_transforms/limiter.md
+      - LoudnessNormalization: waveform_transforms/loudness_normalization.md
+      - LowPassFilter: waveform_transforms/low_pass_filter.md
+      - LowShelfFilter: waveform_transforms/low_shelf_filter.md
+      - Mp3Compression: waveform_transforms/mp3_compression.md
+      - Normalize: waveform_transforms/normalize.md
+      - Padding: waveform_transforms/padding.md
+      - PeakingFilter: waveform_transforms/peaking_filter.md
+      - PitchShift: waveform_transforms/pitch_shift.md
+      - PolarityInversion: waveform_transforms/polarity_inversion.md
+      - Resample: waveform_transforms/resample.md
+      - Reverse: waveform_transforms/reverse.md
+      - RoomSimulator: waveform_transforms/room_simulator.md
+      - SevenBandParametricEQ: waveform_transforms/seven_band_parametric_eq.md
+      - Shift: waveform_transforms/shift.md
+      - TanhDistortion: waveform_transforms/tanh_distortion.md
+      - TimeMask: waveform_transforms/time_mask.md
+      - TimeStretch: waveform_transforms/time_stretch.md
+      - Trim: waveform_transforms/trim.md
   - Spectrogram transforms: spectrogram_transforms.md
   - Changelog: changelog.md
   - Alternatives: alternatives.md

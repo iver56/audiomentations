@@ -33,14 +33,14 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def __init__(
         self,
         sounds_path: Union[List[Path], List[str], Path, str],
-        min_snr_in_db=3,
-        max_snr_in_db=30,
-        noise_rms="relative",
-        min_absolute_rms_in_db=-45,
-        max_absolute_rms_in_db=-15,
+        min_snr_in_db: float = 3.0,
+        max_snr_in_db: float = 30.0,
+        noise_rms: str = "relative",
+        min_absolute_rms_in_db: float = -45.0,
+        max_absolute_rms_in_db: float = -15.0,
         noise_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
-        p=0.5,
-        lru_cache_size=2,
+        p: float = 0.5,
+        lru_cache_size: int = 2,
     ):
         """
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with

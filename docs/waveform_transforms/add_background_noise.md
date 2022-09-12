@@ -35,7 +35,7 @@ Here are some examples of datasets that can be downloaded and used as background
         p=1.0
     )
     
-    augmented_sound = transform(my_waveform_ndarray)
+    augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
     ```
 
 === "Absolute RMS"
@@ -52,7 +52,7 @@ Here are some examples of datasets that can be downloaded and used as background
         p=1.0
     )
     
-    augmented_sound = transform(my_waveform_ndarray)
+    augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
     ```
 
 ## AddBackgroundNoise API

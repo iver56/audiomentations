@@ -19,7 +19,7 @@ Here are some examples of datasets that can be downloaded and used as background
 * [https://github.com/karolpiczak/ESC-50#download](https://github.com/karolpiczak/ESC-50#download)
 * [https://github.com/microsoft/DNS-Challenge/](https://github.com/microsoft/DNS-Challenge/)
 
-## Example usage
+## Usage examples
 
 
 === "Relative RMS"

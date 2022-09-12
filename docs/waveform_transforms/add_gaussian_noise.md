@@ -4,7 +4,7 @@ _Added in v0.1.0_
 
 Add gaussian noise to the samples
 
-## Example usage
+## Usage example
 
 ```python
 from audiomentations import AddGaussianNoise

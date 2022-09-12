@@ -49,14 +49,14 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param min_snr_in_db: Minimum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param max_snr_in_db: Maximum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param noise_rms: Defines how the background noise will be added to the audio input. If the chosen
-            option is "relative", the rms of the added noise will be proportional to the rms of
+            option is "relative", the RMS of the added noise will be proportional to the RMS of
             the input sound. If the chosen option is "absolute", the background noise will have
-            a rms independent of the rms of the input audio file. The default option is "relative".
+            a RMS independent of the RMS of the input audio file. The default option is "relative".
         :param min_absolute_rms_in_db: Is only used if noise_rms is set to "absolute". It is
-            the minimum rms value in dB that the added noise can take. The lower the rms is, the
-            lower will the added sound be.
+            the minimum RMS value in dB that the added noise can take. The lower the RMS is,
+            the lower the added sound will be.
         :param max_absolute_rms_in_db: Is only used if noise_rms is set to "absolute". It is
-            the maximum rms value in dB that the added noise can take. Note that this value
+            the maximum RMS value in dB that the added noise can take. Note that this value
             can not exceed 0.
         :param noise_transform: A callable waveform transform (or composition of transforms) that
             gets applied to the noise before it gets mixed in.

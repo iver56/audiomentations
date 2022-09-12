@@ -19,11 +19,11 @@ class AddGaussianSNR(BaseWaveformTransform):
     supports_multichannel = True
 
     def __init__(
-        self, min_snr_in_db=5, max_snr_in_db=40.0, p=0.5
+        self, min_snr_in_db: float = 5.0, max_snr_in_db: float = 40.0, p: float = 0.5
     ):
         """
-        :param min_snr_in_db: Minimum signal-to-noise ratio in db. A lower number means more noise.
-        :param max_snr_in_db: Maximum signal-to-noise ratio in db. A greater number means less noise.
+        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. A lower number means more noise.
+        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. A greater number means less noise.
         :param p: The probability of applying this transform
         """
         super().__init__(p)

@@ -32,9 +32,9 @@ class BandStopFilter(BaseButterworthFilter):
             frequency (number between 0 and 2)
         :param max_bandwidth_fraction: Maximum bandwidth fraction relative to center
             frequency (number between 0 and 2)
-        :param min_rolloff: Minimum filter roll-off (in db/octave).
+        :param min_rolloff: Minimum filter roll-off (in dB/octave).
             Must be a multiple of 6
-        :param max_rolloff: Maximum filter roll-off (in db/octave)
+        :param max_rolloff: Maximum filter roll-off (in dB/octave)
             Must be a multiple of 6
         :param zero_phase: Whether filtering should be zero phase.
             When this is set to `true` it will not affect the phase of the

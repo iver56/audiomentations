@@ -21,9 +21,9 @@ class LowPassFilter(BaseButterworthFilter):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
-        :param min_rolloff: Minimum filter roll-off (in db/octave).
+        :param min_rolloff: Minimum filter roll-off (in dB/octave).
             Must be a multiple of 6
-        :param max_rolloff: Maximum filter roll-off (in db/octave)
+        :param max_rolloff: Maximum filter roll-off (in dB/octave)
             Must be a multiple of 6
         :param zero_phase: Whether filtering should be zero phase.
             When this is set to `true` it will not affect the phase of the

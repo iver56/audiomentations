@@ -13,7 +13,7 @@ from audiomentations.core.utils import (
 class PeakingFilter(BaseWaveformTransform):
     """
     Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
-    of a specific gain in db (note: can be positive or negative!), and a quality factor
+    of a specific gain in dB (note: can be positive or negative!), and a quality factor
     parameter. Filter coefficients are taken from the W3 Audio EQ Cookbook:
     https://www.w3.org/TR/audio-eq-cookbook/
     """
@@ -33,8 +33,8 @@ class PeakingFilter(BaseWaveformTransform):
         """
         :param min_center_freq: The minimum center frequency of the peaking filter
         :param max_center_freq: The maximum center frequency of the peaking filter
-        :param min_gain_db: The minimum gain at center frequency in db
-        :param max_gain_db: The maximum gain at center frequency in db
+        :param min_gain_db: The minimum gain at center frequency in dB
+        :param max_gain_db: The maximum gain at center frequency in dB
         :param min_q: The minimum quality factor Q. The higher the Q, the steeper the
             transition band will be.
         :param max_q: The maximum quality factor Q. The higher the Q, the steeper the

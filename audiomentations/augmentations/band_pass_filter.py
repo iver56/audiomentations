@@ -26,9 +26,9 @@ class BandPassFilter(BaseButterworthFilter):
         :param max_center_freq: Maximum center frequency in hertz
         :param min_bandwidth_fraction: Minimum bandwidth relative to center frequency
         :param max_bandwidth_fraction: Maximum bandwidth relative to center frequency
-        :param min_rolloff: Minimum filter roll-off (in db/octave).
+        :param min_rolloff: Minimum filter roll-off (in dB/octave).
             Must be a multiple of 6
-        :param max_rolloff: Maximum filter roll-off (in db/octave)
+        :param max_rolloff: Maximum filter roll-off (in dB/octave)
             Must be a multiple of 6
         :param zero_phase: Whether filtering should be zero phase.
             When this is set to `true` it will not affect the phase of the

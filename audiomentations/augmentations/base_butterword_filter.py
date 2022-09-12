@@ -86,9 +86,9 @@ class BaseButterworthFilter(BaseWaveformTransform):
         """
         :param min_cutoff_freq: Minimum cutoff frequency in hertz
         :param max_cutoff_freq: Maximum cutoff frequency in hertz
-        :param min_rolloff: Minimum filter roll-off (in db/octave).
+        :param min_rolloff: Minimum filter roll-off (in dB/octave).
             Must be a multiple of 6
-        :param max_rolloff: Maximum filter roll-off (in db/octave)
+        :param max_rolloff: Maximum filter roll-off (in dB/octave)
             Must be a multiple of 6
         :param p: The probability of applying this transform
         """
@@ -123,9 +123,9 @@ class BaseButterworthFilter(BaseWaveformTransform):
             frequency (number between 0.0 and 2.0)
         :param max_bandwidth_fraction: Maximum bandwidth fraction relative to center
             frequency (number between 0.0 and 2.0)
-        :param min_rolloff: Minimum filter roll-off (in db/octave).
+        :param min_rolloff: Minimum filter roll-off (in dB/octave).
             Must be a multiple of 6
-        :param max_rolloff: Maximum filter roll-off (in db/octave)
+        :param max_rolloff: Maximum filter roll-off (in dB/octave)
             Must be a multiple of 6
         :param p: The probability of applying this transform
         """

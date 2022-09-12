@@ -31,7 +31,7 @@ class AddShortNoises(BaseWaveformTransform):
         max_snr_in_db: float = 24.0,
         min_time_between_sounds: float = 4.0,
         max_time_between_sounds: float = 16.0,
-        noise_rms: str = "relative",
+        noise_rms: str = "relative_to_whole_input",
         min_absolute_noise_rms_db: float = -50.0,
         max_absolute_noise_rms_db: float = -20,
         add_all_noises_with_same_level: bool = False,
@@ -349,8 +349,7 @@ class AddShortNoises(BaseWaveformTransform):
                 noise_placeholder[start_sample_index:end_sample_index] += noise_samples
                 if gain_signal:
                     signal_mask[start_sample_index:end_sample_index] = np.maximum(
-                        signal_mask[start_sample_index:end_sample_index],
-                        noise_gain,
+                        signal_mask[start_sample_index:end_sample_index], noise_gain,
                     )
 
         if gain_signal:

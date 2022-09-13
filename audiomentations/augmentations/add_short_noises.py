@@ -136,10 +136,10 @@ class AddShortNoises(BaseWaveformTransform):
         if noise_rms is None:
             noise_rms = "relative"
             warnings.warn(
-                "The default value of 'noise_rms' will change from 'relative' to"
-                "'relative_to_whole_input' in a future version of audiomentations."
-                "Please specify explicitly 'noise_rms' to 'relative' if you don't want to change"
-                "its current behaviour. Discard this warning if you explicitly provided 'noise_rms'.",
+                "The default value of noise_rms in AddShortNoises will change from"
+                " 'relative' to 'relative_to_whole_input' in a future version of"
+                " audiomentations. If you set the value explicitly, you will not get"
+                " this warning.",
                 FutureWarning
             )
         assert noise_rms in ["relative", "absolute", "relative_to_whole_input"]

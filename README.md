@@ -45,47 +45,51 @@ augmented_samples = augment(samples=samples, sample_rate=16000)
 
 # Transforms
 
-* AddBackgroundNoise
-* AddGaussianNoise
-* AddGaussianSNR
-* ApplyImpulseResponse
-* AddShortNoises
-* AirAbsorption
-* BandPassFilter
-* BandStopFilter
-* Clip
-* ClippingDistortion
-* FrequencyMask
-* Gain
-* GainTransition
-* HighPassFilter
-* HighShelfFilter
-* LowPassFilter
-* LowShelfFilter
-* Mp3Compression
-* Lambda
-* Limiter
-* LoudnessNormalization
-* Normalize
-* Padding
-* PeakingFilter
-* PitchShift
-* PolarityInversion
-* Resample
-* Reverse
-* RoomSimulator
-* SevenBandParametricEQ
-* Shift
-* SpecChannelShuffle
-* SpecFrequencyMask
-* TanhDistortion
-* TimeMask
-* TimeStretch
-* Trim
+* [AddBackgroundNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_background_noise/)
+* [AddGaussianNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_noise/)
+* [AddGaussianSNR](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_snr/)
+* [AddShortNoises](https://iver56.github.io/audiomentations/waveform_transforms/add_short_noises/)
+* [AirAbsorption](https://iver56.github.io/audiomentations/waveform_transforms/air_absorption/)
+* [ApplyImpulseResponse](https://iver56.github.io/audiomentations/waveform_transforms/apply_impulse_response/)
+* [BandPassFilter](https://iver56.github.io/audiomentations/waveform_transforms/band_pass_filter/)
+* [BandStopFilter](https://iver56.github.io/audiomentations/waveform_transforms/band_stop_filter/)
+* [Clip](https://iver56.github.io/audiomentations/waveform_transforms/clip/)
+* [ClippingDistortion](https://iver56.github.io/audiomentations/waveform_transforms/clipping_distortion/)
+* [FrequencyMask](https://iver56.github.io/audiomentations/waveform_transforms/frequency_mask/)
+* [Gain](https://iver56.github.io/audiomentations/waveform_transforms/gain/)
+* [GainTransition](https://iver56.github.io/audiomentations/waveform_transforms/gain_transition/)
+* [HighPassFilter](https://iver56.github.io/audiomentations/waveform_transforms/high_pass_filter/)
+* [HighShelfFilter](https://iver56.github.io/audiomentations/waveform_transforms/high_shelf_filter/)
+* [Lambda](https://iver56.github.io/audiomentations/waveform_transforms/lambda/)
+* [Limiter](https://iver56.github.io/audiomentations/waveform_transforms/limiter/)
+* [LoudnessNormalization](https://iver56.github.io/audiomentations/waveform_transforms/loudness_normalization/)
+* [LowPassFilter](https://iver56.github.io/audiomentations/waveform_transforms/low_pass_filter/)
+* [LowShelfFilter](https://iver56.github.io/audiomentations/waveform_transforms/low_shelf_filter/)
+* [Mp3Compression](https://iver56.github.io/audiomentations/waveform_transforms/mp3_compression/)
+* [Normalize](https://iver56.github.io/audiomentations/waveform_transforms/normalize/)
+* [Padding](https://iver56.github.io/audiomentations/waveform_transforms/padding/)
+* [PeakingFilter](https://iver56.github.io/audiomentations/waveform_transforms/peaking_filter/)
+* [PitchShift](https://iver56.github.io/audiomentations/waveform_transforms/pitch_shift/)
+* [PolarityInversion](https://iver56.github.io/audiomentations/waveform_transforms/polarity_inversion/)
+* [Resample](https://iver56.github.io/audiomentations/waveform_transforms/resample/)
+* [Reverse](https://iver56.github.io/audiomentations/waveform_transforms/reverse/)
+* [RoomSimulator](https://iver56.github.io/audiomentations/waveform_transforms/room_simulator/)
+* [SevenBandParametricEQ](https://iver56.github.io/audiomentations/waveform_transforms/seven_band_parametric_eq/)
+* [Shift](https://iver56.github.io/audiomentations/waveform_transforms/shift/)
+* [SpecChannelShuffle](https://iver56.github.io/audiomentations/spectrogram_transforms/)
+* [SpecFrequencyMask](https://iver56.github.io/audiomentations/spectrogram_transforms/)
+* [TanhDistortion](https://iver56.github.io/audiomentations/waveform_transforms/tanh_distortion/)
+* [TimeMask](https://iver56.github.io/audiomentations/waveform_transforms/time_mask/)
+* [TimeStretch](https://iver56.github.io/audiomentations/waveform_transforms/time_stretch/)
+* [Trim](https://iver56.github.io/audiomentations/waveform_transforms/trim/)
 
 # Documentation
 
 See [https://iver56.github.io/audiomentations/](https://iver56.github.io/audiomentations/)
+
+# Changelog
+
+See [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 
 # Acknowledgements
 

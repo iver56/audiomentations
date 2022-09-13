@@ -2,7 +2,6 @@ import os
 import pickle
 
 import numpy as np
-import pytest
 
 from audiomentations import ApplyImpulseResponse
 from audiomentations.core.composition import Compose
@@ -34,7 +33,7 @@ class TestImpulseResponse:
         )
 
         assert samples_out.dtype == np.float32
-        assert len(samples_out) > len(samples_in)
+        assert samples_out.shape == samples_in.shape
 
     def test_apply_impulse_response_multi_channel(self):
         sample_len = 1024
@@ -63,21 +62,21 @@ class TestImpulseResponse:
         )
 
         assert samples_out.dtype == np.float32
-        assert samples_out.shape[1] > len(samples_in)
+        assert samples_out.shape == samples_in.shape
 
-    def test_leave_length_unchanged(self):
+    def test_include_tail(self):
         sample_len = 1024
         samples_in = np.random.normal(0, 1, size=sample_len).astype(np.float32)
         sample_rate = 16000
 
         add_ir_transform = ApplyImpulseResponse(
-            ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0, leave_length_unchanged=True
+            ir_path=os.path.join(DEMO_DIR, "ir"), p=1.0, leave_length_unchanged=False
         )
 
         samples_out = add_ir_transform(samples=samples_in, sample_rate=sample_rate)
 
         assert samples_out.dtype == np.float32
-        assert len(samples_out) == len(samples_in)
+        assert samples_out.shape[-1] > samples_in.shape[-1]
 
     def test_picklability(self):
         add_ir_transform = ApplyImpulseResponse(

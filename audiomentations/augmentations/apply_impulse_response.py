@@ -2,7 +2,7 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, List, Union
+from typing import List, Union
 
 import numpy as np
 from scipy.signal import convolve
@@ -25,7 +25,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         ir_path: Union[List[Path], List[str], str, Path],
         p=0.5,
         lru_cache_size=128,
-        leave_length_unchanged: Optional[bool] = None,
+        leave_length_unchanged: bool = True,
     ):
         """
         :param ir_path: A path or list of paths to audio file(s) and/or folder(s) with
@@ -45,14 +45,6 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(
             ApplyImpulseResponse.__load_ir
         )
-        if leave_length_unchanged is None:
-            warnings.warn(
-                "The default value of leave_length_unchanged will change from False to"
-                " True in a future version of audiomentations. You can set the value"
-                " explicitly to remove this warning for now.",
-                FutureWarning
-            )
-            leave_length_unchanged = False
 
         self.leave_length_unchanged = leave_length_unchanged
 

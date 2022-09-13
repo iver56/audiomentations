@@ -449,7 +449,7 @@ class TestLowPassFilterTransform:
 
         samples = get_chirp_test(sample_rate, 10)
 
-        # Expected db drop at fc
+        # Expected dB drop at fc
         if zero_phase:
             expected_db_drop = 6
         else:
@@ -500,7 +500,7 @@ class TestLowPassFilterTransform:
             import matplotlib.pyplot as plt
 
             plt.title(
-                f"Filter type: High Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                f"Filter type: High Roll-off:{rolloff}dB/octave Zero-phase:{zero_phase}"
             )
             plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
             plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
@@ -518,7 +518,7 @@ class TestLowPassFilterTransform:
             [0.0, expected_db_drop, expected_db_drop + rolloff]
         )
 
-        # Tolerances for the differences in db
+        # Tolerances for the differences in dB
         tolerances = np.array([1.0, 2.0, 5.0])
 
         for n, freq in enumerate(frequencies_of_interest):
@@ -572,7 +572,7 @@ class TestLowPassFilterTransform:
                 import matplotlib.pyplot as plt
 
                 plt.title(
-                    f"Filter type: Low-pass Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                    f"Filter type: Low-pass Roll-off:{rolloff}dB/octave Zero-phase:{zero_phase}"
                 )
                 plt.plot(processed_samples)
                 plt.plot(channel, "r--")
@@ -599,7 +599,7 @@ class TestHighPassFilterTransform:
 
         samples = get_chirp_test(sample_rate, 10)
 
-        # Expected db drop at fc
+        # Expected dB drop at fc
         if zero_phase:
             expected_db_drop = 6
         else:
@@ -650,7 +650,7 @@ class TestHighPassFilterTransform:
             import matplotlib.pyplot as plt
 
             plt.title(
-                f"Filter type: High Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                f"Filter type: High Roll-off:{rolloff}dB/octave Zero-phase:{zero_phase}"
             )
             plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
             plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
@@ -670,7 +670,7 @@ class TestHighPassFilterTransform:
             [expected_db_drop + rolloff, expected_db_drop, 0.0]
         )
 
-        # Tolerances for the differences in db
+        # Tolerances for the differences in dB
         tolerances = np.array([5.0, 2.0, 1.0])
 
         for n, freq in enumerate(frequencies_of_interest):
@@ -724,7 +724,7 @@ class TestHighPassFilterTransform:
                 import matplotlib.pyplot as plt
 
                 plt.title(
-                    f"Filter type: Highpass Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                    f"Filter type: Highpass Roll-off:{rolloff}dB/octave Zero-phase:{zero_phase}"
                 )
                 plt.plot(processed_samples)
                 plt.plot(channel, "r--")
@@ -777,7 +777,7 @@ class TestBandPassFilterTransform:
 
         samples = get_chirp_test(sample_rate, 10)
 
-        # Expected db drop at fc
+        # Expected dB drop at fc
         if zero_phase:
             expected_db_drop = 6
         else:
@@ -832,7 +832,7 @@ class TestBandPassFilterTransform:
             import matplotlib.pyplot as plt
 
             plt.title(
-                f"Filter type: Band-pass Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                f"Filter type: Band-pass Roll-off:{rolloff}dB/octave Zero-phase:{zero_phase}"
             )
             plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
             plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
@@ -864,7 +864,7 @@ class TestBandPassFilterTransform:
             ]
         )
 
-        # Tolerances for the differences in db
+        # Tolerances for the differences in dB
         tolerances = np.array([2.0, 1.0, 2.0])
 
         for n, freq in enumerate(frequencies_of_interest):
@@ -930,7 +930,7 @@ class TestBandPassFilterTransform:
                 import matplotlib.pyplot as plt
 
                 plt.title(
-                    f"Filter type: Band-pass Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                    f"Filter type: Band-pass Roll-off:{rolloff}dB/octave Zero-phase:{zero_phase}"
                 )
                 plt.plot(processed_samples)
                 plt.plot(channel, "r--")
@@ -1010,7 +1010,7 @@ class TestBandStopFilterTransform:
 
         samples = get_chirp_test(sample_rate, 10)
 
-        # Expected db drop at fc
+        # Expected dB drop at fc
         if zero_phase:
             expected_db_drop = 6
         else:
@@ -1065,7 +1065,7 @@ class TestBandStopFilterTransform:
             import matplotlib.pyplot as plt
 
             plt.title(
-                f"Filter type: Band-stop Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                f"Filter type: Band-stop Roll-off:{rolloff}dB/octave Zero-phase:{zero_phase}"
             )
             plt.plot(wx, 10 * np.log10(np.abs(samples_pxx)))
             plt.plot(wx, 10 * np.log10(np.abs(processed_samples_pxx)), ":")
@@ -1087,7 +1087,7 @@ class TestBandStopFilterTransform:
         )
         expected_differences = np.array([0, expected_db_drop, expected_db_drop, 0.0])
 
-        # Tolerances for the differences in db
+        # Tolerances for the differences in dB
         tolerances = np.array([1.0, 2.0, 2.0, 1.0])
 
         for n, freq in enumerate(frequencies_of_interest):
@@ -1153,7 +1153,7 @@ class TestBandStopFilterTransform:
                 import matplotlib.pyplot as plt
 
                 plt.title(
-                    f"Filter type: Band-stop Roll-off:{rolloff}db/octave Zero-phase:{zero_phase}"
+                    f"Filter type: Band-stop Roll-off:{rolloff}dB/octave Zero-phase:{zero_phase}"
                 )
                 plt.plot(processed_samples)
                 plt.plot(channel, "r--")

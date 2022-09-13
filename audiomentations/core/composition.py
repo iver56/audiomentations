@@ -55,7 +55,7 @@ class Compose(BaseCompose):
     Compose applies the given sequence of transforms when called,
     optionally shuffling the sequence for every call.
 
-    Example usage:
+    Usage example:
 
     ```
     augment = Compose([
@@ -124,7 +124,7 @@ class SomeOf(BaseCompose):
                         # pick 2 to all of the transforms
                         SomeOf((2, None), [transform1, transform2, transform3, transform4])
 
-    Example usage:
+    Usage example:
     ```
     augment = SomeOf(
         (2, None),
@@ -218,7 +218,7 @@ class OneOf(BaseCompose):
     """
     OneOf randomly picks one of the given transforms when called, and applies that
     transform.
-    Example usage:
+    Usage example:
     ```
     augment = OneOf([
         TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),

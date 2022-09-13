@@ -33,7 +33,7 @@ class AddShortNoises(BaseWaveformTransform):
         max_time_between_sounds: float = 16.0,
         noise_rms: str = "relative",
         min_absolute_noise_rms_db: float = -50.0,
-        max_absolute_noise_rms_db: float = -20,
+        max_absolute_noise_rms_db: float = -20.0,
         add_all_noises_with_same_level: bool = False,
         include_silence_in_noise_rms_estimation: bool = True,
         burst_probability: float = 0.22,
@@ -53,16 +53,16 @@ class AddShortNoises(BaseWaveformTransform):
             audio files. Can be str or Path instance(s). The audio files given here are
             supposed to be (short) noises.
         :param min_snr_in_db: Minimum signal-to-noise ratio in dB. A lower value means the added
-            sounds/noises will be louder.
+            sounds/noises will be louder. This gets ignored if noise_rms is set to "absolute".
         :param max_snr_in_db: Maximum signal-to-noise ratio in dB. A lower value means the added
-            sounds/noises will be louder.
-        :param min_time_between_sounds: Minimum pause time between the added sounds/noises
-        :param max_time_between_sounds: Maximum pause time between the added sounds/noises
-        :param noise_rms: To choose in ["relative", "absolute", "relative_to_whole_input"].
+            sounds/noises will be louder. This gets ignored if noise_rms is set to "absolute".
+        :param min_time_between_sounds: Minimum pause time (in seconds) between the added sounds/noises
+        :param max_time_between_sounds: Maximum pause time (in seconds) between the added sounds/noises
+        :param noise_rms: To choose in ["absolute", "relative", "relative_to_whole_input"].
             Defines how the noises will be added to the audio input.
             "relative": the RMS value of the added noise will be proportional to the RMS value of
-            the input sound calculated only for the samples where the noise is added.
-            "absolute": the added noises will have a RMS independent of the RMS of the input audio
+            the input sound calculated only for the region where the noise is added.
+            "absolute": the added noises will have an RMS independent of the RMS of the input audio
             file.
             "relative_to_whole_input": the RMS of the added noises will be
             proportional to the RMS of the whole input sound.
@@ -72,22 +72,25 @@ class AddShortNoises(BaseWaveformTransform):
         :param max_absolute_noise_rms_db: Is only used if noise_rms is set to "absolute". It is
             the maximum RMS value in dB that the added noise can take. Note that this value
             can not exceed 0.
-        : param add_all_noises_with_same_level: add all the short noises with the same snr.
-            The latter will be included between min_snr_in_db and max_snr_in_db. If
-            noise_rms == "absolute", the RMS is used instead of the snr.This snr value
-            will change each time the parameters of the transform are randomized.
+        :param add_all_noises_with_same_level: Whether to add all the short noises
+            (within one audio snippet) with the same SNR. If `noise_rms` is set to `"absolute"`,
+            the RMS is used instead of SNR. The target SNR (or RMS) will change every time the
+            parameters of the transform are randomized.
         :param include_silence_in_noise_rms_estimation: A boolean. It chooses how the RMS of
             the noises to be added will be calculated. If this option is set to False, the silence
-            in the noise files will be removed before the RMS calculation. It is useful for
+            in the noise files will be disregarded in the RMS calculation. It is useful for
             non-stationary noises where silent periods occur.
-        :param burst_probability: The probability of adding an extra sound/noise that overlaps
+        :param burst_probability: For every noise (A) that gets added, there
+            is a probability of adding an extra noise (B) that overlaps with noise A. This
+            parameter controls that probability. `min_pause_factor_during_burst` and
+            `max_pause_factor_during_burst` control the amount of overlap.
         :param min_pause_factor_during_burst: Min value of how far into the current sound (as
             fraction) the burst sound should start playing. The value must be greater than 0.
         :param max_pause_factor_during_burst: Max value of how far into the current sound (as
             fraction) the burst sound should start playing. The value must be greater than 0.
         :param min_fade_in_time: Min sound/noise fade in time in seconds. Use a value larger
             than 0 to avoid a "click" at the start of the sound/noise.
-        :param max_fade_in_time: Min sound/noise fade out time in seconds. Use a value larger
+        :param max_fade_in_time: Max sound/noise fade out time in seconds. Use a value larger
             than 0 to avoid a "click" at the start of the sound/noise.
         :param min_fade_out_time: Min sound/noise fade out time in seconds. Use a value larger
             than 0 to avoid a "click" at the end of the sound/noise.

@@ -54,8 +54,8 @@ A folder of (noise) sounds to be mixed in must be specified.
 
 `sounds_path`: `Union[List[Path], List[str], Path, str]`
 :   :octicons-milestone-24: A path or list of paths to audio file(s) and/or folder(s)
-with audio files. Can be str or Path instance(s). The audio files given here are
-supposed to be background noises.
+    with audio files. Can be str or Path instance(s). The audio files given here are
+    supposed to be (short) noises.
 
 `min_snr_in_db`: `float` (unit: Decibel)
 :   :octicons-milestone-24: Default: `0.0`. Minimum signal-to-noise ratio in dB. A lower

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.27.0] - 2022-09-13
+
+### Changed
+
+* Speed up `Limiter` by ~8x
+* Fix/improve some docstrings and type hints
+* Change default values in `Trim` and `ApplyImpulseResponse` according to the warnings that were added in v0.23.0
+* Emit a FutureWarning when `noise_rms` in `AddShortNoises` is not specified - the 
+ default value will change from "relative" to "relative_to_whole_input" in a future version. 
+
 ## [0.26.0] - 2022-08-19
 
 ### Added

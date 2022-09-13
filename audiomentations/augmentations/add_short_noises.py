@@ -131,6 +131,14 @@ class AddShortNoises(BaseWaveformTransform):
         assert type(include_silence_in_noise_rms_estimation) == bool
         assert noise_rms in ["relative", "absolute", "relative_to_whole_input"]
 
+        if noise_rms == "relative":
+            warnings.warn(
+                "The default value of 'noise_rms' will change from 'relative' to"
+                "'relative_to_whole_input' in a future version of audiomentations."
+                "Please specify explicitly 'noise_rms' to 'relative' if you don't want to change"
+                "its current behaviour. Discard this warning if you explicitly provided 'noise_rms'."
+            )
+
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
         self.min_time_between_sounds = min_time_between_sounds
@@ -349,8 +357,7 @@ class AddShortNoises(BaseWaveformTransform):
                 noise_placeholder[start_sample_index:end_sample_index] += noise_samples
                 if gain_signal:
                     signal_mask[start_sample_index:end_sample_index] = np.maximum(
-                        signal_mask[start_sample_index:end_sample_index],
-                        noise_gain,
+                        signal_mask[start_sample_index:end_sample_index], noise_gain,
                     )
 
         if gain_signal:

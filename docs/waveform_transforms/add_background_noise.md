@@ -71,7 +71,7 @@ Here are some examples of datasets that can be downloaded and used as background
     only used if `noise_rms` is set to "relative"
 
 `noise_rms`: `str` (choices: `"absolute"`, `"relative"`)
-:   :octicons-milestone-24: Default: `relative`. Defines how the background noise will
+:   :octicons-milestone-24: Default: `"relative"`. Defines how the background noise will
     be added to the audio input. If the chosen option is `"relative"`, the rms of the
     added noise will be proportional to the RMS of the input sound. If the chosen option
     is `"absolute"`, the background noise will have a RMS independent of the rms of the

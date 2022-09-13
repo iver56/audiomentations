@@ -1,4 +1,4 @@
-# AddBackgroundNoise
+# `AddBackgroundNoise`
 
 _Added in v0.9.0_
 

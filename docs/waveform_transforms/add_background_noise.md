@@ -21,7 +21,7 @@ Here are some examples of datasets that can be downloaded and used as background
 
 ## Input-output example
 
-Here we add some music (with SNR = 4.0 dB) to a speech recording
+Here we add some music (with SNR = 5.0 dB) to a speech recording
 
 ![Input-output waveforms and spectrograms](AddBackgroundNoise.webp)
 

@@ -19,6 +19,16 @@ Here are some examples of datasets that can be downloaded and used as background
 * [https://github.com/karolpiczak/ESC-50#download](https://github.com/karolpiczak/ESC-50#download)
 * [https://github.com/microsoft/DNS-Challenge/](https://github.com/microsoft/DNS-Challenge/)
 
+## Input-output example
+
+Here we add some music (with SNR = 4.0 dB) to a speech recording
+
+![Input-output waveforms and spectrograms](AddBackgroundNoise.webp)
+
+| Input sound                                                                               | Transformed sound                                                                               |
+|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| <audio controls><source src="../AddBackgroundNoise_input.flac" type="audio/flac"></audio> | <audio controls><source src="../AddBackgroundNoise_transformed.flac" type="audio/flac"></audio> | 
+
 ## Usage examples
 
 

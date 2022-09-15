@@ -5,6 +5,8 @@ from typing import Tuple
 
 import librosa
 import numpy as np
+import soundfile
+from PIL import Image
 from librosa.display import specshow
 from matplotlib import pyplot as plt
 from numpy.typing import NDArray
@@ -22,11 +24,11 @@ def plot_waveforms_and_spectrograms(
 
     fig, axs = plt.subplots(2, 2)
 
-    fig.suptitle("Input sound (left) and transformed sound (right)")
     axs[0, 0].plot(sound)
     axs[0, 0].set_xticklabels([])
     axs[0, 0].set_xticks([])
     axs[0, 0].set_ylim([-ylim, ylim])
+    axs[0, 0].title.set_text("Input sound")
 
     axs[0, 1].plot(transformed_sound)
     axs[0, 1].set_xticklabels([])
@@ -34,6 +36,7 @@ def plot_waveforms_and_spectrograms(
     axs[0, 1].set_ylim([-ylim, ylim])
     axs[0, 1].set_yticks([])
     axs[0, 1].set_yticklabels([])
+    axs[0, 1].title.set_text("Transformed sound")
 
     def get_magnitude_spectrogram(samples):
         complex_spec = librosa.stft(samples)
@@ -97,14 +100,16 @@ class AddBackgroundNoiseExample(TransformUsageExample):
         np.random.seed(345)
         transform = AddBackgroundNoise(
             sounds_path=librosa.example("pistachio"),
-            min_snr_in_db=4.0,
-            max_snr_in_db=4.0,
+            min_snr_in_db=5.0,
+            max_snr_in_db=5.0,
             p=1.0,
         )
 
         sound, sample_rate = load_sound_file(
             librosa.example("libri1"), sample_rate=16000
         )
+
+        sound = sound[..., 0 : 5 * sample_rate]
 
         transformed_sound = transform(sound, sample_rate)
 
@@ -131,4 +136,25 @@ if __name__ == "__main__":
             transformed_sound,
             sample_rate,
             output_file_path=output_file_path,
+        )
+        Image.open(output_file_path).save(
+            output_file_path.with_suffix(".webp"), "webp", lossless=True, quality=100
+        )
+        os.remove(output_file_path)
+
+        soundfile.write(
+            BASE_DIR
+            / "docs"
+            / "waveform_transforms"
+            / f"{transform_class.__name__}_input.flac",
+            sound,
+            sample_rate,
+        )
+        soundfile.write(
+            BASE_DIR
+            / "docs"
+            / "waveform_transforms"
+            / f"{transform_class.__name__}_transformed.flac",
+            transformed_sound,
+            sample_rate,
         )

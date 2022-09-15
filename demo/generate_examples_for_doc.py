@@ -20,7 +20,7 @@ transform_usage_example_classes = dict()
 def plot_waveforms_and_spectrograms(
     sound, transformed_sound, sample_rate, output_file_path
 ):
-    ylim = max(np.amax(np.abs(sound)), np.amax(np.abs(transformed_sound))) * 1.05
+    ylim = max(np.amax(np.abs(sound)), np.amax(np.abs(transformed_sound))) * 1.1
 
     fig, axs = plt.subplots(2, 2)
 
@@ -46,7 +46,7 @@ def plot_waveforms_and_spectrograms(
     transformed_sound_spec = get_magnitude_spectrogram(transformed_sound)
 
     vmax = max(np.amax(sound_spec), np.amax(transformed_sound_spec))
-    vmin = vmax - 80.0
+    vmin = vmax - 85.0
 
     specshow(
         sound_spec,
@@ -73,6 +73,8 @@ def plot_waveforms_and_spectrograms(
     axs[1, 1].set_yticks([])
     axs[1, 1].set_yticklabels([])
     axs[1, 1].set_ylabel("")
+
+    plt.tight_layout(pad=0.1)
 
     plt.savefig(output_file_path, dpi=200)
     plt.close(fig)
@@ -109,7 +111,7 @@ class AddBackgroundNoiseExample(TransformUsageExample):
             librosa.example("libri1"), sample_rate=16000
         )
 
-        sound = sound[..., 0 : 5 * sample_rate]
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
 
         transformed_sound = transform(sound, sample_rate)
 

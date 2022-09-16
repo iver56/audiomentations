@@ -5,7 +5,7 @@ _Added in v0.9.0_
 Mix in another sound, e.g. a background noise. Useful if your original sound is clean and
 you want to simulate an environment where background noise is present.
 
-Can also be used for [mixup :octicons-link-external-24:](https://arxiv.org/pdf/1710.09412.pdf){target=_blank} when training
+Can also be used for [mixup :octicons-link-external-16:](https://arxiv.org/pdf/1710.09412.pdf){target=_blank} when training
 classification/annotation models.
 
 A path to a file/folder with sound(s), or a list of file/folder paths, must be
@@ -20,8 +20,8 @@ Optionally, the added noise sound can be transformed (with [`noise_transform`](#
 
 Here are some examples of datasets that can be downloaded and used as background noise:
 
-* [https://github.com/karolpiczak/ESC-50#download](https://github.com/karolpiczak/ESC-50#download)
-* [https://github.com/microsoft/DNS-Challenge/](https://github.com/microsoft/DNS-Challenge/)
+* [https://github.com/karolpiczak/ESC-50#download :octicons-link-external-16:](https://github.com/karolpiczak/ESC-50#download){target=_blank}
+* [https://github.com/microsoft/DNS-Challenge/ :octicons-link-external-16:](https://github.com/microsoft/DNS-Challenge/){target=_blank}
 
 ## Input-output example
 

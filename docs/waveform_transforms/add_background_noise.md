@@ -75,11 +75,11 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
 
 `min_snr_in_db`: `float` (unit: Decibel)
 :   :octicons-milestone-24: Default: `3.0`. Minimum signal-to-noise ratio in dB. Is only
-    used if `noise_rms` is set to "relative"
+    used if `noise_rms` is set to `"relative"`
 
 `max_snr_in_db`: `float` (unit: Decibel)
 :   :octicons-milestone-24: Default: `30.0`. Maximum signal-to-noise ratio in dB. Is
-    only used if `noise_rms` is set to "relative"
+    only used if `noise_rms` is set to `"relative"`
 
 `noise_rms`: `str` (choices: `"absolute"`, `"relative"`)
 :   :octicons-milestone-24: Default: `"relative"`. Defines how the background noise will

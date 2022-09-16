@@ -105,6 +105,7 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
 [`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[np.ndarray, int], np.ndarray]]`
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or
     composition of transforms) that gets applied to the noise before it gets mixed in.
+    The callable is expected to input audio waveform (numpy array) and sample rate (int).
 
 [`p`](#p){ #p }: `float`
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

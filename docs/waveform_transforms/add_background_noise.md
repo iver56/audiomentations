@@ -21,7 +21,8 @@ Here are some examples of datasets that can be downloaded and used as background
 
 ## Input-output example
 
-Here we add some music to a speech recording, targeting a signal-to-noise ratio (SNR) of 5 dB, which means that the speech (signal) is 5 dB louder than the music (noise).
+Here we add some music to a speech recording, targeting a signal-to-noise ratio (SNR) of
+5 decibels (dB), which means that the speech (_signal_) is 5 dB louder than the music (_noise_).
 
 ![Input-output waveforms and spectrograms](AddBackgroundNoise.webp)
 
@@ -82,10 +83,10 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
 
 `noise_rms`: `str` (choices: `"absolute"`, `"relative"`)
 :   :octicons-milestone-24: Default: `"relative"`. Defines how the background noise will
-    be added to the audio input. If the chosen option is `"relative"`, the rms of the
-    added noise will be proportional to the RMS of the input sound. If the chosen option
-    is `"absolute"`, the background noise will have a RMS independent of the rms of the
-    input audio file
+    be added to the audio input. If the chosen option is `"relative"`, the root mean
+    square (RMS) of the added noise will be proportional to the RMS of the input sound.
+    If the chosen option is `"absolute"`, the background noise will have an RMS
+    independent of the rms of the input audio file
 
 `min_absolute_rms_in_db`: `float` (unit: Decibel)
 :   :octicons-milestone-24: Default: `-45.0`. Is only used if `noise_rms` is set to

@@ -43,6 +43,10 @@ samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32
 augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
+# Documentation website
+
+See [https://iver56.github.io/audiomentations/](https://iver56.github.io/audiomentations/)
+
 # Transforms
 
 * [AddBackgroundNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_background_noise/)
@@ -82,10 +86,6 @@ augmented_samples = augment(samples=samples, sample_rate=16000)
 * [TimeMask](https://iver56.github.io/audiomentations/waveform_transforms/time_mask/)
 * [TimeStretch](https://iver56.github.io/audiomentations/waveform_transforms/time_stretch/)
 * [Trim](https://iver56.github.io/audiomentations/waveform_transforms/trim/)
-
-# Documentation
-
-See [https://iver56.github.io/audiomentations/](https://iver56.github.io/audiomentations/)
 
 # Changelog
 

@@ -86,9 +86,9 @@ See [audiomentations/spec_augmentations/spectrogram_transforms.py](https://githu
 
 # Waveform transforms
 
-Some of the following waveform transforms can be visualized (for understanding) by the [audio-transformation-visualization GUI](https://share.streamlit.io/phrasenmaeher/audio-transformation-visualization/main/visualize_transformation.py) (made by phrasenmaeher), where you can upload your own input wav file
+For a list and explanation of all waveform transforms, see Waveform transforms in the menu.
 
-For a list and brief explanation of all waveform transforms, see Waveform transforms
+Waveform transforms can be visualized (for understanding) by the [audio-transformation-visualization GUI](https://share.streamlit.io/phrasenmaeher/audio-transformation-visualization/main/visualize_transformation.py) (made by [phrasenmaeher](https://github.com/phrasenmaeher)), where you can upload your own input wav file
 
 # Spectrogram transforms
 

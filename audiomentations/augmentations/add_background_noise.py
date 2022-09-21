@@ -59,7 +59,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
             the maximum RMS value in dB that the added noise can take. Note that this value
             can not exceed 0.
         :param noise_transform: A callable waveform transform (or composition of transforms) that
-            gets applied to the noise before it gets mixed in.
+            gets applied to the noise before it gets mixed in. The callable is expected
+            to input audio waveform (numpy array) and sample rate (int).
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """

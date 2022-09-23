@@ -3,7 +3,7 @@
 _Added in v0.18.0, updated in v0.21.0_
 
 Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / octave)
-is parametrized. Can also be set for zero-phase filtering (will result in a 6db drop at
+is parametrized. Can also be set for zero-phase filtering (will result in a 6 dB drop at
 cutoffs).
 
 # BandPassFilter API
@@ -20,11 +20,11 @@ cutoffs).
 [`max_bandwidth_fraction`](#max_bandwidth_fraction){ #max_bandwidth_fraction }: `float`
 :   :octicons-milestone-24: Default: `1.99`. Maximum bandwidth relative to center frequency
 
-[`min_rolloff`](#min_rolloff){ #min_rolloff }: `float` (unit: dB/octave)
+[`min_rolloff`](#min_rolloff){ #min_rolloff }: `float` (unit: Decibels/octave)
 :   :octicons-milestone-24: Default: `12`. Minimum filter roll-off (in dB/octave).
     Must be a multiple of 6
 
-[`max_rolloff`](#max_rolloff){ #max_rolloff }: `float` (unit: dB/octave)
+[`max_rolloff`](#max_rolloff){ #max_rolloff }: `float` (unit: Decibels/octave)
 :   :octicons-milestone-24: Default: `24`. Maximum filter roll-off (in dB/octave)
     Must be a multiple of 6
 

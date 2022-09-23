@@ -15,14 +15,14 @@ class BandStopFilter(BaseButterworthFilter):
 
     def __init__(
         self,
-        min_center_freq=200.0,
-        max_center_freq=4000.0,
-        min_bandwidth_fraction=0.5,
-        max_bandwidth_fraction=1.99,
-        min_rolloff=12,
-        max_rolloff=24,
-        zero_phase=False,
-        p=0.5,
+        min_center_freq: float = 200.0,
+        max_center_freq: float = 4000.0,
+        min_bandwidth_fraction: float = 0.5,
+        max_bandwidth_fraction: float = 1.99,
+        min_rolloff: int = 12,
+        max_rolloff: int = 24,
+        zero_phase: bool = False,
+        p: float = 0.5,
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
@@ -39,7 +39,7 @@ class BandStopFilter(BaseButterworthFilter):
             When this is set to `true` it will not affect the phase of the
             input signal but will sound 3db lower at the cutoff frequency
             compared to the non-zero phase case (6db vs 3db). Additionally,
-            it is 2X times slower than in the non-zero phase case. If you
+            it is 2 times slower than in the non-zero phase case. If you
             absolutely want no phase distortions (e.g. want to augment a
             drum track), set this to `true`.
         :param p: The probability of applying this transform

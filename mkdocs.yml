@@ -13,7 +13,6 @@ nav:
       - BandStopFilter: waveform_transforms/band_stop_filter.md
       - Clip: waveform_transforms/clip.md
       - ClippingDistortion: waveform_transforms/clipping_distortion.md
-      - FrequencyMask: waveform_transforms/frequency_mask.md
       - Gain: waveform_transforms/gain.md
       - GainTransition: waveform_transforms/gain_transition.md
       - HighPassFilter: waveform_transforms/high_pass_filter.md

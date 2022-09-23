@@ -13,7 +13,6 @@ from audiomentations import (
     PitchShift,
     Shift,
     Normalize,
-    FrequencyMask,
     TimeMask,
     AddGaussianSNR,
     Resample,
@@ -260,12 +259,6 @@ if __name__ == "__main__":
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": BandStopFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
-        {
-            "instance": FrequencyMask(
-                min_frequency_band=0.5, max_frequency_band=0.6, p=1.0
-            ),
-            "num_runs": 5,
-        },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
         {"instance": GainTransition(p=1.0), "num_runs": 5},
         {"instance": HighPassFilter(p=1.0), "num_runs": 5},

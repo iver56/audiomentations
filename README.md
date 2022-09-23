@@ -59,7 +59,6 @@ See [https://iver56.github.io/audiomentations/](https://iver56.github.io/audiome
 * [BandStopFilter](https://iver56.github.io/audiomentations/waveform_transforms/band_stop_filter/)
 * [Clip](https://iver56.github.io/audiomentations/waveform_transforms/clip/)
 * [ClippingDistortion](https://iver56.github.io/audiomentations/waveform_transforms/clipping_distortion/)
-* [FrequencyMask](https://iver56.github.io/audiomentations/waveform_transforms/frequency_mask/)
 * [Gain](https://iver56.github.io/audiomentations/waveform_transforms/gain/)
 * [GainTransition](https://iver56.github.io/audiomentations/waveform_transforms/gain_transition/)
 * [HighPassFilter](https://iver56.github.io/audiomentations/waveform_transforms/high_pass_filter/)

@@ -8,7 +8,6 @@ from .augmentations.band_pass_filter import BandPassFilter
 from .augmentations.band_stop_filter import BandStopFilter
 from .augmentations.clip import Clip
 from .augmentations.clipping_distortion import ClippingDistortion
-from .augmentations.frequency_mask import FrequencyMask
 from .augmentations.gain import Gain
 from .augmentations.gain_transition import GainTransition
 from .augmentations.high_pass_filter import HighPassFilter

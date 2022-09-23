@@ -15,11 +15,16 @@ class ClippingDistortion(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_percentile_threshold=0, max_percentile_threshold=40, p=0.5):
+    def __init__(
+        self,
+        min_percentile_threshold: int = 0,
+        max_percentile_threshold: int = 40,
+        p: float = 0.5,
+    ):
         """
         :param min_percentile_threshold: int, A lower bound on the total percent of samples that
             will be clipped
-        :param max_percentile_threshold: int, A upper bound on the total percent of samples that
+        :param max_percentile_threshold: int, An upper bound on the total percent of samples that
             will be clipped
         :param p: The probability of applying this transform
         """

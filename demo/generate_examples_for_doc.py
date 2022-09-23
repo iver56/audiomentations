@@ -11,7 +11,7 @@ from librosa.display import specshow
 from matplotlib import pyplot as plt
 from numpy.typing import NDArray
 
-from audiomentations import AddBackgroundNoise
+from audiomentations import AddBackgroundNoise, AddGaussianNoise
 from audiomentations.core.audio_loading_utils import load_sound_file
 
 transform_usage_example_classes = dict()
@@ -113,6 +113,25 @@ class AddBackgroundNoiseExample(TransformUsageExample):
             librosa.example("libri1"), sample_rate=16000
         )
 
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class AddGaussianNoiseExample(TransformUsageExample):
+    transform_class = AddGaussianNoise
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = AddGaussianNoise(min_amplitude=0.01, max_amplitude=0.01, p=1.0)
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("libri1"), sample_rate=16000
+        )
         sound = sound[..., 0 : int(4.7 * sample_rate)]
 
         transformed_sound = transform(sound, sample_rate)

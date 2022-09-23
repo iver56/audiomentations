@@ -4,7 +4,7 @@ from audiomentations.augmentations.base_butterword_filter import BaseButterworth
 class BandPassFilter(BaseButterworthFilter):
     """
     Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / octave)
-    is parametrized. Can also be set for zero-phase filtering (will result in a 6db drop at
+    is parametrized. Can also be set for zero-phase filtering (will result in a 6 dB drop at
     cutoffs).
     """
 
@@ -12,14 +12,14 @@ class BandPassFilter(BaseButterworthFilter):
 
     def __init__(
         self,
-        min_center_freq=200.0,
-        max_center_freq=4000.0,
-        min_bandwidth_fraction=0.5,
-        max_bandwidth_fraction=1.99,
-        min_rolloff=12,
-        max_rolloff=24,
-        zero_phase=False,
-        p=0.5,
+        min_center_freq: float = 200.0,
+        max_center_freq: float = 4000.0,
+        min_bandwidth_fraction: float = 0.5,
+        max_bandwidth_fraction: float = 1.99,
+        min_rolloff: int = 12,
+        max_rolloff: int = 24,
+        zero_phase: bool = False,
+        p: float = 0.5,
     ):
         """
         :param min_center_freq: Minimum center frequency in hertz
@@ -31,13 +31,13 @@ class BandPassFilter(BaseButterworthFilter):
         :param max_rolloff: Maximum filter roll-off (in dB/octave)
             Must be a multiple of 6
         :param zero_phase: Whether filtering should be zero phase.
-            When this is set to `true` it will not affect the phase of the
-            input signal but will sound 3db lower at the cutoff frequency
-            compared to the non-zero phase case (6db vs 3db). Additionally,
-            it is 2X times slower than in the non-zero phase case. If you
+            When this is set to `True` it will not affect the phase of the
+            input signal but will sound 3 dB lower at the cutoff frequency
+            compared to the non-zero phase case (6 dB vs 3 dB). Additionally,
+            it is 2 times slower than in the non-zero phase case. If you
             absolutely want no phase distortions (e.g. want to augment an
             audio file with lots of transients, like a drum track), set
-            this to `true`.
+            this to `True`.
         :param p: The probability of applying this transform
         """
         super().__init__(

@@ -13,9 +13,9 @@ from audiomentations.core.utils import find_audio_files_in_paths
 
 
 class ApplyImpulseResponse(BaseWaveformTransform):
-    """Convolve the audio with a random impulse response.
+    """Convolve the audio with a randomly selected impulse response.
     Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
-    Impulse responses are represented as wav files in the given ir_path.
+    Impulse responses are represented as audio (ideally wav) files in the given ir_path.
     """
 
     supports_multichannel = True

@@ -27,9 +27,9 @@ class HighPassFilter(BaseButterworthFilter):
             Must be a multiple of 6
         :param zero_phase: Whether filtering should be zero phase.
             When this is set to `true` it will not affect the phase of the
-            input signal but will sound 3db lower at the cutoff frequency
-            compared to the non-zero phase case (6db vs 3db). Additionally,
-            it is 2X times slower than in the non-zero phase case. If you
+            input signal but will sound 3 dB lower at the cutoff frequency
+            compared to the non-zero phase case (6 dB vs. 3 dB). Additionally,
+            it is 2 times slower than in the non-zero phase case. If you
             absolutely want no phase distortions (e.g. want to augment a
             drum track), set this to `true`.
         :param p: The probability of applying this transform

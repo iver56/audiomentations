@@ -16,24 +16,24 @@ end of the sound.
 
 # GainTransition API
 
-[`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` (unit: Decibel)
+[`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-24.0`. Minimum gain.
 
-[`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` (unit: Decibel)
+[`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `6.0`. Maximum gain.
 
-[`min_duration`](#min_duration){ #min_duration }: `Union[float, int]` (unit: see [`duration_unit`](#duration_unit))
+[`min_duration`](#min_duration){ #min_duration }: `Union[float, int]` • unit: see [`duration_unit`](#duration_unit)
 :   :octicons-milestone-24: Default: `0.2`. Minimum length of transition.
 
-[`max_duration`](#max_duration){ #max_duration }: `Union[float, int]` (unit: see [`duration_unit`](#duration_unit))
+[`max_duration`](#max_duration){ #max_duration }: `Union[float, int]` • unit: see [`duration_unit`](#duration_unit)
 :   :octicons-milestone-24: Default: `6.0`. Maximum length of transition.
 
-[`duration_unit`](#duration_unit){ #duration_unit }: `str` (choices: `"fraction"`, `"samples"`, `"seconds"`)
+[`duration_unit`](#duration_unit){ #duration_unit }: `str` • choices: `"fraction"`, `"samples"`, `"seconds"`
 :   :octicons-milestone-24: Default: `"seconds"`. Defines the unit of the value of `min_duration` and `max_duration`.
     
     * `"fraction"`: Fraction of the total sound length
     * `"samples"`: Number of audio samples
     * `"seconds"`: Number of seconds
 
-[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
+[`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

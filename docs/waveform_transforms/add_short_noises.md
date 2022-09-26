@@ -57,25 +57,25 @@ A folder of (noise) sounds to be mixed in must be specified.
     with audio files. Can be str or Path instance(s). The audio files given here are
     supposed to be (short) noises.
 
-[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` (unit: Decibel)
+[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `0.0`. Minimum signal-to-noise ratio in dB. A lower
     value means the added sounds/noises will be louder. This gets ignored if `noise_rms`
     is set to `"absolute"`.
 
-[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` (unit: Decibel)
+[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `24.0`. Maximum signal-to-noise ratio in dB. A
     lower value means the added sounds/noises will be louder. This gets ignored if
     `noise_rms` is set to `"absolute"`.
 
-[`min_time_between_sounds`](#min_time_between_sounds){ #min_time_between_sounds }: `float` (unit: seconds)
+[`min_time_between_sounds`](#min_time_between_sounds){ #min_time_between_sounds }: `float` • unit: seconds
 :   :octicons-milestone-24: Default: `4.0`. Minimum pause time (in seconds) between the
     added sounds/noises
 
-[`max_time_between_sounds`](#max_time_between_sounds){ #max_time_between_sounds }: `float` (unit: seconds)
+[`max_time_between_sounds`](#max_time_between_sounds){ #max_time_between_sounds }: `float` • unit: seconds
 :   :octicons-milestone-24: Default: `16.0`. Maximum pause time (in seconds) between the
     added sounds/noises
 
-[`noise_rms`](#noise_rms){ #noise_rms }: `str` (choices: `"absolute"`, `"relative"`, `"relative_to_whole_input"`)
+[`noise_rms`](#noise_rms){ #noise_rms }: `str` • choices: `"absolute"`, `"relative"`, `"relative_to_whole_input"`
 :   :octicons-milestone-24: Default: `"relative"` (<=v0.27), but will be changed to
     `"relative_to_whole_input"` in a future version.
 
@@ -88,12 +88,12 @@ A folder of (noise) sounds to be mixed in must be specified.
     * `"relative_to_whole_input"`: the RMS of the added noises will be
         proportional to the RMS of the whole input sound.
 
-[`min_absolute_noise_rms_db`](#min_absolute_noise_rms_db){ #min_absolute_noise_rms_db }: `float` (unit: Decibel)
+[`min_absolute_noise_rms_db`](#min_absolute_noise_rms_db){ #min_absolute_noise_rms_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-50.0`. Is only used if `noise_rms` is set to
     `"absolute"`. It is the minimum RMS value in dB that the added noise can take. The
     lower the RMS is, the lower will the added sound be.
 
-[`max_absolute_noise_rms_db`](#max_absolute_noise_rms_db){ #max_absolute_noise_rms_db }: `float` (unit: seconds)
+[`max_absolute_noise_rms_db`](#max_absolute_noise_rms_db){ #max_absolute_noise_rms_db }: `float` • unit: seconds
 :   :octicons-milestone-24: Default: `-20.0`. Is only used if `noise_rms` is set to
     `"absolute"`. It is the maximum RMS value in dB that the added noise can take. Note
     that this value can not exceed 0.
@@ -124,23 +124,23 @@ A folder of (noise) sounds to be mixed in must be specified.
 :   :octicons-milestone-24: Default: `1.1`. Max value of how far into the current sound (as
     fraction) the burst sound should start playing. The value must be greater than 0.
 
-[`min_fade_in_time`](#min_fade_in_time){ #min_fade_in_time }: `float` (unit: seconds)
+[`min_fade_in_time`](#min_fade_in_time){ #min_fade_in_time }: `float` • unit: seconds
 :   :octicons-milestone-24: Default: `0.005`. Min noise fade in time in seconds. Use a
     value larger than 0 to avoid a "click" at the start of the noise.
 
-[`max_fade_in_time`](#max_fade_in_time){ #max_fade_in_time }: `float` (unit: seconds)
+[`max_fade_in_time`](#max_fade_in_time){ #max_fade_in_time }: `float` • unit: seconds
 :   :octicons-milestone-24: Default: `0.08`. Max noise fade in time in seconds. Use a
     value larger than 0 to avoid a "click" at the start of the noise.
 
-[`min_fade_out_time`](#min_fade_out_time){ #min_fade_out_time }: `float` (unit: seconds)
+[`min_fade_out_time`](#min_fade_out_time){ #min_fade_out_time }: `float` • unit: seconds
 :   :octicons-milestone-24: Default: `0.01`. Min sound/noise fade out time in seconds.
     Use a value larger than 0 to avoid a "click" at the end of the sound/noise.
 
-[`max_fade_out_time`](#max_fade_out_time){ #max_fade_out_time }: `float` (unit: seconds)
+[`max_fade_out_time`](#max_fade_out_time){ #max_fade_out_time }: `float` • unit: seconds
 :   :octicons-milestone-24: Default: `0.1`. Max sound/noise fade out time in seconds.
     Use a value larger than 0 to avoid a "click" at the end of the sound/noise.
 
-[`signal_gain_in_db_during_noise`](#signal_gain_in_db_during_noise){ #signal_gain_in_db_during_noise }: `float` (unit: Decibel)
+[`signal_gain_in_db_during_noise`](#signal_gain_in_db_during_noise){ #signal_gain_in_db_during_noise }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `0.0`. Gain applied to the signal during a short noise.
     When fading the signal to the custom gain, the same fade times are used as
     for the noise, so it's essentially cross-fading. The default value (0.0) means
@@ -156,7 +156,7 @@ A folder of (noise) sounds to be mixed in must be specified.
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or
     composition of transforms) that gets applied to noises before they get mixed in.
 
-[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
+[`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.
 
 [`lru_cache_size`](#lru_cache_size){ #lru_cache_size }: `int`

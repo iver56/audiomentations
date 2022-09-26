@@ -11,10 +11,10 @@ more aligned with human hearing, which is not linear. Filter steepness
 
 # BandStopFilter API
 
-[`min_center_freq`](#min_center_freq){ #min_center_freq }: `float` (unit: hertz)
+[`min_center_freq`](#min_center_freq){ #min_center_freq }: `float` • unit: hertz
 :   :octicons-milestone-24: Default: `200.0`. Minimum center frequency in hertz
 
-[`max_center_freq`](#max_center_freq){ #max_center_freq }: `float` (unit: hertz)
+[`max_center_freq`](#max_center_freq){ #max_center_freq }: `float` • unit: hertz
 :   :octicons-milestone-24: Default: `4000.0`. Maximum center frequency in hertz
 
 [`min_bandwidth_fraction`](#min_bandwidth_fraction){ #min_bandwidth_fraction }: `float`
@@ -23,11 +23,11 @@ more aligned with human hearing, which is not linear. Filter steepness
 [`max_bandwidth_fraction`](#max_bandwidth_fraction){ #max_bandwidth_fraction }: `float`
 :   :octicons-milestone-24: Default: `1.99`. Maximum bandwidth relative to center frequency
 
-[`min_rolloff`](#min_rolloff){ #min_rolloff }: `float` (unit: Decibels/octave)
+[`min_rolloff`](#min_rolloff){ #min_rolloff }: `float` • unit: Decibels/octave
 :   :octicons-milestone-24: Default: `12`. Minimum filter roll-off (in dB/octave).
     Must be a multiple of 6
 
-[`max_rolloff`](#max_rolloff){ #max_rolloff }: `float` (unit: Decibels/octave)
+[`max_rolloff`](#max_rolloff){ #max_rolloff }: `float` • unit: Decibels/octave
 :   :octicons-milestone-24: Default: `24`. Maximum filter roll-off (in dB/octave)
     Must be a multiple of 6
 
@@ -39,5 +39,5 @@ more aligned with human hearing, which is not linear. Filter steepness
     you absolutely want no phase distortions (e.g. want to augment an audio file with
     lots of transients, like a drum track), set this to `True`.
 
-[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
+[`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

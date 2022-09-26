@@ -7,17 +7,17 @@ Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
 
 # HighPassFilter API
 
-[`min_cutoff_freq`](#min_cutoff_freq){ #min_cutoff_freq }: `float` (unit: hertz)
+[`min_cutoff_freq`](#min_cutoff_freq){ #min_cutoff_freq }: `float` • unit: hertz
 :   :octicons-milestone-24: Default: `20.0`. Minimum cutoff frequency
 
-[`max_cutoff_freq`](#max_cutoff_freq){ #max_cutoff_freq }: `float` (unit: hertz)
+[`max_cutoff_freq`](#max_cutoff_freq){ #max_cutoff_freq }: `float` • unit: hertz
 :   :octicons-milestone-24: Default: `2400.0`. Maximum cutoff frequency
 
-[`min_rolloff`](#min_rolloff){ #min_rolloff }: `float` (unit: Decibels/octave)
+[`min_rolloff`](#min_rolloff){ #min_rolloff }: `float` • unit: Decibels/octave
 :   :octicons-milestone-24: Default: `12`. Minimum filter roll-off (in dB/octave).
     Must be a multiple of 6
 
-[`max_rolloff`](#max_rolloff){ #max_rolloff }: `float` (unit: Decibels/octave)
+[`max_rolloff`](#max_rolloff){ #max_rolloff }: `float` • unit: Decibels/octave
 :   :octicons-milestone-24: Default: `24`. Maximum filter roll-off (in dB/octave)
     Must be a multiple of 6
 
@@ -29,5 +29,5 @@ Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
     you absolutely want no phase distortions (e.g. want to augment an audio file with
     lots of transients, like a drum track), set this to `True`.
 
-[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
+[`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

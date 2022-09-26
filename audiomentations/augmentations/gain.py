@@ -18,8 +18,15 @@ class Gain(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_gain_in_db=-12, max_gain_in_db=12, p=0.5):
+    def __init__(
+        self,
+        min_gain_in_db: float = -12.0,
+        max_gain_in_db: float = 12.0,
+        p: float = 0.5,
+    ):
         """
+        :param min_gain_in_db: Minimum gain
+        :param max_gain_in_db: Maximum gain
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -36,4 +43,3 @@ class Gain(BaseWaveformTransform):
 
     def apply(self, samples, sample_rate):
         return samples * self.parameters["amplitude_ratio"]
-

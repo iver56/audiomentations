@@ -18,5 +18,5 @@ the two input parameters `min_percentile_threshold` and `max_percentile_threshol
 :   :octicons-milestone-24: Default: `40`. An upper bound on the total percent of
     samples that will be clipped
 
-[`p`](#p){ #p }: `float`
+[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

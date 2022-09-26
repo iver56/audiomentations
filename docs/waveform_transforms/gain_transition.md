@@ -35,5 +35,5 @@ end of the sound.
     * `"samples"`: Number of audio samples
     * `"seconds"`: Number of seconds
 
-[`p`](#p){ #p }: `float`
+[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

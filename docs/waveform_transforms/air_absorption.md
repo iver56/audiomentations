@@ -38,5 +38,5 @@ attenuate according to the distance law. Gain augmentation needs to be done sepa
 [`max_distance`](#max_distance){ #max_distance }: `float` (unit: meters)
 :   :octicons-milestone-24: Default: `100.0`. Maximum microphone-source distance in meters.
 
-[`p`](#p){ #p }: `float`
+[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

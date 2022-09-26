@@ -37,5 +37,5 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 [`max_amplitude`](#max_amplitude){ #max_amplitude }: `float` (unit: linear amplitude)
 :   :octicons-milestone-24: Default: `0.015`. Maximum noise amplification factor.
 
-[`p`](#p){ #max_amplitude }: `float`
+[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

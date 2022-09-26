@@ -156,7 +156,7 @@ A folder of (noise) sounds to be mixed in must be specified.
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or
     composition of transforms) that gets applied to noises before they get mixed in.
 
-[`p`](#p){ #p }: `float`
+[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.
 
 [`lru_cache_size`](#lru_cache_size){ #lru_cache_size }: `int`

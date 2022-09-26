@@ -17,5 +17,5 @@ See also [https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping](https
 [`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` (unit: Decibel)
 :   :octicons-milestone-24: Default: `12.0`. Maximum gain.
 
-[`p`](#p){ #p }: `float`
+[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

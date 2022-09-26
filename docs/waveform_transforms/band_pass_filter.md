@@ -36,5 +36,5 @@ cutoffs).
     you absolutely want no phase distortions (e.g. want to augment an audio file with
     lots of transients, like a drum track), set this to `True`.
 
-[`p`](#p){ #p }: `float`
+[`p`](#p){ #p }: `float` (range: [0.0, 1.0])
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

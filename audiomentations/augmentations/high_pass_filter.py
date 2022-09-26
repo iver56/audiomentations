@@ -11,11 +11,11 @@ class HighPassFilter(BaseButterworthFilter):
 
     def __init__(
         self,
-        min_cutoff_freq=20,
-        max_cutoff_freq=2400,
-        min_rolloff=12,
-        max_rolloff=24,
-        zero_phase=False,
+        min_cutoff_freq: float = 20.0,
+        max_cutoff_freq: float = 2400.0,
+        min_rolloff: int = 12,
+        max_rolloff: int = 24,
+        zero_phase: bool = False,
         p: float = 0.5,
     ):
         """

@@ -28,7 +28,7 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 
 ## Trim API
 
-[`top_db`](#top_db){ #top_db }: `float`
+[`top_db`](#top_db){ #top_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `30.0`. The threshold value (in decibels) below which to consider silence and trim.
 
 [`p`](#p){ #p }: `float`

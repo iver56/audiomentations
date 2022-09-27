@@ -13,7 +13,7 @@ Trim leading and trailing silence from an audio signal using `librosa.effects.tr
 |-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
 | <audio controls><source src="../AddGaussianNoise_input.flac" type="audio/flac"></audio> | <audio controls><source src="../Trim_transformed.flac" type="audio/flac"></audio> |
 
-## Usage examples
+## Usage example
 
 ```python
 from audiomentations import Trim

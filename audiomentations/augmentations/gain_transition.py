@@ -56,10 +56,10 @@ class GainTransition(BaseWaveformTransform):
     ):
         """
 
-        :param min_gain_in_db:
-        :param max_gain_in_db:
-        :param min_duration: minimum length of transition. See also duration_unit.
-        :param max_duration: maximum length of transition. See also duration_unit.
+        :param min_gain_in_db: Minimum gain
+        :param max_gain_in_db: Maximum gain
+        :param min_duration: Minimum length of transition. See also duration_unit.
+        :param max_duration: Maximum length of transition. See also duration_unit.
         :param duration_unit: Defines the unit of the value of min_duration and max_duration.
             "fraction": Fraction of the total sound length
             "samples": Number of audio samples

@@ -24,5 +24,5 @@ sometimes be useful at the end of a data augmentation pipeline.
 [`a_max`](#a_max){ #a_max }: `float`
 :   :octicons-milestone-24: Default: `1.0`. Maximum value for clipping.
 
-[`p`](#p){ #p }: `float`
+[`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

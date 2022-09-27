@@ -23,13 +23,13 @@ class HighShelfFilter(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_center_freq=300.0,
-        max_center_freq=7500.0,
-        min_gain_db=-18.0,
-        max_gain_db=18.0,
-        min_q=0.1,
-        max_q=0.999,
-        p=0.5,
+        min_center_freq: float = 300.0,
+        max_center_freq: float = 7500.0,
+        min_gain_db: float = -18.0,
+        max_gain_db: float = 18.0,
+        min_q: float = 0.1,
+        max_q: float = 0.999,
+        p: float = 0.5,
     ):
         """
         :param min_center_freq: The minimum center frequency of the shelving filter
@@ -40,6 +40,7 @@ class HighShelfFilter(BaseWaveformTransform):
             transition band will be.
         :param max_q: The maximum quality factor Q. The higher the Q, the steeper the
             transition band will be.
+        :param p: The probability of applying this transform
         """
 
         assert (

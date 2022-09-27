@@ -18,7 +18,7 @@ Can also be set for zero-phase filtering (will result in a 6db drop at cutoff).
     Must be a multiple of 6
 
 [`max_rolloff`](#max_rolloff){ #max_rolloff }: `float` • unit: Decibels/octave
-:   :octicons-milestone-24: Default: `24`. Maximum filter roll-off (in dB/octave)
+:   :octicons-milestone-24: Default: `24`. Maximum filter roll-off (in dB/octave).
     Must be a multiple of 6
 
 [`zero_phase`](#zero_phase){ #zero_phase }: `bool`

@@ -51,7 +51,6 @@ transform_usage_example_classes = dict()
 
 
 def plot_waveforms_and_spectrograms(sound, transformed_sound, sample_rate, output_file_path):
-    print(f"sound shape: {sound.shape}, transformed shape: {transformed_sound.shape}")
     xmax = max(sound.shape[0], transformed_sound.shape[0])
     ylim = max(np.amax(np.abs(sound)), np.amax(np.abs(transformed_sound))) * 1.1
     sound = sound[:xmax]
@@ -113,7 +112,6 @@ def plot_waveforms_and_spectrograms(sound, transformed_sound, sample_rate, outpu
     plt.tight_layout(pad=0.1)
 
     plt.savefig(output_file_path, dpi=200)
-    print(f"wrote file at {output_file_path}")
     plt.close(fig)
 
 
@@ -291,7 +289,6 @@ if __name__ == "__main__":
             transformed_sound,
             sample_rate,
         ) = transform_usage_example_class().generate_example()
-        print(f"Done generating transformations")
         output_file_path = BASE_DIR / "docs" / "waveform_transforms" / f"{transform_class.__name__}.png"
         plot_waveforms_and_spectrograms(
             sound,
@@ -299,7 +296,6 @@ if __name__ == "__main__":
             sample_rate,
             output_file_path=output_file_path,
         )
-        print(f"Saved plot at {output_file_path}")
         Image.open(output_file_path).save(output_file_path.with_suffix(".webp"), "webp", lossless=True, quality=100)
         os.remove(output_file_path)
 

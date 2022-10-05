@@ -175,7 +175,7 @@ class RoomSimulatorExample(TransformUsageExample):
     def generate_example(self):
         random.seed(345)
         np.random.seed(345)
-        transform = transform_class(p=1)
+        transform = RoomSimulator(p=1)
 
         sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
         sound = sound[..., 0 : int(4.7 * sample_rate)]
@@ -192,7 +192,7 @@ class SevenBandEQExample(TransformUsageExample):
     def generate_example(self):
         random.seed(345)
         np.random.seed(345)
-        transform = transform_class(p=1)
+        transform = SevenBandParametricEQ(min_gain_db=3.0, max_gain_db=3.0, p=1)
 
         sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
         sound = sound[..., 0 : int(4.7 * sample_rate)]
@@ -209,7 +209,7 @@ class ShiftExample(TransformUsageExample):
     def generate_example(self):
         random.seed(345)
         np.random.seed(345)
-        transform = Shift(min_fraction=-1, max_fraction=1.0, rollover=True, p=1)
+        transform = Shift(min_fraction=0.75, max_fraction=0.75, rollover=True, p=1)
 
         sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
         sound = sound[..., 0 : int(4.7 * sample_rate)]
@@ -226,7 +226,7 @@ class TanhDistortionExample(TransformUsageExample):
     def generate_example(self):
         random.seed(345)
         np.random.seed(345)
-        transform = transform_class(p=1.0)
+        transform = TanhDistortion(min_distortion=0.25, max_distortion=0.25, p=1.0)
 
         sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
         sound = sound[..., 0 : int(4.7 * sample_rate)]
@@ -244,7 +244,7 @@ class TimeStretchExample(TransformUsageExample):
         random.seed(345)
         np.random.seed(345)
         transform = TimeStretch(
-            min_rate=0.8,
+            min_rate=1.20,
             max_rate=1.25,
             leave_length_unchanged=True,
             p=1.0,
@@ -267,7 +267,7 @@ class TrimExample(TransformUsageExample):
         random.seed(345)
         np.random.seed(345)
         transform = Trim(
-            top_db=30.0,
+            top_db=15.0,
             p=1.0,
         )
 

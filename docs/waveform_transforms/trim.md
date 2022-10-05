@@ -11,7 +11,7 @@ Trim leading and trailing silence from an audio signal using `librosa.effects.tr
 
 | Input sound                                                                             | Transformed sound                                                                             |
 |-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| <audio controls><source src="../AddGaussianNoise_input.flac" type="audio/flac"></audio> | <audio controls><source src="../Trim_transformed.flac" type="audio/flac"></audio> |
+| <audio controls><source src="../Trim_input.flac" type="audio/flac"></audio> | <audio controls><source src="../Trim_transformed.flac" type="audio/flac"></audio> |
 
 ## Usage example
 

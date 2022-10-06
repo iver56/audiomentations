@@ -34,7 +34,7 @@ transform = TanhDistortion(
 augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 ```
 
-## Trim API
+## TanhDistortion API
 
 [`min_distortion`](#min_distortion){ #min_distortion }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.01`. Minimum "amount" of distortion to apply to the signal.

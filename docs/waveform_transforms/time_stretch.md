@@ -28,7 +28,7 @@ transform = TimeStretch(
 augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 ```
 
-## Trim API
+## TimeStretch API
 
 [`min_rate`](#min_rate){ #min_rate }: `float`
 :   :octicons-milestone-24: Default: `0.8`. Minimum rate of change of total duration of the signal.

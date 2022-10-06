@@ -186,7 +186,7 @@ class RoomSimulatorExample(TransformUsageExample):
 
 
 @register
-class SevenBandEQExample(TransformUsageExample):
+class SevenBandParametricEQExample(TransformUsageExample):
     transform_class = SevenBandParametricEQ
 
     def generate_example(self):
@@ -244,7 +244,7 @@ class TimeStretchExample(TransformUsageExample):
         random.seed(345)
         np.random.seed(345)
         transform = TimeStretch(
-            min_rate=1.20,
+            min_rate=1.25,
             max_rate=1.25,
             leave_length_unchanged=True,
             p=1.0,

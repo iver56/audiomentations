@@ -5,7 +5,9 @@ _Added in v0.2.0_
 Change the speed or duration of the signal without changing the pitch. This augmentation employs `librosa.effects.time_stretch` in the backend to achieve the effect and also supports multichannel functionality. 
 
 
-## Input-output examples
+## Input-output example
+
+In this example we speed up a sound by 25%. This corresponds to a rate of 1.25.
 
 ![Input-output waveforms and spectrograms](TimeStretch.webp)
 

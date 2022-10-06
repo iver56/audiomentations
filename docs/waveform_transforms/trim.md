@@ -5,7 +5,9 @@ _Added in v0.7.0_
 Trim leading and trailing silence from an audio signal using `librosa.effects.trim`. It considers threshold
 (in decibels) below reference defined in parameter `top_db` as silence.
 
-## Input-output examples
+## Input-output example
+
+In this example we remove silence from the start and end, using the default top_db parameter value
 
 ![Input-output waveforms and spectrograms](Trim.webp)
 

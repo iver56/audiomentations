@@ -37,10 +37,10 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 ## Trim API
 
 [`min_distortion`](#min_distortion){ #min_distortion }: `float` ? unit: rate
-:   :octicons-milestone-24: Default: `0.8`. Minimum rate of distortion to apply to the signal.
+:   :octicons-milestone-24: Default: `0.01`. Minimum rate of distortion to apply to the signal.
 
 [`max_distortion`](#min_distortion){ #min_distortion }: `float` ? unit: rate
-:   :octicons-milestone-24: Default: `1.25`. Maximum rate of distortion to apply to the signal.
+:   :octicons-milestone-24: Default: `0.7`. Maximum rate of distortion to apply to the signal.
 
 [`p`](#p){ #p }: `float`
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

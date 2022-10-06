@@ -11,10 +11,16 @@ class TimeStretch(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_rate=0.8, max_rate=1.25, leave_length_unchanged=True, p=0.5):
+    def __init__(
+        self,
+        min_rate: float = 0.8,
+        max_rate: float = 1.25,
+        leave_length_unchanged: bool = True,
+        p: float = 0.5,
+    ):
         super().__init__(p)
-        assert min_rate > 0.1
-        assert max_rate < 10
+        assert min_rate >= 0.1
+        assert max_rate <= 10
         assert min_rate <= max_rate
         self.min_rate = min_rate
         self.max_rate = max_rate

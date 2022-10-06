@@ -28,8 +28,8 @@ In this example we apply tanh distortion with the "distortion amount" (think of 
 from audiomentations import TanhDistortion
 
 transform = TanhDistortion(
-    min_distortion = 0.01,
-    max_distortion = 0.7,
+    min_distortion=0.01,
+    max_distortion=0.7,
     p=1.0
 )
 

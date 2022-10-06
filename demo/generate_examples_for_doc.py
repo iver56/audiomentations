@@ -2,6 +2,7 @@ import os
 import random
 from pathlib import Path
 from typing import Tuple
+from functools import partial
 
 import librosa
 import numpy as np
@@ -11,17 +12,49 @@ from librosa.display import specshow
 from matplotlib import pyplot as plt
 from numpy.typing import NDArray
 
-from audiomentations import AddBackgroundNoise, AddGaussianNoise
+from audiomentations import (
+    AddBackgroundNoise,
+    AddGaussianNoise,
+    AddShortNoises,
+    AirAbsorption,
+    ApplyImpulseResponse,
+    BandPassFilter,
+    BandStopFilter,
+    Clip,
+    ClippingDistortion,
+    Gain,
+    GainTransition,
+    HighPassFilter,
+    HighShelfFilter,
+    LoudnessNormalization,
+    LowPassFilter,
+    LowShelfFilter,
+    Mp3Compression,
+    Normalize,
+    Padding,
+    PeakingFilter,
+    PitchShift,
+    PolarityInversion,
+    Resample,
+    Reverse,
+    RoomSimulator,
+    SevenBandParametricEQ,
+    Shift,
+    TanhDistortion,
+    TimeMask,
+    TimeStretch,
+    Trim,
+)
 from audiomentations.core.audio_loading_utils import load_sound_file
 
 transform_usage_example_classes = dict()
 
 
-def plot_waveforms_and_spectrograms(
-    sound, transformed_sound, sample_rate, output_file_path
-):
+def plot_waveforms_and_spectrograms(sound, transformed_sound, sample_rate, output_file_path):
+    xmax = max(sound.shape[0], transformed_sound.shape[0])
     ylim = max(np.amax(np.abs(sound)), np.amax(np.abs(transformed_sound))) * 1.1
-
+    sound = sound[:xmax]
+    transformed_sound = transformed_sound[:xmax]
     fig, axs = plt.subplots(2, 2)
 
     axs[0, 0].plot(sound)
@@ -109,9 +142,7 @@ class AddBackgroundNoiseExample(TransformUsageExample):
             p=1.0,
         )
 
-        sound, sample_rate = load_sound_file(
-            librosa.example("libri1"), sample_rate=16000
-        )
+        sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
 
         sound = sound[..., 0 : int(4.7 * sample_rate)]
 
@@ -129,9 +160,119 @@ class AddGaussianNoiseExample(TransformUsageExample):
         np.random.seed(345)
         transform = AddGaussianNoise(min_amplitude=0.01, max_amplitude=0.01, p=1.0)
 
-        sound, sample_rate = load_sound_file(
-            librosa.example("libri1"), sample_rate=16000
+        sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class RoomSimulatorExample(TransformUsageExample):
+    transform_class = RoomSimulator
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = RoomSimulator(p=1)
+
+        sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class SevenBandEQExample(TransformUsageExample):
+    transform_class = SevenBandParametricEQ
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = SevenBandParametricEQ(min_gain_db=3.0, max_gain_db=3.0, p=1)
+
+        sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class ShiftExample(TransformUsageExample):
+    transform_class = Shift
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = Shift(min_fraction=0.75, max_fraction=0.75, rollover=True, p=1)
+
+        sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class TanhDistortionExample(TransformUsageExample):
+    transform_class = TanhDistortion
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = TanhDistortion(min_distortion=0.25, max_distortion=0.25, p=1.0)
+
+        sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class TimeStretchExample(TransformUsageExample):
+    transform_class = TimeStretch
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = TimeStretch(
+            min_rate=1.20,
+            max_rate=1.25,
+            leave_length_unchanged=True,
+            p=1.0,
         )
+
+        sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
+
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class TrimExample(TransformUsageExample):
+    transform_class = Trim
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = Trim(
+            top_db=15.0,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(librosa.example("libri1"), sample_rate=16000)
+
         sound = sound[..., 0 : int(4.7 * sample_rate)]
 
         transformed_sound = transform(sound, sample_rate)
@@ -148,36 +289,23 @@ if __name__ == "__main__":
             transformed_sound,
             sample_rate,
         ) = transform_usage_example_class().generate_example()
-        output_file_path = (
-            BASE_DIR
-            / "docs"
-            / "waveform_transforms"
-            / f"{transform_class.__name__}.png"
-        )
+        output_file_path = BASE_DIR / "docs" / "waveform_transforms" / f"{transform_class.__name__}.png"
         plot_waveforms_and_spectrograms(
             sound,
             transformed_sound,
             sample_rate,
             output_file_path=output_file_path,
         )
-        Image.open(output_file_path).save(
-            output_file_path.with_suffix(".webp"), "webp", lossless=True, quality=100
-        )
+        Image.open(output_file_path).save(output_file_path.with_suffix(".webp"), "webp", lossless=True, quality=100)
         os.remove(output_file_path)
 
         soundfile.write(
-            BASE_DIR
-            / "docs"
-            / "waveform_transforms"
-            / f"{transform_class.__name__}_input.flac",
+            BASE_DIR / "docs" / "waveform_transforms" / f"{transform_class.__name__}_input.flac",
             sound,
             sample_rate,
         )
         soundfile.write(
-            BASE_DIR
-            / "docs"
-            / "waveform_transforms"
-            / f"{transform_class.__name__}_transformed.flac",
+            BASE_DIR / "docs" / "waveform_transforms" / f"{transform_class.__name__}_transformed.flac",
             transformed_sound,
             sample_rate,
         )

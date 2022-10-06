@@ -291,7 +291,7 @@ class TrimExample(TransformUsageExample):
     def generate_example(self):
         random.seed(345)
         np.random.seed(345)
-        transform = Trim(top_db=30.0, p=1.0)
+        transform = Trim(p=1.0)
 
         sound, sample_rate = load_sound_file(
             librosa.example("libri1"), sample_rate=16000

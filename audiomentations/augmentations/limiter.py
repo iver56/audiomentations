@@ -28,16 +28,16 @@ class Limiter(BaseWaveformTransform):
         p: float = 0.5,
     ):
         """
-        The threshold determines the level above which the limiter kicks in.
-        The attack time is how quickly the limiter will kick in once the limiting decibel.
+        The threshold determines the audio level above which the limiter kicks in.
+        The attack time is how quickly the limiter kicks in once the audio signal starts exceeding the threshold.
         The release time determines how quickly the limiter stops working after the signal drops below the threshold.
 
-        :param min_threshold_db: Min threshold in decibels
-        :param max_threshold_db: Max threshold in decibels
+        :param min_threshold_db: Minimum threshold in decibels
+        :param max_threshold_db: Maximum threshold in decibels
         :param min_attack: Minimum attack time in seconds
         :param max_attack: Maximum attack time in seconds
         :param min_release: Minimum release time in seconds
-        :param max_release: Minimum release time in seconds
+        :param max_release: Maximum release time in seconds
         :param threshold_mode: "relative_to_signal_peak" or "absolute"
             "relative_to_signal_peak" means the threshold is relative to peak of the signal.
             "absolute" means the threshold is relative to 0 dBFS, so it doesn't depend

@@ -1,4 +1,4 @@
-site_name: audiomentations
+site_name: audiomentations documentation
 site_author: 'Iver Jordal'
 nav:
   - Home: index.md

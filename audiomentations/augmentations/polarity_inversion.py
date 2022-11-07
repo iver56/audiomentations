@@ -14,7 +14,7 @@ class PolarityInversion(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, p=0.5):
+    def __init__(self, p: float = 0.5):
         """
         :param p: The probability of applying this transform
         """

@@ -46,7 +46,7 @@ class BaseTransform:
 
 
 class BaseWaveformTransform(BaseTransform):
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         raise NotImplementedError
 
     def is_multichannel(self, samples):
@@ -84,7 +84,7 @@ class BaseWaveformTransform(BaseTransform):
             return self.apply(samples, sample_rate)
         return samples
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         self.parameters["should_apply"] = random.random() < self.p
 
 

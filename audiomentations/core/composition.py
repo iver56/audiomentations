@@ -1,5 +1,7 @@
 import random
 
+import numpy as np
+
 from audiomentations.core.transforms_interface import BaseSpectrogramTransform
 
 
@@ -76,7 +78,7 @@ class Compose(BaseCompose):
     def __init__(self, transforms, p=1.0, shuffle=False):
         super().__init__(transforms, p, shuffle)
 
-    def __call__(self, samples, sample_rate):
+    def __call__(self, samples: np.ndarray, sample_rate: int):
         transforms = self.transforms.copy()
         should_apply = random.random() < self.p
         # TODO: Adhere to self.are_parameters_frozen

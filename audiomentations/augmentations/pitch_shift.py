@@ -27,14 +27,14 @@ class PitchShift(BaseWaveformTransform):
         self.min_semitones = min_semitones
         self.max_semitones = max_semitones
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["num_semitones"] = random.uniform(
                 self.min_semitones, self.max_semitones
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         try:
             pitch_shifted_samples = librosa.effects.pitch_shift(
                 samples, sr=sample_rate, n_steps=self.parameters["num_semitones"]

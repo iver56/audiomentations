@@ -1,3 +1,5 @@
+import numpy as np
+
 from audiomentations import LowShelfFilter, PeakingFilter, HighShelfFilter
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -97,14 +99,14 @@ class SevenBandParametricEQ(BaseWaveformTransform):
             self.peaking_filters[i].freeze_parameters()
         self.high_shelf_filter.freeze_parameters()
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         self.low_shelf_filter.randomize_parameters(samples, sample_rate)
         for i in range(len(self.peaking_filters)):
             self.peaking_filters[i].randomize_parameters(samples, sample_rate)
         self.high_shelf_filter.randomize_parameters(samples, sample_rate)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         samples = self.low_shelf_filter(samples, sample_rate)
         for i in range(len(self.peaking_filters)):
             samples = self.peaking_filters[i](samples, sample_rate)

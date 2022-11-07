@@ -1,5 +1,7 @@
 import random
 
+import numpy as np
+
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
     convert_decibels_to_amplitude_ratio,
@@ -34,12 +36,12 @@ class Gain(BaseWaveformTransform):
         self.min_gain_in_db = min_gain_in_db
         self.max_gain_in_db = max_gain_in_db
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["amplitude_ratio"] = convert_decibels_to_amplitude_ratio(
                 random.uniform(self.min_gain_in_db, self.max_gain_in_db)
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         return samples * self.parameters["amplitude_ratio"]

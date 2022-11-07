@@ -22,7 +22,7 @@ class Clip(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, a_min=-1.0, a_max=1.0, p=0.5):
+    def __init__(self, a_min: float = -1.0, a_max: float = 1.0, p: float = 0.5):
         """
         :param a_min: float, minimum value for clipping
         :param a_max: float, maximum value for clipping
@@ -33,5 +33,5 @@ class Clip(BaseWaveformTransform):
         self.a_min = a_min
         self.a_max = a_max
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         return np.clip(samples, self.a_min, self.a_max)

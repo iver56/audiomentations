@@ -52,12 +52,12 @@ class ApplyImpulseResponse(BaseWaveformTransform):
     def __load_ir(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["ir_file_path"] = random.choice(self.ir_files)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         ir, sample_rate2 = self.__load_ir(self.parameters["ir_file_path"], sample_rate)
         if sample_rate != sample_rate2:
             # This will typically not happen, as librosa should automatically resample the

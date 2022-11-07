@@ -76,7 +76,7 @@ class GainTransition(BaseWaveformTransform):
         self.max_duration = max_duration
         self.duration_unit = duration_unit
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             if self.duration_unit == "samples":
@@ -109,7 +109,7 @@ class GainTransition(BaseWaveformTransform):
                 self.min_gain_in_db, self.max_gain_in_db
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         num_samples = samples.shape[-1]
         fade_mask = get_fade_mask(
             start_level_in_db=self.parameters["start_gain_in_db"],

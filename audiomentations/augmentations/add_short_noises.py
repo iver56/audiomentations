@@ -172,7 +172,7 @@ class AddShortNoises(BaseWaveformTransform):
     def __load_sound(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             input_sound_duration = len(samples) / sample_rate
@@ -282,7 +282,7 @@ class AddShortNoises(BaseWaveformTransform):
 
             self.parameters["sounds"] = sounds
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         num_samples = samples.shape[-1]
         noise_placeholder = np.zeros_like(samples)
 

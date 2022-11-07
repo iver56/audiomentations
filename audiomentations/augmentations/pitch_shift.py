@@ -12,7 +12,14 @@ class PitchShift(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_semitones=-4, max_semitones=4, p=0.5):
+    def __init__(
+        self, min_semitones: float = -4.0, max_semitones: float = 4, p: float = 0.5
+    ):
+        """
+        :param min_semitones: Minimum semitones to shift. Negative number means shift down.
+        :param max_semitones: Maximum semitones to shift. Positive number means shift up.
+        :param p: The probability of applying this transform
+        """
         super().__init__(p)
         assert min_semitones >= -12
         assert max_semitones <= 12

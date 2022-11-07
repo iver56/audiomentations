@@ -6,16 +6,18 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 class AddRandomizedPhaseShiftNoise(BaseWaveformTransform):
 
-    def __init__(self, p=0.5):
+    def __init__(self, p=0.5, min_phase_shift=0, max_phase_shift=np.pi):
         """
         :param p:
         """
         super().__init__(p)
+        self.min_phase_shift = min_phase_shift
+        self.max_phase_shift = max_phase_shift
 
     def randomize_parameters(self, samples, sample_rate):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            phase_shift = random.uniform(0, np.pi)
+            phase_shift = random.uniform(self.min_phase_shift, self.max_phase_shift)
             self.parameters["phase_shift"] = phase_shift
 
     def apply(self, samples):

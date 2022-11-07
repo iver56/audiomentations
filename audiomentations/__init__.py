@@ -32,6 +32,7 @@ from .augmentations.tanh_distortion import TanhDistortion
 from .augmentations.time_mask import TimeMask
 from .augmentations.time_stretch import TimeStretch
 from .augmentations.trim import Trim
+from .augmentations.add_phase_randomization import AddRandomizedPhaseShiftNoise
 from .core.composition import Compose, SpecCompose, OneOf, SomeOf
 from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle
 from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask

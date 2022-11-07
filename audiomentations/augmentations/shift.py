@@ -46,14 +46,14 @@ class Shift(BaseWaveformTransform):
         self.fade = fade
         self.fade_duration = fade_duration
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["fraction_to_shift"] = random.uniform(
                 self.min_fraction, self.max_fraction
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         num_places_to_shift = round(
             self.parameters["fraction_to_shift"] * samples.shape[-1]
         )

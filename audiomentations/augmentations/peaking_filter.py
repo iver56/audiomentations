@@ -22,13 +22,13 @@ class PeakingFilter(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_center_freq=50.0,
-        max_center_freq=7500.0,
-        min_gain_db=-24,
-        max_gain_db=24,
-        min_q=0.5,
-        max_q=5.0,
-        p=0.5,
+        min_center_freq: float = 50.0,
+        max_center_freq: float = 7500.0,
+        min_gain_db: float = -24.0,
+        max_gain_db: float = 24.0,
+        min_q: float = 0.5,
+        max_q: float = 5.0,
+        p: float = 0.5,
     ):
         """
         :param min_center_freq: The minimum center frequency of the peaking filter
@@ -82,7 +82,7 @@ class PeakingFilter(BaseWaveformTransform):
 
         return sos
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
 
         center_mel = np.random.uniform(
@@ -93,7 +93,7 @@ class PeakingFilter(BaseWaveformTransform):
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         assert samples.dtype == np.float32
 
         sos = self._get_biquad_coefficients_from_input_parameters(

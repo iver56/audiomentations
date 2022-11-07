@@ -35,14 +35,14 @@ class ClippingDistortion(BaseWaveformTransform):
         self.min_percentile_threshold = min_percentile_threshold
         self.max_percentile_threshold = max_percentile_threshold
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["percentile_threshold"] = random.randint(
                 self.min_percentile_threshold, self.max_percentile_threshold
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         lower_percentile_threshold = int(self.parameters["percentile_threshold"] / 2)
         lower_threshold, upper_threshold = np.percentile(
             samples, [lower_percentile_threshold, 100 - lower_percentile_threshold]

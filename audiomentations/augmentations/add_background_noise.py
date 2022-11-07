@@ -86,7 +86,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def _load_sound(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["snr_in_db"] = random.uniform(
@@ -112,7 +112,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
                 self.parameters["noise_start_index"] + num_samples
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         noise_sound, _ = self._load_sound(
             self.parameters["noise_file_path"], sample_rate
         )

@@ -30,7 +30,7 @@ class AddGaussianSNR(BaseWaveformTransform):
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             # Pick SNR in decibel scale
@@ -42,7 +42,7 @@ class AddGaussianSNR(BaseWaveformTransform):
             # In gaussian noise, the RMS gets roughly equal to the std
             self.parameters["noise_std"] = noise_rms
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         noise = np.random.normal(
             0.0, self.parameters["noise_std"], size=samples.shape
         ).astype(np.float32)

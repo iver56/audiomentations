@@ -36,14 +36,14 @@ class TanhDistortion(BaseWaveformTransform):
         self.min_distortion = min_distortion
         self.max_distortion = max_distortion
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["distortion_amount"] = random.uniform(
                 self.min_distortion, self.max_distortion
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         # Find out how much to pre-gain the audio to get a given amount of distortion
         percentile = 100 - 99 * self.parameters["distortion_amount"]
         threshold = np.percentile(abs(samples), percentile)

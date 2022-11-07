@@ -15,13 +15,13 @@ class Reverse(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, p=0.5):
+    def __init__(self, p: float = 0.5):
         """
         :param p: The probability of applying this transform
         """
         super().__init__(p)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         if len(samples.shape) > 1:
             return np.fliplr(samples)
         else:

@@ -33,7 +33,7 @@ class TimeMask(BaseWaveformTransform):
         self.max_band_part = max_band_part
         self.fade = fade
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             num_samples = samples.shape[-1]
@@ -45,7 +45,7 @@ class TimeMask(BaseWaveformTransform):
                 0, num_samples - self.parameters["t"]
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         new_samples = samples.copy()
         t = self.parameters["t"]
         t0 = self.parameters["t0"]

@@ -35,7 +35,6 @@ class Tremolo(BaseWaveformTransform):
         
         # Ref: https://ffmpeg.org/ffmpeg-all.html#tremolo
         ffmpeg_command = f"tremolo=f={self.parameters['f']}:d={self.parameters['d']}"
-        print(ffmpeg_command)
 
         compressed = apply_ffmpeg_commands(samples, sample_rate, ['-af', ffmpeg_command])
 

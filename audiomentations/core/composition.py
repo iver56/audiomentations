@@ -5,11 +5,12 @@ from audiomentations.core.utils import weights_to_probabilities
 
 
 class BaseCompose:
-    def __init__(self, transforms, p: float = 1.0, shuffle: bool = False):
+    def __init__(self, transforms, p: float = 1.0, shuffle: bool = False, verbose=0):
         self.transforms = transforms
         self.p = p
         self.shuffle = shuffle
         self.are_parameters_frozen = False
+        self.verbose = verbose
 
         name_list = []
         for transform in self.transforms:
@@ -264,7 +265,8 @@ class OneOf(BaseCompose):
         if self.should_apply:
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
-            print(self.transforms[self.transform_index])
+            if self.verbose > 0:
+                print(self.transforms[self.transform_index])
             return self.transforms[self.transform_index](*args, **kwargs)
 
         if "samples" in kwargs:

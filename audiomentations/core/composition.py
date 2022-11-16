@@ -1,14 +1,16 @@
 import random
 
 from audiomentations.core.transforms_interface import BaseSpectrogramTransform
+from audiomentations.core.utils import weights_to_probabilities
 
 
 class BaseCompose:
-    def __init__(self, transforms, p: float = 1.0, shuffle: bool = False):
+    def __init__(self, transforms, p: float = 1.0, shuffle: bool = False, verbose=0):
         self.transforms = transforms
         self.p = p
         self.shuffle = shuffle
         self.are_parameters_frozen = False
+        self.verbose = verbose
 
         name_list = []
         for transform in self.transforms:
@@ -160,10 +162,16 @@ class SomeOf(BaseCompose):
                     num_transforms_to_apply = random.randint(
                         self.num_transforms[0], len(self.transforms)
                     )
-                else:
+                elif type(self.num_transforms[0]) == int:
                     num_transforms_to_apply = random.randint(
                         self.num_transforms[0], self.num_transforms[1]
                     )
+                else:
+                    # two arrays are given. first are the numbers and the second are probabilities
+                    num_transforms_to_apply = random.choices(
+                        self.num_transforms[0], 
+                        weights=weights_to_probabilities(self.num_transforms[1])
+                    )[0]
             else:
                 num_transforms_to_apply = self.num_transforms
             all_transforms_indexes = list(range(len(self.transforms)))
@@ -232,16 +240,22 @@ class OneOf(BaseCompose):
     ```
     """
 
-    def __init__(self, transforms, p: float = 1.0):
+    def __init__(self, transforms, p: float = 1.0, weights=None):
         super().__init__(transforms, p)
         self.transform_index = 0
         self.should_apply = True
 
+        if weights:
+            weights = weights_to_probabilities(weights)
+            assert len(weights) == len(self.transforms)
+
+        self.weights = weights
+        
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
         self.should_apply = random.random() < self.p
         if self.should_apply:
-            self.transform_index = random.randint(0, len(self.transforms) - 1)
+            self.transform_index = random.choices(range(len(self.transforms)), self.weights)[0]
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:
@@ -251,6 +265,8 @@ class OneOf(BaseCompose):
         if self.should_apply:
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
+            if self.verbose > 0:
+                print(self.transforms[self.transform_index])
             return self.transforms[self.transform_index](*args, **kwargs)
 
         if "samples" in kwargs:

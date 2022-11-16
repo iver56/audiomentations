@@ -1,4 +1,8 @@
+import imp
 import os
+import io
+import random
+from subprocess import Popen, PIPE
 from pathlib import Path
 from typing import List, Union
 
@@ -166,3 +170,97 @@ def convert_mel_to_frequency(m: Union[float, np.array]) -> Union[float, np.array
     https://en.wikipedia.org/wiki/Mel_scale#History_and_other_formulas
     """
     return 700.0 * (10 ** (m / 2595.0) - 1.0)
+
+
+def find_time_shift(a, b, max_shift=5000):
+    """
+    Find time shift between two signals a and b.
+    :param a: numpy array. First signal. Must be mono.
+    :param b: numpy array. Second signal. Must be mono.
+    :param max_shift: maximum possible shift. This will help to speed up the algorithm
+    """
+    start_slice = min(a.shape[-1], b.shape[-1])
+    if max_shift:
+        start_slice = min(start_slice, 2 * max_shift)
+
+    a = a[:start_slice]
+    b = b[:start_slice]
+    
+    return np.argmax(np.abs(np.convolve(a, b[::-1]))) - a.shape[0]
+
+
+def apply_ffmpeg_commands(samples, sample_rate, commands):
+    """
+    Apply a list of ffmpeg commands to the given audio samples.
+    Everything is done in memory avoiding the need to write to disk.
+    The input samples are assumed to be in the range [-1, 1].
+    Currently only 16 bit PCM WAV files are supported as input, 
+    othervise, the input samples are converted to 16 bit PCM WAV.
+    :param samples: numpy array. Audio samples.
+    :param sample_rate: int. Sampling rate of the audio samples.
+    :param commands: list of strings. List of ffmpeg commands.
+        For example to apply simple compressor with threshold 15dB: ["-af", "acompressor=threshold=-15dB"]
+    :return: numpy array. Audio samples after applying the ffmpeg commands.
+    """
+    import soundfile as sf
+    
+    if len(samples.shape) == 2:
+        samples = samples.T
+
+    cmd = [
+        "ffmpeg", 
+        "-i", 'pipe:0',
+        *commands,
+        "-f", "wav",
+        "-"
+    ]
+
+    p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+
+    b = io.BytesIO()
+    b.name = "toffmpeg.wav"
+    sf.write(b, samples, samplerate=sample_rate, format='WAV')
+    b.seek(0)
+
+    data, out = p.communicate(b.read())
+
+    if b"Error" in out:
+        raise Exception(out)
+
+    reconstructed = np.fromstring(data[data.find(b"data")+8:], np.int16)
+    reconstructed = reconstructed / 32767
+    
+    if samples.dtype == np.float32:
+        reconstructed = reconstructed.astype(np.float32)
+
+    if len(samples.shape) == 2:
+        reconstructed = reconstructed.reshape((reconstructed.shape[0] // 2, 2)).T
+
+    return reconstructed
+
+
+def random_log(a, b):
+    """
+    Pick a random number between a and b in logarithmic scale
+    param a: float. Lower bound
+    param b: float. Upper bound
+    """
+    return math.exp(random.uniform(math.log(a), math.log(b)))
+
+
+def random_log_int(a, b):
+    """
+    Pick a random integer between a and b in logarithmic scale
+    param a: float. Lower bound
+    param b: float. Upper bound
+    """
+    c = random_log(a, b)
+    return max(a, min(b, round(c)))
+
+
+def weights_to_probabilities(w):
+    """
+    converts the weights to probabilites
+    """
+    norm = sum(w)
+    return [x / norm for x in w]

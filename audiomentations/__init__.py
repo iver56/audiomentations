@@ -45,6 +45,7 @@ from .augmentations.time_mask import TimeMask
 from .augmentations.time_stretch import TimeStretch
 from .augmentations.tremolo import Tremolo
 from .augmentations.trim import Trim
+from .augmentations.add_phase_randomization import AddRandomizedPhaseShiftNoise
 from .augmentations.two_pole_all_pass_filter import TwoPoleAllPassFilter
 from .core.composition import Compose, SpecCompose, OneOf, SomeOf
 from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle

@@ -147,11 +147,15 @@ class SomeOf(BaseCompose):
     ```
     """
 
-    def __init__(self, num_transforms: int or tuple, transforms, p: float = 1.0):
+    def __init__(self, num_transforms: int or tuple, transforms, p: float = 1.0, weights=None):
         super().__init__(transforms, p)
         self.transform_indexes = []
         self.num_transforms = num_transforms
         self.should_apply = True
+        self.weights = weights
+        if self.weights is None:
+            self.weights = [1.0] * len(transforms)
+        assert len(self.weights) == len(transforms)
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
@@ -176,7 +180,7 @@ class SomeOf(BaseCompose):
                 num_transforms_to_apply = self.num_transforms
             all_transforms_indexes = list(range(len(self.transforms)))
             self.transform_indexes = sorted(
-                random.sample(all_transforms_indexes, num_transforms_to_apply)
+                random.choices(all_transforms_indexes, weights=self.weights, k=num_transforms_to_apply)
             )
         return self.transform_indexes
 

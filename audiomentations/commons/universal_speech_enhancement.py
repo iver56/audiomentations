@@ -34,10 +34,11 @@ from audiomentations import (
     AddGaussianNoise
 )
 
-def universal_speech_enhancement(noises_path, short_noises_path, impulse_responses_path):
+def universal_speech_enhancement(environmental_noises_path, background_noises_path, short_noises_path, impulse_responses_path):
     # Implementation of the universal speech enhancement augmentation from https://arxiv.org/pdf/2206.03065.pdf
     augment = SomeOf(
         num_transforms=([1, 2, 3, 4, 5], [0.35, 0.45, 0.15, 0.04, 0.01]),
+        weights=[1, 1, 1, 1, 1, 4, 1, 1],
         transforms=[
             OneOf([
                 BandPassFilter(p=1),
@@ -46,10 +47,9 @@ def universal_speech_enhancement(noises_path, short_noises_path, impulse_respons
                 BandLimitWithTwoPhaseResample(p=1),
             ], weights=[5, 5, 20, 30]),
             OneOf([
-                ApplyMP3Codec(p=1),
                 ApplyVorbisCodec(p=1),
                 ApplyULawCodec(p=1)
-            ], weights=[20, 3, 3]),
+            ], weights=[3, 3]),
             OneOf([
                 Overdrive(p=1),
                 ClippingDistortion(p=1)
@@ -67,10 +67,14 @@ def universal_speech_enhancement(noises_path, short_noises_path, impulse_respons
                 SevenBandParametricEQ(p=1),
                 TwoPoleAllPassFilter(p=1)
             ]),
-            OneOf([
-                AddBackgroundNoise(noises_path, p=1),
-                AddShortNoises(short_noises_path, p=1)
-            ], weights=[150, 150]),
+            SomeOf(
+                num_transforms=([1, 2, 3], [0.2, 0.5, 0.3]),
+                transforms=[
+                    AddBackgroundNoise(environmental_noises_path, p=1),
+                    AddBackgroundNoise(background_noises_path, p=1),
+                    AddShortNoises(short_noises_path, noise_rms='relative_to_whole_input', p=1)
+                ]
+            ),
             OneOf([
                 Phaser(p=1),
                 ApplyImpulseResponse(impulse_responses_path, p=1),

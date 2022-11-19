@@ -34,16 +34,18 @@ from audiomentations import (
     AddGaussianNoise
 )
 
-def universal_speech_enhancement(environmental_noises_path, background_noises_path, short_noises_path, impulse_responses_path):
+
+def universal_speech_enhancement(environmental_noises_path, background_noises_path, short_noises_path,
+                                 impulse_responses_path):
     # Implementation of the universal speech enhancement augmentation from https://arxiv.org/pdf/2206.03065.pdf
     augment = SomeOf(
         num_transforms=([1, 2, 3, 4, 5], [0.35, 0.45, 0.15, 0.04, 0.01]),
         weights=[1, 1, 1, 1, 1, 4, 1, 1],
         transforms=[
             OneOf([
-                BandPassFilter(p=1),
+                BandPassFilter(min_center_freq=600, p=1),
                 HighPassFilter(p=1),
-                LowPassFilter(p=1),
+                LowPassFilter(min_cutoff_freq=400, p=1),
                 BandLimitWithTwoPhaseResample(p=1),
             ], weights=[5, 5, 20, 30]),
             OneOf([
@@ -81,7 +83,7 @@ def universal_speech_enhancement(environmental_noises_path, background_noises_pa
                 ShortDelay(p=1)
             ], weights=[1, 120, 3]),
             OneOf([
-                AddGaussianNoise(p=1)
+                AddGaussianNoise(max_amplitude=0.5, p=1)
             ])
         ]
     )

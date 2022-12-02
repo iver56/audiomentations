@@ -61,10 +61,10 @@ class RoomSimulator(BaseWaveformTransform):
         calculation_mode: str = "absorption",
         use_ray_tracing: bool = True,
         max_order: Optional[int] = None,
-        leave_length_unchanged: Optional[bool] = None,
+        leave_length_unchanged: bool = False,
         padding: float = 0.1,
         p: float = 0.5,
-        ray_tracing_options: Dict or None = None,
+        ray_tracing_options: Optional[Dict] = None,
     ):
         """
 
@@ -78,7 +78,7 @@ class RoomSimulator(BaseWaveformTransform):
             a given coefficient value for the surfaces of the room (walls, ceilings, and floor).
             This coefficient takes values between 0 (fully reflective surface) and 1 (fully absorbing surface).
 
-            Example values (May differ!):
+            Example values (may differ!):
                 Studio w acoustic panels > 0.40
                 Office / Library         ~ 0.15
                 Factory                  ~ 0.05
@@ -88,10 +88,10 @@ class RoomSimulator(BaseWaveformTransform):
             of the surfaces of the room to achieve a target rt60 (in seconds). Note that this parameter
             changes only the materials (absorption coefficients) of the surfaces, NOT the dimension of the rooms.
 
-            Example values (May differ!):
+            Example values (may differ!):
                 Recording studio:  0.3s
                 Office          :  0.5s
-                Concert Hall    :  1.5s
+                Concert hall    :  1.5s
 
         :param min_source_x: Minimum x location of the source (meters)
         :param max_source_x: Minimum x location of the source (meters)
@@ -105,8 +105,7 @@ class RoomSimulator(BaseWaveformTransform):
             relative to the source, in radians.
         :param max_mic_azimuth:
         :param min_mic_elevation:
-            Minimum elevation of the microphon relative to the source, in
-            radians.
+            Minimum elevation of the microphone relative to the source, in radians.
         :param max_mic_elevation:
         :param calculation_mode: When set to `absorption`, it will create the room with surfaces based on
             `min_absorption_value` and `max_absorption_value`. If set to `rt60` it will try to assign surface
@@ -131,7 +130,6 @@ class RoomSimulator(BaseWaveformTransform):
             "absorption",
         ], "`calculation_mode` should either be `rt60` or `absorption`"
 
-        self.max_order = max_order
         self.calculation_mode = calculation_mode
         self.min_absorption_value = min_absorption_value
         self.max_absorption_value = max_absorption_value

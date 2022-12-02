@@ -8,6 +8,8 @@ and microphones in parametrized locations.
 Use it when you want a ton of synthetic room impulse responses of specific configurations
 characteristics or simply to quickly add reverb for augmentation purposes
 
+## RoomSimulator API
+
 [`min_size_x`](#min_size_x){ #min_size_x }: `float` • unit: meters
 :   :octicons-milestone-24: Default: `3.6`. Minimum width (x coordinate) of the room in meters
 

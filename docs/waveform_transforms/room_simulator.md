@@ -96,19 +96,19 @@ characteristics or simply to quickly add reverb for augmentation purposes
     source in meters
 
 [`min_mic_azimuth`](#min_mic_azimuth){ #min_mic_azimuth }: `float` • unit: radians
-:   :octicons-milestone-24: Default: `-π`. Minimum azimuth (angle around z axis) of the
+:   :octicons-milestone-24: Default: `-math.pi`. Minimum azimuth (angle around z axis) of the
     microphone relative to the source.
 
 [`max_mic_azimuth`](#max_mic_azimuth){ #max_mic_azimuth }: `float` • unit: radians
-:   :octicons-milestone-24: Default: `π`. Maximum azimuth (angle around z axis) of the
+:   :octicons-milestone-24: Default: `math.pi`. Maximum azimuth (angle around z axis) of the
     microphone relative to the source.
 
 [`min_mic_elevation`](#min_mic_elevation){ #min_mic_elevation }: `float` • unit: radians
-:   :octicons-milestone-24: Default: `-π`. Minimum elevation of the microphone relative
+:   :octicons-milestone-24: Default: `-math.pi`. Minimum elevation of the microphone relative
     to the source, in radians.
 
 [`max_mic_elevation`](#max_mic_elevation){ #max_mic_elevation }: `float` • unit: radians
-:   :octicons-milestone-24: Default: `π`. Maximum elevation of the microphone relative
+:   :octicons-milestone-24: Default: `math.pi`. Maximum elevation of the microphone relative
     to the source, in radians.
 
 [`calculation_mode`](#calculation_mode){ #calculation_mode }: `str` • choices: `"rt60"`, `"absorption"`

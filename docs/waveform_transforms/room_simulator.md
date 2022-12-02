@@ -127,9 +127,9 @@ characteristics or simply to quickly add reverb for augmentation purposes
     incorrect results.
 
 [`max_order`](#max_order){ #max_order }: `Optional[int]` • range: [1, 30]
-:   :octicons-milestone-24: Default: `None`. Maximum order of reflections for the Image
+:   :octicons-milestone-24: Default: `1`. Maximum order of reflections for the Image
     Source Model. E.g. a value of 1 will only add first order reflections while a value
-    of 30 will add a diffuse reverberation tail.
+    of 30 will add a diffuse reverberation tail. Ignored when `calculation_mode=="rt60"`.
 
 [`leave_length_unchanged`](#leave_length_unchanged){ #leave_length_unchanged }: `bool`
 :   :octicons-milestone-24: Default: `False`. When set to True, the tail of the sound

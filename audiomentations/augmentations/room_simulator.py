@@ -7,7 +7,6 @@ from scipy.signal import convolve
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
-
 class RoomSimulator(BaseWaveformTransform):
     """
     A ShoeBox Room Simulator. Simulates a cuboid of parametrized size and 
@@ -60,7 +59,7 @@ class RoomSimulator(BaseWaveformTransform):
         max_mic_elevation: float = np.pi,
         calculation_mode: str = "absorption",
         use_ray_tracing: bool = True,
-        max_order: Optional[int] = None,
+        max_order: int = 1,
         leave_length_unchanged: bool = False,
         padding: float = 0.1,
         p: float = 0.5,
@@ -114,7 +113,7 @@ class RoomSimulator(BaseWaveformTransform):
             Disable this if you need speed but do not really care for incorrect results.
         :param max_order: Maximum order of reflections for the Image Source Model. E.g. a value of
             1 will only add first order reflections while a value of 30 will add a
-            diffuse reverberation tail.
+            diffuse reverberation tail. Ignored when calculation_mode='rt60'.
         :param leave_length_unchanged: When set to True, the tail of the sound (e.g. reverb at
             the end) will be chopped off so that the length of the output is equal to the
             length of the input.
@@ -225,11 +224,9 @@ class RoomSimulator(BaseWaveformTransform):
             self.parameters["absorption_coefficient"], max_order = pra.inverse_sabine(
                 self.parameters["target_rt60"], room_dim
             )
-
-            # Prioritise manually set `max_order` if it is set, over the one
-            # calculated by the inverse sabine formula.
-            if not self.max_order:
-                self.parameters["max_order"] = max_order
+            
+            # When `rt60` is specified, use max_order from sabine's formula
+            self.parameters["max_order"] = max_order
         else:
             self.parameters["absorption_coefficient"] = random.uniform(
                 self.min_absorption_value, self.max_absorption_value
@@ -294,6 +291,7 @@ class RoomSimulator(BaseWaveformTransform):
             materials=pra.Material(self.parameters["absorption_coefficient"]),
             ray_tracing=self.use_ray_tracing,
             air_absorption=True,
+            max_order=self.parameters["max_order"],
         )
 
         if self.use_ray_tracing:

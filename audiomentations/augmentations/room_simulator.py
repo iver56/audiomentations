@@ -112,8 +112,9 @@ class RoomSimulator(BaseWaveformTransform):
         :param use_ray_tracing: Whether to use ray_tracing or not (slower but much more accurate).
             Disable this if you need speed but do not really care for incorrect results.
         :param max_order: Maximum order of reflections for the Image Source Model. E.g. a value of
-            1 will only add first order reflections while a value of 30 will add a
-            diffuse reverberation tail. Ignored when calculation_mode='rt60'.
+            1 will only add first order reflections while a value of 4 will add a
+            diffuse reverberation tail. *Warning* Placing this higher than 11-12 will result
+            in a very slow augmentation process when `calculation_mode="rt60"`. In that case, keep it around `3-4`.
         :param leave_length_unchanged: When set to True, the tail of the sound (e.g. reverb at
             the end) will be chopped off so that the length of the output is equal to the
             length of the input.
@@ -226,7 +227,7 @@ class RoomSimulator(BaseWaveformTransform):
             )
             
             # When `rt60` is specified, use max_order from sabine's formula
-            self.parameters["max_order"] = max_order
+            self.parameters["max_order"] = min(max_order,self.max_order)
         else:
             self.parameters["absorption_coefficient"] = random.uniform(
                 self.min_absorption_value, self.max_absorption_value

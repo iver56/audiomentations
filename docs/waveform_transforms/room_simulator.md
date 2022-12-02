@@ -126,10 +126,16 @@ characteristics or simply to quickly add reverb for augmentation purposes
     but much more accurate). Disable this if you need speed but do not really care for
     incorrect results.
 
-[`max_order`](#max_order){ #max_order }: `Optional[int]` • range: [1, 30]
+[`max_order`](#max_order){ #max_order }: `Optional[int]` • range: [1, ∞)
 :   :octicons-milestone-24: Default: `1`. Maximum order of reflections for the Image
     Source Model. E.g. a value of 1 will only add first order reflections while a value
-    of 30 will add a diffuse reverberation tail. Ignored when `calculation_mode=="rt60"`.
+    of 12 will add a diffuse reverberation tail. 
+
+    !!! warning 
+        Placing this higher than 11-12 will result in a very slow augmentation process when `calculation_mode="rt60"`. 
+    
+    !!! tip
+        When using `calculation_mode="rt60"`, keep it around `3-4`.
 
 [`leave_length_unchanged`](#leave_length_unchanged){ #leave_length_unchanged }: `bool`
 :   :octicons-milestone-24: Default: `False`. When set to True, the tail of the sound

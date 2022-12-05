@@ -126,7 +126,7 @@ characteristics or simply to quickly add reverb for augmentation purposes
     but much more accurate). Disable this if you need speed but do not really care for
     incorrect results.
 
-[`max_order`](#max_order){ #max_order }: `Optional[int]` • range: [1, ∞)
+[`max_order`](#max_order){ #max_order }: `int` • range: [1, ∞)
 :   :octicons-milestone-24: Default: `1`. Maximum order of reflections for the Image
     Source Model. E.g. a value of 1 will only add first order reflections while a value
     of 12 will add a diffuse reverberation tail. 

@@ -26,3 +26,15 @@ The seven bands have center frequencies picked in the following ranges (min-max)
 * 909-2045 hz
 * 1957-4404 hz
 * 4216-9486 hz
+
+
+## SevenBandParametricEQ API
+
+[`min_gain_db`](#min_gain_db){ #min_gain_db }: `float` • unit: Decibel
+:   :octicons-milestone-24: Default: `-12.0`. Minimum number of dB to cut or boost a band
+
+[`max_gain_db`](#max_gain_db){ #max_gain_db }: `float` • unit: decibel
+:   :octicons-milestone-24: Default: `12.0`. Maximum number of dB to cut or boost a band
+
+[`p`](#p){ #p }: `float` • range: [0.0, 1.0]
+:   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

@@ -9,9 +9,13 @@ and one high shelf filter, all with randomized gains, Q values and center freque
 Because this transform changes the timbre, but keeps the overall "class" of the
 sound the same (depending on application), it can be used for data augmentation to
 make ML models more robust to various frequency spectrums. Many things can affect
-the spectrum, like room acoustics, any objects between the microphone and
-the sound source, microphone type/model and the distance between the sound source
-and the microphone.
+the spectrum, for example:
+
+* the nature and quality of the sound source
+* room acoustics
+* any objects between the microphone and the sound source
+* microphone type/model
+* the distance between the sound source and the microphone
 
 The seven bands have center frequencies picked in the following ranges (min-max):
 

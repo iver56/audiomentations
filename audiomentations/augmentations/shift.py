@@ -14,16 +14,16 @@ class Shift(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_fraction=-0.5,
-        max_fraction=0.5,
-        rollover=True,
-        fade=False,
-        fade_duration=0.01,
-        p=0.5,
+        min_fraction: float = -0.5,
+        max_fraction: float = 0.5,
+        rollover: bool = True,
+        fade: bool = False,
+        fade_duration: float = 0.01,
+        p: float = 0.5,
     ):
         """
-        :param min_fraction: float, fraction of total sound length
-        :param max_fraction: float, fraction of total sound length
+        :param min_fraction: Minimum fraction of total sound length to shift
+        :param max_fraction: Maximum fraction of total sound length to shift
         :param rollover: When set to True, samples that roll beyond the first or last position
             are re-introduced at the last or first. When set to False, samples that roll beyond
             the first or last position are discarded. In other words, rollover=False results in
@@ -79,9 +79,10 @@ class Shift(BaseWaveformTransform):
                 )
                 fade_in_length = fade_in_end - fade_in_start
 
-                shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
-                    :fade_in_length
-                ]
+                shifted_samples[
+                    ...,
+                    fade_in_start:fade_in_end,
+                ] *= fade_in[:fade_in_length]
 
                 if self.rollover:
 
@@ -114,8 +115,9 @@ class Shift(BaseWaveformTransform):
                         shifted_samples.shape[-1],
                     )
                     fade_in_length = fade_in_end - fade_in_start
-                    shifted_samples[..., fade_in_start:fade_in_end,] *= fade_in[
-                        :fade_in_length
-                    ]
+                    shifted_samples[
+                        ...,
+                        fade_in_start:fade_in_end,
+                    ] *= fade_in[:fade_in_length]
 
         return shifted_samples

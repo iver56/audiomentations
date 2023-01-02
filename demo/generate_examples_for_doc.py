@@ -260,6 +260,31 @@ class TanhDistortionExample(TransformUsageExample):
 
 
 @register
+class TimeMaskExample(TransformUsageExample):
+    transform_class = TimeMask
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = TimeMask(
+            min_band_part=0.1,
+            max_band_part=0.15,
+            fade=True,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("libri1"), sample_rate=16000
+        )
+
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
 class TimeStretchExample(TransformUsageExample):
     transform_class = TimeStretch
 

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.28.0] - 2023-01-12
+
+### Added
+
+* Add/improve type hints
+* Add/improve documentation
+
+### Fixed
+
+* Fix a bug in `RoomSimulator` where the value of `max_order` was not respected
+
+### Removed
+
+* Remove `FrequencyMask` that had been deprecated since version 0.22.0. `BandStopFilter` is a good alternative.
+
 ## [0.27.0] - 2022-09-13
 
 ### Changed
@@ -109,6 +124,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Improve speed of `PitchShift` by 6-18% when the input audio is stereo
+
+### Deprecated
+
+* Deprecate `FrequencyMask` in favor of `BandStopFilter`
 
 ### Removed
 
@@ -395,7 +414,8 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
-[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.27.0...HEAD
+[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.28.0...HEAD
+[0.28.0]: https://github.com/iver56/audiomentations/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/iver56/audiomentations/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/iver56/audiomentations/compare/v0.25.1...v0.26.0
 [0.25.1]: https://github.com/iver56/audiomentations/compare/v0.25.0...v0.25.1

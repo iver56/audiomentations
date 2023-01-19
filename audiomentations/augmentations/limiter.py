@@ -108,6 +108,9 @@ class Limiter(BaseWaveformTransform):
             ] = threshold_factor * convert_decibels_to_amplitude_ratio(threshold_db)
 
     def apply(self, samples: np.ndarray, sample_rate: int):
+        if self.parameters["threshold"] == 0.0:
+            # Digital silence input can cause this to happen
+            return samples
         try:
             from cylimiter import Limiter as CyLimiter
         except ImportError:

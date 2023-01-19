@@ -32,3 +32,13 @@ class TestLimiter:
         samples = np.random.normal(0, 1, size=1024).astype(np.float32)
         transform.randomize_parameters(samples, sample_rate=16000)
         json.dumps(transform.serialize_parameters())
+
+    def test_digital_silence(self):
+        samples_in = np.zeros((1024,), np.float32)
+        augmenter = Limiter(p=1.0)
+        std_in = np.mean(np.abs(samples_in))
+        samples_out = augmenter(samples=samples_in, sample_rate=16000)
+        std_out = np.mean(np.abs(samples_out))
+        assert samples_out.dtype == np.float32
+        assert samples_out.shape == samples_in.shape
+        assert std_out == std_in == 0.0

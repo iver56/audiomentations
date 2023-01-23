@@ -1,9 +1,9 @@
 # Audiomentations documentation
 
-[![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/master.svg)](https://circleci.com/gh/iver56/audiomentations)
-[![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/master.svg)](https://codecov.io/gh/iver56/audiomentations)
+[![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/main.svg)](https://circleci.com/gh/iver56/audiomentations)
+[![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/main.svg)](https://codecov.io/gh/iver56/audiomentations)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
-[![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/master/LICENSE)
+[![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7010042.svg)](https://doi.org/10.5281/zenodo.7010042)
 
 A Python library for audio data augmentation. Inspired by
@@ -60,7 +60,7 @@ samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32
 augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
-Check out the source code at [audiomentations/augmentations/](https://github.com/iver56/audiomentations/blob/master/audiomentations/augmentations/) to see the waveform transforms you can apply, and what arguments they have.
+Check out the source code at [audiomentations/augmentations/](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/) to see the waveform transforms you can apply, and what arguments they have.
 
 ## Spectrogram
 
@@ -82,7 +82,7 @@ spectrogram = np.random.random((1025, 256, 2))
 augmented_spectrogram = augment(spectrogram)
 ```
 
-See [audiomentations/spec_augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/master/audiomentations/spec_augmentations/spectrogram_transforms.py) for spectrogram transforms.
+See [audiomentations/spec_augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/main/audiomentations/spec_augmentations/spectrogram_transforms.py) for spectrogram transforms.
 
 # Waveform transforms
 

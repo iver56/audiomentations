@@ -39,7 +39,8 @@ nav:
       - Trim: waveform_transforms/trim.md
   - Spectrogram transforms: spectrogram_transforms.md
   - Guides:
-      - guides/transform_parameters.md
+      - CPU vs. GPU:  guides/cpu_vs_gpu.md
+      - Transform parameters: guides/transform_parameters.md
   - Changelog: changelog.md
   - Alternatives: alternatives.md
 theme:

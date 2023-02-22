@@ -12,8 +12,10 @@ class Normalize(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, p: float = 0.5):
+    def __init__(self, apply_to: str = "all", p: float = 0.5):
         super().__init__(p)
+        assert apply_to in ("all", "only_too_loud_sounds")
+        self.apply_to = apply_to
 
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -21,6 +23,12 @@ class Normalize(BaseWaveformTransform):
             self.parameters["max_amplitude"] = np.amax(np.abs(samples))
 
     def apply(self, samples: np.ndarray, sample_rate: int):
+        if (
+            self.apply_to == "only_too_loud_sounds"
+            and self.parameters["max_amplitude"] < 1.0
+        ):
+            return samples
+
         if self.parameters["max_amplitude"] > 0:
             normalized_samples = samples / self.parameters["max_amplitude"]
         else:

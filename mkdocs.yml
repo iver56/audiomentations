@@ -38,6 +38,8 @@ nav:
       - TimeStretch: waveform_transforms/time_stretch.md
       - Trim: waveform_transforms/trim.md
   - Spectrogram transforms: spectrogram_transforms.md
+  - Guides:
+      - guides/transform_parameters.md
   - Changelog: changelog.md
   - Alternatives: alternatives.md
 theme:

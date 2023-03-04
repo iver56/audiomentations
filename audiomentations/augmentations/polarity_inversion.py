@@ -1,3 +1,5 @@
+import numpy as np
+
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 
@@ -14,14 +16,14 @@ class PolarityInversion(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, p=0.5):
+    def __init__(self, p: float = 0.5):
         """
         :param p: The probability of applying this transform
         """
         super().__init__(p)
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         return -samples

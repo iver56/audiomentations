@@ -13,8 +13,9 @@ def next_power_of_2(x: int) -> int:
 
 class AirAbsorption(BaseWaveformTransform):
     """
-    Applies an air absorption transform parametrized by temperature, humidity, and distance
-    of source.
+    Apply a Lowpass-like filterbank with variable octave attenuation that simulates attenuation of
+    higher frequencies due to air absorption. This transform is parametrized by temperature,
+    humidity, and the distance between audio source and microphone.
 
     This is not a scientifically accurate transform but basically applies a uniform
     filterbank with attenuations given by:
@@ -25,8 +26,8 @@ class AirAbsorption(BaseWaveformTransform):
     is adapted from a lookup table by pyroomacoustics [1]. It can also be seen as a lowpass filter
     with variable octave attenuation.
 
-    Note: This only "simulates" the dampening of high frequencies, and does not  attenuate according to the distance law. Gain augmentation needs
-    to be done separately.
+    Note: This only "simulates" the dampening of high frequencies, and does not
+    attenuate according to the distance law. Gain augmentation needs to be done separately.
 
     [1] https://github.com/LCAV/pyroomacoustics
     """
@@ -74,8 +75,8 @@ class AirAbsorption(BaseWaveformTransform):
         p=0.5,
     ):
         """
-        :param min_temperature: Minimum temperature in Celsius (can take a value of either 10 or 20)
-        :param max_temperature: Maximum temperature in Celsius (can take a value of either 10 or 20)
+        :param min_temperature: Minimum temperature in Celsius (can take a value of either 10.0 or 20.0)
+        :param max_temperature: Maximum temperature in Celsius (can take a value of either 10.0 or 20.0)
         :param min_humidity: Minimum humidity in percent (between 30 and 90)
         :param max_humidity: Maximum humidity in percent (between 30 and 90)
         :param min_distance: Minimum microphone-source distance in meters.
@@ -92,6 +93,9 @@ class AirAbsorption(BaseWaveformTransform):
         ], "Sorry, the only supported temperatures are either 10 or 20 degrees Celsius"
         assert min_temperature <= max_temperature
         assert 30 <= min_humidity <= max_humidity <= 90
+        assert min_distance > 0.0
+        assert max_distance > 0.0
+        assert min_distance <= max_distance
 
         super().__init__(p)
 

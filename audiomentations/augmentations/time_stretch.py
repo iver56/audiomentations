@@ -11,16 +11,22 @@ class TimeStretch(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_rate=0.8, max_rate=1.25, leave_length_unchanged=True, p=0.5):
+    def __init__(
+        self,
+        min_rate: float = 0.8,
+        max_rate: float = 1.25,
+        leave_length_unchanged: bool = True,
+        p: float = 0.5,
+    ):
         super().__init__(p)
-        assert min_rate > 0.1
-        assert max_rate < 10
+        assert min_rate >= 0.1
+        assert max_rate <= 10
         assert min_rate <= max_rate
         self.min_rate = min_rate
         self.max_rate = max_rate
         self.leave_length_unchanged = leave_length_unchanged
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             """
@@ -29,7 +35,7 @@ class TimeStretch(BaseWaveformTransform):
             """
             self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         try:
             time_stretched_samples = librosa.effects.time_stretch(
                 samples, rate=self.parameters["rate"]

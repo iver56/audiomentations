@@ -1,5 +1,7 @@
 import random
 
+import numpy as np
+
 from audiomentations.core.transforms_interface import BaseSpectrogramTransform
 
 
@@ -55,7 +57,7 @@ class Compose(BaseCompose):
     Compose applies the given sequence of transforms when called,
     optionally shuffling the sequence for every call.
 
-    Example usage:
+    Usage example:
 
     ```
     augment = Compose([
@@ -76,7 +78,7 @@ class Compose(BaseCompose):
     def __init__(self, transforms, p=1.0, shuffle=False):
         super().__init__(transforms, p, shuffle)
 
-    def __call__(self, samples, sample_rate):
+    def __call__(self, samples: np.ndarray, sample_rate: int):
         transforms = self.transforms.copy()
         should_apply = random.random() < self.p
         # TODO: Adhere to self.are_parameters_frozen
@@ -124,7 +126,7 @@ class SomeOf(BaseCompose):
                         # pick 2 to all of the transforms
                         SomeOf((2, None), [transform1, transform2, transform3, transform4])
 
-    Example usage:
+    Usage example:
     ```
     augment = SomeOf(
         (2, None),
@@ -218,7 +220,7 @@ class OneOf(BaseCompose):
     """
     OneOf randomly picks one of the given transforms when called, and applies that
     transform.
-    Example usage:
+    Usage example:
     ```
     augment = OneOf([
         TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),

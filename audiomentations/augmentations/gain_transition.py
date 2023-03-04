@@ -56,10 +56,10 @@ class GainTransition(BaseWaveformTransform):
     ):
         """
 
-        :param min_gain_in_db:
-        :param max_gain_in_db:
-        :param min_duration: minimum length of transition. See also duration_unit.
-        :param max_duration: maximum length of transition. See also duration_unit.
+        :param min_gain_in_db: Minimum gain
+        :param max_gain_in_db: Maximum gain
+        :param min_duration: Minimum length of transition. See also duration_unit.
+        :param max_duration: Maximum length of transition. See also duration_unit.
         :param duration_unit: Defines the unit of the value of min_duration and max_duration.
             "fraction": Fraction of the total sound length
             "samples": Number of audio samples
@@ -76,7 +76,7 @@ class GainTransition(BaseWaveformTransform):
         self.max_duration = max_duration
         self.duration_unit = duration_unit
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             if self.duration_unit == "samples":
@@ -109,7 +109,7 @@ class GainTransition(BaseWaveformTransform):
                 self.min_gain_in_db, self.max_gain_in_db
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         num_samples = samples.shape[-1]
         fade_mask = get_fade_mask(
             start_level_in_db=self.parameters["start_gain_in_db"],

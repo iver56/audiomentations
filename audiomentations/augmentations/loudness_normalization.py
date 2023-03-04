@@ -1,5 +1,6 @@
 import random
 
+import numpy as np
 import sys
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -7,9 +8,12 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 class LoudnessNormalization(BaseWaveformTransform):
     """
-    Apply a constant amount of gain to match a specific loudness. This is an implementation of
-    ITU-R BS.1770-4.
-    See also:
+    Apply a constant amount of gain to match a specific loudness (in LUFS). This is an
+    implementation of ITU-R BS.1770-4.
+
+    For an explanation on LUFS, see https://en.wikipedia.org/wiki/LUFS
+
+    See also the following web pages for more info on audio loudness normalization:
         https://github.com/csteinmetz1/pyloudnorm
         https://en.wikipedia.org/wiki/Audio_normalization
 
@@ -20,13 +24,18 @@ class LoudnessNormalization(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_lufs_in_db=-31, max_lufs_in_db=-13, p=0.5):
+    def __init__(
+        self,
+        min_lufs_in_db: float = -31.0,
+        max_lufs_in_db: float = -13.0,
+        p: float = 0.5,
+    ):
         super().__init__(p)
         # For an explanation on LUFS, see https://en.wikipedia.org/wiki/LUFS
         self.min_lufs_in_db = min_lufs_in_db
         self.max_lufs_in_db = max_lufs_in_db
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         try:
             import pyloudnorm
         except ImportError:
@@ -48,7 +57,7 @@ class LoudnessNormalization(BaseWaveformTransform):
                 random.uniform(self.min_lufs_in_db, self.max_lufs_in_db)
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         try:
             import pyloudnorm
         except ImportError:

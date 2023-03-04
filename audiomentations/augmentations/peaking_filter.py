@@ -13,7 +13,7 @@ from audiomentations.core.utils import (
 class PeakingFilter(BaseWaveformTransform):
     """
     Peaking filter transform. Applies a peaking filter at a specific center frequency in hertz
-    of a specific gain in db (note: can be positive or negative!), and a quality factor
+    of a specific gain in dB (note: can be positive or negative!), and a quality factor
     parameter. Filter coefficients are taken from the W3 Audio EQ Cookbook:
     https://www.w3.org/TR/audio-eq-cookbook/
     """
@@ -22,19 +22,19 @@ class PeakingFilter(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_center_freq=50.0,
-        max_center_freq=7500.0,
-        min_gain_db=-24,
-        max_gain_db=24,
-        min_q=0.5,
-        max_q=5.0,
-        p=0.5,
+        min_center_freq: float = 50.0,
+        max_center_freq: float = 7500.0,
+        min_gain_db: float = -24.0,
+        max_gain_db: float = 24.0,
+        min_q: float = 0.5,
+        max_q: float = 5.0,
+        p: float = 0.5,
     ):
         """
         :param min_center_freq: The minimum center frequency of the peaking filter
         :param max_center_freq: The maximum center frequency of the peaking filter
-        :param min_gain_db: The minimum gain at center frequency in db
-        :param max_gain_db: The maximum gain at center frequency in db
+        :param min_gain_db: The minimum gain at center frequency in dB
+        :param max_gain_db: The maximum gain at center frequency in dB
         :param min_q: The minimum quality factor Q. The higher the Q, the steeper the
             transition band will be.
         :param max_q: The maximum quality factor Q. The higher the Q, the steeper the
@@ -82,7 +82,7 @@ class PeakingFilter(BaseWaveformTransform):
 
         return sos
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
 
         center_mel = np.random.uniform(
@@ -93,7 +93,7 @@ class PeakingFilter(BaseWaveformTransform):
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         assert samples.dtype == np.float32
 
         sos = self._get_biquad_coefficients_from_input_parameters(

@@ -33,14 +33,14 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def __init__(
         self,
         sounds_path: Union[List[Path], List[str], Path, str],
-        min_snr_in_db=3,
-        max_snr_in_db=30,
-        noise_rms="relative",
-        min_absolute_rms_in_db=-45,
-        max_absolute_rms_in_db=-15,
+        min_snr_in_db: float = 3.0,
+        max_snr_in_db: float = 30.0,
+        noise_rms: str = "relative",
+        min_absolute_rms_in_db: float = -45.0,
+        max_absolute_rms_in_db: float = -15.0,
         noise_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
-        p=0.5,
-        lru_cache_size=2,
+        p: float = 0.5,
+        lru_cache_size: int = 2,
     ):
         """
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
@@ -49,17 +49,18 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param min_snr_in_db: Minimum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param max_snr_in_db: Maximum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param noise_rms: Defines how the background noise will be added to the audio input. If the chosen
-            option is "relative", the rms of the added noise will be proportional to the rms of
+            option is "relative", the RMS of the added noise will be proportional to the RMS of
             the input sound. If the chosen option is "absolute", the background noise will have
-            a rms independent of the rms of the input audio file. The default option is "relative".
+            a RMS independent of the RMS of the input audio file. The default option is "relative".
         :param min_absolute_rms_in_db: Is only used if noise_rms is set to "absolute". It is
-            the minimum rms value in dB that the added noise can take. The lower the rms is, the
-            lower will the added sound be.
+            the minimum RMS value in dB that the added noise can take. The lower the RMS is,
+            the lower the added sound will be.
         :param max_absolute_rms_in_db: Is only used if noise_rms is set to "absolute". It is
-            the maximum rms value in dB that the added noise can take. Note that this value
+            the maximum RMS value in dB that the added noise can take. Note that this value
             can not exceed 0.
         :param noise_transform: A callable waveform transform (or composition of transforms) that
-            gets applied to the noise before it gets mixed in.
+            gets applied to the noise before it gets mixed in. The callable is expected
+            to input audio waveform (numpy array) and sample rate (int).
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
@@ -85,7 +86,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def _load_sound(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["snr_in_db"] = random.uniform(
@@ -111,7 +112,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
                 self.parameters["noise_start_index"] + num_samples
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         noise_sound, _ = self._load_sound(
             self.parameters["noise_file_path"], sample_rate
         )

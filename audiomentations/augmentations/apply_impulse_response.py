@@ -2,7 +2,7 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, List, Union
+from typing import List, Union
 
 import numpy as np
 from scipy.signal import convolve
@@ -13,9 +13,9 @@ from audiomentations.core.utils import find_audio_files_in_paths
 
 
 class ApplyImpulseResponse(BaseWaveformTransform):
-    """Convolve the audio with a random impulse response.
+    """Convolve the audio with a randomly selected impulse response.
     Impulse responses can be created using e.g. http://tulrich.com/recording/ir_capture/
-    Impulse responses are represented as wav files in the given ir_path.
+    Impulse responses are represented as audio (ideally wav) files in the given ir_path.
     """
 
     supports_multichannel = True
@@ -25,7 +25,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         ir_path: Union[List[Path], List[str], str, Path],
         p=0.5,
         lru_cache_size=128,
-        leave_length_unchanged: Optional[bool] = None,
+        leave_length_unchanged: bool = True,
     ):
         """
         :param ir_path: A path or list of paths to audio file(s) and/or folder(s) with
@@ -45,14 +45,6 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(
             ApplyImpulseResponse.__load_ir
         )
-        if leave_length_unchanged is None:
-            warnings.warn(
-                "The default value of leave_length_unchanged will change from False to"
-                " True in a future version of audiomentations. You can set the value"
-                " explicitly to remove this warning for now.",
-                FutureWarning
-            )
-            leave_length_unchanged = False
 
         self.leave_length_unchanged = leave_length_unchanged
 
@@ -60,12 +52,12 @@ class ApplyImpulseResponse(BaseWaveformTransform):
     def __load_ir(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["ir_file_path"] = random.choice(self.ir_files)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         ir, sample_rate2 = self.__load_ir(self.parameters["ir_file_path"], sample_rate)
         if sample_rate != sample_rate2:
             # This will typically not happen, as librosa should automatically resample the

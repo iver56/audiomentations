@@ -19,18 +19,18 @@ class AddGaussianSNR(BaseWaveformTransform):
     supports_multichannel = True
 
     def __init__(
-        self, min_snr_in_db=5, max_snr_in_db=40.0, p=0.5
+        self, min_snr_in_db: float = 5.0, max_snr_in_db: float = 40.0, p: float = 0.5
     ):
         """
-        :param min_snr_in_db: Minimum signal-to-noise ratio in db. A lower number means more noise.
-        :param max_snr_in_db: Maximum signal-to-noise ratio in db. A greater number means less noise.
+        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. A lower number means more noise.
+        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. A greater number means less noise.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             # Pick SNR in decibel scale
@@ -42,7 +42,7 @@ class AddGaussianSNR(BaseWaveformTransform):
             # In gaussian noise, the RMS gets roughly equal to the std
             self.parameters["noise_std"] = noise_rms
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         noise = np.random.normal(
             0.0, self.parameters["noise_std"], size=samples.shape
         ).astype(np.float32)

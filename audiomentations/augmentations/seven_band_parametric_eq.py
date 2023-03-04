@@ -1,3 +1,5 @@
+import numpy as np
+
 from audiomentations import LowShelfFilter, PeakingFilter, HighShelfFilter
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -11,18 +13,23 @@ class SevenBandParametricEQ(BaseWaveformTransform):
     Because this transform changes the timbre, but keeps the overall "class" of the
     sound the same (depending on application), it can be used for data augmentation to
     make ML models more robust to various frequency spectrums. Many things can affect
-    the spectrum, like room acoustics, any objects between the microphone and
-    the sound source, microphone type/model and the distance between the sound source
-    and the microphone.
+    the spectrum, for example:
+
+    * the nature and quality of the sound source
+    * room acoustics
+    * any objects between the microphone and the sound source
+    * microphone type/model
+    * the distance between the sound source and the microphone
 
     The seven bands have center frequencies picked in the following ranges (min-max):
-    42-95 hz
-    91-204 hz
-    196-441 hz
-    421-948 hz
-    909-2045 hz
-    1957-4404 hz
-    4216-9486 hz
+
+    * 42-95 hz
+    * 91-204 hz
+    * 196-441 hz
+    * 421-948 hz
+    * 909-2045 hz
+    * 1957-4404 hz
+    * 4216-9486 hz
     """
 
     supports_multichannel = True
@@ -97,14 +104,14 @@ class SevenBandParametricEQ(BaseWaveformTransform):
             self.peaking_filters[i].freeze_parameters()
         self.high_shelf_filter.freeze_parameters()
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         self.low_shelf_filter.randomize_parameters(samples, sample_rate)
         for i in range(len(self.peaking_filters)):
             self.peaking_filters[i].randomize_parameters(samples, sample_rate)
         self.high_shelf_filter.randomize_parameters(samples, sample_rate)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         samples = self.low_shelf_filter(samples, sample_rate)
         for i in range(len(self.peaking_filters)):
             samples = self.peaking_filters[i](samples, sample_rate)

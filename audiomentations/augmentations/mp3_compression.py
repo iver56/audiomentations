@@ -52,7 +52,11 @@ class Mp3Compression(BaseWaveformTransform):
     ]
 
     def __init__(
-        self, min_bitrate: int = 8, max_bitrate: int = 64, backend: str = "pydub", p=0.5
+        self,
+        min_bitrate: int = 8,
+        max_bitrate: int = 64,
+        backend: str = "pydub",
+        p: float = 0.5,
     ):
         """
         :param min_bitrate: Minimum bitrate in kbps
@@ -75,7 +79,7 @@ class Mp3Compression(BaseWaveformTransform):
         assert backend in ("pydub", "lameenc")
         self.backend = backend
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             bitrate_choices = [
@@ -85,7 +89,7 @@ class Mp3Compression(BaseWaveformTransform):
             ]
             self.parameters["bitrate"] = random.choice(bitrate_choices)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         if self.backend == "lameenc":
             return self.apply_lameenc(samples, sample_rate)
         elif self.backend == "pydub":
@@ -93,15 +97,15 @@ class Mp3Compression(BaseWaveformTransform):
         else:
             raise Exception("Backend {} not recognized".format(self.backend))
 
-    def apply_lameenc(self, samples, sample_rate):
+    def apply_lameenc(self, samples: np.ndarray, sample_rate: int):
         try:
             import lameenc
         except ImportError:
             print(
                 "Failed to import the lame encoder. Maybe it is not installed? "
                 "To install the optional lameenc dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
+                " do `pip install audiomentations[extras]` or simply"
+                " `pip install lameenc`",
                 file=sys.stderr,
             )
             raise
@@ -142,15 +146,15 @@ class Mp3Compression(BaseWaveformTransform):
 
         return degraded_samples
 
-    def apply_pydub(self, samples, sample_rate):
+    def apply_pydub(self, samples: np.ndarray, sample_rate: int):
         try:
             import pydub
         except ImportError:
             print(
                 "Failed to import pydub. Maybe it is not installed? "
                 "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` instead of"
-                " `pip install audiomentations`",
+                " do `pip install audiomentations[extras]` or simply"
+                " `pip install pydub`",
                 file=sys.stderr,
             )
             raise

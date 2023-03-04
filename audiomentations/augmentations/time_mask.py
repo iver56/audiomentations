@@ -13,13 +13,21 @@ class TimeMask(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, min_band_part=0.0, max_band_part=0.5, fade=False, p=0.5):
+    def __init__(
+        self,
+        min_band_part: float = 0.0,
+        max_band_part: float = 0.5,
+        fade: bool = False,
+        p: float = 0.5,
+    ):
         """
         :param min_band_part: Minimum length of the silent part as a fraction of the
-            total sound length. Float. Must be between 0.0 and 1.0
+            total sound length. Must be between 0.0 and 1.0
         :param max_band_part: Maximum length of the silent part as a fraction of the
-            total sound length. Float. Must be between 0.0 and 1.0
-        :param fade: Bool, Add linear fade in and fade out of the silent part.
+            total sound length. Must be between 0.0 and 1.0
+        :param fade: When set to True, add a linear fade in and fade out of the silent
+            part. This can smooth out an unwanted abrupt change between two consecutive
+            samples (which sounds like a transient/click/pop).
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -33,7 +41,7 @@ class TimeMask(BaseWaveformTransform):
         self.max_band_part = max_band_part
         self.fade = fade
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             num_samples = samples.shape[-1]
@@ -45,7 +53,7 @@ class TimeMask(BaseWaveformTransform):
                 0, num_samples - self.parameters["t"]
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         new_samples = samples.copy()
         t = self.parameters["t"]
         t0 = self.parameters["t0"]

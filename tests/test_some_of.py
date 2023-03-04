@@ -8,7 +8,6 @@ from numpy.testing import assert_array_equal, assert_array_almost_equal
 from audiomentations import (
     ClippingDistortion,
     AddBackgroundNoise,
-    FrequencyMask,
     TimeMask,
     Shift,
     PolarityInversion,
@@ -174,7 +173,6 @@ class TestSomeOf:
                     p=1.0,
                 ),
                 ClippingDistortion(p=1.0),
-                FrequencyMask(min_frequency_band=0.3, max_frequency_band=0.5, p=1.0),
                 TimeMask(min_band_part=0.2, max_band_part=0.5, p=1.0),
                 Shift(min_fraction=0.5, max_fraction=0.5, p=1.0),
             ],

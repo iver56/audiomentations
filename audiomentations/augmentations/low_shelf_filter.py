@@ -23,13 +23,13 @@ class LowShelfFilter(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_center_freq=50.0,
-        max_center_freq=4000.0,
-        min_gain_db=-18.0,
-        max_gain_db=18.0,
-        min_q=0.1,
-        max_q=0.999,
-        p=0.5,
+        min_center_freq: float = 50.0,
+        max_center_freq: float = 4000.0,
+        min_gain_db: float = -18.0,
+        max_gain_db: float = 18.0,
+        min_q: float = 0.1,
+        max_q: float = 0.999,
+        p: float = 0.5,
     ):
 
         """
@@ -37,8 +37,10 @@ class LowShelfFilter(BaseWaveformTransform):
         :param max_center_freq: The maximum center frequency of the shelving filter
         :param min_gain_db: The minimum gain at DC (0 hz)
         :param max_gain_db: The maximum gain at DC (0 hz)
-        :param min_q: The minimum quality factor q
-        :param max_q: The maximum quality factor q
+        :param min_q: The minimum quality factor q. The higher the Q, the steeper the
+            transition band will be.
+        :param max_q: The maximum quality factor q. The higher the Q, the steeper the
+            transition band will be.
         """
 
         assert (
@@ -102,7 +104,7 @@ class LowShelfFilter(BaseWaveformTransform):
 
         return sos
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
 
         center_mel = np.random.uniform(
@@ -113,7 +115,7 @@ class LowShelfFilter(BaseWaveformTransform):
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         nyquist_freq = sample_rate // 2
         center_freq = self.parameters["center_freq"]
         if center_freq > nyquist_freq:
@@ -141,4 +143,3 @@ class LowShelfFilter(BaseWaveformTransform):
                 )
 
         return processed_samples
-

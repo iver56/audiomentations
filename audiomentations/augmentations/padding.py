@@ -16,11 +16,11 @@ class Padding(BaseWaveformTransform):
 
     def __init__(
         self,
-        mode="silence",
-        min_fraction=0.01,
-        max_fraction=0.7,
-        pad_section="end",
-        p=0.5,
+        mode: str = "silence",
+        min_fraction: float = 0.01,
+        max_fraction: float = 0.7,
+        pad_section: str = "end",
+        p: float = 0.5,
     ):
         """
         :param mode: Padding mode. Must be one of "silence", "wrap", "reflect"
@@ -44,7 +44,7 @@ class Padding(BaseWaveformTransform):
         assert pad_section in ("start", "end")
         self.pad_section = pad_section
 
-    def randomize_parameters(self, samples, sample_rate):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             input_length = samples.shape[-1]
@@ -53,7 +53,7 @@ class Padding(BaseWaveformTransform):
                 int(round(self.max_fraction * input_length)),
             )
 
-    def apply(self, samples, sample_rate):
+    def apply(self, samples: np.ndarray, sample_rate: int):
         padding_length = self.parameters["padding_length"]
         if padding_length == 0:
             return samples

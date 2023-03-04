@@ -13,7 +13,6 @@ from audiomentations import (
     PitchShift,
     Shift,
     Normalize,
-    FrequencyMask,
     TimeMask,
     AddGaussianSNR,
     Resample,
@@ -42,7 +41,9 @@ from audiomentations import (
     GainTransition,
     Padding,
     AirAbsorption,
+    Lambda,
 )
+from audiomentations.augmentations.limiter import Limiter
 from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
@@ -258,12 +259,6 @@ if __name__ == "__main__":
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": BandStopFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
-        {
-            "instance": FrequencyMask(
-                min_frequency_band=0.5, max_frequency_band=0.6, p=1.0
-            ),
-            "num_runs": 5,
-        },
         {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
         {"instance": GainTransition(p=1.0), "num_runs": 5},
         {"instance": HighPassFilter(p=1.0), "num_runs": 5},
@@ -274,6 +269,14 @@ if __name__ == "__main__":
             "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
             "num_runs": 5,
         },
+        {
+            "instance": Lambda(
+                transform=lambda samples, sample_rate: samples - 0.2,
+                p=1.0,
+            ),
+            "num_runs": 1,
+        },
+        {"instance": Limiter(p=1.0), "num_runs": 5},
         {"instance": LoudnessNormalization(p=1.0), "num_runs": 5},
         {
             "instance": Mp3Compression(backend="lameenc", p=1.0),

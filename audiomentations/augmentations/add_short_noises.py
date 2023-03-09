@@ -31,7 +31,7 @@ class AddShortNoises(BaseWaveformTransform):
         max_snr_in_db: float = 24.0,
         min_time_between_sounds: float = 4.0,
         max_time_between_sounds: float = 16.0,
-        noise_rms: str = None,
+        noise_rms: str = "relative_to_whole_input",
         min_absolute_noise_rms_db: float = -50.0,
         max_absolute_noise_rms_db: float = -20.0,
         add_all_noises_with_same_level: bool = False,
@@ -133,15 +133,6 @@ class AddShortNoises(BaseWaveformTransform):
         assert min_absolute_noise_rms_db <= max_absolute_noise_rms_db < 0
         assert type(include_silence_in_noise_rms_estimation) == bool
 
-        if noise_rms is None:
-            noise_rms = "relative"
-            warnings.warn(
-                "The default value of noise_rms in AddShortNoises will change from"
-                " 'relative' to 'relative_to_whole_input' in a future version of"
-                " audiomentations. If you set the value explicitly, you will not get"
-                " this warning.",
-                FutureWarning
-            )
         assert noise_rms in ["relative", "absolute", "relative_to_whole_input"]
 
         self.min_snr_in_db = min_snr_in_db

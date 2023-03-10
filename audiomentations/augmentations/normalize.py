@@ -30,7 +30,6 @@ class Normalize(BaseWaveformTransform):
             return samples
 
         if self.parameters["max_amplitude"] > 0:
-            normalized_samples = samples / self.parameters["max_amplitude"]
+            return samples / self.parameters["max_amplitude"]
         else:
-            normalized_samples = samples
-        return normalized_samples
+            return samples

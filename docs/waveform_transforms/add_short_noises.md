@@ -8,6 +8,16 @@ occur.
 
 A folder of (noise) sounds to be mixed in must be specified.
 
+## Input-output example
+
+Here we add some short noise sounds to a voice recording.
+
+![Input-output waveforms and spectrograms](AddShortNoises.webp)
+
+| Input sound                                                                           | Transformed sound                                                                           |
+|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| <audio controls><source src="../AddShortNoises_input.flac" type="audio/flac"></audio> | <audio controls><source src="../AddShortNoises_transformed.flac" type="audio/flac"></audio> | 
+
 
 ## Usage examples
 

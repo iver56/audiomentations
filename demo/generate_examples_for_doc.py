@@ -49,6 +49,7 @@ from audiomentations import (
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 
+DEMO_DIR = os.path.dirname(__file__)
 transform_usage_example_classes = dict()
 
 
@@ -177,6 +178,32 @@ class AddGaussianNoiseExample(TransformUsageExample):
             librosa.example("libri1"), sample_rate=16000
         )
         sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class AddShortNoisesExample(TransformUsageExample):
+    transform_class = AddShortNoises
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = AddShortNoises(
+            os.path.join(DEMO_DIR, "short_noises"),
+            min_time_between_sounds=0.8,
+            max_time_between_sounds=2.5,
+            min_snr_in_db=0.0,
+            max_snr_in_db=15.0,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("pistachio"), sample_rate=None
+        )
+        sound = sound[..., 0 : int(4.6 * sample_rate)]
 
         transformed_sound = transform(sound, sample_rate)
 

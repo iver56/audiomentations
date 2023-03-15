@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.29.0] - 2023-03-15
+
+### Added
+
+* Add `apply_to` parameter that can be set to `"only_too_loud_sounds"` in `Normalize`
+
+### Changed
+
+* Change default value of `noise_rms` from `"relative"` to `"relative_to_whole_input"` in `AddShortNoises`
+* Change default values of `min_snr_in_db` (from `0.0` to `-6.0`), `max_snr_in_db` (from `24.0` to `18.0`), `min_time_between_sounds` (from `4.0` to `2.0`) and `max_time_between_sounds` (from `16.0` to `8.0`) in `AddShortNoises`
+
+### Fixed
+
+* Fix a bug where `Limiter` raised an exception when it got digital silence as input
 
 ## [0.28.0] - 2023-01-12
 
@@ -414,7 +427,8 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
-[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.28.0...HEAD
+[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.29.0...HEAD
+[0.29.0]: https://github.com/iver56/audiomentations/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/iver56/audiomentations/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/iver56/audiomentations/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/iver56/audiomentations/compare/v0.25.1...v0.26.0

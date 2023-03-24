@@ -33,7 +33,7 @@ class PostGain:
             "same_rms",
             "same_lufs",
             "peak_normalize_always",
-            # "peak_normalize_if_too_loud",
+            "peak_normalize_if_too_loud",
             # "target_rms",
             # "target_lufs",
             # "target_peak_dbfs",
@@ -81,7 +81,13 @@ class PostGain:
         self, samples: np.ndarray, sample_rate: int
     ) -> np.ndarray:
         samples = self.transform(samples, sample_rate)
-        return Normalize(p=1.0)(samples, sample_rate)
+        return Normalize(apply_to="all", p=1.0)(samples, sample_rate)
+
+    def method_peak_normalize_if_too_loud(
+        self, samples: np.ndarray, sample_rate: int
+    ) -> np.ndarray:
+        samples = self.transform(samples, sample_rate)
+        return Normalize(apply_to="only_too_loud_sounds", p=1.0)(samples, sample_rate)
 
     def __call__(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         if self.method == "same_rms":
@@ -90,5 +96,7 @@ class PostGain:
             return self.method_same_lufs(samples, sample_rate)
         elif self.method == "peak_normalize_always":
             return self.method_peak_normalize_always(samples, sample_rate)
+        elif self.method == "peak_normalize_if_too_loud":
+            return self.method_peak_normalize_if_too_loud(samples, sample_rate)
         else:
             raise Exception()

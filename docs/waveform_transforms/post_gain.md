@@ -9,7 +9,7 @@ by a (set of) transform(s), or for preventing clipping in the output.
 
 # PostGain API
 
-[`transform`](#transform){ #transform }: `Callable`
+[`transform`](#transform){ #transform }: `Callable[[np.ndarray, int], np.ndarray]`
 :   :octicons-milestone-24: A callable to be applied. It should input
     samples (ndarray), sample_rate (int) and optionally some user-defined
     keyword arguments.

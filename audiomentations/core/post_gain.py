@@ -37,12 +37,12 @@ class PostGain:
             # "target_true_peak_dbfs",
             # "clip",
         )
-        if self.method == "target_rms":
-            self.target_rms = kwargs["target_rms"]
-        elif self.method == "target_lufs":
-            self.target_lufs = kwargs["target_lufs"]
-        elif self.method == "target_peak_dbfs":
-            self.target_peak_dbfs = kwargs["target_peak_dbfs"]
+        # if self.method == "target_rms":
+        #     self.target_rms = kwargs["target_rms"]
+        # elif self.method == "target_lufs":
+        #     self.target_lufs = kwargs["target_lufs"]
+        # elif self.method == "target_peak_dbfs":
+        #     self.target_peak_dbfs = kwargs["target_peak_dbfs"]
 
     def method_same_rms(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         rms_before = calculate_rms(samples)

@@ -62,8 +62,8 @@ class TestPostGain:
         )
         sample_rate = 16000
         augmenter = PostGain(
-            Gain(min_gain_in_db=-55, max_gain_in_db=-55, p=1.0),
-            method="peak_normalize_always",
+            Gain(min_gain_in_db=0.0, max_gain_in_db=0.0, p=1.0),
+            method="peak_normalize_if_too_loud",
         )
 
         processed_samples = augmenter(samples=samples, sample_rate=sample_rate)

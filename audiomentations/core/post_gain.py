@@ -38,7 +38,6 @@ class PostGain:
             # "target_lufs",
             # "target_peak_dbfs",
             # "target_true_peak_dbfs",
-            # "clip",
         )
         # if self.method == "target_rms":
         #     self.target_rms = kwargs["target_rms"]

@@ -14,15 +14,18 @@ class PostGain:
     """
     Gain up or down the audio after the given transform (or set of transforms) has
     processed the audio. There are several methods that determine how the audio should
-    be gained.
+    be gained. PostGain can be useful for compensating for any gain differences introduced
+    by a (set of) transform(s), or for preventing clipping in the output.
     """
 
     def __init__(
-        self, transform: Callable[[np.ndarray, int], np.ndarray], method: str, **kwargs
+        self, transform: Callable[[np.ndarray, int], np.ndarray], method: str  #, **kwargs
     ):
         """
-        :param transform:
-        :param method:
+        :param transform: A callable to be applied. It should input
+            samples (ndarray), sample_rate (int) and optionally some user-defined
+            keyword arguments.
+        :param method: "same_rms", "same_lufs" or "peak_normalize_always"
         """
         self.transform = transform
         self.method = method

@@ -23,8 +23,8 @@ class DurationClip(BaseWaveformTransform):
         p: float = 0.5,
     ):
         """
-        :param duration_samples: Target duratin in sample length
-        :param duration_seconds: Target duratin in second
+        :param duration_samples: Target duration in number of samples
+        :param duration_seconds: Target duration in seconds
         :param pad_mode: Padding mode. Must be supported by `numpy.pad`
         :param pad_section: Which part of the signal should be replaced with padding:
             "start" or "end"

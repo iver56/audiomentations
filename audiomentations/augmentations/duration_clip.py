@@ -3,7 +3,7 @@ import numpy as np
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 
-class DurationClip(BaseWaveformTransform):
+class RandomCrop(BaseWaveformTransform):
     """
     Clip audio by duration specified in samples or seconds.
     If the input sound is longer than the target duration,

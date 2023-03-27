@@ -2,13 +2,13 @@ from .augmentations.add_background_noise import AddBackgroundNoise
 from .augmentations.add_gaussian_noise import AddGaussianNoise
 from .augmentations.add_gaussian_snr import AddGaussianSNR
 from .augmentations.add_short_noises import AddShortNoises
+from .augmentations.adjust_duration import AdjustDuration
 from .augmentations.air_absorption import AirAbsorption
 from .augmentations.apply_impulse_response import ApplyImpulseResponse
 from .augmentations.band_pass_filter import BandPassFilter
 from .augmentations.band_stop_filter import BandStopFilter
 from .augmentations.clip import Clip
 from .augmentations.clipping_distortion import ClippingDistortion
-from .augmentations.duration_clip import DurationClip
 from .augmentations.gain import Gain
 from .augmentations.gain_transition import GainTransition
 from .augmentations.high_pass_filter import HighPassFilter

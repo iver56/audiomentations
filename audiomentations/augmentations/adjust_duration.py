@@ -3,13 +3,12 @@ import numpy as np
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 
-class RandomCrop(BaseWaveformTransform):
+class AdjustDuration(BaseWaveformTransform):
     """
-    Clip audio by duration specified in samples or seconds.
-    If the input sound is longer than the target duration,
-    pick a random offset and crop the sound to the target duration.
-    If the input sound is shorter than the target duration,
-    pad the end of the sound (append digital silence) so the duration matches the target duration.
+    Trim or pad the audio to the specified in samples or seconds. If the input sound is
+    longer than the target duration, pick a random offset and crop the sound to the
+    target duration. If the input sound is shorter than the target duration, pad the
+    sound so the duration matches the target duration.
     """
 
     supports_multichannel=True

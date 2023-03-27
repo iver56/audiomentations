@@ -3,10 +3,10 @@ import random
 import numpy as np
 import pytest
 
-from audiomentations import DurationClip
+from audiomentations import AdjustDuration
 
 
-class TestDurationClip:
+class TestAdjustDuration:
     @pytest.mark.parametrize("mode", ["constant", "wrap", "reflect"])
     @pytest.mark.parametrize("pad_section", ["start", "end"])
     @pytest.mark.parametrize("sample_len", [3, 4, 5])
@@ -19,7 +19,7 @@ class TestDurationClip:
         target_shape = list(input_shape)
         target_shape[-1] = sample_len
         target_shape = tuple(target_shape)
-        augmenter = DurationClip(
+        augmenter = AdjustDuration(
             duration_samples=sample_len, pad_mode=mode, pad_section=pad_section, p=1.0
         )
         samples = augmenter(samples=samples, sample_rate=sample_rate)
@@ -39,7 +39,7 @@ class TestDurationClip:
         target_shape = list(input_shape)
         target_shape[-1] = int(second * sample_rate)
         target_shape = tuple(target_shape)
-        augmenter = DurationClip(
+        augmenter = AdjustDuration(
             duration_seconds=second, pad_mode=mode, pad_section=pad_section, p=1.0
         )
         samples = augmenter(samples=samples, sample_rate=sample_rate)

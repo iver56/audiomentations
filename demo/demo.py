@@ -42,6 +42,7 @@ from audiomentations import (
     Padding,
     AirAbsorption,
     Lambda,
+    AdjustDuration,
 )
 from audiomentations.augmentations.limiter import Limiter
 from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
@@ -255,6 +256,12 @@ if __name__ == "__main__":
             ),
             "num_runs": 5,
             "name": "AddShortNoisesWithNoiseTransform",
+        },
+        {"instance": AdjustDuration(duration_seconds=2.0, p=1.0), "num_runs": 5},
+        {
+            "instance": AdjustDuration(duration_seconds=10.0, p=1.0),
+            "num_runs": 1,
+            "name": "AdjustDurationWithPaddding",
         },
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": BandStopFilter(p=1.0), "num_runs": 5},

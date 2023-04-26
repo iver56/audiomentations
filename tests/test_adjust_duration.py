@@ -20,7 +20,7 @@ class TestAdjustDuration:
         target_shape[-1] = sample_len
         target_shape = tuple(target_shape)
         augmenter = AdjustDuration(
-            duration_samples=sample_len, pad_mode=mode, pad_section=pad_section, p=1.0
+            duration_samples=sample_len, padding_mode=mode, padding_position=pad_section, p=1.0
         )
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 
@@ -40,7 +40,7 @@ class TestAdjustDuration:
         target_shape[-1] = int(second * sample_rate)
         target_shape = tuple(target_shape)
         augmenter = AdjustDuration(
-            duration_seconds=second, pad_mode=mode, pad_section=pad_section, p=1.0
+            duration_seconds=second, padding_mode=mode, padding_position=pad_section, p=1.0
         )
         samples = augmenter(samples=samples, sample_rate=sample_rate)
 

@@ -11,32 +11,33 @@ class AdjustDuration(BaseWaveformTransform):
     duration, pad the sound so the duration matches the target duration.
     """
 
-    supports_multichannel=True
+    supports_multichannel = True
 
     def __init__(
         self,
         duration_samples: int = None,
         duration_seconds: float = None,
-        pad_mode: str = "silence",
-        pad_section: str = "end",
+        padding_mode: str = "silence",
+        padding_position: str = "end",
         p: float = 0.5,
     ):
         """
         :param duration_samples: Target duration in number of samples
         :param duration_seconds: Target duration in seconds
-        :param pad_mode: Padding mode. Must be "silence", "wrap" or "reflect". Only
+        :param padding_mode: Padding mode. Must be "silence", "wrap" or "reflect". Only
             used when audio input is shorter than the target duration.
-        :param pad_section: Which part should be padded: "start" or "end"
+        :param padding_position: Which part should be padded: "start" or "end". Only
+            used when audio input is shorter than the target duration.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        assert pad_mode in ("silence", "wrap", "reflect")
-        if pad_mode == "silence":
-            pad_mode = "constant"
-        self.mode = pad_mode
+        assert padding_mode in ("silence", "wrap", "reflect")
+        if padding_mode == "silence":
+            padding_mode = "constant"  # for numpy.pad compatibility
+        self.padding_mode = padding_mode
 
-        assert pad_section in ("start", "end")
-        self.pad_section = pad_section
+        assert padding_position in ("start", "end")
+        self.padding_position = padding_position
 
         assert duration_samples is not None or duration_seconds is not None
         if duration_samples is not None and duration_seconds is not None:
@@ -64,13 +65,13 @@ class AdjustDuration(BaseWaveformTransform):
         elif sample_length < target_samples:
             padding_length = target_samples - sample_length
             if samples.ndim == 1:
-                if self.pad_section == "start":
+                if self.padding_position == "start":
                     pad_width = (padding_length, 0)
                 else:
                     pad_width = (0, padding_length)
             else:
-                if self.pad_section == "start":
+                if self.padding_position == "start":
                     pad_width = ((0, 0), (padding_length, 0))
                 else:
                     pad_width = ((0, 0), (0, padding_length))
-            return np.pad(samples, pad_width, self.mode)
+            return np.pad(samples, pad_width, self.padding_mode)

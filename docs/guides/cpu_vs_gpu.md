@@ -1,4 +1,4 @@
-# CPU vs. GPU: Which to use when training audio ML models with online data augmentation?
+# CPU vs. GPU: Which to use for online data augmentation when training audio ML models?
 
 When training an audio machine learning model that includes online data augmentation as part of the training pipeline, you can choose to run the transforms on CPU or GPU. While some libraries, such as torch-audiomentations, support GPU, audiomentations is CPU-only. So, which one is better? The answer is: it depends.
 

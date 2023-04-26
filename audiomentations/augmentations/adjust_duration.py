@@ -26,8 +26,8 @@ class AdjustDuration(BaseWaveformTransform):
         :param duration_seconds: Target duration in seconds
         :param padding_mode: Padding mode. Must be "silence", "wrap" or "reflect". Only
             used when audio input is shorter than the target duration.
-        :param padding_position: Which part should be padded: "start" or "end". Only
-            used when audio input is shorter than the target duration.
+        :param padding_position: The position of the inserted/added padding. Must be
+            "start" or "end". Only used when audio input is shorter than the target duration.
         :param p: The probability of applying this transform
         """
         super().__init__(p)

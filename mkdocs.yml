@@ -7,6 +7,7 @@ nav:
       - AddGaussianNoise: waveform_transforms/add_gaussian_noise.md
       - AddGaussianSNR: waveform_transforms/add_gaussian_snr.md
       - AddShortNoises: waveform_transforms/add_short_noises.md
+      - AdjustDuration: waveform_transforms/adjust_duration.md
       - AirAbsorption: waveform_transforms/air_absorption.md
       - ApplyImpulseResponse: waveform_transforms/apply_impulse_response.md
       - BandPassFilter: waveform_transforms/band_pass_filter.md

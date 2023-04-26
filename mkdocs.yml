@@ -48,6 +48,7 @@ theme:
   name: material
 repo_name: 'iver56/audiomentations'
 repo_url: 'https://github.com/iver56/audiomentations'
+edit_uri: edit/main/docs/
 markdown_extensions:
   - attr_list
   - def_list

@@ -5,10 +5,10 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 class AdjustDuration(BaseWaveformTransform):
     """
-    Trim or pad the audio to the specified in samples or seconds. If the input sound is
-    longer than the target duration, pick a random offset and crop the sound to the
-    target duration. If the input sound is shorter than the target duration, pad the
-    sound so the duration matches the target duration.
+    Trim or pad the audio to the specified length/duration in samples or seconds. If the
+    input sound is longer than the target duration, pick a random offset and crop the
+    sound to the target duration. If the input sound is shorter than the target
+    duration, pad the sound so the duration matches the target duration.
     """
 
     supports_multichannel=True
@@ -17,19 +17,22 @@ class AdjustDuration(BaseWaveformTransform):
         self,
         duration_samples: int = None,
         duration_seconds: float = None,
-        pad_mode: str = "constant",
+        pad_mode: str = "silence",
         pad_section: str = "end",
         p: float = 0.5,
     ):
         """
         :param duration_samples: Target duration in number of samples
         :param duration_seconds: Target duration in seconds
-        :param pad_mode: Padding mode. Must be supported by `numpy.pad`
-        :param pad_section: Which part of the signal should be replaced with padding:
-            "start" or "end"
+        :param pad_mode: Padding mode. Must be "silence", "wrap" or "reflect". Only
+            used when audio input is shorter than the target duration.
+        :param pad_section: Which part should be padded: "start" or "end"
         :param p: The probability of applying this transform
         """
         super().__init__(p)
+        assert pad_mode in ("silence", "wrap", "reflect")
+        if pad_mode == "silence":
+            pad_mode = "constant"
         self.mode = pad_mode
 
         assert pad_section in ("start", "end")

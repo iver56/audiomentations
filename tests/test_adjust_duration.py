@@ -7,7 +7,7 @@ from audiomentations import AdjustDuration
 
 
 class TestAdjustDuration:
-    @pytest.mark.parametrize("mode", ["constant", "wrap", "reflect"])
+    @pytest.mark.parametrize("mode", ["silence", "wrap", "reflect"])
     @pytest.mark.parametrize("pad_section", ["start", "end"])
     @pytest.mark.parametrize("sample_len", [3, 4, 5])
     @pytest.mark.parametrize("ndim", [None, 1, 2])
@@ -27,7 +27,7 @@ class TestAdjustDuration:
         assert samples.dtype == np.float32
         assert samples.shape == target_shape
 
-    @pytest.mark.parametrize("mode", ["constant", "wrap", "reflect"])
+    @pytest.mark.parametrize("mode", ["silence", "wrap", "reflect"])
     @pytest.mark.parametrize("pad_section", ["start", "end"])
     @pytest.mark.parametrize("second", [0.4, 0.5, 0.6])
     @pytest.mark.parametrize("ndim", [None, 1, 2])

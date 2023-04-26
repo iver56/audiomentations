@@ -29,6 +29,7 @@ nav:
       - PeakingFilter: waveform_transforms/peaking_filter.md
       - PitchShift: waveform_transforms/pitch_shift.md
       - PolarityInversion: waveform_transforms/polarity_inversion.md
+      - PostGain: waveform_transforms/post_gain.md
       - Resample: waveform_transforms/resample.md
       - Reverse: waveform_transforms/reverse.md
       - RoomSimulator: waveform_transforms/room_simulator.md

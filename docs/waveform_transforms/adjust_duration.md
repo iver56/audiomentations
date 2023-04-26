@@ -14,6 +14,38 @@ machine learning model. The reason for varying audio clip lengths can be e.g.
 * data augmentation transforms that change the lengths (e.g. time stretching or
  convolving with impulse responses without cutting the tail)
 
+## Input-output example
+
+Here we input an audio clip and remove a part of the start and the end, so the length of the result matches the specified target length.
+
+![Input-output waveforms and spectrograms](AdjustDuration.webp)
+
+| Input sound                                                                           | Transformed sound                                                                           |
+|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| <audio controls><source src="../AdjustDuration_input.flac" type="audio/flac"></audio> | <audio controls><source src="../AdjustDuration_transformed.flac" type="audio/flac"></audio> | 
+
+## Usage examples
+
+=== "Target length in samples"
+
+    ```python
+    from audiomentations import AdjustDuration
+    
+    transform = AdjustDuration(duration_samples=60000, p=1.0)
+    
+    augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
+    ```
+
+=== "Target duration in seconds"
+
+    ```python
+    from audiomentations import AdjustDuration
+
+    transform = AdjustDuration(duration_seconds=3.75, p=1.0)
+    
+    augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
+    ```
+
 # AdjustDuration API
 
 [`duration_samples`](#duration_samples){ #duration_samples }: `int` • range: [0, ∞)

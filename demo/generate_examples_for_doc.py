@@ -46,6 +46,7 @@ from audiomentations import (
     TimeMask,
     TimeStretch,
     Trim,
+    AdjustDuration,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 
@@ -199,6 +200,25 @@ class AddShortNoisesExample(TransformUsageExample):
             max_snr_in_db=15.0,
             p=1.0,
         )
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("pistachio"), sample_rate=None
+        )
+        sound = sound[..., 0 : int(4.6 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class AdjustDurationExample(TransformUsageExample):
+    transform_class = AdjustDuration
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = AdjustDuration(duration_samples=60000, p=1.0)
 
         sound, sample_rate = load_sound_file(
             librosa.example("pistachio"), sample_rate=None

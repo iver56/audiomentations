@@ -78,6 +78,7 @@ class Mp3Compression(BaseWaveformTransform):
         self.max_bitrate = max_bitrate
         assert backend in ("pydub", "lameenc")
         self.backend = backend
+        self.post_gain_factor = None
 
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -97,6 +98,25 @@ class Mp3Compression(BaseWaveformTransform):
         else:
             raise Exception("Backend {} not recognized".format(self.backend))
 
+    def maybe_pre_gain(self, samples):
+        """
+        If the audio is too loud, gain it down to avoid distortion in the audio file to
+        be encoded.
+        """
+        greatest_abs_sample = np.amax(np.abs(samples))
+        if greatest_abs_sample > 1.0:
+            self.post_gain_factor = greatest_abs_sample
+            samples = samples * (1.0 / greatest_abs_sample)
+        else:
+            self.post_gain_factor = None
+        return samples
+
+    def maybe_post_gain(self, samples):
+        """If the audio was pre-gained down earlier, post-gain it up to compensate here."""
+        if self.post_gain_factor is not None:
+            samples = samples * self.post_gain_factor
+        return samples
+
     def apply_lameenc(self, samples: np.ndarray, sample_rate: int):
         try:
             import lameenc
@@ -111,6 +131,8 @@ class Mp3Compression(BaseWaveformTransform):
             raise
 
         assert samples.dtype == np.float32
+
+        samples = self.maybe_pre_gain(samples)
 
         int_samples = convert_float_samples_to_int16(samples).T
 
@@ -138,6 +160,8 @@ class Mp3Compression(BaseWaveformTransform):
 
         os.unlink(tmp_file_path)
 
+        degraded_samples = self.maybe_post_gain(degraded_samples)
+
         if num_channels == 1:
             if int_samples.ndim == 1 and degraded_samples.ndim == 2:
                 degraded_samples = degraded_samples.flatten()
@@ -161,6 +185,8 @@ class Mp3Compression(BaseWaveformTransform):
 
         assert samples.dtype == np.float32
 
+        samples = self.maybe_pre_gain(samples)
+
         int_samples = convert_float_samples_to_int16(samples).T
         num_channels = 1 if samples.ndim == 1 else samples.shape[0]
         audio_segment = pydub.AudioSegment(
@@ -182,6 +208,8 @@ class Mp3Compression(BaseWaveformTransform):
         degraded_samples, _ = librosa.load(tmp_file_path, sr=sample_rate, mono=False)
 
         os.unlink(tmp_file_path)
+
+        degraded_samples = self.maybe_post_gain(degraded_samples)
 
         if num_channels == 1:
             if int_samples.ndim == 1 and degraded_samples.ndim == 2:

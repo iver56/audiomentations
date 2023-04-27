@@ -99,7 +99,10 @@ class Mp3Compression(BaseWaveformTransform):
             raise Exception("Backend {} not recognized".format(self.backend))
 
     def maybe_pre_gain(self, samples):
-        """Avoid clipping in the audio to be encoded"""
+        """
+        If the audio is too loud, gain it down to avoid distortion in the audio file to
+        be encoded.
+        """
         greatest_abs_sample = np.amax(np.abs(samples))
         if greatest_abs_sample > 1.0:
             self.post_gain_factor = greatest_abs_sample

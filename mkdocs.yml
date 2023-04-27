@@ -65,4 +65,6 @@ markdown_extensions:
       alternate_style: true
   - admonition
   - codehilite
-
+extra:
+  static_templates:
+    - google874768f12a0e923e.html

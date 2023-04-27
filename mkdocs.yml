@@ -1,5 +1,6 @@
 site_name: audiomentations documentation
 site_author: 'Iver Jordal'
+site_url: https://iver56.github.io/audiomentations/
 nav:
   - Home: index.md
   - Waveform transforms:

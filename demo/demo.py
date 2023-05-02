@@ -261,7 +261,22 @@ if __name__ == "__main__":
         {
             "instance": AdjustDuration(duration_seconds=10.0, p=1.0),
             "num_runs": 1,
-            "name": "AdjustDurationWithPaddding",
+            "name": "AdjustDurationPadEndSilence",
+        },
+        {
+            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", p=1.0),
+            "num_runs": 1,
+            "name": "AdjustDurationPadStartSilence",
+        },
+        {
+            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", padding_mode="wrap", p=1.0),
+            "num_runs": 1,
+            "name": "AdjustDurationPadStartWrap",
+        },
+        {
+            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", padding_mode="reflect", p=1.0),
+            "num_runs": 1,
+            "name": "AdjustDurationPadStartReflect",
         },
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": BandStopFilter(p=1.0), "num_runs": 5},

@@ -437,7 +437,8 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
-[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.29.0...HEAD
+[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.30.0...HEAD
+[0.30.0]: https://github.com/iver56/audiomentations/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/iver56/audiomentations/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/iver56/audiomentations/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/iver56/audiomentations/compare/v0.26.0...v0.27.0

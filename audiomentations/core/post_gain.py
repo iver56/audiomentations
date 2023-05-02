@@ -25,7 +25,7 @@ class PostGain:
         :param transform: A callable to be applied. It should input
             samples (ndarray), sample_rate (int) and optionally some user-defined
             keyword arguments.
-        :param method: "same_rms", "same_lufs" or "peak_normalize_always"
+        :param method: "same_rms", "same_lufs", "peak_normalize_always" or "peak_normalize_always"
         """
         self.transform = transform
         self.method = method

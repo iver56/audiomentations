@@ -1,6 +1,6 @@
 # `PostGain`
 
-_Added in v0.30.0_
+_Added in v0.31.0_
 
 Gain up or down the audio after the given transform (or set of transforms) has
 processed the audio. There are several methods that determine how the audio should

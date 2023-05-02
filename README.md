@@ -53,6 +53,7 @@ See [https://iver56.github.io/audiomentations/](https://iver56.github.io/audiome
 * [AddGaussianNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_noise/)
 * [AddGaussianSNR](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_snr/)
 * [AddShortNoises](https://iver56.github.io/audiomentations/waveform_transforms/add_short_noises/)
+* [AdjustDuration](https://iver56.github.io/audiomentations/waveform_transforms/adjust_duration/)
 * [AirAbsorption](https://iver56.github.io/audiomentations/waveform_transforms/air_absorption/)
 * [ApplyImpulseResponse](https://iver56.github.io/audiomentations/waveform_transforms/apply_impulse_response/)
 * [BandPassFilter](https://iver56.github.io/audiomentations/waveform_transforms/band_pass_filter/)

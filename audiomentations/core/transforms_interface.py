@@ -17,6 +17,10 @@ class MonoAudioNotSupportedException(Exception):
     pass
 
 
+class WrongMultichannelAudioShape(Exception):
+    pass
+
+
 class BaseTransform:
     supports_mono = True
     supports_multichannel = False
@@ -63,10 +67,10 @@ class BaseWaveformTransform(BaseTransform):
         if self.parameters["should_apply"] and len(samples) > 0:
             if self.is_multichannel(samples):
                 if samples.shape[0] > samples.shape[1]:
-                    warnings.warn(
+                    raise WrongMultichannelAudioShape(
                         "Multichannel audio must have channels first, not channels last. In"
                         " other words, the shape must be (channels, samples), not"
-                        " (samples, channels)"
+                        " (samples, channels). See https://iver56.github.io/audiomentations/guides/multichannel_audio_array_shapes/ for more info."
                     )
                 if not self.supports_multichannel:
                     raise MultichannelAudioNotSupportedException(

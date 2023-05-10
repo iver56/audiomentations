@@ -123,7 +123,7 @@ Contributions are welcome!
 
 # Multichannel audio
 
-As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` support not only mono audio (1-dimensional numpy arrays), but also stereo audio, i.e. 2D arrays with shape like `(num_channels, num_samples)`
+As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` support not only mono audio (1-dimensional numpy arrays), but also stereo audio, i.e. 2D arrays with shape like `(num_channels, num_samples)`. See also the [guide on multichannel audio array shapes](guides/multichannel_audio_array_shapes.md).
 
 # Acknowledgements
 

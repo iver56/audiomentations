@@ -50,6 +50,7 @@ See [https://iver56.github.io/audiomentations/](https://iver56.github.io/audiome
 # Transforms
 
 * [AddBackgroundNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_background_noise/)
+* [AddColorNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_color_noise/)
 * [AddGaussianNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_noise/)
 * [AddGaussianSNR](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_snr/)
 * [AddShortNoises](https://iver56.github.io/audiomentations/waveform_transforms/add_short_noises/)

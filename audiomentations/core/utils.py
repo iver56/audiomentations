@@ -166,3 +166,23 @@ def convert_mel_to_frequency(m: Union[float, np.array]) -> Union[float, np.array
     https://en.wikipedia.org/wiki/Mel_scale#History_and_other_formulas
     """
     return 700.0 * (10 ** (m / 2595.0) - 1.0)
+
+
+def a_weighting_frequency_envelope(n_fft, sample_rate):
+    """
+    Return the A-weighting frequency envelope for the given FFT size and sample rate.
+
+    See the wikipedia article here:
+    https://en.wikipedia.org/wiki/A-weighting#A
+    """
+
+    freqs = np.fft.rfftfreq(n_fft, 1 / sample_rate)
+    weighting = (
+        (12194**2 * freqs**4)
+        / (
+            (freqs**2 + 20.6**2)
+            * np.sqrt((freqs**2 + 107.7**2) * (freqs**2 + 737.9**2))
+            * (freqs**2 + 12194**2)
+        )
+    ) + 2.00
+    return weighting

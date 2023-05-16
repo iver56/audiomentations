@@ -100,8 +100,6 @@ class TestUtils:
             )
         ) + 2.00
 
-        print(weighting.shape)
-
         assert a_weighting_frequency_envelope(n_fft, sample_rate) == pytest.approx(
             weighting, abs=0.01
         )

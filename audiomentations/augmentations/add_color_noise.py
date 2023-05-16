@@ -20,26 +20,6 @@ NOISE_COLOR_DECAYS = {
 }
 
 
-def a_weighting_frequency_envelope(n_fft, sample_rate):
-    """
-    Return the A-weighting frequency envelope for the given FFT size and sample rate.
-
-    See the wikipedia article here:
-    https://en.wikipedia.org/wiki/A-weighting#A
-    """
-
-    freqs = np.fft.rfftfreq(n_fft, 1 / sample_rate)
-    weighting = (
-        (12194**2 * freqs**4)
-        / (
-            (freqs**2 + 20.6**2)
-            * np.sqrt((freqs**2 + 107.7**2) * (freqs**2 + 737.9**2))
-            * (freqs**2 + 12194**2)
-        )
-    ) + 2.00
-    return weighting
-
-
 def generate_decaying_white_noise(
     n_samples, f_decay, sample_rate, apply_a_weighting=False, n_fft=64
 ):

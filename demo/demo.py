@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from audiomentations import (
     AddGaussianNoise,
+    AddColorNoise,
     TimeStretch,
     PitchShift,
     Shift,
@@ -150,6 +151,38 @@ if __name__ == "__main__":
             "name": "AddGaussianSNR",
         },
         {
+            "instance": AddColorNoise(p=1.0, min_f_decay=2.0, max_f_decay=2.0),
+            "num_runs": 2,
+            "name": "AddColorNoise_Brown",
+        },
+        {
+            "instance": AddColorNoise(p=1.0, min_f_decay=-2.0, max_f_decay=-2.0),
+            "num_runs": 2,
+            "name": "AddColorNoise_Violet",
+        },
+        {
+            "instance": AddColorNoise(p=1.0, min_f_decay=-1.0, max_f_decay=-1.0),
+            "num_runs": 2,
+            "name": "AddColorNoise_Blue",
+        },
+        {
+            "instance": AddColorNoise(p=1.0, min_f_decay=1.0, max_f_decay=1.0),
+            "num_runs": 2,
+            "name": "AddColorNoise_Pink",
+        },
+        {
+            "instance": AddColorNoise(p=1.0, min_f_decay=0.0, max_f_decay=0.0),
+            "num_runs": 2,
+            "name": "AddColorNoise_White",
+        },
+        {
+            "instance": AddColorNoise(
+                p=1.0, min_f_decay=0.0, max_f_decay=0.0, p_apply_a_weighting=1.0
+            ),
+            "num_runs": 2,
+            "name": "AddColorNoise_Grey",
+        },
+        {
             "instance": ApplyImpulseResponse(
                 p=1.0,
                 ir_path=os.path.join(DEMO_DIR, "ir"),
@@ -264,17 +297,29 @@ if __name__ == "__main__":
             "name": "AdjustDurationPadEndSilence",
         },
         {
-            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", p=1.0),
+            "instance": AdjustDuration(
+                duration_seconds=10.0, padding_position="start", p=1.0
+            ),
             "num_runs": 1,
             "name": "AdjustDurationPadStartSilence",
         },
         {
-            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", padding_mode="wrap", p=1.0),
+            "instance": AdjustDuration(
+                duration_seconds=10.0,
+                padding_position="start",
+                padding_mode="wrap",
+                p=1.0,
+            ),
             "num_runs": 1,
             "name": "AdjustDurationPadStartWrap",
         },
         {
-            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", padding_mode="reflect", p=1.0),
+            "instance": AdjustDuration(
+                duration_seconds=10.0,
+                padding_position="start",
+                padding_mode="reflect",
+                p=1.0,
+            ),
             "num_runs": 1,
             "name": "AdjustDurationPadStartReflect",
         },

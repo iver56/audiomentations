@@ -31,6 +31,20 @@ class TestAddColorNoise:
         rms_before = np.sqrt(np.mean(samples_in**2))
         samples_out = augmenter(samples=samples_in, sample_rate=16000)
         rms_after = np.sqrt(np.mean(samples_out**2))
+        assert samples_out.shape == samples_in.shape
+        assert samples_out.dtype == np.float32
+        assert not (float(rms_after) == pytest.approx(0.0))
+        assert rms_after != rms_before
+
+    def test_add_colored_noise_defaults_stereo(self):
+        np.random.seed(42)
+        samples_in = np.random.normal(0, 1, size=(2, 1024)).astype(np.float32)
+        augmenter = AddColorNoise(p=1.0)
+        rms_before = np.sqrt(np.mean(samples_in**2))
+        samples_out = augmenter(samples=samples_in, sample_rate=16000)
+        rms_after = np.sqrt(np.mean(samples_out**2))
+
+        assert samples_out.shape == samples_in.shape
         assert samples_out.dtype == np.float32
         assert not (float(rms_after) == pytest.approx(0.0))
         assert rms_after != rms_before

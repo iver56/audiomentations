@@ -1,10 +1,12 @@
 import random
-from typing import Optional
 
 import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import calculate_desired_noise_rms, calculate_rms
+from audiomentations.core.utils import (
+    a_weighting_frequency_envelope,
+)
 
 import scipy.signal as sp
 
@@ -143,12 +145,24 @@ class AddColorNoise(BaseWaveformTransform):
     def apply(self, samples: np.ndarray, sample_rate: int):
         desired_noise_rms = self.parameters["desired_noise_rms"]
 
+        if samples.ndim == 1:
+            n_channels = 1
+        else:
+            n_channels = samples.shape[0]
+
         noise_with_unit_rms = generate_decaying_white_noise(
-            n_samples=len(samples),
+            n_samples=samples.shape[-1],
             f_decay=self.parameters["f_decay"],
             sample_rate=sample_rate,
             apply_a_weighting=self.parameters["apply_a_weighting"],
             n_fft=self.n_fft,
         )
 
-        return samples + noise_with_unit_rms * desired_noise_rms
+        if n_channels > 1:
+            return (
+                samples
+                + np.repeat(noise_with_unit_rms[np.newaxis, :], n_channels, axis=0)
+                * desired_noise_rms
+            )
+        else:
+            return samples + noise_with_unit_rms * desired_noise_rms

@@ -23,7 +23,7 @@ NOISE_COLOR_DECAYS = {
 
 
 def generate_decaying_white_noise(
-    n_samples, f_decay, sample_rate, apply_a_weighting=False, n_fft=64
+    size, f_decay, sample_rate, apply_a_weighting=False, n_fft=64
 ):
     """
     Generates a white noise signal decaying by 1/f^beta.
@@ -31,10 +31,10 @@ def generate_decaying_white_noise(
     Note that you can get away with low n_fft (e.g. 128 points) values
     if you are not using a_weighting, but keep it higher otherwise.
     """
-    # Create n_samples of white noise
-    sig = np.random.randn(n_samples)
 
-    if f_decay == 0.0:
+    sig = np.random.normal(0, 1, size=size)
+
+    if f_decay == 0.0 and not apply_a_weighting:
         # No decay, return white noise
         return sig.astype(np.float32)
 
@@ -57,7 +57,16 @@ def generate_decaying_white_noise(
     decay_ir = np.fft.irfft(decay)
 
     # Convolve the white noise with the decay impulse response
-    fsig = sp.oaconvolve(sig, decay_ir, "same")
+
+    # Calculate number of channels
+    if len(sig.shape) > 1:
+        n_channels = sig.shape[0]
+        fsig = np.zeros_like(sig).astype(np.float32)
+        for chn_idx in range(n_channels):
+            fsig[chn_idx] = sp.oaconvolve(sig[chn_idx], decay_ir, "same")
+    else:
+        n_channels = 1
+        fsig = sp.oaconvolve(sig, decay_ir, "same")
 
     # Normalize to unit energy
     fsig /= np.sqrt(np.mean(fsig**2))
@@ -151,7 +160,7 @@ class AddColorNoise(BaseWaveformTransform):
             n_channels = samples.shape[0]
 
         noise_with_unit_rms = generate_decaying_white_noise(
-            n_samples=samples.shape[-1],
+            size=samples.shape,
             f_decay=self.parameters["f_decay"],
             sample_rate=sample_rate,
             apply_a_weighting=self.parameters["apply_a_weighting"],
@@ -159,10 +168,6 @@ class AddColorNoise(BaseWaveformTransform):
         )
 
         if n_channels > 1:
-            return (
-                samples
-                + np.repeat(noise_with_unit_rms[np.newaxis, :], n_channels, axis=0)
-                * desired_noise_rms
-            )
+            return samples + noise_with_unit_rms * desired_noise_rms
         else:
             return samples + noise_with_unit_rms * desired_noise_rms

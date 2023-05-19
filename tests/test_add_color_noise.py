@@ -1,10 +1,30 @@
-from typing import Optional
-from audiomentations.core.utils import a_weighting_frequency_envelope
+from audiomentations.augmentations.add_color_noise import generate_decaying_white_noise
+from audiomentations.core.utils import calculate_rms
 import pytest
 
 import numpy as np
 
 from audiomentations import AddColorNoise, NOISE_COLOR_DECAYS
+
+
+def noise_kl_divergence_from_white_noise(noise):
+    """Measures similarity between noise and white noise using KL divergence"""
+
+    def kl_divergence(p, q):
+        return sum(p[i] * np.log2(p[i] / q[i]) for i in range(len(p)))
+
+    hist1, _ = np.histogram(noise, bins=min(100, int(0.01 * len(noise))))
+    hist1 = hist1.astype(np.float32) + 1e-4
+    hist1 /= hist1.sum()
+
+    white_noise_of_same_size = np.random.normal(0, 1, len(noise))
+    hist2, _ = np.histogram(
+        white_noise_of_same_size, bins=min(100, int(0.01 * len(noise)))
+    )
+    hist2 = hist2.astype(np.float32) + 1e-4
+    hist2 /= hist2.sum()
+
+    return kl_divergence(hist1, hist2)
 
 
 def calculate_decay_rate(noise: np.ndarray, n_fft=8192):
@@ -95,3 +115,26 @@ class TestAddColorNoise:
         # TODO: Decrease the value of abs= below. To do that, we need a better
         #       calculate_decay_rate function.
         assert decay_rate == pytest.approx(10 * np.log10(2) * f_decay, abs=2)
+
+    @pytest.mark.parametrize("color", NOISE_COLOR_DECAYS.keys())
+    @pytest.mark.parametrize("a_weighted", [False, True])
+    @pytest.mark.parametrize("size", [(16_000), (2, 16_000)])
+    def test_generate_decaying_white_noise(self, color, a_weighted, size):
+        np.random.seed(42)
+        f_decay = NOISE_COLOR_DECAYS[color]
+
+        noise = generate_decaying_white_noise(
+            size=size,
+            f_decay=f_decay,
+            apply_a_weighting=a_weighted,
+            n_fft=64,
+            sample_rate=16000,
+        )
+
+        assert np.mean(noise) == pytest.approx(0.0, abs=0.1)
+        assert calculate_rms(noise) == pytest.approx(1.0, abs=0.1)
+
+        # TODO: is abs=0.313 below good enough?
+        assert noise_kl_divergence_from_white_noise(noise.flatten()) == pytest.approx(
+            0.0, abs=0.313
+        )

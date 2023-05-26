@@ -2,13 +2,55 @@
 
 _Added in v0.26.0_
 
-A simple audio limiter (dynamic range compression).
-Note: This transform also delays the signal by a fraction of the attack time.
+The `Limiter`, based on [cylimiter :octicons-link-external-16:](https://github.com/pzelasko/cylimiter){target=_blank}, is a straightforward audio transform that applies dynamic range compression.
+It is capable of limiting the audio signal based on certain parameters.
+Additionally, please note that this transform introduces a slight delay in the signal, equivalent to a fraction of the attack time.
 
 * The _threshold_ determines the audio level above which the limiter kicks in.
 * The _attack_ time is how quickly the limiter kicks in once the audio signal starts exceeding the threshold.
 * The _release_ time determines how quickly the limiter stops working after the signal drops below the threshold.
 
+## Input-output example
+
+In this example we apply the limiter with a threshold that is 10 dB lower than the signal peak
+
+![Input-output waveforms and spectrograms](Limiter.webp)
+
+| Input sound                                                                          | Transformed sound                                                                             |
+|--------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| <audio controls><source src="../Limiter_input.flac" type="audio/flac"></audio> | <audio controls><source src="../Limiter_transformed.flac" type="audio/flac"></audio> |
+
+## Usage examples
+
+=== "Threshold relative to signal peak"
+
+    ```python
+    from audiomentations import Limiter
+    
+    transform = Limiter(
+        min_threshold_db=-16.0,
+        max_threshold_db=-6.0,
+        threshold_mode="relative_to_signal_peak",
+        p=1.0,
+    )
+    
+    augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
+    ```
+
+=== "Absolute threshold"
+
+    ```python
+    from audiomentations import Limiter
+    
+    transform = Limiter(
+        min_threshold_db=-16.0,
+        max_threshold_db=-6.0,
+        threshold_mode="absolute",
+        p=1.0,
+    )
+    
+    augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
+    ```
 
 # Limiter API
 
@@ -31,7 +73,7 @@ Note: This transform also delays the signal by a fraction of the attack time.
 :   :octicons-milestone-24: Default: `0.7`. Maximum release time
 
 [`threshold_mode`](#threshold_mode){ #threshold_mode }: `str` • choices: `"relative_to_signal_peak"`, `"absolute"`
-:   :octicons-milestone-24: Default: `relative_to_signal_peak`.
+:   :octicons-milestone-24: Default: `relative_to_signal_peak`. Specifies the mode for determining the threshold.
 
     * `"relative_to_signal_peak"` means the threshold is relative to peak of the signal.
     * `"absolute"` means the threshold is relative to 0 dBFS, so it doesn't depend

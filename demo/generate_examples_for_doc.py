@@ -47,6 +47,7 @@ from audiomentations import (
     TimeStretch,
     Trim,
     AdjustDuration,
+    Limiter, AddGaussianSNR,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 
@@ -186,6 +187,25 @@ class AddGaussianNoiseExample(TransformUsageExample):
 
 
 @register
+class AddGaussianSNRExample(TransformUsageExample):
+    transform_class = AddGaussianSNR
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = AddGaussianSNR(min_snr_in_db=16.0, max_snr_in_db=16.0, p=1.0)
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("libri1"), sample_rate=16000
+        )
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
 class AddShortNoisesExample(TransformUsageExample):
     transform_class = AddShortNoises
 
@@ -224,6 +244,25 @@ class AdjustDurationExample(TransformUsageExample):
             librosa.example("pistachio"), sample_rate=None
         )
         sound = sound[..., 0 : int(4.6 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class LimiterExample(TransformUsageExample):
+    transform_class = Limiter
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = Limiter(min_threshold_db=-10, max_threshold_db=-10, p=1)
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("libri1"), sample_rate=16000
+        )
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
 
         transformed_sound = transform(sound, sample_rate)
 

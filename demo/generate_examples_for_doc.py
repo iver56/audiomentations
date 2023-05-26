@@ -47,7 +47,7 @@ from audiomentations import (
     TimeStretch,
     Trim,
     AdjustDuration,
-    Limiter,
+    Limiter, AddGaussianSNR,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 
@@ -175,6 +175,25 @@ class AddGaussianNoiseExample(TransformUsageExample):
         random.seed(345)
         np.random.seed(345)
         transform = AddGaussianNoise(min_amplitude=0.01, max_amplitude=0.01, p=1.0)
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("libri1"), sample_rate=16000
+        )
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class AddGaussianSNRExample(TransformUsageExample):
+    transform_class = AddGaussianSNR
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = AddGaussianSNR(min_snr_in_db=16.0, max_snr_in_db=16.0, p=1.0)
 
         sound, sample_rate = load_sound_file(
             librosa.example("libri1"), sample_rate=16000

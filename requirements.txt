@@ -3,7 +3,7 @@ black
 coverage==4.5.2
 cylimiter==0.3.0
 lameenc==1.3.1
-librosa==0.10.0.post1
+librosa==0.10.0.post2
 matplotlib>=3.0.0,<4
 numba==0.57.0
 numpy==1.23.0

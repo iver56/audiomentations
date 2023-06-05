@@ -13,7 +13,7 @@ class PitchShift(BaseWaveformTransform):
     supports_multichannel = True
 
     def __init__(
-        self, min_semitones: float = -4.0, max_semitones: float = 4, p: float = 0.5
+        self, min_semitones: float = -4.0, max_semitones: float = 4, res_type: str = "soxr_hq", p: float = 0.5
     ):
         """
         :param min_semitones: Minimum semitones to shift. Negative number means shift down.
@@ -26,6 +26,7 @@ class PitchShift(BaseWaveformTransform):
         assert min_semitones <= max_semitones
         self.min_semitones = min_semitones
         self.max_semitones = max_semitones
+        self.res_type = res_type
 
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -54,6 +55,7 @@ class PitchShift(BaseWaveformTransform):
                     pitch_shifted_samples[i],
                     sr=sample_rate,
                     n_steps=self.parameters["num_semitones"],
+                    res_type=self.res_type,
                 )
 
         return pitch_shifted_samples

@@ -36,8 +36,14 @@ class PitchShift(BaseWaveformTransform):
 
     def apply(self, samples: np.ndarray, sample_rate: int):
         try:
+            resample_type = (
+                "kaiser_best" if librosa.__version__.startswith("0.8.") else "soxr_hq"
+            )
             pitch_shifted_samples = librosa.effects.pitch_shift(
-                samples, sr=sample_rate, n_steps=self.parameters["num_semitones"]
+                samples,
+                sr=sample_rate,
+                n_steps=self.parameters["num_semitones"],
+                res_type=resample_type,
             )
         except librosa.util.exceptions.ParameterError:
             warnings.warn(

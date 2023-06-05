@@ -34,7 +34,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/iver56/audiomentations",
     packages=find_packages(exclude=["demo", "tests"]),
-    install_requires=["numpy>=1.13.0", "librosa>0.7.2,<0.10.0", "scipy>=1.0.0,<2"],
+    install_requires=["numpy>=1.13.0", "librosa>=0.8.0,!=0.10.0,<0.11.0", "scipy>=1.3.0,<2", "soxr>=0.3.2,<1.0.0"],
     extras_require={
         "extras": [
             "cylimiter==0.3.0",

@@ -77,13 +77,19 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     with audio files. Can be str or Path instance(s). The audio files given here are
     supposed to be background noises.
 
-[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
+[`min_snr_db`](#min_snr_db){ #min_snr_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `3.0`. Minimum signal-to-noise ratio in dB. Is only
     used if `noise_rms` is set to `"relative"`
 
-[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
+[`max_snr_db`](#max_snr_db){ #max_snr_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `30.0`. Maximum signal-to-noise ratio in dB. Is
     only used if `noise_rms` is set to `"relative"`
+
+[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated. Use [`min_snr_db`](#min_snr_db) instead
+
+[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated. Use [`max_snr_db`](#max_snr_db) instead
 
 [`noise_rms`](#noise_rms){ #noise_rms }: `str` • choices: `"absolute"`, `"relative"`
 :   :octicons-milestone-24: Default: `"relative"`. Defines how the background noise will

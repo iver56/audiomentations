@@ -33,8 +33,10 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def __init__(
         self,
         sounds_path: Union[List[Path], List[str], Path, str],
-        min_snr_in_db: float = 3.0,
-        max_snr_in_db: float = 30.0,
+        min_snr_in_db: float = None,
+        max_snr_in_db: float = None,
+        min_snr_db: float = None,
+        max_snr_db: float = None,
         noise_rms: str = "relative",
         min_absolute_rms_in_db: float = -45.0,
         max_absolute_rms_in_db: float = -15.0,
@@ -46,8 +48,10 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
             audio files. Can be str or Path instance(s). The audio files given here are
             supposed to be background noises.
-        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
-        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
+        :param min_snr_in_db: Deprecated. Use min_snr_db instead.
+        :param max_snr_in_db: Deprecated. Use max_snr_db instead.
+        :param min_snr_db: Minimum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
+        :param max_snr_db: Maximum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param noise_rms: Defines how the background noise will be added to the audio input. If the chosen
             option is "relative", the RMS of the added noise will be proportional to the RMS of
             the input sound. If the chosen option is "absolute", the background noise will have
@@ -68,15 +72,46 @@ class AddBackgroundNoise(BaseWaveformTransform):
         self.sound_file_paths = find_audio_files_in_paths(sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
 
-        assert min_absolute_rms_in_db <= max_absolute_rms_in_db <= 0
-        assert min_snr_in_db <= max_snr_in_db
         assert len(self.sound_file_paths) > 0
 
+        if min_snr_db is not None and min_snr_in_db is not None:
+            raise ValueError(
+                "Passing both min_snr_db and min_snr_in_db is not supported. Use only"
+                " min_snr_db."
+            )
+        elif min_snr_db is not None:
+            self.min_snr_db = min_snr_db
+        elif min_snr_in_db is not None:
+            warnings.warn(
+                "The min_snr_in_db parameter is deprecated. Use min_snr_db instead.",
+                DeprecationWarning,
+            )
+            self.min_snr_db = min_snr_in_db
+        else:
+            self.min_snr_db = 3.0  # the default
+
+        if max_snr_db is not None and max_snr_in_db is not None:
+            raise ValueError(
+                "Passing both max_snr_db and max_snr_in_db is not supported. Use only"
+                " max_snr_db."
+            )
+        elif max_snr_db is not None:
+            self.max_snr_db = max_snr_db
+        elif max_snr_in_db is not None:
+            warnings.warn(
+                "The max_snr_in_db parameter is deprecated. Use max_snr_db instead.",
+                DeprecationWarning,
+            )
+            self.max_snr_db = max_snr_in_db
+        else:
+            self.max_snr_db = 30.0  # the default
+
+        assert self.min_snr_db <= self.max_snr_db
+
         self.noise_rms = noise_rms
-        self.min_snr_in_db = min_snr_in_db
+        assert min_absolute_rms_in_db <= max_absolute_rms_in_db <= 0
         self.min_absolute_rms_in_db = min_absolute_rms_in_db
         self.max_absolute_rms_in_db = max_absolute_rms_in_db
-        self.max_snr_in_db = max_snr_in_db
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddBackgroundNoise._load_sound
         )
@@ -89,8 +124,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["snr_in_db"] = random.uniform(
-                self.min_snr_in_db, self.max_snr_in_db
+            self.parameters["snr_db"] = random.uniform(
+                self.min_snr_db, self.max_snr_db
             )
             self.parameters["rms_in_db"] = random.uniform(
                 self.min_absolute_rms_in_db, self.max_absolute_rms_in_db
@@ -135,7 +170,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
 
         if self.noise_rms == "relative":
             desired_noise_rms = calculate_desired_noise_rms(
-                clean_rms, self.parameters["snr_in_db"]
+                clean_rms, self.parameters["snr_db"]
             )
 
             # Adjust the noise to match the desired noise RMS
@@ -163,9 +198,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def __getstate__(self):
         state = self.__dict__.copy()
         warnings.warn(
-            "Warning: the LRU cache of AddBackgroundNoise gets discarded when pickling it."
-            " E.g. this means the cache will not be used when using AddBackgroundNoise together"
-            " with multiprocessing on Windows"
+            "Warning: the LRU cache of AddBackgroundNoise gets discarded when pickling"
+            " it. E.g. this means the cache will not be used when using"
+            " AddBackgroundNoise together with multiprocessing on Windows"
         )
         del state["_load_sound"]
         return state

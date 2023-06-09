@@ -11,11 +11,17 @@ See also [https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping](https
 
 # Gain API
 
-[`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` • unit: Decibel
+[`min_gain_db`](#min_gain_db){ #min_gain_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-12.0`. Minimum gain.
 
-[`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` • unit: Decibel
+[`max_gain_db`](#max_gain_db){ #max_gain_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `12.0`. Maximum gain.
+
+[`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated. Use [`min_gain_db`](#min_gain_db) instead
+
+[`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated. Use [`max_gain_db`](#max_gain_db) instead
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

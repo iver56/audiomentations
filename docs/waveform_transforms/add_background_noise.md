@@ -98,15 +98,21 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     If the chosen option is `"absolute"`, the background noise will have an RMS
     independent of the rms of the input audio file
 
-[`min_absolute_rms_in_db`](#min_absolute_rms_in_db){ #min_absolute_rms_in_db }: `float` • unit: Decibel
+[`min_absolute_rms_db`](#min_absolute_rms_db){ #min_absolute_rms_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-45.0`. Is only used if `noise_rms` is set to
     `"absolute"`. It is the minimum RMS value in dB that the added noise can take. The
     lower the RMS is, the lower the added sound will be.
 
-[`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel
+[`max_absolute_rms_db`](#max_absolute_rms_db){ #max_absolute_rms_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-15.0`. Is only used if `noise_rms` is set to
     `"absolute"`. It is the maximum RMS value in dB that the added noise can take. Note
     that this value can not exceed 0.
+
+[`min_absolute_rms_in_db`](#min_absolute_rms_in_db){ #min_absolute_rms_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated. Use [`min_absolute_rms_db`](#min_absolute_rms_db) instead
+
+[`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated. Use [`max_absolute_rms_in_db`](#max_absolute_rms_in_db) instead
 
 [`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[np.ndarray, int], np.ndarray]]`
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or

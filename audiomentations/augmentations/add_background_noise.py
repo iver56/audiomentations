@@ -38,8 +38,10 @@ class AddBackgroundNoise(BaseWaveformTransform):
         min_snr_db: float = None,
         max_snr_db: float = None,
         noise_rms: str = "relative",
-        min_absolute_rms_in_db: float = -45.0,
-        max_absolute_rms_in_db: float = -15.0,
+        min_absolute_rms_in_db: float = None,
+        max_absolute_rms_in_db: float = None,
+        min_absolute_rms_db: float = None,
+        max_absolute_rms_db: float = None,
         noise_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
         p: float = 0.5,
         lru_cache_size: int = 2,
@@ -56,12 +58,14 @@ class AddBackgroundNoise(BaseWaveformTransform):
             option is "relative", the RMS of the added noise will be proportional to the RMS of
             the input sound. If the chosen option is "absolute", the background noise will have
             a RMS independent of the RMS of the input audio file. The default option is "relative".
-        :param min_absolute_rms_in_db: Is only used if noise_rms is set to "absolute". It is
+        :param min_absolute_rms_db: Is only used if noise_rms is set to "absolute". It is
             the minimum RMS value in dB that the added noise can take. The lower the RMS is,
-            the lower the added sound will be.
-        :param max_absolute_rms_in_db: Is only used if noise_rms is set to "absolute". It is
+            the lower the added sound will be. Default: -45.0
+        :param max_absolute_rms_db: Is only used if noise_rms is set to "absolute". It is
             the maximum RMS value in dB that the added noise can take. Note that this value
-            can not exceed 0.
+            can not exceed 0. Default: -15.0
+        :param min_absolute_rms_in_db: Deprecated. Use min_absolute_rms_db instead.
+        :param max_absolute_rms_in_db: Deprecated. Use max_absolute_rms_db instead.
         :param noise_transform: A callable waveform transform (or composition of transforms) that
             gets applied to the noise before it gets mixed in. The callable is expected
             to input audio waveform (numpy array) and sample rate (int).
@@ -108,10 +112,47 @@ class AddBackgroundNoise(BaseWaveformTransform):
 
         assert self.min_snr_db <= self.max_snr_db
 
+        if min_absolute_rms_db is not None and min_absolute_rms_in_db is not None:
+            raise ValueError(
+                "Passing both min_absolute_rms_db and min_absolute_rms_in_db is not"
+                " supported. Use only min_absolute_rms_db."
+            )
+        elif min_absolute_rms_db is not None:
+            self.min_absolute_rms_db = min_absolute_rms_db
+        elif min_absolute_rms_in_db is not None:
+            warnings.warn(
+                (
+                    "The min_absolute_rms_in_db parameter is deprecated. Use"
+                    " min_absolute_rms_db instead."
+                ),
+                DeprecationWarning,
+            )
+            self.min_absolute_rms_db = min_absolute_rms_in_db
+        else:
+            self.min_absolute_rms_db = -45.0  # the default
+
+        if max_absolute_rms_db is not None and max_absolute_rms_in_db is not None:
+            raise ValueError(
+                "Passing both max_absolute_rms_db and max_absolute_rms_in_db is not"
+                " supported. Use only max_absolute_rms_db."
+            )
+        elif max_absolute_rms_db is not None:
+            self.max_absolute_rms_db = max_absolute_rms_db
+        elif max_absolute_rms_in_db is not None:
+            warnings.warn(
+                (
+                    "The max_absolute_rms_in_db parameter is deprecated. Use"
+                    " max_absolute_rms_db instead."
+                ),
+                DeprecationWarning,
+            )
+            self.max_absolute_rms_db = max_absolute_rms_in_db
+        else:
+            self.max_absolute_rms_db = -45.0  # the default
+
+        assert self.min_absolute_rms_db <= self.max_absolute_rms_db <= 0
+
         self.noise_rms = noise_rms
-        assert min_absolute_rms_in_db <= max_absolute_rms_in_db <= 0
-        self.min_absolute_rms_in_db = min_absolute_rms_in_db
-        self.max_absolute_rms_in_db = max_absolute_rms_in_db
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddBackgroundNoise._load_sound
         )
@@ -124,11 +165,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["snr_db"] = random.uniform(
-                self.min_snr_db, self.max_snr_db
-            )
-            self.parameters["rms_in_db"] = random.uniform(
-                self.min_absolute_rms_in_db, self.max_absolute_rms_in_db
+            self.parameters["snr_db"] = random.uniform(self.min_snr_db, self.max_snr_db)
+            self.parameters["rms_db"] = random.uniform(
+                self.min_absolute_rms_db, self.max_absolute_rms_db
             )
             self.parameters["noise_file_path"] = random.choice(self.sound_file_paths)
 
@@ -177,7 +216,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
             noise_sound = noise_sound * (desired_noise_rms / noise_rms)
 
         if self.noise_rms == "absolute":
-            desired_noise_rms_db = self.parameters["rms_in_db"]
+            desired_noise_rms_db = self.parameters["rms_db"]
             desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
                 desired_noise_rms_db
             )

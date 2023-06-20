@@ -39,8 +39,8 @@ Here we add some gaussian noise (with SNR = 16 dB) to a speech recording.
 from audiomentations import AddGaussianSNR
 
 transform = AddGaussianSNR(
-    min_snr_in_db=5.0,
-    max_snr_in_db=40.0,
+    min_snr_db=5.0,
+    max_snr_db=40.0,
     p=1.0
 )
 
@@ -49,13 +49,19 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 
 ## AddGaussianSNR API
 
-[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
+[`min_snr_db`](#min_snr_db){ #min_snr_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `5.0`. Minimum signal-to-noise ratio in dB. A lower
     number means more noise.
 
-[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: decibel
+[`max_snr_db`](#max_snr_db){ #max_snr_db }: `float` • unit: decibel
 :   :octicons-milestone-24: Default: `40.0`. Maximum signal-to-noise ratio in dB. A
     greater number means less noise.
+
+[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated. Use [`min_snr_db`](#min_snr_db) instead
+
+[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: decibel
+:   :warning: Deprecated. Use [`max_snr_db`](#max_snr_db) instead
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

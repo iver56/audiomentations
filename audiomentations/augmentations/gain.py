@@ -30,10 +30,10 @@ class Gain(BaseWaveformTransform):
         p: float = 0.5,
     ):
         """
-        :param min_gain_db: Minimum gain
-        :param max_gain_db: Maximum gain
         :param min_gain_in_db: Deprecated. Use min_gain_db instead
         :param max_gain_in_db: Deprecated. Use max_gain_db instead
+        :param min_gain_db: Minimum gain
+        :param max_gain_db: Maximum gain
         :param p: The probability of applying this transform
         """
         super().__init__(p)

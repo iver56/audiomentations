@@ -151,8 +151,8 @@ class AddBackgroundNoiseExample(TransformUsageExample):
         np.random.seed(345)
         transform = AddBackgroundNoise(
             sounds_path=librosa.example("pistachio"),
-            min_snr_in_db=5.0,
-            max_snr_in_db=5.0,
+            min_snr_db=5.0,
+            max_snr_db=5.0,
             p=1.0,
         )
 
@@ -193,7 +193,7 @@ class AddGaussianSNRExample(TransformUsageExample):
     def generate_example(self):
         random.seed(345)
         np.random.seed(345)
-        transform = AddGaussianSNR(min_snr_in_db=16.0, max_snr_in_db=16.0, p=1.0)
+        transform = AddGaussianSNR(min_snr_db=16.0, max_snr_db=16.0, p=1.0)
 
         sound, sample_rate = load_sound_file(
             librosa.example("libri1"), sample_rate=16000
@@ -216,8 +216,8 @@ class AddShortNoisesExample(TransformUsageExample):
             os.path.join(DEMO_DIR, "short_noises"),
             min_time_between_sounds=0.8,
             max_time_between_sounds=2.5,
-            min_snr_in_db=0.0,
-            max_snr_in_db=15.0,
+            min_snr_db=0.0,
+            max_snr_db=15.0,
             p=1.0,
         )
 

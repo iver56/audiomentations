@@ -228,8 +228,8 @@ class AddShortNoises(BaseWaveformTransform):
             current_time += global_offset
             sounds = []
 
-            snr_in_db = random.uniform(self.min_snr_db, self.max_snr_db)
-            rms_in_db = random.uniform(
+            snr_db = random.uniform(self.min_snr_db, self.max_snr_db)
+            rms_db = random.uniform(
                 self.min_absolute_noise_rms_db, self.max_absolute_noise_rms_db
             )
 
@@ -249,8 +249,8 @@ class AddShortNoises(BaseWaveformTransform):
                 )
 
                 if not self.add_all_noises_with_same_level:
-                    snr_in_db = random.uniform(self.min_snr_db, self.max_snr_db)
-                    rms_in_db = random.uniform(
+                    snr_db = random.uniform(self.min_snr_db, self.max_snr_db)
+                    rms_db = random.uniform(
                         self.min_absolute_noise_rms_db, self.max_absolute_noise_rms_db
                     )
 
@@ -261,8 +261,8 @@ class AddShortNoises(BaseWaveformTransform):
                         "end": current_time + sound_duration,
                         "fade_out_time": fade_out_time,
                         "file_path": sound_file_path,
-                        "snr_in_db": snr_in_db,
-                        "rms_in_db": rms_in_db,
+                        "snr_db": snr_db,
+                        "rms_db": rms_db,
                     }
                 )
 
@@ -295,10 +295,10 @@ class AddShortNoises(BaseWaveformTransform):
                     )
 
                     if not self.add_all_noises_with_same_level:
-                        snr_in_db = random.uniform(
+                        snr_db = random.uniform(
                             self.min_snr_db, self.max_snr_db
                         )
-                        rms_in_db = random.uniform(
+                        rms_db = random.uniform(
                             self.min_absolute_noise_rms_db,
                             self.max_absolute_noise_rms_db,
                         )
@@ -310,8 +310,8 @@ class AddShortNoises(BaseWaveformTransform):
                             "end": current_time + sound_duration,
                             "fade_out_time": fade_out_time,
                             "file_path": sound_file_path,
-                            "snr_in_db": snr_in_db,
-                            "rms_in_db": rms_in_db,
+                            "snr_db": snr_db,
+                            "rms_db": rms_db,
                         }
                     )
 
@@ -390,13 +390,13 @@ class AddShortNoises(BaseWaveformTransform):
             if noise_rms > 0:
                 if self.noise_rms in ["relative", "relative_to_whole_input"]:
                     desired_noise_rms = calculate_desired_noise_rms(
-                        clean_rms, sound_params["snr_in_db"]
+                        clean_rms, sound_params["snr_db"]
                     )
 
                     # Adjust the noise to match the desired noise RMS
                     noise_samples = noise_samples * (desired_noise_rms / noise_rms)
                 elif self.noise_rms == "absolute":
-                    desired_noise_rms_db = sound_params["rms_in_db"]
+                    desired_noise_rms_db = sound_params["rms_db"]
                     desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
                         desired_noise_rms_db
                     )

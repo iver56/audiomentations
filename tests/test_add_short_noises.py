@@ -43,11 +43,11 @@ class TestAddShortNoises:
         rms_before = calculate_rms(samples)
         augmenter = AddShortNoises(
             sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-            min_snr_in_db=50.0,
-            max_snr_in_db=50.0,
+            min_snr_db=50.0,
+            max_snr_db=50.0,
             min_time_between_sounds=2.0,
             max_time_between_sounds=4.0,
-            signal_gain_in_db_during_noise=-100,
+            signal_gain_db_during_noise=-100,
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
@@ -64,8 +64,8 @@ class TestAddShortNoises:
         )
         augmenter = AddShortNoises(
             sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-            min_snr_in_db=50.0,
-            max_snr_in_db=50.0,
+            min_snr_db=50.0,
+            max_snr_db=50.0,
             min_time_between_sounds=1.0,
             max_time_between_sounds=2.0,
             noise_transform=PolarityInversion(p=1.0),
@@ -129,7 +129,7 @@ class TestAddShortNoises:
                     "end": 0.8071696744046519,
                     "fade_out_time": 0.07119110196424423,
                     "file_path": os.path.join(DEMO_DIR, "silence", "silence.wav"),
-                    "snr_in_db": 19.040001423519563,
+                    "snr_db": 19.040001423519563,
                 }
             ],
         }
@@ -228,8 +228,8 @@ class TestAddShortNoises:
             sounds_path=os.path.join(DEMO_DIR, "short_noises"),
             min_time_between_sounds=2.0,
             max_time_between_sounds=8.0,
-            min_snr_in_db=5,
-            max_snr_in_db=5,
+            min_snr_db=5,
+            max_snr_db=5,
             noise_rms="relative_to_whole_input",
             p=1.0,
         )
@@ -283,8 +283,8 @@ class TestAddShortNoises:
         dummy_audio = np.random.randint(1, 5, 250000)
         transform_same_noise_level = AddShortNoises(
             sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-            min_snr_in_db=15,
-            max_snr_in_db=30,
+            min_snr_db=15,
+            max_snr_db=30,
             noise_rms="relative",
             add_all_noises_with_same_level=True,
             min_time_between_sounds=0.5,
@@ -294,8 +294,8 @@ class TestAddShortNoises:
 
         transform_different_noise_level = AddShortNoises(
             sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-            min_snr_in_db=15,
-            max_snr_in_db=30,
+            min_snr_db=15,
+            max_snr_db=30,
             add_all_noises_with_same_level=False,
             min_time_between_sounds=0.5,
             max_time_between_sounds=1,
@@ -307,13 +307,13 @@ class TestAddShortNoises:
                 dummy_audio, sample_rate=44100
             )
             sounds = transform_same_noise_level.parameters["sounds"]
-            snr_sounds_same_level = [sounds[j]["snr_in_db"] for j in range(len(sounds))]
+            snr_sounds_same_level = [sounds[j]["snr_db"] for j in range(len(sounds))]
             transform_different_noise_level.randomize_parameters(
                 dummy_audio, sample_rate=44100
             )
             sounds = transform_different_noise_level.parameters["sounds"]
             snr_sounds_different_level = [
-                sounds[j]["snr_in_db"] for j in range(len(sounds))
+                sounds[j]["snr_db"] for j in range(len(sounds))
             ]
 
             assert len(set(snr_sounds_same_level)) == 1

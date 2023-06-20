@@ -56,8 +56,8 @@ class TestAddBackgroundNoise:
         )
         augmenter = AddBackgroundNoise(
             sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-            min_snr_in_db=15,
-            max_snr_in_db=35,
+            min_snr_db=15,
+            max_snr_db=35,
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
@@ -69,8 +69,8 @@ class TestAddBackgroundNoise:
         sample_rate = 48000
         augmenter = AddBackgroundNoise(
             sounds_path=os.path.join(DEMO_DIR, "almost_silent"),
-            min_snr_in_db=15,
-            max_snr_in_db=35,
+            min_snr_db=15,
+            max_snr_db=35,
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
@@ -84,8 +84,8 @@ class TestAddBackgroundNoise:
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "digital_silence"),
-                    min_snr_in_db=15,
-                    max_snr_in_db=35,
+                    min_snr_db=15,
+                    max_snr_db=35,
                     p=1.0,
                 )
             ]
@@ -135,8 +135,8 @@ class TestAddBackgroundNoise:
         sample_rate = 44100
         augmenter = AddBackgroundNoise(
             sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-            min_snr_in_db=3,
-            max_snr_in_db=6,
+            min_snr_db=3,
+            max_snr_db=6,
             p=1.0,
         )
         samples_out_without_transform = augmenter(

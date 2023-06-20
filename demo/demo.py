@@ -120,8 +120,8 @@ if __name__ == "__main__":
             "instance": AddBackgroundNoise(
                 sounds_path=os.path.join(DEMO_DIR, "background_noises"),
                 noise_rms="absolute",
-                min_absolute_rms_in_db=-30,
-                max_absolute_rms_in_db=-10,
+                min_absolute_rms_db=-30,
+                max_absolute_rms_db=-10,
                 p=1.0,
             ),
             "num_runs": 5,
@@ -130,8 +130,8 @@ if __name__ == "__main__":
         {
             "instance": AddBackgroundNoise(
                 sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                min_snr_in_db=2,
-                max_snr_in_db=4,
+                min_snr_db=2,
+                max_snr_db=4,
                 noise_transform=Reverse(p=1.0),
                 p=1.0,
             ),
@@ -188,8 +188,8 @@ if __name__ == "__main__":
         {
             "instance": AddShortNoises(
                 sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                min_snr_in_db=0,
-                max_snr_in_db=8,
+                min_snr_db=0,
+                max_snr_db=8,
                 noise_rms="relative",
                 min_time_between_sounds=2.0,
                 max_time_between_sounds=4.0,
@@ -208,8 +208,8 @@ if __name__ == "__main__":
         {
             "instance": AddShortNoises(
                 sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                min_snr_in_db=0,
-                max_snr_in_db=8,
+                min_snr_db=0,
+                max_snr_db=8,
                 noise_rms="relative",
                 min_time_between_sounds=2.0,
                 max_time_between_sounds=4.0,
@@ -220,7 +220,7 @@ if __name__ == "__main__":
                 max_fade_in_time=0.08,
                 min_fade_out_time=0.01,
                 max_fade_out_time=0.1,
-                signal_gain_in_db_during_noise=-100.0,
+                signal_gain_db_during_noise=-100.0,
                 p=1.0,
             ),
             "num_runs": 5,
@@ -229,8 +229,8 @@ if __name__ == "__main__":
         {
             "instance": AddShortNoises(
                 sounds_path=os.path.join(DEMO_DIR, "short_noises"),
-                min_snr_in_db=0,
-                max_snr_in_db=8,
+                min_snr_db=0,
+                max_snr_db=8,
                 noise_rms="relative",
                 min_time_between_sounds=1.0,
                 max_time_between_sounds=2.0,
@@ -281,7 +281,7 @@ if __name__ == "__main__":
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": BandStopFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},
-        {"instance": Gain(min_gain_in_db=-6, max_gain_in_db=6, p=1.0), "num_runs": 5},
+        {"instance": Gain(min_gain_db=-6.0, max_gain_db=6.0, p=1.0), "num_runs": 5},
         {"instance": GainTransition(p=1.0), "num_runs": 5},
         {"instance": HighPassFilter(p=1.0), "num_runs": 5},
         {"instance": HighShelfFilter(p=1.0), "num_runs": 5},

@@ -13,7 +13,7 @@ class TestGain:
         samples = np.array([1.0, 0.5, -0.25, -0.125, 0.0], dtype=np.float32)
         sample_rate = 16000
 
-        augment = Gain(min_gain_in_db=-6, max_gain_in_db=-6, p=1.0)
+        augment = Gain(min_gain_db=-6, max_gain_db=-6, p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert_almost_equal(
             processed_samples,
@@ -30,7 +30,7 @@ class TestGain:
         )
         sample_rate = 16000
 
-        augment = Gain(min_gain_in_db=-6, max_gain_in_db=-6, p=1.0)
+        augment = Gain(min_gain_db=-6, max_gain_db=-6, p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert_almost_equal(
             processed_samples,
@@ -52,7 +52,7 @@ class TestGain:
         print(samples.shape)
         sample_rate = 16000
 
-        augment = Gain(min_gain_in_db=-6, max_gain_in_db=-6, p=1.0)
+        augment = Gain(min_gain_db=-6, max_gain_db=-6, p=1.0)
 
         with pytest.raises(WrongMultichannelAudioShape):
             processed_samples = augment(samples=samples, sample_rate=sample_rate)

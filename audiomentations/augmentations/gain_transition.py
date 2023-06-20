@@ -1,4 +1,5 @@
 import random
+import warnings
 from typing import Union
 
 import numpy as np
@@ -8,20 +9,20 @@ from audiomentations.core.utils import convert_decibels_to_amplitude_ratio
 
 
 def get_fade_mask(
-    start_level_in_db: float,
-    end_level_in_db: float,
-    fade_time_in_samples: int,
+    start_level_db: float,
+    end_level_db: float,
+    fade_time_samples: int,
 ):
     """
-    :param start_level_in_db:
-    :param end_level_in_db:
-    :param fade_time_in_samples: How long does the fade last?
+    :param start_level_db:
+    :param end_level_db:
+    :param fade_time_samples: How long does the fade last?
     :return:
     """
     fade_mask = np.linspace(
-        start_level_in_db,
-        end_level_in_db,
-        num=fade_time_in_samples,
+        start_level_db,
+        end_level_db,
+        num=fade_time_samples,
         dtype=np.float32,
     )
     fade_mask = convert_decibels_to_amplitude_ratio(fade_mask)
@@ -47,8 +48,10 @@ class GainTransition(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_gain_in_db: float = -24.0,
-        max_gain_in_db: float = 6.0,
+        min_gain_in_db: float = None,
+        max_gain_in_db: float = None,
+        min_gain_db: float = None,
+        max_gain_db: float = None,
         min_duration: Union[float, int] = 0.2,
         max_duration: Union[float, int] = 6.0,
         duration_unit: str = "seconds",
@@ -56,8 +59,10 @@ class GainTransition(BaseWaveformTransform):
     ):
         """
 
-        :param min_gain_in_db: Minimum gain
-        :param max_gain_in_db: Maximum gain
+        :param min_gain_in_db: Deprecated. Use min_gain_db instead
+        :param max_gain_in_db: Deprecated. Use max_gain_db instead
+        :param min_gain_db: Minimum gain
+        :param max_gain_db: Maximum gain
         :param min_duration: Minimum length of transition. See also duration_unit.
         :param max_duration: Maximum length of transition. See also duration_unit.
         :param duration_unit: Defines the unit of the value of min_duration and max_duration.
@@ -67,11 +72,43 @@ class GainTransition(BaseWaveformTransform):
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        assert min_gain_in_db <= max_gain_in_db
+
+        if min_gain_db is not None and min_gain_in_db is not None:
+            raise ValueError(
+                "Passing both min_gain_db and min_gain_in_db is not supported. Use only"
+                " min_gain_db."
+            )
+        elif min_gain_db is not None:
+            self.min_gain_db = min_gain_db
+        elif min_gain_in_db is not None:
+            warnings.warn(
+                "The min_gain_in_db parameter is deprecated. Use min_gain_db instead.",
+                DeprecationWarning,
+            )
+            self.min_gain_db = min_gain_in_db
+        else:
+            self.min_gain_db = -24.0  # the default
+
+        if max_gain_db is not None and max_gain_in_db is not None:
+            raise ValueError(
+                "Passing both max_gain_db and max_gain_in_db is not supported. Use only"
+                " max_gain_db."
+            )
+        elif max_gain_db is not None:
+            self.max_gain_db = max_gain_db
+        elif max_gain_in_db is not None:
+            warnings.warn(
+                "The max_gain_in_db parameter is deprecated. Use max_gain_db instead.",
+                DeprecationWarning,
+            )
+            self.max_gain_db = max_gain_in_db
+        else:
+            self.max_gain_db = 6.0  # the default
+
+        assert self.min_gain_db <= self.max_gain_db
+
         assert min_duration > 0
         assert min_duration <= max_duration
-        self.min_gain_in_db = min_gain_in_db
-        self.max_gain_in_db = max_gain_in_db
         self.min_duration = min_duration
         self.max_duration = max_duration
         self.duration_unit = duration_unit
@@ -95,29 +132,29 @@ class GainTransition(BaseWaveformTransform):
             else:
                 raise ValueError("Invalid duration_unit")
 
-            self.parameters["fade_time_in_samples"] = max(
+            self.parameters["fade_time_samples"] = max(
                 3, random.randint(min_duration_in_samples, max_duration_in_samples)
             )
             self.parameters["t0"] = random.randint(
-                -self.parameters["fade_time_in_samples"] + 2,
+                -self.parameters["fade_time_samples"] + 2,
                 samples.shape[-1] - 2,
             )
-            self.parameters["start_gain_in_db"] = random.uniform(
-                self.min_gain_in_db, self.max_gain_in_db
+            self.parameters["start_gain_db"] = random.uniform(
+                self.min_gain_db, self.max_gain_db
             )
-            self.parameters["end_gain_in_db"] = random.uniform(
-                self.min_gain_in_db, self.max_gain_in_db
+            self.parameters["end_gain_db"] = random.uniform(
+                self.min_gain_db, self.max_gain_db
             )
 
     def apply(self, samples: np.ndarray, sample_rate: int):
         num_samples = samples.shape[-1]
         fade_mask = get_fade_mask(
-            start_level_in_db=self.parameters["start_gain_in_db"],
-            end_level_in_db=self.parameters["end_gain_in_db"],
-            fade_time_in_samples=self.parameters["fade_time_in_samples"],
+            start_level_db=self.parameters["start_gain_db"],
+            end_level_db=self.parameters["end_gain_db"],
+            fade_time_samples=self.parameters["fade_time_samples"],
         )
         start_sample_index = self.parameters["t0"]
-        end_sample_index = start_sample_index + self.parameters["fade_time_in_samples"]
+        end_sample_index = start_sample_index + self.parameters["fade_time_samples"]
         if start_sample_index < 0:
             # crop fade_mask: shave off a chunk in the beginning
             num_samples_to_shave_off = abs(start_sample_index)
@@ -135,10 +172,10 @@ class GainTransition(BaseWaveformTransform):
         samples[..., start_sample_index:end_sample_index] *= fade_mask
         if start_sample_index > 0:
             samples[..., :start_sample_index] *= convert_decibels_to_amplitude_ratio(
-                self.parameters["start_gain_in_db"]
+                self.parameters["start_gain_db"]
             )
         if end_sample_index < num_samples:
             samples[..., end_sample_index:] *= convert_decibels_to_amplitude_ratio(
-                self.parameters["end_gain_in_db"]
+                self.parameters["end_gain_db"]
             )
         return samples

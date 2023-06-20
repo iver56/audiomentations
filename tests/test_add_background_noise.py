@@ -5,6 +5,7 @@ import random
 import warnings
 
 import numpy as np
+import pytest
 
 from audiomentations import AddBackgroundNoise, Compose, Reverse
 from demo.demo import DEMO_DIR
@@ -16,13 +17,37 @@ class TestAddBackgroundNoise:
         sample_rate = 44100
         augmenter = AddBackgroundNoise(
             sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-            min_snr_in_db=15,
-            max_snr_in_db=35,
+            min_snr_db=15.0,
+            max_snr_db=35.0,
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
         assert not np.allclose(samples, samples_out)
         assert samples_out.dtype == np.float32
+
+        # test old API
+        samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 22500)).astype(np.float32)
+        sample_rate = 44100
+        with pytest.warns(DeprecationWarning):
+            augmenter = AddBackgroundNoise(
+                sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+                min_snr_in_db=15,
+                max_snr_in_db=35,
+                p=1.0,
+            )
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+        assert not np.allclose(samples, samples_out)
+        assert samples_out.dtype == np.float32
+
+    def test_pass_both_old_and_new_args(self):
+        with pytest.raises(ValueError):
+            AddBackgroundNoise(
+                sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+                min_snr_db=15,
+                max_snr_db=35,
+                min_snr_in_db=15,
+                max_snr_in_db=35,
+            )
 
     def test_add_background_noise_when_noise_sound_is_too_short(self):
         sample_rate = 44100
@@ -31,8 +56,8 @@ class TestAddBackgroundNoise:
         )
         augmenter = AddBackgroundNoise(
             sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-            min_snr_in_db=15,
-            max_snr_in_db=35,
+            min_snr_db=15,
+            max_snr_db=35,
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
@@ -44,8 +69,8 @@ class TestAddBackgroundNoise:
         sample_rate = 48000
         augmenter = AddBackgroundNoise(
             sounds_path=os.path.join(DEMO_DIR, "almost_silent"),
-            min_snr_in_db=15,
-            max_snr_in_db=35,
+            min_snr_db=15,
+            max_snr_db=35,
             p=1.0,
         )
         samples_out = augmenter(samples=samples, sample_rate=sample_rate)
@@ -59,8 +84,8 @@ class TestAddBackgroundNoise:
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "digital_silence"),
-                    min_snr_in_db=15,
-                    max_snr_in_db=35,
+                    min_snr_db=15,
+                    max_snr_db=35,
                     p=1.0,
                 )
             ]
@@ -110,8 +135,8 @@ class TestAddBackgroundNoise:
         sample_rate = 44100
         augmenter = AddBackgroundNoise(
             sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-            min_snr_in_db=3,
-            max_snr_in_db=6,
+            min_snr_db=3,
+            max_snr_db=6,
             p=1.0,
         )
         samples_out_without_transform = augmenter(

@@ -8,7 +8,7 @@ class TestLambda:
     def test_gain_lambda(self):
         samples_in = np.random.normal(0, 1, size=1024).astype(np.float32)
         augmenter = Lambda(
-            transform=Gain(min_gain_in_db=50, max_gain_in_db=50, p=1.0), p=1.0
+            transform=Gain(min_gain_db=50, max_gain_db=50, p=1.0), p=1.0
         )
         std_in = np.mean(np.abs(samples_in))
         samples_out = augmenter(samples=samples_in, sample_rate=16000)

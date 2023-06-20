@@ -27,8 +27,10 @@ class AddShortNoises(BaseWaveformTransform):
     def __init__(
         self,
         sounds_path: Union[List[Path], List[str], Path, str],
-        min_snr_in_db: float = -6.0,
-        max_snr_in_db: float = 18.0,
+        min_snr_in_db: float = None,
+        max_snr_in_db: float = None,
+        min_snr_db: float = None,
+        max_snr_db: float = None,
         min_time_between_sounds: float = 2.0,
         max_time_between_sounds: float = 8.0,
         noise_rms: str = "relative_to_whole_input",
@@ -43,7 +45,8 @@ class AddShortNoises(BaseWaveformTransform):
         max_fade_in_time: float = 0.08,
         min_fade_out_time: float = 0.01,
         max_fade_out_time: float = 0.1,
-        signal_gain_in_db_during_noise: float = 0.0,
+        signal_gain_in_db_during_noise: float = None,
+        signal_gain_db_during_noise: float = None,
         noise_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
         p: float = 0.5,
         lru_cache_size: Optional[int] = 64,
@@ -52,9 +55,11 @@ class AddShortNoises(BaseWaveformTransform):
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
             audio files. Can be str or Path instance(s). The audio files given here are
             supposed to be (short) noises.
-        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. A lower value means the added
+        :param min_snr_in_db: Deprecated. Use min_snr_db instead.
+        :param max_snr_in_db: Deprecated. Use max_snr_db instead.
+        :param min_snr_db: Minimum signal-to-noise ratio in dB. A lower value means the added
             sounds/noises will be louder. This gets ignored if noise_rms is set to "absolute".
-        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. A lower value means the added
+        :param max_snr_db: Maximum signal-to-noise ratio in dB. A lower value means the added
             sounds/noises will be louder. This gets ignored if noise_rms is set to "absolute".
         :param min_time_between_sounds: Minimum pause time (in seconds) between the added sounds/noises
         :param max_time_between_sounds: Maximum pause time (in seconds) between the added sounds/noises
@@ -96,7 +101,8 @@ class AddShortNoises(BaseWaveformTransform):
             than 0 to avoid a "click" at the end of the sound/noise.
         :param max_fade_out_time: Max sound/noise fade out time in seconds. Use a value larger
             than 0 to avoid a "click" at the end of the sound/noise.
-        :param signal_gain_in_db_during_noise: Gain applied to the signal during a short noise.
+        :param signal_gain_in_db_during_noise: Deprecated. Use signal_gain_db_during_noise instead.
+        :param signal_gain_db_during_noise: Gain applied to the signal during a short noise.
             When fading the signal to the custom gain, the same fade times are used as
             for the noise, so it's essentially cross-fading. The default value (0.0) means
             the signal will not be gained. If set to a very low value, e.g. -100.0, this
@@ -114,7 +120,7 @@ class AddShortNoises(BaseWaveformTransform):
         self.sound_file_paths = find_audio_files_in_paths(sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
         assert len(self.sound_file_paths) > 0
-        assert min_snr_in_db <= max_snr_in_db
+
         assert min_time_between_sounds <= max_time_between_sounds
         assert 0.0 < burst_probability <= 1.0
         if burst_probability == 1.0:
@@ -135,8 +141,56 @@ class AddShortNoises(BaseWaveformTransform):
 
         assert noise_rms in ["relative", "absolute", "relative_to_whole_input"]
 
-        self.min_snr_in_db = min_snr_in_db
-        self.max_snr_in_db = max_snr_in_db
+        if min_snr_db is not None and min_snr_in_db is not None:
+            raise ValueError(
+                "Passing both min_snr_db and min_snr_in_db is not supported. Use only"
+                " min_snr_db."
+            )
+        elif min_snr_db is not None:
+            self.min_snr_db = min_snr_db
+        elif min_snr_in_db is not None:
+            warnings.warn(
+                "The min_snr_in_db parameter is deprecated. Use min_snr_db instead.",
+                DeprecationWarning,
+            )
+            self.min_snr_db = min_snr_in_db
+        else:
+            self.min_snr_db = -6.0  # the default
+
+        if max_snr_db is not None and max_snr_in_db is not None:
+            raise ValueError(
+                "Passing both max_snr_db and max_snr_in_db is not supported. Use only"
+                " max_snr_db."
+            )
+        elif max_snr_db is not None:
+            self.max_snr_db = max_snr_db
+        elif max_snr_in_db is not None:
+            warnings.warn(
+                "The max_snr_in_db parameter is deprecated. Use max_snr_db instead.",
+                DeprecationWarning,
+            )
+            self.max_snr_db = max_snr_in_db
+        else:
+            self.max_snr_db = 18.0  # the default
+
+        assert self.min_snr_db <= self.max_snr_db
+
+        if signal_gain_db_during_noise is not None and signal_gain_in_db_during_noise is not None:
+            raise ValueError(
+                "Passing both signal_gain_db_during_noise and signal_gain_in_db_during_noise is not supported. Use only"
+                " signal_gain_db_during_noise."
+            )
+        elif signal_gain_db_during_noise is not None:
+            self.signal_gain_db_during_noise = signal_gain_db_during_noise
+        elif signal_gain_in_db_during_noise is not None:
+            warnings.warn(
+                "The signal_gain_in_db_during_noise parameter is deprecated. Use signal_gain_db_during_noise instead.",
+                DeprecationWarning,
+            )
+            self.signal_gain_db_during_noise = signal_gain_in_db_during_noise
+        else:
+            self.signal_gain_db_during_noise = 0.0  # the default
+
         self.min_time_between_sounds = min_time_between_sounds
         self.max_time_between_sounds = max_time_between_sounds
         self.burst_probability = burst_probability
@@ -153,7 +207,6 @@ class AddShortNoises(BaseWaveformTransform):
             include_silence_in_noise_rms_estimation
         )
         self.add_all_noises_with_same_level = add_all_noises_with_same_level
-        self.signal_gain_in_db_during_noise = signal_gain_in_db_during_noise
         self.noise_transform = noise_transform
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddShortNoises.__load_sound
@@ -175,8 +228,8 @@ class AddShortNoises(BaseWaveformTransform):
             current_time += global_offset
             sounds = []
 
-            snr_in_db = random.uniform(self.min_snr_in_db, self.max_snr_in_db)
-            rms_in_db = random.uniform(
+            snr_db = random.uniform(self.min_snr_db, self.max_snr_db)
+            rms_db = random.uniform(
                 self.min_absolute_noise_rms_db, self.max_absolute_noise_rms_db
             )
 
@@ -196,8 +249,8 @@ class AddShortNoises(BaseWaveformTransform):
                 )
 
                 if not self.add_all_noises_with_same_level:
-                    snr_in_db = random.uniform(self.min_snr_in_db, self.max_snr_in_db)
-                    rms_in_db = random.uniform(
+                    snr_db = random.uniform(self.min_snr_db, self.max_snr_db)
+                    rms_db = random.uniform(
                         self.min_absolute_noise_rms_db, self.max_absolute_noise_rms_db
                     )
 
@@ -208,8 +261,8 @@ class AddShortNoises(BaseWaveformTransform):
                         "end": current_time + sound_duration,
                         "fade_out_time": fade_out_time,
                         "file_path": sound_file_path,
-                        "snr_in_db": snr_in_db,
-                        "rms_in_db": rms_in_db,
+                        "snr_db": snr_db,
+                        "rms_db": rms_db,
                     }
                 )
 
@@ -242,10 +295,10 @@ class AddShortNoises(BaseWaveformTransform):
                     )
 
                     if not self.add_all_noises_with_same_level:
-                        snr_in_db = random.uniform(
-                            self.min_snr_in_db, self.max_snr_in_db
+                        snr_db = random.uniform(
+                            self.min_snr_db, self.max_snr_db
                         )
-                        rms_in_db = random.uniform(
+                        rms_db = random.uniform(
                             self.min_absolute_noise_rms_db,
                             self.max_absolute_noise_rms_db,
                         )
@@ -257,8 +310,8 @@ class AddShortNoises(BaseWaveformTransform):
                             "end": current_time + sound_duration,
                             "fade_out_time": fade_out_time,
                             "file_path": sound_file_path,
-                            "snr_in_db": snr_in_db,
-                            "rms_in_db": rms_in_db,
+                            "snr_db": snr_db,
+                            "rms_db": rms_db,
                         }
                     )
 
@@ -278,7 +331,7 @@ class AddShortNoises(BaseWaveformTransform):
         noise_placeholder = np.zeros_like(samples)
 
         signal_mask = None
-        gain_signal = self.signal_gain_in_db_during_noise != 0.0
+        gain_signal = self.signal_gain_db_during_noise != 0.0
         if gain_signal:
             signal_mask = np.zeros(shape=(num_samples,), dtype=np.float32)
 
@@ -337,13 +390,13 @@ class AddShortNoises(BaseWaveformTransform):
             if noise_rms > 0:
                 if self.noise_rms in ["relative", "relative_to_whole_input"]:
                     desired_noise_rms = calculate_desired_noise_rms(
-                        clean_rms, sound_params["snr_in_db"]
+                        clean_rms, sound_params["snr_db"]
                     )
 
                     # Adjust the noise to match the desired noise RMS
                     noise_samples = noise_samples * (desired_noise_rms / noise_rms)
                 elif self.noise_rms == "absolute":
-                    desired_noise_rms_db = sound_params["rms_in_db"]
+                    desired_noise_rms_db = sound_params["rms_db"]
                     desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
                         desired_noise_rms_db
                     )
@@ -358,7 +411,7 @@ class AddShortNoises(BaseWaveformTransform):
 
         if gain_signal:
             # Gain the original signal before mixing in the noises
-            signal_mask *= self.signal_gain_in_db_during_noise
+            signal_mask *= self.signal_gain_db_during_noise
             signal_mask = convert_decibels_to_amplitude_ratio(signal_mask)
             return samples * signal_mask + noise_placeholder
         else:

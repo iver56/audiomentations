@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.31.0] - 2023-06-21
+
+### Changed
+
+* Raise exception instead of warning when the given multichannel ndarray has wrong shape
+* Add support for the latest librosa 0.10 version
+* Switch to a faster resampler internally in pitch shift, leading to much faster execution. This requires `soxr`.
+* Bump min `scipy` requirement from 1.0 to 1.3
+* Rename "_in_db" to "_db" in args and parameters. Passing args with the old names still works, but is deprecated and will stop working in a future version.
+
 ## [0.30.0] - 2023-05-02
 
 ### Added
@@ -437,7 +447,8 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
-[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.30.0...HEAD
+[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.31.0...HEAD
+[0.31.0]: https://github.com/iver56/audiomentations/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/iver56/audiomentations/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/iver56/audiomentations/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/iver56/audiomentations/compare/v0.27.0...v0.28.0

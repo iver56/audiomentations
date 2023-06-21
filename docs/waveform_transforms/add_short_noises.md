@@ -68,27 +68,27 @@ Here we add some short noise sounds to a voice recording.
     supposed to be (short) noises.
 
 [`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`min_snr_db`](#min_snr_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`min_snr_db`](#min_snr_db) instead
 
 [`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`max_snr_db`](#max_snr_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`max_snr_db`](#max_snr_db) instead
 
 [`min_snr_db`](#min_snr_db){ #min_snr_db }: `float` • unit: Decibel
-:   :octicons-milestone-24: Default: `0.0` (changed to `-6.0` since v0.29.0). Minimum signal-to-noise ratio in dB. A lower
+:   :octicons-milestone-24: Default: `-6.0`. Minimum signal-to-noise ratio in dB. A lower
     value means the added sounds/noises will be louder. This gets ignored if `noise_rms`
     is set to `"absolute"`.
 
 [`max_snr_db`](#max_snr_db){ #max_snr_db }: `float` • unit: Decibel
-:   :octicons-milestone-24: Default: `24.0` (changed to `18.0` since v0.29.0). Maximum signal-to-noise ratio in dB. A
+:   :octicons-milestone-24: Default: `18.0`. Maximum signal-to-noise ratio in dB. A
     lower value means the added sounds/noises will be louder. This gets ignored if
     `noise_rms` is set to `"absolute"`.
 
 [`min_time_between_sounds`](#min_time_between_sounds){ #min_time_between_sounds }: `float` • unit: seconds
-:   :octicons-milestone-24: Default: `4.0` (changed to `2.0` since v0.29.0). Minimum pause time (in seconds) between the
+:   :octicons-milestone-24: Default: `2.0`. Minimum pause time (in seconds) between the
     added sounds/noises
 
 [`max_time_between_sounds`](#max_time_between_sounds){ #max_time_between_sounds }: `float` • unit: seconds
-:   :octicons-milestone-24: Default: `16.0` (changed to `8.0` since v0.29.0). Maximum pause time (in seconds) between the
+:   :octicons-milestone-24: Default: `8.0`. Maximum pause time (in seconds) between the
     added sounds/noises
 
 [`noise_rms`](#noise_rms){ #noise_rms }: `str` • choices: `"absolute"`, `"relative"`, `"relative_to_whole_input"`
@@ -157,7 +157,7 @@ Here we add some short noise sounds to a voice recording.
     Use a value larger than 0 to avoid a "click" at the end of the sound/noise.
 
 [`signal_gain_in_db_during_noise`](#signal_gain_in_db_during_noise){ #signal_gain_in_db_during_noise }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`signal_gain_db_during_noise`](#signal_gain_db_during_noise) instead
+:   :warning: Deprecated as of v0.31.0. Use [`signal_gain_db_during_noise`](#signal_gain_db_during_noise) instead
 
 [`signal_gain_db_during_noise`](#signal_gain_db_during_noise){ #signal_gain_in_db_during_noise }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `0.0`. Gain applied to the signal during a short noise.

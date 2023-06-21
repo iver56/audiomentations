@@ -19,10 +19,10 @@ See also [https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping :octic
 # LoudnessNormalization API
 
 [`min_lufs_in_db`](#min_lufs_in_db){ #min_lufs_in_db }: `float` • unit: LUFS
-:   :warning: Deprecated. Use [`min_lufs`](#min_lufs) instead
+:   :warning: Deprecated as of v0.31.0. Use [`min_lufs`](#min_lufs) instead
 
 [`max_lufs_in_db`](#max_lufs_in_db){ #max_lufs_in_db }: `float` • unit: LUFS
-:   :warning: Deprecated. Use [`max_lufs`](#max_lufs) instead
+:   :warning: Deprecated as of v0.31.0. Use [`max_lufs`](#max_lufs) instead
 
 [`min_lufs`](#min_lufs){ #min_lufs }: `float` • unit: LUFS
 :   :octicons-milestone-24: Default: `-31.0`. Minimum loudness target

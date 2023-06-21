@@ -12,10 +12,10 @@ See also [https://en.wikipedia.org/wiki/Clipping_(audio)#Digital_clipping](https
 # Gain API
 
 [`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`min_gain_db`](#min_gain_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`min_gain_db`](#min_gain_db) instead
 
 [`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`max_gain_db`](#max_gain_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`max_gain_db`](#max_gain_db) instead
 
 [`min_gain_db`](#min_gain_db){ #min_gain_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-12.0`. Minimum gain.

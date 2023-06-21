@@ -86,10 +86,10 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     only used if `noise_rms` is set to `"relative"`
 
 [`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`min_snr_db`](#min_snr_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`min_snr_db`](#min_snr_db) instead
 
 [`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`max_snr_db`](#max_snr_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`max_snr_db`](#max_snr_db) instead
 
 [`noise_rms`](#noise_rms){ #noise_rms }: `str` • choices: `"absolute"`, `"relative"`
 :   :octicons-milestone-24: Default: `"relative"`. Defines how the background noise will
@@ -109,10 +109,10 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     that this value can not exceed 0.
 
 [`min_absolute_rms_in_db`](#min_absolute_rms_in_db){ #min_absolute_rms_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`min_absolute_rms_db`](#min_absolute_rms_db) instead
+:   :warning: Deprecated as of v0.31.0.. Use [`min_absolute_rms_db`](#min_absolute_rms_db) instead
 
 [`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`max_absolute_rms_in_db`](#max_absolute_rms_in_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`max_absolute_rms_in_db`](#max_absolute_rms_in_db) instead
 
 [`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[np.ndarray, int], np.ndarray]]`
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or

@@ -58,10 +58,10 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
     greater number means less noise.
 
 [`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated. Use [`min_snr_db`](#min_snr_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`min_snr_db`](#min_snr_db) instead
 
 [`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: decibel
-:   :warning: Deprecated. Use [`max_snr_db`](#max_snr_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`max_snr_db`](#max_snr_db) instead
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

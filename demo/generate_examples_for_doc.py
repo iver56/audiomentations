@@ -47,7 +47,8 @@ from audiomentations import (
     TimeStretch,
     Trim,
     AdjustDuration,
-    Limiter, AddGaussianSNR,
+    Limiter,
+    AddGaussianSNR,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 
@@ -244,6 +245,33 @@ class AdjustDurationExample(TransformUsageExample):
             librosa.example("pistachio"), sample_rate=None
         )
         sound = sound[..., 0 : int(4.6 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class AirAbsorptionExample(TransformUsageExample):
+    transform_class = AirAbsorption
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = AirAbsorption(
+            min_temperature=20.0,
+            max_temperature=20.0,
+            min_humidity=70.0,
+            max_humidity=70.0,
+            min_distance=20.0,
+            max_distance=20.0,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
 
         transformed_sound = transform(sound, sample_rate)
 

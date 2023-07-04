@@ -2,7 +2,29 @@
 
 _Added in v0.26.0_
 
-Apply a user-defined transform (callable) to the signal.
+Apply a user-defined transform (callable) to the signal. The inspiration for this
+transform comes from albumentation's lambda transform. This allows one to have a little
+more fine-grained control over the operations in the context of a `Compose`, `OneOf` or `SomeOf`
+
+## Usage example
+
+```python
+import random
+
+from audiomentations import Lambda, OneOf, Gain
+
+
+def gain_only_left_channel(samples, sample_rate):
+    samples[0, :] *= random.uniform(0.8, 1.25)
+    return samples
+
+
+transform = OneOf(
+    transforms=[Lambda(transform=gain_only_left_channel, p=1.0), Gain(p=1.0)]
+)
+
+augmented_sound = transform(my_stereo_waveform_ndarray, sample_rate=16000)
+```
 
 # Lambda API
 

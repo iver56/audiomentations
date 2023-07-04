@@ -15,15 +15,19 @@ where `distance` is the microphone-source assumed distance in meters and `absorp
 is adapted from a lookup table by [pyroomacoustics](https://github.com/LCAV/pyroomacoustics).
 It can also be seen as a lowpass filter with variable octave attenuation.
 
-Note: This only "simulates" the dampening of high frequencies, and does not
-attenuate according to the distance law. Gain augmentation needs to be done separately.
+Note that since this transform mostly affects high frequencies, it is only
+suitable for audio with sufficiently high sample rate, like 32 kHz and above.
+
+Note also that this transform only "simulates" the dampening of high frequencies, and
+does not attenuate according to the distance law. Gain augmentation needs to be done
+separately.
 
 ## Input-output example
 
 Here we input a high-quality speech recording and apply `AirAbsorption` with an air
 temperature of 20 degrees celsius, 70% humidity and a distance of 20 meters. One can see
-clearly in the spectrogram that the highest frequencies, especially above ~13 kHz, are
-gained down in the output, but it may require a quiet room and some concentration to
+clearly in the spectrogram that the highs, especially above ~13 kHz, are rolled off in
+the output, but it may require a quiet room and some concentration to
 hear it clearly in the audio comparison.
 
 ![Input-output waveforms and spectrograms](AirAbsorption.webp)

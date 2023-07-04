@@ -18,6 +18,34 @@ It can also be seen as a lowpass filter with variable octave attenuation.
 Note: This only "simulates" the dampening of high frequencies, and does not
 attenuate according to the distance law. Gain augmentation needs to be done separately.
 
+## Input-output example
+
+Here we input a high-quality speech recording and apply `AirAbsorption` with an air
+temperature of 20 degrees celsius, 70% humidity and a distance of 20 meters. One can see
+clearly in the spectrogram that the highest frequencies, especially above ~13 kHz, are
+gained down in the output, but it may require a quiet room and some concentration to
+hear it clearly in the audio comparison.
+
+![Input-output waveforms and spectrograms](AirAbsorption.webp)
+
+| Input sound                                                                           | Transformed sound                                                                           |
+|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| <audio controls><source src="../AirAbsorption_input.flac" type="audio/flac"></audio> | <audio controls><source src="../AirAbsorption_transformed.flac" type="audio/flac"></audio> | 
+
+## Usage example
+
+```python
+from audiomentations import AirAbsorption
+
+transform = AirAbsorption(
+    min_distance=10.0,
+    max_distance=50.0,
+    p=1.0,
+)
+
+augmented_sound = transform(my_waveform_ndarray, sample_rate=48000)
+```
+
 ## AirAbsorption API
 
 [`min_temperature`](#min_temperature){ #min_temperature }: `float` • unit: Celsius • choices: [10.0, 20.0]

@@ -45,14 +45,11 @@ class TestGain:
         assert processed_samples.dtype == np.float32
 
     def test_gain_multichannel_with_wrong_dimension_ordering(self):
-        samples = np.array(
-            [[1.0, 0.5, -0.25, -0.125, 0.0], [1.0, 0.5, -0.25, -0.125, 0.0]],
-            dtype=np.float32,
-        ).T
-        print(samples.shape)
-        sample_rate = 16000
+        samples = np.random.uniform(low=-0.5, high=0.5, size=(2000, 2)).astype(
+            np.float32
+        )
 
         augment = Gain(min_gain_db=-6, max_gain_db=-6, p=1.0)
 
         with pytest.raises(WrongMultichannelAudioShape):
-            processed_samples = augment(samples=samples, sample_rate=sample_rate)
+            augment(samples=samples, sample_rate=16000)

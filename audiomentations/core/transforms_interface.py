@@ -66,7 +66,8 @@ class BaseWaveformTransform(BaseTransform):
             self.randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"] and len(samples) > 0:
             if self.is_multichannel(samples):
-                if samples.shape[0] > samples.shape[1]:
+                # Note: We multiply by 8 here to allow big batches of very short audio
+                if samples.shape[0] > samples.shape[1] * 8:
                     raise WrongMultichannelAudioShape(
                         "Multichannel audio must have channels first, not channels last. In"
                         " other words, the shape must be (channels, samples), not"

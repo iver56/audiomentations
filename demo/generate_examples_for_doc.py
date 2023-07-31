@@ -298,6 +298,26 @@ class LimiterExample(TransformUsageExample):
 
 
 @register
+class PitchShiftExample(TransformUsageExample):
+    transform_class = PitchShift
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = PitchShift(min_semitones=-4, max_semitones=-4, p=1.0)
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("pistachio"), sample_rate=None
+        )
+        sound = sound[..., 0 : int(4.6 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+
+@register
 class RoomSimulatorExample(TransformUsageExample):
     transform_class = RoomSimulator
 

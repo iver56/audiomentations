@@ -13,7 +13,7 @@ class PitchShift(BaseWaveformTransform):
     supports_multichannel = True
 
     def __init__(
-        self, min_semitones: float = -4.0, max_semitones: float = 4, p: float = 0.5
+        self, min_semitones: float = -4.0, max_semitones: float = 4.0, p: float = 0.5
     ):
         """
         :param min_semitones: Minimum semitones to shift. Negative number means shift down.

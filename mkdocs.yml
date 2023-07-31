@@ -49,6 +49,8 @@ nav:
   - Alternatives: alternatives.md
 theme:
   name: material
+  features:
+    - navigation.expand
 repo_name: 'iver56/audiomentations'
 repo_url: 'https://github.com/iver56/audiomentations'
 edit_uri: edit/main/docs/

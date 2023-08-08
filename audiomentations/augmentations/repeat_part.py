@@ -66,6 +66,13 @@ class RepeatPart(BaseWaveformTransform):
                 0, samples.shape[-1] - self.parameters["part_duration_samples"]
             )
 
+    @staticmethod
+    def transform_parts(parts: np.ndarray, part_length: int, part_transform):
+        for i in range(0, parts.shape[-1], part_length):
+            parts[..., i : i + part_length] = part_transform(
+                parts[..., i : i + part_length]
+            )
+
     def apply(self, samples: np.ndarray, sample_rate: int):
         part = samples[
             ...,
@@ -92,10 +99,9 @@ class RepeatPart(BaseWaveformTransform):
                 repeats_end_index = repeats_start_index + parts.shape[-1]
 
                 result_placeholder = np.zeros(shape=result_shape, dtype=np.float32)
-                if self.parameters["part_start_index"] > 0:
-                    result_placeholder[..., :repeats_start_index] = samples[
-                        ..., :repeats_start_index
-                    ]
+                result_placeholder[..., :repeats_start_index] = samples[
+                    ..., :repeats_start_index
+                ]
 
                 result_placeholder[
                     ...,
@@ -103,7 +109,7 @@ class RepeatPart(BaseWaveformTransform):
                 ] = parts
 
                 result_placeholder[..., repeats_end_index:] = samples[
-                    ..., -(result_length - repeats_end_index):
+                    ..., -(result_length - repeats_end_index) :
                 ]
                 return result_placeholder
             else:

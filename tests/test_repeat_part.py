@@ -125,3 +125,24 @@ class TestRepeatPart:
             ),
         )
         assert processed_samples.dtype == np.float32
+
+    def test_insert_two_repeats(self):
+        augment = RepeatPart(mode="insert", crossfade=False, p=1.0)
+        augment.parameters = {
+            "should_apply": True,
+            "part_num_samples": 3,
+            "repeats": 2,
+            "part_start_index": 0,
+        }
+        augment.freeze_parameters()
+
+        samples = np.array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7], dtype=np.float32)
+        processed_samples = augment(samples=samples, sample_rate=4000)
+        assert_array_almost_equal(
+            processed_samples,
+            np.array(
+                [0.0, 0.1, 0.2, 0.0, 0.1, 0.2, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+                dtype=np.float32,
+            ),
+        )
+        assert processed_samples.dtype == np.float32

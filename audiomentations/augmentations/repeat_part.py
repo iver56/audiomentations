@@ -1,11 +1,9 @@
 import random
 from typing import Optional, Callable
 
-import math
 import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import convert_decibels_to_amplitude_ratio
 
 
 class RepeatPart(BaseWaveformTransform):
@@ -86,11 +84,39 @@ class RepeatPart(BaseWaveformTransform):
             # TODO: Maybe do sqrt-based crossfade, like I learned in the first semester of mustek?
             pass
         else:
-            repeats_length = part_length * self.parameters["repeats"]
+            repeats_start_index = (
+                self.parameters["part_start_index"]
+                + self.parameters["part_num_samples"]
+            )
 
+            last_end_index = repeats_start_index
+            parts = []
+            for i in range(self.parameters["repeats"]):
+                start_idx = last_end_index
+
+                part_array = part
+
+                if self.part_transform:
+                    part_array = self.part_transform(np.copy(part_array), sample_rate)
+
+                last_end_index = start_idx + part_array.shape[-1]
+
+                stop = False
+                if self.mode == "replace" and last_end_index > samples.shape[-1]:
+                    limited_part_length = samples.shape[-1] - start_idx
+                    last_end_index = start_idx + limited_part_length
+                    part_array = part[..., :limited_part_length]
+                    stop = True
+
+                parts.append(
+                    {"array": part_array, "start_idx": start_idx, "end_idx": last_end_index}
+                )
+                if stop:
+                    break
+
+            repeats_length = parts[-1]["end_idx"] - parts[0]["start_idx"]
             result_length = samples.shape[-1]
             if self.mode == "insert":
-                # TODO: Actually, we don't know the true repeats length before the part_transforms have been applied!
                 result_length += repeats_length
 
             if samples.ndim == 1:
@@ -98,45 +124,24 @@ class RepeatPart(BaseWaveformTransform):
             else:
                 result_shape = (samples.shape[0], result_length)
 
-            repeats_start_index = (
-                self.parameters["part_start_index"]
-                + self.parameters["part_num_samples"]
-            )
-            repeats_end_index = repeats_start_index + repeats_length
-
             result_placeholder = np.zeros(shape=result_shape, dtype=np.float32)
             result_placeholder[..., :repeats_start_index] = samples[
                 ..., :repeats_start_index
             ]
 
-            for i in range(self.parameters["repeats"]):
-                start_idx = repeats_start_index + i * part_length
-
-                the_part = part
-
-                if self.part_transform:
-                    the_part = self.part_transform(np.copy(the_part), sample_rate)
-
-                end_idx = start_idx + the_part.shape[-1]
-
-                if end_idx > result_length:
-                    limited_part_length = result_length - start_idx
-                    end_idx = start_idx + limited_part_length
-                    the_part = part[..., :limited_part_length]
-
-                result_placeholder[..., start_idx:end_idx] = (
-                    the_part  # needs to be += instead of = when crossfading is enabled
-                )
+            for part in parts:
+                result_placeholder[..., part["start_idx"] : part["end_idx"]] = part[
+                    "array"
+                ]  # needs to be += instead of = when crossfading is enabled
+            del parts
 
             if self.mode == "insert":
-                result_placeholder[..., repeats_end_index:] = samples[
-                    ..., -(result_length - repeats_end_index) :
+                result_placeholder[..., last_end_index:] = samples[
+                    ..., -(result_length - last_end_index) :
                 ]
             else:
-                if repeats_end_index < result_length:
-                    result_placeholder[..., repeats_end_index:] = samples[
-                        ..., repeats_end_index:
-                    ]
+                if last_end_index < result_length:
+                    result_placeholder[..., last_end_index:] = samples[..., last_end_index:]
             return result_placeholder
 
     def freeze_parameters(self):

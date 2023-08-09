@@ -62,21 +62,24 @@ class BaseWaveformTransform(BaseTransform):
                 "Warning: input samples dtype is np.float64. Converting to np.float32"
             )
             samples = np.float32(samples)
-        if not self.are_parameters_frozen:
+        if not self.are_parameters_frozen or self.parameters["should_apply"] is None:
             self.randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"] and len(samples) > 0:
             if self.is_multichannel(samples):
                 # Note: We multiply by 8 here to allow big batches of very short audio
                 if samples.shape[0] > samples.shape[1] * 8:
                     raise WrongMultichannelAudioShape(
-                        "Multichannel audio must have channels first, not channels last. In"
-                        " other words, the shape must be (channels, samples), not"
-                        " (samples, channels). See https://iver56.github.io/audiomentations/guides/multichannel_audio_array_shapes/ for more info."
+                        "Multichannel audio must have channels first, not channels"
+                        " last. In other words, the shape must be (channels, samples),"
+                        " not (samples, channels). See"
+                        " https://iver56.github.io/audiomentations/guides/multichannel_audio_array_shapes/"
+                        " for more info."
                     )
                 if not self.supports_multichannel:
                     raise MultichannelAudioNotSupportedException(
-                        "{} only supports mono audio, not multichannel audio. In other words, a 1-dimensional input"
-                        " ndarray was expected, but the input had more than 1 dimension.".format(
+                        "{} only supports mono audio, not multichannel audio. In other"
+                        " words, a 1-dimensional input ndarray was expected, but the"
+                        " input had more than 1 dimension.".format(
                             self.__class__.__name__
                         )
                     )

@@ -45,7 +45,9 @@ class RepeatPart(BaseWaveformTransform):
         self.mode = mode
         self.crossfade = crossfade
         self.crossfade_duration = crossfade_duration
-        self.part_transform = part_transform  # TODO: implement freeze transforms for the part_transform
+        self.part_transform = (
+            part_transform  # TODO: implement freeze transforms for the part_transform
+        )
 
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -63,7 +65,7 @@ class RepeatPart(BaseWaveformTransform):
                 self.min_repeats, self.max_repeats
             )
             self.parameters["part_start_index"] = random.randint(
-                0, samples.shape[-1] - self.parameters["part_duration_samples"]
+                0, samples.shape[-1] - self.parameters["part_num_samples"]
             )
 
     @staticmethod
@@ -136,3 +138,13 @@ class RepeatPart(BaseWaveformTransform):
                         ..., repeats_end_index:
                     ]
             return result_placeholder
+
+    def freeze_parameters(self):
+        super().freeze_parameters()
+        if hasattr(self.part_transform, "freeze_parameters"):
+            self.part_transform.freeze_parameters()
+
+    def unfreeze_parameters(self):
+        super().unfreeze_parameters()
+        if hasattr(self.part_transform, "unfreeze_parameters"):
+            self.part_transform.unfreeze_parameters()

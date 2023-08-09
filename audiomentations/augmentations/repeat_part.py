@@ -45,7 +45,7 @@ class RepeatPart(BaseWaveformTransform):
         self.mode = mode
         self.crossfade = crossfade
         self.crossfade_duration = crossfade_duration
-        self.part_transform = part_transform  # TODO: Actually implement the use of this
+        self.part_transform = part_transform  # TODO: implement freeze transforms for the part_transform
 
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -79,61 +79,60 @@ class RepeatPart(BaseWaveformTransform):
             self.parameters["part_start_index"] : self.parameters["part_start_index"]
             + self.parameters["part_num_samples"],
         ]
+        part_length = part.shape[-1]
         if self.crossfade:
             # TODO: Maybe do sqrt-based crossfade, like I learned in the first semester of mustek?
             pass
         else:
+            repeats_length = part_length * self.parameters["repeats"]
+
+            result_length = samples.shape[-1]
             if self.mode == "insert":
-                parts = np.tile(part, self.parameters["repeats"])
+                # TODO: Actually, we don't know the true repeats length before the part_transforms have been applied!
+                result_length += repeats_length
 
-                result_length = samples.shape[-1] + parts.shape[-1]
-                if samples.ndim == 1:
-                    result_shape = (result_length,)
-                else:
-                    result_shape = (samples.shape[0], result_length)
+            if samples.ndim == 1:
+                result_shape = (result_length,)
+            else:
+                result_shape = (samples.shape[0], result_length)
 
-                repeats_start_index = (
-                    self.parameters["part_start_index"]
-                    + self.parameters["part_num_samples"]
+            repeats_start_index = (
+                self.parameters["part_start_index"]
+                + self.parameters["part_num_samples"]
+            )
+            repeats_end_index = repeats_start_index + repeats_length
+
+            result_placeholder = np.zeros(shape=result_shape, dtype=np.float32)
+            result_placeholder[..., :repeats_start_index] = samples[
+                ..., :repeats_start_index
+            ]
+
+            for i in range(self.parameters["repeats"]):
+                start_idx = repeats_start_index + i * part_length
+
+                the_part = part
+
+                if self.part_transform:
+                    the_part = self.part_transform(np.copy(the_part), sample_rate)
+
+                end_idx = start_idx + the_part.shape[-1]
+
+                if end_idx > result_length:
+                    limited_part_length = result_length - start_idx
+                    end_idx = start_idx + limited_part_length
+                    the_part = part[..., :limited_part_length]
+
+                result_placeholder[..., start_idx:end_idx] = (
+                    the_part  # needs to be += instead of = when crossfading is enabled
                 )
-                repeats_end_index = repeats_start_index + parts.shape[-1]
 
-                result_placeholder = np.zeros(shape=result_shape, dtype=np.float32)
-                result_placeholder[..., :repeats_start_index] = samples[
-                    ..., :repeats_start_index
-                ]
-
-                result_placeholder[
-                    ...,
-                    repeats_start_index:repeats_end_index,
-                ] = parts
-
+            if self.mode == "insert":
                 result_placeholder[..., repeats_end_index:] = samples[
                     ..., -(result_length - repeats_end_index) :
                 ]
-                return result_placeholder
             else:
-                repeated_part_start_index = (
-                    self.parameters["part_start_index"]
-                    + self.parameters["part_num_samples"]
-                )
-                max_repeated_part_length = samples.shape[-1] - repeated_part_start_index
-                if self.parameters["repeats"] > 1:
-                    # Limit the number of tiles to what fits inside the samples
-                    repeats = min(
-                        self.parameters["repeats"],
-                        int(math.ceil(max_repeated_part_length / part.shape[-1])),
-                    )
-                    parts = np.tile(part, repeats)
-                else:
-                    parts = part
-
-                if parts.shape[-1] > max_repeated_part_length:
-                    parts = parts[..., :max_repeated_part_length]
-
-                samples[
-                    ...,
-                    repeated_part_start_index : repeated_part_start_index
-                    + parts.shape[-1],
-                ] = parts
-                return samples
+                if repeats_end_index < result_length:
+                    result_placeholder[..., repeats_end_index:] = samples[
+                        ..., repeats_end_index:
+                    ]
+            return result_placeholder

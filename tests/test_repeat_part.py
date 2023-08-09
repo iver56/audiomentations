@@ -1,11 +1,14 @@
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
+from audiomentations import Gain
 from audiomentations.augmentations.repeat_part import RepeatPart
 
 
 class TestRepeatPart:
     # TODO: Test 2D
+    # TODO: Test part_transform freeze_parameters
+    # TODO: Test what happens when part_transform changes the part length
 
     def test_replace_one_repeat(self):
         augment = RepeatPart(mode="replace", crossfade=False, p=1.0)
@@ -25,6 +28,48 @@ class TestRepeatPart:
             processed_samples,
             np.array(
                 [0.0, 0.1, 0.2, 0.3, 0.1, 0.2, 0.3, 0.7, 0.8, 0.9, 1.0],
+                dtype=np.float32,
+            ),
+        )
+        assert processed_samples.shape == samples.shape
+        assert processed_samples.dtype == np.float32
+
+    def test_replace_one_repeat_transformed(self):
+        augment = RepeatPart(
+            mode="replace",
+            crossfade=False,
+            part_transform=Gain(min_gain_db=-6.0, max_gain_db=-6.0, p=1.0),
+            p=1.0,
+        )
+        augment.parameters = {
+            "should_apply": True,
+            "part_num_samples": 3,
+            "repeats": 1,
+            "part_start_index": 1,
+        }
+        augment.freeze_parameters()
+
+        samples = np.array(
+            [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], dtype=np.float32
+        )
+        processed_samples = augment(samples=samples, sample_rate=4000)
+        part_gain_factor = 0.5011872336272722  # -6 dB
+        assert_array_almost_equal(
+            processed_samples,
+            np.array(
+                [
+                    0.0,
+                    0.1,
+                    0.2,
+                    0.3,
+                    0.1 * part_gain_factor,
+                    0.2 * part_gain_factor,
+                    0.3 * part_gain_factor,
+                    0.7,
+                    0.8,
+                    0.9,
+                    1.0,
+                ],
                 dtype=np.float32,
             ),
         )

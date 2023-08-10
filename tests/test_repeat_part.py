@@ -15,7 +15,7 @@ def adapt_ndim(samples, ndim):
 
 class TestRepeatPart:
     # TODO: Test crossfading
-    
+
     def test_replace_one_repeat(self):
         augment = RepeatPart(mode="replace", crossfade=False, p=1.0)
         augment.parameters = {
@@ -49,9 +49,10 @@ class TestRepeatPart:
             part_transform=Gain(min_gain_db=-6.0, max_gain_db=-6.0, p=1.0),
             p=1.0,
         )
+        part_gain_factor = 0.5011872336272722
         augment.part_transform.parameters = {
             "should_apply": True,
-            "amplitude_ratio": 0.5011872336272722,  # -6 dB
+            "amplitude_ratio": part_gain_factor,  # -6 dB
         }
         augment.parameters = {
             "should_apply": True,
@@ -69,7 +70,7 @@ class TestRepeatPart:
             samples = adapt_ndim(samples, ndim)
 
             processed_samples = augment(samples=samples, sample_rate=4000)
-            part_gain_factor = augment.part_transform.parameters["amplitude_ratio"]
+
             target_samples = np.array(
                 [
                     0.0,
@@ -185,6 +186,43 @@ class TestRepeatPart:
                 [0.0, 0.1, 0.2, 0.3, 0.1, 0.2, 0.3, 0.1, 0.2, 0.3, 0.1],
                 dtype=np.float32,
             )
+            target_samples = adapt_ndim(target_samples, ndim)
+            assert_array_almost_equal(processed_samples, target_samples)
+            assert processed_samples.shape == samples.shape
+            assert processed_samples.dtype == np.float32
+
+    def test_replace_many_transformed_repeats_exceed_input_length(self):
+        augment = RepeatPart(
+            mode="replace",
+            crossfade=False,
+            part_transform=Gain(min_gain_db=-6.0, max_gain_db=-6.0, p=1.0),
+            p=1.0,
+        )
+        part_gain_factor = 0.5011872336272722
+        augment.part_transform.parameters = {
+            "should_apply": True,
+            "amplitude_ratio": part_gain_factor,  # -6 dB
+        }
+        augment.parameters = {
+            "should_apply": True,
+            "part_num_samples": 3,
+            "repeats": 9,
+            "part_start_index": 1,
+        }
+        augment.freeze_parameters()
+
+        for ndim in (1, 2):
+            samples = np.array(
+                [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+                dtype=np.float32,
+            )
+            samples = adapt_ndim(samples, ndim)
+            processed_samples = augment(samples=samples, sample_rate=4000)
+            target_samples = np.array(
+                [0.0, 0.1, 0.2, 0.3, 0.1, 0.2, 0.3, 0.1, 0.2, 0.3, 0.1],
+                dtype=np.float32,
+            )
+            target_samples[4:] *= part_gain_factor
             target_samples = adapt_ndim(target_samples, ndim)
             assert_array_almost_equal(processed_samples, target_samples)
             assert processed_samples.shape == samples.shape

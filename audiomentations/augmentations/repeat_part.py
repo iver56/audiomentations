@@ -79,7 +79,6 @@ class RepeatPart(BaseWaveformTransform):
             self.parameters["part_start_index"] : self.parameters["part_start_index"]
             + self.parameters["part_num_samples"],
         ]
-        part_length = part.shape[-1]
         if self.crossfade:
             # TODO: Maybe do sqrt-based crossfade, like I learned in the first semester of mustek?
             pass
@@ -105,7 +104,7 @@ class RepeatPart(BaseWaveformTransform):
                 if self.mode == "replace" and last_end_index > samples.shape[-1]:
                     limited_part_length = samples.shape[-1] - start_idx
                     last_end_index = start_idx + limited_part_length
-                    part_array = part[..., :limited_part_length]
+                    part_array = part_array[..., :limited_part_length]
                     stop = True
 
                 parts.append(

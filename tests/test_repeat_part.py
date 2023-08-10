@@ -22,7 +22,7 @@ class TestRepeatPart:
     # TODO: Test crossfading
 
     def test_replace_one_repeat(self):
-        augment = RepeatPart(mode="replace", crossfade=False, p=1.0)
+        augment = RepeatPart(mode="replace", crossfade_duration=0.0, p=1.0)
         augment.parameters = {
             "should_apply": True,
             "part_num_samples": 3,
@@ -50,7 +50,7 @@ class TestRepeatPart:
     def test_replace_one_repeat_transformed(self):
         augment = RepeatPart(
             mode="replace",
-            crossfade=False,
+            crossfade_duration=0.0,
             part_transform=Gain(min_gain_db=-6.0, max_gain_db=-6.0, p=1.0),
             p=1.0,
         )
@@ -102,7 +102,7 @@ class TestRepeatPart:
             min_part_duration=0.1,
             max_part_duration=0.2,
             part_transform=Gain(p=1.0),
-            crossfade=False,
+            crossfade_duration=0.0,
             p=1.0,
         )
         dummy_samples = np.zeros(40, dtype=np.float32)
@@ -119,7 +119,7 @@ class TestRepeatPart:
         assert params3 != params2
 
     def test_replace_one_repeat_near_end(self):
-        augment = RepeatPart(mode="replace", crossfade=False, p=1.0)
+        augment = RepeatPart(mode="replace", crossfade_duration=0.0, p=1.0)
         augment.parameters = {
             "should_apply": True,
             "part_num_samples": 3,
@@ -145,7 +145,7 @@ class TestRepeatPart:
             assert processed_samples.dtype == np.float32
 
     def test_replace_two_repeats(self):
-        augment = RepeatPart(mode="replace", crossfade=False, p=1.0)
+        augment = RepeatPart(mode="replace", crossfade_duration=0.0, p=1.0)
         augment.parameters = {
             "should_apply": True,
             "part_num_samples": 3,
@@ -171,7 +171,7 @@ class TestRepeatPart:
             assert processed_samples.dtype == np.float32
 
     def test_replace_many_repeats_exceed_input_length(self):
-        augment = RepeatPart(mode="replace", crossfade=False, p=1.0)
+        augment = RepeatPart(mode="replace", crossfade_duration=0.0, p=1.0)
         augment.parameters = {
             "should_apply": True,
             "part_num_samples": 3,
@@ -199,7 +199,7 @@ class TestRepeatPart:
     def test_replace_many_transformed_repeats_exceed_input_length(self):
         augment = RepeatPart(
             mode="replace",
-            crossfade=False,
+            crossfade_duration=0.0,
             part_transform=Gain(min_gain_db=-6.0, max_gain_db=-6.0, p=1.0),
             p=1.0,
         )
@@ -234,7 +234,7 @@ class TestRepeatPart:
             assert processed_samples.dtype == np.float32
 
     def test_insert_one_repeat(self):
-        augment = RepeatPart(mode="insert", crossfade=False, p=1.0)
+        augment = RepeatPart(mode="insert", crossfade_duration=0.0, p=1.0)
         augment.parameters = {
             "should_apply": True,
             "part_num_samples": 3,
@@ -257,7 +257,7 @@ class TestRepeatPart:
         assert processed_samples.dtype == np.float32
 
     def test_insert_two_repeats(self):
-        augment = RepeatPart(mode="insert", crossfade=False, p=1.0)
+        augment = RepeatPart(mode="insert", crossfade_duration=0.0, p=1.0)
         augment.parameters = {
             "should_apply": True,
             "part_num_samples": 3,
@@ -280,7 +280,7 @@ class TestRepeatPart:
     def test_insert_two_elongated_repeats(self):
         augment = RepeatPart(
             mode="insert",
-            crossfade=False,
+            crossfade_duration=0.0,
             part_transform=AdjustDuration(duration_samples=6, p=1.0),
             p=1.0,
         )
@@ -326,7 +326,7 @@ class TestRepeatPart:
 
     def test_insert_two_repeats_with_crossfading(self):
         augment = RepeatPart(
-            mode="insert", crossfade=True, crossfade_duration=0.005, p=1.0
+            mode="insert", crossfade_duration=0.005, p=1.0
         )
         augment.parameters = {
             "should_apply": True,
@@ -348,7 +348,7 @@ class TestRepeatPart:
 
     def test_repeat_two_repeats_with_crossfading(self):
         augment = RepeatPart(
-            mode="replace", crossfade=True, crossfade_duration=0.005, p=1.0
+            mode="replace", crossfade_duration=0.005, p=1.0
         )
         augment.parameters = {
             "should_apply": True,
@@ -371,5 +371,5 @@ class TestRepeatPart:
     def test_too_large_crossfade_duration(self):
         with pytest.raises(ValueError):
             RepeatPart(
-                mode="replace", crossfade=True, crossfade_duration=0.5, p=1.0
+                mode="replace", crossfade_duration=0.5, p=1.0
             )

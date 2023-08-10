@@ -6,6 +6,7 @@ import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
+# 0.00025 seconds corresponds to 2 samples at 8000 Hz
 CROSSFADE_DURATION_EPSILON = 0.00025
 
 
@@ -61,7 +62,7 @@ class RepeatPart(BaseWaveformTransform):
 
         if crossfade_duration == 0.0:
             self.crossfade = False
-        if crossfade_duration < 0.0:
+        elif crossfade_duration < 0.0:
             raise ValueError("crossfade_duration must be >= 0.0")
         elif crossfade_duration < CROSSFADE_DURATION_EPSILON:
             raise ValueError(
@@ -94,8 +95,10 @@ class RepeatPart(BaseWaveformTransform):
             self.parameters["repeats"] = random.randint(
                 self.min_repeats, self.max_repeats
             )
+            crossfade_length = self.get_crossfade_length(sample_rate)
+            half_crossfade_length = crossfade_length // 2
             self.parameters["part_start_index"] = random.randint(
-                0, samples.shape[-1] - self.parameters["part_num_samples"]
+                half_crossfade_length, samples.shape[-1] - self.parameters["part_num_samples"]
             )
 
     @staticmethod
@@ -106,27 +109,28 @@ class RepeatPart(BaseWaveformTransform):
     def get_sqrt_fade_out_mask(fade_in_mask: np.ndarray):
         return 1.0 - fade_in_mask
 
+    def get_crossfade_length(self, sample_rate: int) -> int:
+        if not self.crossfade:
+            return 0
+        crossfade_length = int(self.crossfade_duration * sample_rate)
+        if crossfade_length < 2:
+            warnings.warn(
+                "crossfade_duration is too small for the given sample rate. Using a"
+                " crossfade length of 2 samples."
+            )
+            crossfade_length = 2
+        elif crossfade_length % 2 == 1:
+            crossfade_length += 1
+        return crossfade_length
+
     def apply(self, samples: np.ndarray, sample_rate: int):
         crossfade_length = 0
         half_crossfade_length = 0
         fade_in_mask = None
         fade_out_mask = None
         if self.crossfade:
-            crossfade_length = int(self.crossfade_duration * sample_rate)
-            if crossfade_length < 2:
-                warnings.warn(
-                    "crossfade_duration is too small for the given sample rate. Using a"
-                    " crossfade length of 2 samples."
-                )
-                crossfade_length = 2
-            elif crossfade_length % 2 == 1:
-                crossfade_length += 1
+            crossfade_length = self.get_crossfade_length(sample_rate)
             half_crossfade_length = crossfade_length // 2
-            if half_crossfade_length > self.parameters["part_start_index"]:
-                raise Exception(
-                    "there is a problem! not enough space for crossfade. TODO: Update"
-                    " randomize_parameters so it does not select invalid params"
-                )  # TODO
             fade_in_mask = self.get_sqrt_fade_in_mask(crossfade_length)
             fade_out_mask = self.get_sqrt_fade_out_mask(fade_in_mask)
 

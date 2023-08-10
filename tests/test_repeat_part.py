@@ -2,9 +2,13 @@ from copy import deepcopy
 
 import numpy as np
 from numpy.testing import assert_array_almost_equal
+from scipy.io.wavfile import write
 
 from audiomentations import Gain, AdjustDuration
 from audiomentations.augmentations.repeat_part import RepeatPart
+from tests.test_filter_transforms import get_chirp_test
+
+DEBUG = True
 
 
 def adapt_ndim(samples, ndim):
@@ -317,4 +321,48 @@ class TestRepeatPart:
                 dtype=np.float32,
             ),
         )
+        assert processed_samples.dtype == np.float32
+
+    def test_insert_two_repeats_with_crossfading(self):
+        augment = RepeatPart(
+            mode="insert", crossfade=True, crossfade_duration=0.005, p=1.0
+        )
+        augment.parameters = {
+            "should_apply": True,
+            "part_num_samples": int(0.25 * 44100),
+            "repeats": 2,
+            "part_start_index": 150,
+        }
+        augment.freeze_parameters()
+
+        sample_rate = 44100
+        samples = get_chirp_test(sample_rate, duration=2) * 0.3
+        if DEBUG:
+            write("input.wav", rate=sample_rate, data=samples)
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        if DEBUG:
+            write("processed.wav", rate=sample_rate, data=processed_samples)
+
+        assert processed_samples.dtype == np.float32
+
+    def test_repeat_two_repeats_with_crossfading(self):
+        augment = RepeatPart(
+            mode="replace", crossfade=True, crossfade_duration=0.005, p=1.0
+        )
+        augment.parameters = {
+            "should_apply": True,
+            "part_num_samples": int(0.25 * 44100),
+            "repeats": 2,
+            "part_start_index": 150,
+        }
+        augment.freeze_parameters()
+
+        sample_rate = 44100
+        samples = get_chirp_test(sample_rate, duration=2) * 0.3
+        if DEBUG:
+            write("input.wav", rate=sample_rate, data=samples)
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        if DEBUG:
+            write("processed.wav", rate=sample_rate, data=processed_samples)
+
         assert processed_samples.dtype == np.float32

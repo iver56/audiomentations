@@ -187,7 +187,7 @@ class RoomSimulator(BaseWaveformTransform):
         else:
             self.ray_tracing_options = ray_tracing_options
 
-    def randomize_parameters(self, samples: np.array, sample_rate: int):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
 
         try:
             import pyroomacoustics as pra

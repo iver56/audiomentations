@@ -149,7 +149,7 @@ class BaseButterworthFilter(BaseWaveformTransform):
                 "min_bandwidth_fraction must not be greater than max_bandwidth_fraction"
             )
 
-    def randomize_parameters(self, samples: np.array, sample_rate: int = None):
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int = None):
         super().randomize_parameters(samples, sample_rate)
         if self.zero_phase:
             random_order = random.randint(
@@ -180,7 +180,7 @@ class BaseButterworthFilter(BaseWaveformTransform):
                 self.parameters["center_freq"] * bandwidth_fraction
             )
 
-    def apply(self, samples: np.array, sample_rate: int = None):
+    def apply(self, samples: np.ndarray, sample_rate: int = None):
         assert samples.dtype == np.float32
 
         if self.filter_type in BaseButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:

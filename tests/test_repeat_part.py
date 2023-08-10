@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 import numpy as np
+import pytest
 from numpy.testing import assert_array_almost_equal
 from scipy.io.wavfile import write
 
@@ -366,3 +367,9 @@ class TestRepeatPart:
             write("processed.wav", rate=sample_rate, data=processed_samples)
 
         assert processed_samples.dtype == np.float32
+
+    def test_too_large_crossfade_duration(self):
+        with pytest.raises(ValueError):
+            RepeatPart(
+                mode="replace", crossfade=True, crossfade_duration=0.5, p=1.0
+            )

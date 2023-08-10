@@ -1,9 +1,12 @@
 import random
+import warnings
 from typing import Optional, Callable
 
 import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+
+CROSSFADE_DURATION_EPSILON = 0.00025
 
 
 class RepeatPart(BaseWaveformTransform):
@@ -20,28 +23,59 @@ class RepeatPart(BaseWaveformTransform):
         min_part_duration: float = 0.25,
         max_part_duration: float = 1.2,
         mode: str = "insert",
-        crossfade: bool = True,
         crossfade_duration: float = 0.005,
         part_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
         p: float = 0.5,
     ):
         """
         TODO: docstring goes here
+
+        Note that a part_transform that makes the part shorter is only supported if the
+        transformed part is at least two times the crossfade duration.
+
+        Note also that the length of inputs you give it must be compatible with the part
+        durations and any crossfade durations. If you give it an input that is too short,
+        you'll get a warning and no operation is applied to the signal.
+
+        TODO: Note that setting `crossfade_duration` to 0.0 will disable crossfading.
+
         :param p: The probability of applying this transform
         """
         super().__init__(p)
 
-        assert min_repeats >= 1
-        assert max_repeats >= min_repeats
+        if min_repeats < 1:
+            raise ValueError("min_repeats must be >= 1")
+        if max_repeats < min_repeats:
+            raise ValueError("max_repeats must be >= min_repeats")
         self.min_repeats = min_repeats
         self.max_repeats = max_repeats
-        assert min_part_duration >= 0.0
-        assert max_part_duration >= min_part_duration
+        if min_part_duration < 0.0:
+            raise ValueError("min_part_duration must be >= 0.0")
+        if max_part_duration < min_part_duration:
+            raise ValueError("max_part_duration must be >= min_part_duration")
         self.min_part_duration = min_part_duration
         self.max_part_duration = max_part_duration
-        assert mode in ("insert", "replace")
+        if mode not in ("insert", "replace"):
+            raise ValueError('mode must be set to either "insert" or "replace"')
         self.mode = mode
-        self.crossfade = crossfade
+
+        if crossfade_duration == 0.0:
+            self.crossfade = False
+        if crossfade_duration < 0.0:
+            raise ValueError("crossfade_duration must be >= 0.0")
+        elif crossfade_duration < CROSSFADE_DURATION_EPSILON:
+            raise ValueError(
+                "When crossfade_duration is set to a positive number, it must be >="
+                f" {CROSSFADE_DURATION_EPSILON}"
+            )
+        else:
+            self.crossfade = True
+        if min_part_duration < 2 * crossfade_duration:
+            raise ValueError(
+                "crossfade_duration must be >= 2 * min_part_duration. You can fix this"
+                " error by increasing min_part_duration or by decreasing"
+                " crossfade_duration"
+            )
         self.crossfade_duration = crossfade_duration
         self.part_transform = part_transform
 
@@ -79,14 +113,20 @@ class RepeatPart(BaseWaveformTransform):
         fade_out_mask = None
         if self.crossfade:
             crossfade_length = int(self.crossfade_duration * sample_rate)
-            if crossfade_length % 2 == 1:
+            if crossfade_length < 2:
+                warnings.warn(
+                    "crossfade_duration is too small for the given sample rate. Using a"
+                    " crossfade length of 2 samples."
+                )
+                crossfade_length = 2
+            elif crossfade_length % 2 == 1:
                 crossfade_length += 1
             half_crossfade_length = crossfade_length // 2
             if half_crossfade_length > self.parameters["part_start_index"]:
                 raise Exception(
                     "there is a problem! not enough space for crossfade. TODO: Update"
                     " randomize_parameters so it does not select invalid params"
-                )
+                )  # TODO
             fade_in_mask = self.get_sqrt_fade_in_mask(crossfade_length)
             fade_out_mask = self.get_sqrt_fade_out_mask(fade_in_mask)
 
@@ -125,12 +165,15 @@ class RepeatPart(BaseWaveformTransform):
 
             if self.part_transform:
                 part_array = self.part_transform(part_array, sample_rate)
+                if self.crossfade and part_array.shape[-1] < 2 * crossfade_length:
+                    raise ValueError(
+                        "Applying a part_transform that makes a part shorter than 2 *"
+                        " crossfade_duration is not supported"
+                    )
 
             last_end_index = start_idx + part_array.shape[-1]
 
             if self.crossfade:
-                # TODO: Check that there is a place in the middle of the array that isn't affected by the crossfading
-                # Maybe we limit the crossfading length in this case?
                 part_array[..., :crossfade_length] *= fade_in_mask
                 part_array[..., -crossfade_length:] *= fade_out_mask
 

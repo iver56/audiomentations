@@ -205,7 +205,7 @@ class RepeatPart(BaseWaveformTransform):
                                 + half_crossfade_length,
                             ],
                         )[0, 1]
-                        if correlation_coefficient > 0.8:
+                        if abs(correlation_coefficient) > 0.5:
                             fade_out_crossfade_type = "equal_gain"
                 if is_last_part:
                     last_crossfade_type = fade_out_crossfade_type

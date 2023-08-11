@@ -20,6 +20,12 @@ class RepeatPart(BaseWaveformTransform):
     * Repeating some musical note or sound in a rhythmical way
     * A person stutters or says the same word (with variations) multiple times on a row
     * A mechanical noise with periodic repetitions
+    * A "skip in the record" or a "stuck needle" effect, reminiscent of vinyl records or
+        CDs when they repeatedly play a short section due to a scratch or other
+        imperfection.
+    * Digital audio glitches, such as a buffer underrun in video games,
+      where the current audio frame gets looped continuously due to system overloads
+      or a software crash.
 
     Note that the length of inputs you give it must be compatible with the part
     duration range and crossfade duration. If you give it an input audio array that is

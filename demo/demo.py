@@ -43,6 +43,7 @@ from audiomentations import (
     AirAbsorption,
     Lambda,
     AdjustDuration,
+    RepeatPart,
 )
 from audiomentations.augmentations.limiter import Limiter
 from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
@@ -264,17 +265,29 @@ if __name__ == "__main__":
             "name": "AdjustDurationPadEndSilence",
         },
         {
-            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", p=1.0),
+            "instance": AdjustDuration(
+                duration_seconds=10.0, padding_position="start", p=1.0
+            ),
             "num_runs": 1,
             "name": "AdjustDurationPadStartSilence",
         },
         {
-            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", padding_mode="wrap", p=1.0),
+            "instance": AdjustDuration(
+                duration_seconds=10.0,
+                padding_position="start",
+                padding_mode="wrap",
+                p=1.0,
+            ),
             "num_runs": 1,
             "name": "AdjustDurationPadStartWrap",
         },
         {
-            "instance": AdjustDuration(duration_seconds=10.0, padding_position="start", padding_mode="reflect", p=1.0),
+            "instance": AdjustDuration(
+                duration_seconds=10.0,
+                padding_position="start",
+                padding_mode="reflect",
+                p=1.0,
+            ),
             "num_runs": 1,
             "name": "AdjustDurationPadStartReflect",
         },
@@ -338,6 +351,21 @@ if __name__ == "__main__":
         },
         {"instance": PeakingFilter(p=1.0), "num_runs": 5},
         {"instance": PolarityInversion(p=1.0), "num_runs": 1},
+        {
+            "instance": RepeatPart(mode="insert", p=1.0),
+            "num_runs": 5,
+            "name": "RepeatPartInsert",
+        },
+        {
+            "instance": RepeatPart(mode="replace", crossfade_duration=0.1, p=1.0),
+            "num_runs": 5,
+            "name": "RepeatPartReplace",
+        },
+        {
+            "instance": RepeatPart(mode="replace", crossfade_duration=0.0, p=1.0),
+            "num_runs": 5,
+            "name": "RepeatPartReplaceWithoutCrossFading",
+        },
         {"instance": Resample(p=1.0), "num_runs": 5},
         {"instance": Reverse(p=1.0), "num_runs": 1},
         {

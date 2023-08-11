@@ -4,8 +4,11 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
-from audiomentations import Gain, AdjustDuration
-from audiomentations.augmentations.repeat_part import RepeatPart
+from audiomentations import Gain, AdjustDuration, Shift
+from audiomentations.augmentations.repeat_part import (
+    RepeatPart,
+    get_crossfade_mask_pair,
+)
 from tests.test_filter_transforms import get_chirp_test
 
 
@@ -335,6 +338,31 @@ class TestRepeatPart:
 
         assert processed_samples.dtype == np.float32
 
+    def test_insert_two_repeats_with_crossfading_and_part_transform(self):
+        # The purpose of this test is to cover two different cases:
+        # 1) The fade from the last part to the tail is correlated (use equal-gain fade)
+        # 2) The fade from the last part to the tail is uncorrelated (use equal-energy fade)
+        for part_transform in [Gain(p=0.0), Shift(p=1.0)]:
+            augment = RepeatPart(
+                mode="insert",
+                crossfade_duration=0.005,
+                part_transform=part_transform,
+                p=1.0,
+            )
+            augment.parameters = {
+                "should_apply": True,
+                "part_num_samples": int(0.25 * 44100),
+                "repeats": 2,
+                "part_start_index": 150,
+            }
+            augment.freeze_parameters()
+
+            sample_rate = 44100
+            samples = get_chirp_test(sample_rate, duration=2) * 0.3
+            processed_samples = augment(samples=samples, sample_rate=sample_rate)
+
+            assert processed_samples.dtype == np.float32
+
     def test_repeat_two_repeats_with_crossfading(self):
         augment = RepeatPart(mode="replace", crossfade_duration=0.005, p=1.0)
         part_num_samples = int(0.25 * 44100)
@@ -372,7 +400,7 @@ class TestRepeatPart:
         seam_impulse_magnitude_with_crossfade = abs(
             processed_samples[..., idx1] - processed_samples[..., idx0]
         )
-        assert seam_impulse_magnitude_with_crossfade < 0.1 * amplitude  # smooth
+        assert seam_impulse_magnitude_with_crossfade < 0.11 * amplitude  # smooth
 
         assert processed_samples.shape == processed_samples_without_crossfade.shape
 
@@ -401,3 +429,8 @@ class TestRepeatPart:
             processed_samples = augmenter(samples, sample_rate=10_000)
 
         assert_array_equal(processed_samples, samples)
+
+    def test_very_short_crossfade_mask_pair(self):
+        fade_in, fade_out = get_crossfade_mask_pair(2)
+        assert_array_almost_equal(fade_in, np.array([0.0, 1.0], dtype=np.float32))
+        assert_array_almost_equal(fade_out, np.array([1.0, 0.0], dtype=np.float32))

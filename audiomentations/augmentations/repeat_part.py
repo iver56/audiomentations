@@ -1,24 +1,14 @@
 import random
 import warnings
-from functools import lru_cache
 from typing import Optional, Callable
 
 import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+from audiomentations.core.utils import get_crossfade_mask_pair
 
 # 0.00025 seconds corresponds to 2 samples at 8000 Hz
 CROSSFADE_DURATION_EPSILON = 0.00025
-
-
-@lru_cache(maxsize=8)
-def get_sqrt_fade_in_mask(length: int) -> np.array:
-    return np.sqrt(np.linspace(0, 1, length, dtype=np.float32))
-
-
-@lru_cache(maxsize=8)
-def get_sqrt_fade_out_mask(length: int) -> np.array:
-    return 1.0 - get_sqrt_fade_in_mask(length)
 
 
 class RepeatPart(BaseWaveformTransform):
@@ -137,13 +127,15 @@ class RepeatPart(BaseWaveformTransform):
     def apply(self, samples: np.ndarray, sample_rate: int):
         crossfade_length = 0
         half_crossfade_length = 0
-        fade_in_mask = None
-        fade_out_mask = None
+        equal_energy_fade_in_mask = None
+        equal_energy_fade_out_mask = None
+        last_crossfade_type = "equal_energy"
         if self.crossfade:
             crossfade_length = self.get_crossfade_length(sample_rate)
             half_crossfade_length = crossfade_length // 2
-            fade_in_mask = get_sqrt_fade_in_mask(crossfade_length)
-            fade_out_mask = get_sqrt_fade_out_mask(crossfade_length)
+            equal_energy_fade_in_mask, equal_energy_fade_out_mask = (
+                get_crossfade_mask_pair(crossfade_length)
+            )
 
         if self.crossfade:
             part = samples[
@@ -189,8 +181,41 @@ class RepeatPart(BaseWaveformTransform):
             last_end_index = start_idx + part_array.shape[-1]
 
             if self.crossfade:
-                part_array[..., :crossfade_length] *= fade_in_mask
-                part_array[..., -crossfade_length:] *= fade_out_mask
+                part_array[..., :crossfade_length] *= equal_energy_fade_in_mask
+
+                fade_out_crossfade_type = "equal_energy"
+                is_last_part = i == self.parameters["repeats"] - 1
+                if is_last_part and self.mode == "insert":
+                    if self.part_transform is None:
+                        fade_out_crossfade_type = "equal_gain"
+                    else:
+                        # If the part was transformed, check if it still correlates with
+                        # the original signal in the seam. If it does, we use equal-gain
+                        # crossfading instead of equal-energy.
+                        correlation_coefficient = np.corrcoef(
+                            part_array[..., -crossfade_length:],
+                            samples[
+                                ...,
+                                self.parameters["part_start_index"]
+                                + self.parameters["part_num_samples"]
+                                - half_crossfade_length : self.parameters[
+                                    "part_start_index"
+                                ]
+                                + self.parameters["part_num_samples"]
+                                + half_crossfade_length,
+                            ],
+                        )[0, 1]
+                        if correlation_coefficient > 0.8:
+                            fade_out_crossfade_type = "equal_gain"
+                if is_last_part:
+                    last_crossfade_type = fade_out_crossfade_type
+                if fade_out_crossfade_type == "equal_energy":
+                    part_array[..., -crossfade_length:] *= equal_energy_fade_out_mask
+                else:
+                    _, equal_gain_fade_out_mask = get_crossfade_mask_pair(
+                        crossfade_length, equal_energy=False
+                    )
+                    part_array[..., -crossfade_length:] *= equal_gain_fade_out_mask
 
             stop = False
             if self.mode == "replace" and last_end_index > samples.shape[-1]:
@@ -219,6 +244,7 @@ class RepeatPart(BaseWaveformTransform):
         result_placeholder = np.zeros(shape=result_shape, dtype=np.float32)
 
         if self.crossfade:
+            # Fade out the signal where the first repetition takes over
             result_placeholder[..., : repeats_start_index - half_crossfade_length] = (
                 samples[..., : repeats_start_index - half_crossfade_length]
             )
@@ -228,7 +254,7 @@ class RepeatPart(BaseWaveformTransform):
                 - half_crossfade_length : repeats_start_index
                 + half_crossfade_length,
             ] = (
-                fade_out_mask
+                equal_energy_fade_out_mask
                 * samples[
                     ...,
                     repeats_start_index
@@ -257,6 +283,12 @@ class RepeatPart(BaseWaveformTransform):
 
         if self.mode == "insert":
             if self.crossfade:
+                if last_crossfade_type == "equal_energy":
+                    fade_in_mask = equal_energy_fade_in_mask
+                else:
+                    fade_in_mask, _ = get_crossfade_mask_pair(
+                        crossfade_length, equal_energy=False
+                    )
                 result_placeholder[
                     ..., last_end_index - crossfade_length : last_end_index
                 ] += (
@@ -276,7 +308,7 @@ class RepeatPart(BaseWaveformTransform):
                 result_placeholder[
                     ..., last_end_index - crossfade_length : last_end_index
                 ] += (
-                    fade_in_mask
+                    equal_energy_fade_in_mask
                     * samples[..., last_end_index - crossfade_length : last_end_index]
                 )
             if last_end_index < result_length:

@@ -13,7 +13,17 @@ CROSSFADE_DURATION_EPSILON = 0.00025
 
 class RepeatPart(BaseWaveformTransform):
     """
-    Select a part of the audio and repeat that part a number of times
+    Select a subsection (or "part") of the audio and repeat that part a number of times.
+    This can be useful when simulating scenarios where a short audio snippet gets
+    repeated, for example:
+
+    * Repeating some musical note or sound in a rhythmical way
+    * A person stutters or says the same word (with variations) multiple times on a row
+    * A mechanical noise with periodic repetitions
+
+    Note that the length of inputs you give it must be compatible with the part
+    duration range and crossfade duration. If you give it an input audio array that is
+    too short, a `UserWarning` will be raised and no operation is applied to the signal.
     """
 
     supports_multichannel = True
@@ -30,17 +40,31 @@ class RepeatPart(BaseWaveformTransform):
         p: float = 0.5,
     ):
         """
-        TODO: docstring goes here
-
-        Note that a part_transform that makes the part shorter is only supported if the
-        transformed part is at least two times the crossfade duration.
-
-        Note also that the length of inputs you give it must be compatible with the part
-        durations and any crossfade durations. If you give it an input that is too short,
-        you'll get a warning and no operation is applied to the signal.
-
-        TODO: Note that setting `crossfade_duration` to 0.0 will disable crossfading.
-
+        :param min_repeats: Minimum number of times a selected audio segment should be
+            repeated in addition to the original. For instance, if the selected number
+            of repeats is 1, the selected segment will be followed by one repeat.
+        :param max_repeats: Maximum number of times a selected audio segment can be
+            repeated in addition to the original.
+        :param min_part_duration: Minimum duration (in seconds) of the audio segment
+            that can be selected for repetition.
+        :param max_part_duration: Maximum duration (in seconds) of the audio segment
+            that can be selected for repetition.
+        :param mode: This parameter has two options:
+            "insert": Insert the repeat(s), making the array longer. After the last
+                repeat there will be the last part of the original audio, offset in time
+                compared to the input array.
+            "replace": Have the repeats replace (as in overwrite) the original audio.
+                Any remaining part at the end (if not overwritten by repeats) will be
+                left untouched without offset. The length of the output array is the
+                same as the input array.
+        :param crossfade_duration: Duration (in seconds) for crossfading between parts.
+            This can be used to smooth transitions and avoid impulses/clicks. To disable
+            crossfading, set this value to 0.0.
+        :param part_transform: An optional callable (audiomentations transform) that
+            gets applied individually to each repeat. This can be used to make each
+            repeat slightly different from the previous one. Note that a part_transform
+            that makes the part shorter is only supported if the transformed part is at
+            least two times the crossfade duration.
         :param p: The probability of applying this transform
         """
         super().__init__(p)

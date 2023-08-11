@@ -158,10 +158,10 @@ class RepeatPart(BaseWaveformTransform):
             self.parameters["part_start_index"] + self.parameters["part_num_samples"]
         )
 
-        last_end_index = repeats_start_index
+        last_repetition_end_index = repeats_start_index
         parts = []
         for i in range(self.parameters["repeats"]):
-            start_idx = last_end_index
+            start_idx = last_repetition_end_index
             if self.crossfade:
                 if i == 0:
                     start_idx -= half_crossfade_length
@@ -178,7 +178,7 @@ class RepeatPart(BaseWaveformTransform):
                         " crossfade_duration is not supported"
                     )
 
-            last_end_index = start_idx + part_array.shape[-1]
+            last_repetition_end_index = start_idx + part_array.shape[-1]
 
             if self.crossfade:
                 part_array[..., :crossfade_length] *= equal_energy_fade_in_mask
@@ -217,17 +217,14 @@ class RepeatPart(BaseWaveformTransform):
                     )
                     part_array[..., -crossfade_length:] *= equal_gain_fade_out_mask
 
-            stop = False
-            if self.mode == "replace" and last_end_index > samples.shape[-1]:
-                limited_part_length = samples.shape[-1] - start_idx
-                last_end_index = start_idx + limited_part_length
-                part_array = part_array[..., :limited_part_length]
-                stop = True
-
             parts.append(
-                {"array": part_array, "start_idx": start_idx, "end_idx": last_end_index}
+                {
+                    "array": part_array,
+                    "start_idx": start_idx,
+                    "end_idx": last_repetition_end_index,
+                }
             )
-            if stop:
+            if self.mode == "replace" and last_repetition_end_index > samples.shape[-1]:
                 break
 
         result_length = samples.shape[-1]
@@ -267,18 +264,25 @@ class RepeatPart(BaseWaveformTransform):
                 ..., :repeats_start_index
             ]
 
-        if self.crossfade:
-            # add
-            for part in parts:
-                result_placeholder[..., part["start_idx"] : part["end_idx"]] += part[
-                    "array"
-                ]
+        # Add all repetitions except the last one
+        for part in parts[:-1]:
+            result_placeholder[..., part["start_idx"] : part["end_idx"]] += part[
+                "array"
+            ]
+
+        # Add the (potentially truncated) last repetition
+        if self.mode == "replace" and parts[-1]["end_idx"] > samples.shape[-1]:
+            truncated_part_length = samples.shape[-1] - parts[-1]["start_idx"]
+            truncated_part = parts[-1]["array"][..., :truncated_part_length]
+            result_placeholder[
+                ...,
+                parts[-1]["start_idx"] : parts[-1]["start_idx"] + truncated_part_length,
+            ] += truncated_part
         else:
-            # set
-            for part in parts:
-                result_placeholder[..., part["start_idx"] : part["end_idx"]] = part[
-                    "array"
-                ]
+            result_placeholder[
+                ..., parts[-1]["start_idx"] : parts[-1]["end_idx"]
+            ] += parts[-1]["array"]
+
         del parts
 
         if self.mode == "insert":
@@ -290,29 +294,51 @@ class RepeatPart(BaseWaveformTransform):
                         crossfade_length, equal_energy=False
                     )
                 result_placeholder[
-                    ..., last_end_index - crossfade_length : last_end_index
+                    ...,
+                    last_repetition_end_index
+                    - crossfade_length : last_repetition_end_index,
                 ] += (
                     fade_in_mask
                     * samples[
                         ...,
-                        -(result_length - last_end_index)
-                        - crossfade_length : -(result_length - last_end_index),
+                        -(result_length - last_repetition_end_index)
+                        - crossfade_length : -(
+                            result_length - last_repetition_end_index
+                        ),
                     ]
                 )
 
-            result_placeholder[..., last_end_index:] = samples[
-                ..., -(result_length - last_end_index) :
+            result_placeholder[..., last_repetition_end_index:] = samples[
+                ..., -(result_length - last_repetition_end_index) :
             ]
         else:
             if self.crossfade:
-                result_placeholder[
-                    ..., last_end_index - crossfade_length : last_end_index
-                ] += (
-                    equal_energy_fade_in_mask
-                    * samples[..., last_end_index - crossfade_length : last_end_index]
-                )
-            if last_end_index < result_length:
-                result_placeholder[..., last_end_index:] = samples[..., last_end_index:]
+                last_crossfade_start_idx = last_repetition_end_index - crossfade_length
+                if last_crossfade_start_idx < samples.shape[-1]:
+                    last_crossfade_length = crossfade_length
+                    if last_repetition_end_index > samples.shape[-1]:
+                        # Truncate crossfade
+                        last_crossfade_length = (
+                            samples.shape[-1] - last_crossfade_start_idx
+                        )
+
+                    result_placeholder[
+                        ...,
+                        last_crossfade_start_idx : last_crossfade_start_idx
+                        + last_crossfade_length,
+                    ] += (
+                        equal_energy_fade_in_mask[:last_crossfade_length]
+                        * samples[
+                            ...,
+                            last_crossfade_start_idx : last_crossfade_start_idx
+                            + last_crossfade_length,
+                        ]
+                    )
+
+            if last_repetition_end_index < result_length:
+                result_placeholder[..., last_repetition_end_index:] = samples[
+                    ..., last_repetition_end_index:
+                ]
         return result_placeholder
 
     def freeze_parameters(self):

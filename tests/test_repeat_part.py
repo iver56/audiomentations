@@ -18,6 +18,19 @@ def adapt_ndim(samples, ndim):
     return samples
 
 
+def assert_high_frequency_energy_absence(
+    audio_array,
+    sample_rate,
+    frequency_threshold: float = 10_000.0,
+    energy_threshold: float = 0.15,
+):
+    spectrum = np.fft.rfft(audio_array)
+    freqs = np.fft.rfftfreq(len(audio_array), 1 / sample_rate)
+    assert np.all(
+        np.abs(spectrum[freqs > frequency_threshold]) < energy_threshold
+    ), "Detected energy in frequencies above the given frequency_threshold!"
+
+
 class TestRepeatPart:
     def test_replace_one_repeat(self):
         augment = RepeatPart(mode="replace", crossfade_duration=0.0, p=1.0)
@@ -363,7 +376,7 @@ class TestRepeatPart:
 
             assert processed_samples.dtype == np.float32
 
-    def test_repeat_two_repeats_with_crossfading(self):
+    def test_replace_mode_two_repeats_with_crossfading(self):
         augment = RepeatPart(mode="replace", crossfade_duration=0.005, p=1.0)
         part_num_samples = int(0.25 * 44100)
         augment.parameters = {
@@ -404,7 +417,49 @@ class TestRepeatPart:
 
         assert processed_samples.shape == processed_samples_without_crossfade.shape
 
-    # TODO: Test what happens if the end of the array is in the middle of the crossfade of the last part (in replace mode)
+    def test_replace_mode_repeats_with_crossfading_at_end(self):
+        # Test that it doesn't crash if the end of the array is in the middle of
+        # the crossfade of the last part (in replace mode)
+        augment = RepeatPart(mode="replace", crossfade_duration=0.124, p=1.0)
+        part_num_samples = int(0.29 * 44100)
+        augment.parameters = {
+            "should_apply": True,
+            "part_num_samples": part_num_samples,
+            "repeats": 5,
+            "part_start_index": int(0.22 * 44100),
+        }
+        augment.freeze_parameters()
+
+        sample_rate = 44100
+        amplitude = 0.3
+        samples = get_chirp_test(sample_rate, duration=2) * amplitude
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert processed_samples.shape == samples.shape
+
+    def test_replace_mode_many_repeats_with_crossfading(self):
+        # Test that it doesn't fade in some of the original audio at the end when there
+        # enough repetitions to fill the whole array when in replace mode.
+        augment = RepeatPart(mode="replace", crossfade_duration=0.124, p=1.0)
+        part_num_samples = int(0.27 * 44100)
+        augment.parameters = {
+            "should_apply": True,
+            "part_num_samples": part_num_samples,
+            "repeats": 20,
+            "part_start_index": int(0.22 * 44100),
+        }
+        augment.freeze_parameters()
+
+        sample_rate = 44100
+        amplitude = 0.3
+        samples = get_chirp_test(sample_rate, duration=2) * amplitude
+        processed_samples = augment(samples=samples, sample_rate=sample_rate)
+        assert processed_samples.shape == samples.shape
+
+        # The very last part should not have any crossfade into the original signal,
+        # where there is only high-freq audio.
+        assert_high_frequency_energy_absence(
+            processed_samples[int(1.9 * 44100) :], sample_rate
+        )
 
     def test_too_large_crossfade_duration(self):
         with pytest.raises(ValueError):

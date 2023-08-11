@@ -4,11 +4,8 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
-from audiomentations import Gain, AdjustDuration, Shift
-from audiomentations.augmentations.repeat_part import (
-    RepeatPart,
-    get_crossfade_mask_pair,
-)
+from audiomentations import Gain, AdjustDuration, RepeatPart, Shift
+from audiomentations.core.utils import get_crossfade_mask_pair
 from tests.test_filter_transforms import get_chirp_test
 
 

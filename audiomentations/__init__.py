@@ -24,6 +24,7 @@ from .augmentations.padding import Padding
 from .augmentations.peaking_filter import PeakingFilter
 from .augmentations.pitch_shift import PitchShift
 from .augmentations.polarity_inversion import PolarityInversion
+from .augmentations.repeat_part import RepeatPart
 from .augmentations.resample import Resample
 from .augmentations.reverse import Reverse
 from .augmentations.room_simulator import RoomSimulator

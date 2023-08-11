@@ -2,14 +2,11 @@ from copy import deepcopy
 
 import numpy as np
 import pytest
-from numpy.testing import assert_array_almost_equal
-from scipy.io.wavfile import write
+from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 from audiomentations import Gain, AdjustDuration
 from audiomentations.augmentations.repeat_part import RepeatPart
 from tests.test_filter_transforms import get_chirp_test
-
-DEBUG = True
 
 
 def adapt_ndim(samples, ndim):
@@ -19,8 +16,6 @@ def adapt_ndim(samples, ndim):
 
 
 class TestRepeatPart:
-    # TODO: Test crossfading
-
     def test_replace_one_repeat(self):
         augment = RepeatPart(mode="replace", crossfade_duration=0.0, p=1.0)
         augment.parameters = {
@@ -325,9 +320,7 @@ class TestRepeatPart:
         assert processed_samples.dtype == np.float32
 
     def test_insert_two_repeats_with_crossfading(self):
-        augment = RepeatPart(
-            mode="insert", crossfade_duration=0.005, p=1.0
-        )
+        augment = RepeatPart(mode="insert", crossfade_duration=0.005, p=1.0)
         augment.parameters = {
             "should_apply": True,
             "part_num_samples": int(0.25 * 44100),
@@ -338,21 +331,16 @@ class TestRepeatPart:
 
         sample_rate = 44100
         samples = get_chirp_test(sample_rate, duration=2) * 0.3
-        if DEBUG:
-            write("input.wav", rate=sample_rate, data=samples)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
-        if DEBUG:
-            write("processed.wav", rate=sample_rate, data=processed_samples)
 
         assert processed_samples.dtype == np.float32
 
     def test_repeat_two_repeats_with_crossfading(self):
-        augment = RepeatPart(
-            mode="replace", crossfade_duration=0.005, p=1.0
-        )
+        augment = RepeatPart(mode="replace", crossfade_duration=0.005, p=1.0)
+        part_num_samples = int(0.25 * 44100)
         augment.parameters = {
             "should_apply": True,
-            "part_num_samples": int(0.25 * 44100),
+            "part_num_samples": part_num_samples,
             "repeats": 2,
             "part_start_index": 150,
         }
@@ -360,16 +348,45 @@ class TestRepeatPart:
 
         sample_rate = 44100
         samples = get_chirp_test(sample_rate, duration=2) * 0.3
-        if DEBUG:
-            write("input.wav", rate=sample_rate, data=samples)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
-        if DEBUG:
-            write("processed.wav", rate=sample_rate, data=processed_samples)
 
         assert processed_samples.dtype == np.float32
 
+        augment_without_crossfade = RepeatPart(
+            mode="replace", crossfade_duration=0.000, p=1.0
+        )
+        augment_without_crossfade.parameters = augment.parameters
+        augment_without_crossfade.freeze_parameters()
+        processed_samples_without_crossfade = augment_without_crossfade(
+            samples=samples, sample_rate=sample_rate
+        )
+
+        assert processed_samples.shape == processed_samples_without_crossfade.shape
+
+        # TODO: maybe assert that there isn't an impulse in the seam, as it would be without crossfading?
+
+    # TODO: Test what happens if the end of the array is in the middle of the crossfade of the last part (in replace mode)
+
     def test_too_large_crossfade_duration(self):
         with pytest.raises(ValueError):
-            RepeatPart(
-                mode="replace", crossfade_duration=0.5, p=1.0
-            )
+            RepeatPart(mode="replace", crossfade_duration=0.5, p=1.0)
+
+    def test_warn_too_short_input(self):
+        augmenter = RepeatPart(
+            mode="replace",
+            min_part_duration=0.1,
+            max_part_duration=0.1,
+            crossfade_duration=0.0,
+            p=1.0,
+        )
+        samples = np.random.uniform(low=-0.5, high=0.5, size=(100,)).astype(np.float32)
+        with pytest.warns(
+            UserWarning,
+            match=(
+                "The input sound is not long enough for applying the RepeatPart"
+                " transform with the current parameters."
+            ),
+        ):
+            processed_samples = augmenter(samples, sample_rate=10_000)
+
+        assert_array_equal(processed_samples, samples)

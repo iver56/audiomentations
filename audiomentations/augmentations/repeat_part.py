@@ -1,5 +1,6 @@
 import random
 import warnings
+from functools import lru_cache
 from typing import Optional, Callable
 
 import numpy as np
@@ -8,6 +9,16 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 # 0.00025 seconds corresponds to 2 samples at 8000 Hz
 CROSSFADE_DURATION_EPSILON = 0.00025
+
+
+@lru_cache(maxsize=8)
+def get_sqrt_fade_in_mask(length: int) -> np.array:
+    return np.sqrt(np.linspace(0, 1, length, dtype=np.float32))
+
+
+@lru_cache(maxsize=8)
+def get_sqrt_fade_out_mask(length: int) -> np.array:
+    return 1.0 - get_sqrt_fade_in_mask(length)
 
 
 class RepeatPart(BaseWaveformTransform):
@@ -87,27 +98,27 @@ class RepeatPart(BaseWaveformTransform):
                 int(self.min_part_duration * sample_rate),
                 int(self.max_part_duration * sample_rate),
             )
-            if self.parameters["part_num_samples"] > samples.shape[-1]:
-                # The input sound is not long enough for applying the transform in this case
+
+            crossfade_length = self.get_crossfade_length(sample_rate)
+            half_crossfade_length = crossfade_length // 2
+            if (
+                half_crossfade_length
+                >= samples.shape[-1] - self.parameters["part_num_samples"]
+            ):
+                warnings.warn(
+                    "The input sound is not long enough for applying the RepeatPart"
+                    " transform with the current parameters."
+                )
                 self.parameters["should_apply"] = False
                 return
 
+            self.parameters["part_start_index"] = random.randint(
+                half_crossfade_length,
+                samples.shape[-1] - self.parameters["part_num_samples"],
+            )
             self.parameters["repeats"] = random.randint(
                 self.min_repeats, self.max_repeats
             )
-            crossfade_length = self.get_crossfade_length(sample_rate)
-            half_crossfade_length = crossfade_length // 2
-            self.parameters["part_start_index"] = random.randint(
-                half_crossfade_length, samples.shape[-1] - self.parameters["part_num_samples"]
-            )
-
-    @staticmethod
-    def get_sqrt_fade_in_mask(length):
-        return np.sqrt(np.linspace(0, 1, length, dtype=np.float32))
-
-    @staticmethod
-    def get_sqrt_fade_out_mask(fade_in_mask: np.ndarray):
-        return 1.0 - fade_in_mask
 
     def get_crossfade_length(self, sample_rate: int) -> int:
         if not self.crossfade:
@@ -131,8 +142,8 @@ class RepeatPart(BaseWaveformTransform):
         if self.crossfade:
             crossfade_length = self.get_crossfade_length(sample_rate)
             half_crossfade_length = crossfade_length // 2
-            fade_in_mask = self.get_sqrt_fade_in_mask(crossfade_length)
-            fade_out_mask = self.get_sqrt_fade_out_mask(fade_in_mask)
+            fade_in_mask = get_sqrt_fade_in_mask(crossfade_length)
+            fade_out_mask = get_sqrt_fade_out_mask(crossfade_length)
 
         if self.crossfade:
             part = samples[

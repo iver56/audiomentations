@@ -342,12 +342,13 @@ class TestRepeatPart:
             "should_apply": True,
             "part_num_samples": part_num_samples,
             "repeats": 2,
-            "part_start_index": 150,
+            "part_start_index": 142,
         }
         augment.freeze_parameters()
 
         sample_rate = 44100
-        samples = get_chirp_test(sample_rate, duration=2) * 0.3
+        amplitude = 0.3
+        samples = get_chirp_test(sample_rate, duration=2) * amplitude
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
         assert processed_samples.dtype == np.float32
@@ -361,9 +362,19 @@ class TestRepeatPart:
             samples=samples, sample_rate=sample_rate
         )
 
-        assert processed_samples.shape == processed_samples_without_crossfade.shape
+        idx0 = augment.parameters["part_start_index"] + part_num_samples - 1
+        idx1 = idx0 + 1
+        seam_impulse_magnitude_without_crossfade = abs(
+            processed_samples_without_crossfade[..., idx1]
+            - processed_samples_without_crossfade[..., idx0]
+        )
+        assert seam_impulse_magnitude_without_crossfade > amplitude  # audible click!
+        seam_impulse_magnitude_with_crossfade = abs(
+            processed_samples[..., idx1] - processed_samples[..., idx0]
+        )
+        assert seam_impulse_magnitude_with_crossfade < 0.1 * amplitude  # smooth
 
-        # TODO: maybe assert that there isn't an impulse in the seam, as it would be without crossfading?
+        assert processed_samples.shape == processed_samples_without_crossfade.shape
 
     # TODO: Test what happens if the end of the array is in the middle of the crossfade of the last part (in replace mode)
 

@@ -75,6 +75,7 @@ The API documentation, along with guides, example code, illustrations and exampl
 * [PeakingFilter](https://iver56.github.io/audiomentations/waveform_transforms/peaking_filter/): Applies a peaking filter with randomized parameters
 * [PitchShift](https://iver56.github.io/audiomentations/waveform_transforms/pitch_shift/): Shifts the pitch up or down without changing the tempo
 * [PolarityInversion](https://iver56.github.io/audiomentations/waveform_transforms/polarity_inversion/): Flips the audio samples upside down, reversing their polarity
+* [RepeatPart](https://iver56.github.io/audiomentations/waveform_transforms/repeat_part/): Repeats a subsection of the audio a number of times
 * [Resample](https://iver56.github.io/audiomentations/waveform_transforms/resample/): Resamples the signal to a randomly chosen sampling rate
 * [Reverse](https://iver56.github.io/audiomentations/waveform_transforms/reverse/): Reverses the audio along its time axis
 * [RoomSimulator](https://iver56.github.io/audiomentations/waveform_transforms/room_simulator/): Simulates the effect of a room on an audio source

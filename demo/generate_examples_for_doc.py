@@ -37,6 +37,7 @@ from audiomentations import (
     PeakingFilter,
     PitchShift,
     PolarityInversion,
+    RepeatPart,
     Resample,
     Reverse,
     RoomSimulator,
@@ -315,6 +316,32 @@ class PitchShiftExample(TransformUsageExample):
 
         return sound, transformed_sound, sample_rate
 
+
+@register
+class RepeatPartExample(TransformUsageExample):
+    transform_class = RepeatPart
+
+    def generate_example(self):
+        random.seed(66)
+        np.random.seed(66)
+        transform = RepeatPart(
+            min_part_duration=0.1,
+            max_part_duration=0.5,
+            crossfade_duration=0.03,
+            part_transform=SevenBandParametricEQ(
+                min_gain_db=-6.0, max_gain_db=6.0, p=1.0
+            ),
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
 
 
 @register

@@ -458,9 +458,25 @@ class TestRepeatPart:
             processed_samples[int(1.9 * 44100) :], sample_rate
         )
 
-    def test_too_large_crossfade_duration(self):
+    def test_invalid_parameters(self):
         with pytest.raises(ValueError):
-            RepeatPart(mode="replace", crossfade_duration=0.5, p=1.0)
+            RepeatPart(crossfade_duration=-0.0001)
+        with pytest.raises(ValueError):
+            RepeatPart(crossfade_duration=0.0001)
+        with pytest.raises(ValueError):
+            RepeatPart(min_part_duration=0.0001)
+        with pytest.raises(ValueError):
+            RepeatPart(min_repeats=0, max_repeats=1)
+        with pytest.raises(ValueError):
+            RepeatPart(min_repeats=2, max_repeats=1)
+        with pytest.raises(ValueError):
+            RepeatPart(min_part_duration=0.5, max_part_duration=0.2)
+        with pytest.raises(ValueError):
+            RepeatPart(
+                min_part_duration=0.01, crossfade_duration=0.1
+            )
+        with pytest.raises(ValueError):
+            RepeatPart(mode="append")
 
     def test_warn_too_short_input(self):
         augmenter = RepeatPart(

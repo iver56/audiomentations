@@ -98,7 +98,7 @@ class RepeatPart(BaseWaveformTransform):
         if crossfade_duration == 0.0:
             self.crossfade = False
         elif crossfade_duration < 0.0:
-            raise ValueError("crossfade_duration must be >= 0.0")
+            raise ValueError("crossfade_duration must not be negative")
         elif crossfade_duration < DURATION_EPSILON:
             raise ValueError(
                 "When crossfade_duration is set to a positive number, it must be >="

@@ -8,7 +8,7 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import get_crossfade_mask_pair
 
 # 0.00025 seconds corresponds to 2 samples at 8000 Hz
-CROSSFADE_DURATION_EPSILON = 0.00025
+DURATION_EPSILON = 0.00025
 
 
 class RepeatPart(BaseWaveformTransform):
@@ -17,7 +17,7 @@ class RepeatPart(BaseWaveformTransform):
     This can be useful when simulating scenarios where a short audio snippet gets
     repeated, for example:
 
-    * Repeating some musical note or sound in a rhythmical way
+    * Repetitions of some musical note or sound in a rhythmical way
     * A person stutters or says the same word (with variations) multiple times on a row
     * A mechanical noise with periodic repetitions
     * A "skip in the record" or a "stuck needle" effect, reminiscent of vinyl records or
@@ -63,9 +63,13 @@ class RepeatPart(BaseWaveformTransform):
                 Any remaining part at the end (if not overwritten by repeats) will be
                 left untouched without offset. The length of the output array is the
                 same as the input array.
-        :param crossfade_duration: Duration (in seconds) for crossfading between parts.
-            This can be used to smooth transitions and avoid impulses/clicks. To disable
-            crossfading, set this value to 0.0.
+        :param crossfade_duration: Duration (in seconds) for crossfading between repeated
+          parts as well as potentially from the original audio to the repetitions and back.
+          The crossfades will be equal-energy or equal-gain depending on the audio and/or the
+          chosen parameters of the transform. The crossfading feature can be used to smooth
+          transitions and avoid abrupt changes, which can lead to impulses/clicks in the audio.
+          If you know what you're doing, and impulses/clicks are desired for your use case,
+          you can disable the crossfading by setting this value to `0.0`.
         :param part_transform: An optional callable (audiomentations transform) that
             gets applied individually to each repeat. This can be used to make each
             repeat slightly different from the previous one. Note that a part_transform
@@ -81,8 +85,8 @@ class RepeatPart(BaseWaveformTransform):
             raise ValueError("max_repeats must be >= min_repeats")
         self.min_repeats = min_repeats
         self.max_repeats = max_repeats
-        if min_part_duration < 0.0:
-            raise ValueError("min_part_duration must be >= 0.0")
+        if min_part_duration < DURATION_EPSILON:
+            raise ValueError(f"min_part_duration must be >= {DURATION_EPSILON}")
         if max_part_duration < min_part_duration:
             raise ValueError("max_part_duration must be >= min_part_duration")
         self.min_part_duration = min_part_duration
@@ -95,10 +99,10 @@ class RepeatPart(BaseWaveformTransform):
             self.crossfade = False
         elif crossfade_duration < 0.0:
             raise ValueError("crossfade_duration must be >= 0.0")
-        elif crossfade_duration < CROSSFADE_DURATION_EPSILON:
+        elif crossfade_duration < DURATION_EPSILON:
             raise ValueError(
                 "When crossfade_duration is set to a positive number, it must be >="
-                f" {CROSSFADE_DURATION_EPSILON}"
+                f" {DURATION_EPSILON}"
             )
         else:
             self.crossfade = True

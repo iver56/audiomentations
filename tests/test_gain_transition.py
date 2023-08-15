@@ -3,7 +3,7 @@ import random
 import numpy as np
 import pytest
 
-from audiomentations import Compose, GainTransition
+from audiomentations import GainTransition
 
 
 class TestGainTransition:
@@ -20,7 +20,7 @@ class TestGainTransition:
         random.seed(42)
         sample_rate = 8000
 
-        augment = Compose([GainTransition(p=1.0)])
+        augment = GainTransition(p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert not np.allclose(samples, processed_samples)
         assert processed_samples.shape == samples.shape
@@ -32,12 +32,8 @@ class TestGainTransition:
         samples = np.random.uniform(low=-0.5, high=0.5, size=(2345,)).astype(np.float32)
         sample_rate = 16000
 
-        augment = Compose(
-            [
-                GainTransition(
-                    min_duration=0.2, max_duration=0.3, duration_unit="seconds", p=1.0
-                )
-            ]
+        augment = GainTransition(
+            min_duration=0.2, max_duration=0.3, duration_unit="seconds", p=1.0
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert not np.allclose(samples, processed_samples)
@@ -50,12 +46,8 @@ class TestGainTransition:
         samples = np.random.uniform(low=-0.5, high=0.5, size=(3456,)).astype(np.float32)
         sample_rate = 32000
 
-        augment = Compose(
-            [
-                GainTransition(
-                    min_duration=1, max_duration=5000, duration_unit="samples", p=1.0
-                )
-            ]
+        augment = GainTransition(
+            min_duration=1, max_duration=5000, duration_unit="samples", p=1.0
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert not np.allclose(samples, processed_samples)

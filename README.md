@@ -90,15 +90,21 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.31.0] - 2023-06-21
+## [0.32.0] - 2023-08-15
+
+### Added
+
+* Add new `RepeatPart` transform
 
 ### Changed
 
-* Raise exception instead of warning when the given multichannel ndarray has wrong shape
-* Add support for the latest librosa 0.10 version
-* Switch to a faster resampler internally in pitch shift, leading to much faster execution. This requires `soxr`.
-* Bump min `scipy` requirement from 1.0 to 1.3
-* Rename "_in_db" to "_db" in args and parameters. Passing args with the old names still works, but is deprecated and will stop working in a future version.
+* Bump min version of numpy dependency from 1.13 to 1.16
+* If a transform is in "frozen parameters" mode, but has no parameters yet, the first transform call will randomize/set parameters
+* Increase the threshold for raising `WrongMultichannelAudioShape`. This allows some rare use cases where the number of channels slightly exceeds the number of samples.
+
+### Fixed
+
+* Fix some type hints that were `np.array` instead of `np.ndarray`
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

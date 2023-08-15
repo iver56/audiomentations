@@ -24,8 +24,8 @@ class RepeatPart(BaseWaveformTransform):
         CDs when they repeatedly play a short section due to a scratch or other
         imperfection.
     * Digital audio glitches, such as a buffer underrun in video games,
-      where the current audio frame gets looped continuously due to system overloads
-      or a software crash.
+        where the current audio frame gets looped continuously due to system overloads
+        or a software crash.
 
     Note that the length of inputs you give it must be compatible with the part
     duration range and crossfade duration. If you give it an input audio array that is
@@ -64,12 +64,12 @@ class RepeatPart(BaseWaveformTransform):
                 left untouched without offset. The length of the output array is the
                 same as the input array.
         :param crossfade_duration: Duration (in seconds) for crossfading between repeated
-          parts as well as potentially from the original audio to the repetitions and back.
-          The crossfades will be equal-energy or equal-gain depending on the audio and/or the
-          chosen parameters of the transform. The crossfading feature can be used to smooth
-          transitions and avoid abrupt changes, which can lead to impulses/clicks in the audio.
-          If you know what you're doing, and impulses/clicks are desired for your use case,
-          you can disable the crossfading by setting this value to `0.0`.
+            parts as well as potentially from the original audio to the repetitions and back.
+            The crossfades will be equal-energy or equal-gain depending on the audio and/or the
+            chosen parameters of the transform. The crossfading feature can be used to smooth
+            transitions and avoid abrupt changes, which can lead to impulses/clicks in the audio.
+            If you know what you're doing, and impulses/clicks are desired for your use case,
+            you can disable the crossfading by setting this value to `0.0`.
         :param part_transform: An optional callable (audiomentations transform) that
             gets applied individually to each repeat. This can be used to make each
             repeat slightly different from the previous one. Note that a part_transform

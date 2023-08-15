@@ -37,9 +37,9 @@ setup(
     url="https://github.com/iver56/audiomentations",
     packages=find_packages(exclude=["demo", "tests"]),
     install_requires=[
-        "numpy>=1.16.0",
+        "numpy>=1.18.0",
         "librosa>=0.8.0,!=0.10.0,<0.11.0",
-        "scipy>=1.3.0,<2",
+        "scipy>=1.4.0,<2",
         "soxr>=0.3.2,<1.0.0",
     ],
     extras_require={
@@ -51,7 +51,7 @@ setup(
             "pyroomacoustics>=0.6.0",
         ]
     },
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

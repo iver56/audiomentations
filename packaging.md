@@ -7,5 +7,6 @@
 * Add and push a git tag to the release commit
 * Add a release here: https://github.com/iver56/audiomentations/releases/new
 * Update the Zenodo badge in README.md. Commit and push.
+* Remove any old files inside the dist folder
 * `python setup.py sdist bdist_wheel`
 * `python -m twine upload dist/*`

@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Raise exception instead of warning when the given multichannel ndarray has wrong shape
 * Add support for the latest librosa 0.10 version
-* Switch to a faster resampler internally in pitch shift, leading to much faster execution. This requires `soxr`.
+* Switch to a faster default resampler internally in `PitchShift`, leading to much faster execution. This requires `soxr`.
 * Bump min `scipy` requirement from 1.0 to 1.3
 * Rename "_in_db" to "_db" in args and parameters. Passing args with the old names still works, but is deprecated and will stop working in a future version.
 

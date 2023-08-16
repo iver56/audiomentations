@@ -109,7 +109,7 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     that this value can not exceed 0.
 
 [`min_absolute_rms_in_db`](#min_absolute_rms_in_db){ #min_absolute_rms_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0.. Use [`min_absolute_rms_db`](#min_absolute_rms_db) instead
+:   :warning: Deprecated as of v0.31.0. Use [`min_absolute_rms_db`](#min_absolute_rms_db) instead
 
 [`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel
 :   :warning: Deprecated as of v0.31.0. Use [`max_absolute_rms_in_db`](#max_absolute_rms_in_db) instead

@@ -99,7 +99,7 @@ The API documentation, along with guides, example code, illustrations and exampl
 ### Changed
 
 * Bump min version of numpy dependency from 1.13 to 1.16
-* If a transform is in "frozen parameters" mode, but has no parameters yet, the first transform call will randomize/set parameters
+* If a transform is in "frozen parameters" mode, but has no parameters yet, the transform will randomize/set parameters when it gets called for the first time
 * Increase the threshold for raising `WrongMultichannelAudioShape`. This allows some rare use cases where the number of channels slightly exceeds the number of samples.
 
 ### Fixed

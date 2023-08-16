@@ -345,6 +345,23 @@ class RepeatPartExample(TransformUsageExample):
 
 
 @register
+class ReverseExample(TransformUsageExample):
+    transform_class = Reverse
+
+    def generate_example(self):
+        transform = Reverse(p=1.0)
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
 class RoomSimulatorExample(TransformUsageExample):
     transform_class = RoomSimulator
 

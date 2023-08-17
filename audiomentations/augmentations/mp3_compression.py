@@ -83,12 +83,11 @@ class Mp3Compression(BaseWaveformTransform):
             )
         if max_bitrate < min_bitrate:
             raise ValueError("max_bitrate must be >= min_bitrate")
-        bitrate_choices = [
-            bitrate
-            for bitrate in self.SUPPORTED_BITRATES
-            if min_bitrate <= bitrate <= max_bitrate
-        ]
-        if len(bitrate_choices) == 0:
+
+        is_any_supported_bitrate_in_range = any(
+            min_bitrate <= bitrate <= max_bitrate for bitrate in self.SUPPORTED_BITRATES
+        )
+        if not is_any_supported_bitrate_in_range:
             raise ValueError(
                 "There is no supported bitrate in the range between the specified"
                 " min_bitrate and max_bitrate. The supported bitrates are:"

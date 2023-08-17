@@ -16,10 +16,10 @@ Warning: This transform writes to disk, so it may be slow.
 
 # Mp3Compression API
 
-[`min_bitrate`](#min_bitrate){ #min_bitrate }: `int` • unit: kbps • range: [8, 320]
+[`min_bitrate`](#min_bitrate){ #min_bitrate }: `int` • unit: kbps • range: [8, `max_bitrate`]
 :   :octicons-milestone-24: Default: `8`. Minimum bitrate in kbps
 
-[`max_bitrate`](#max_bitrate){ #max_bitrate }: `int` • unit: kbps • range: [8, 320]
+[`max_bitrate`](#max_bitrate){ #max_bitrate }: `int` • unit: kbps • range: [`min_bitrate`, 320]
 :   :octicons-milestone-24: Default: `64`. Maximum bitrate in kbps
 
 [`backend`](#backend){ #backend }: `str` • choices: `"pydub"`, `"lameenc"`

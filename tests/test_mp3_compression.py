@@ -98,14 +98,20 @@ class TestMp3Compression:
             assert samples_out.shape[0] == shape[0]
 
     def test_invalid_argument_combination(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             _ = Mp3Compression(min_bitrate=400, max_bitrate=800)
 
-        with pytest.raises(AssertionError):
-            _ = Mp3Compression(min_bitrate=2, max_bitrate=4)
+        with pytest.raises(ValueError):
+            _ = Mp3Compression(min_bitrate=2, max_bitrate=128)
 
-        with pytest.raises(AssertionError):
-            _ = Mp3Compression(min_bitrate=64, max_bitrate=8)
+        with pytest.raises(ValueError):
+            _ = Mp3Compression(min_bitrate=64, max_bitrate=32)
+
+        with pytest.raises(ValueError):
+            _ = Mp3Compression(min_bitrate=66, max_bitrate=67)
+
+        with pytest.raises(ValueError):
+            _ = Mp3Compression(backend="both")
 
     def test_too_loud_input(self):
         """Check that we avoid wrap distortion if input is too loud"""

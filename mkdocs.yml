@@ -16,6 +16,7 @@ nav:
       - Clip: waveform_transforms/clip.md
       - ClippingDistortion: waveform_transforms/clipping_distortion.md
       - Gain: waveform_transforms/gain.md
+      - GainCompensation: waveform_transforms/gain_compensation.md
       - GainTransition: waveform_transforms/gain_transition.md
       - HighPassFilter: waveform_transforms/high_pass_filter.md
       - HighShelfFilter: waveform_transforms/high_shelf_filter.md
@@ -30,7 +31,6 @@ nav:
       - PeakingFilter: waveform_transforms/peaking_filter.md
       - PitchShift: waveform_transforms/pitch_shift.md
       - PolarityInversion: waveform_transforms/polarity_inversion.md
-      #- PostGain: waveform_transforms/post_gain.md
       - RepeatPart: waveform_transforms/repeat_part.md
       - Resample: waveform_transforms/resample.md
       - Reverse: waveform_transforms/reverse.md

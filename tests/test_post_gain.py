@@ -4,7 +4,7 @@ import pytest
 from numpy.testing import assert_almost_equal, assert_array_equal
 
 from audiomentations import Gain
-from audiomentations.core.post_gain import PostGain
+from audiomentations.core.gain_compensation import GainCompensation
 from audiomentations.core.utils import calculate_rms
 
 
@@ -13,7 +13,7 @@ class TestPostGain:
         samples = np.array([1.0, 0.5, -0.25, -0.125, 0.0], dtype=np.float32)
         sample_rate = 16000
 
-        augment = PostGain(
+        augment = GainCompensation(
             Gain(min_gain_db=-6, max_gain_db=-6, p=1.0), method="same_rms"
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
@@ -29,7 +29,7 @@ class TestPostGain:
         )
         sample_rate = 16000
 
-        augment = PostGain(
+        augment = GainCompensation(
             Gain(min_gain_db=60, max_gain_db=60, p=1.0), method="same_lufs"
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
@@ -46,7 +46,7 @@ class TestPostGain:
         )
         sample_rate = 16000
 
-        augment = PostGain(
+        augment = GainCompensation(
             Gain(min_gain_db=-55, max_gain_db=-55, p=1.0),
             method="peak_normalize_always",
         )
@@ -61,7 +61,7 @@ class TestPostGain:
             dtype=np.float32,
         )
         sample_rate = 16000
-        augmenter = PostGain(
+        augmenter = GainCompensation(
             Gain(min_gain_db=0.0, max_gain_db=0.0, p=1.0),
             method="peak_normalize_if_too_loud",
         )

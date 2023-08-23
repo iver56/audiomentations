@@ -9,12 +9,14 @@ from audiomentations.core.utils import (
 )
 
 
-class PostGain:
+class GainCompensation:
     """
     Gain up or down the audio after the given transform (or set of transforms) has
-    processed the audio. There are several methods that determine how the audio should
-    be gained. PostGain can be useful for compensating for any gain differences introduced
-    by a (set of) transform(s), or for preventing clipping in the output.
+    processed the audio. `GainCompensation` can be useful for compensating for any gain
+    differences introduced by a (set of) transform(s), like `ApplyImpulseResponse`,
+    `ApplyBackgroundNoise`, `Clip` and many others. `GainCompensation` ensures that the
+    processed audio's RMS (Root Mean Square) or LUFS (Loudness Units Full Scale) matches
+    the original.
     """
 
     def __init__(self, transform: Callable[[np.ndarray, int], np.ndarray], method: str):
@@ -22,11 +24,14 @@ class PostGain:
         :param transform: A callable to be applied. It should input
             samples (ndarray), sample_rate (int) and optionally some user-defined
             keyword arguments.
-        :param method: "same_rms", "same_lufs"
+        :param method: "same_rms" or "same_lufs".
+            * "same_rms" is fast to compute
+            * "same_lufs" is slower, but is more aligned with human's perceptual loudness
         """
         self.transform = transform
         self.method = method
-        assert self.method in ("same_rms", "same_lufs")
+        if self.method not in ("same_rms", "same_lufs"):
+            raise ValueError('method must be set to "same_rms" or "same_lufs"')
 
     def method_same_rms(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         rms_before = calculate_rms(samples)

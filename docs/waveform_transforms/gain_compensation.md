@@ -1,11 +1,13 @@
-# `PostGain`
+# `GainCompensation`
 
-_Added in v0.31.0_
+_Added in v0.33.0_
 
 Gain up or down the audio after the given transform (or set of transforms) has
-processed the audio. There are several methods that determine how the audio should
-be gained. `PostGain` can be useful for compensating for any gain differences introduced
-by a (set of) transform(s), or for preventing clipping in the output.
+processed the audio. `GainCompensation` can be useful for compensating for any gain
+differences introduced by a (set of) transform(s), like `ApplyImpulseResponse`,
+`ApplyBackgroundNoise`, `Clip` and many others. `GainCompensation` ensures that the
+processed audio's RMS (Root Mean Square) or LUFS (Loudness Units Full Scale) matches
+the original.
 
 # PostGain API
 

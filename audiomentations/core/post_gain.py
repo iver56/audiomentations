@@ -3,7 +3,6 @@ from typing import Callable
 import numpy as np
 import sys
 
-from audiomentations import Normalize
 from audiomentations.core.utils import (
     calculate_rms,
     convert_decibels_to_amplitude_ratio,
@@ -18,33 +17,16 @@ class PostGain:
     by a (set of) transform(s), or for preventing clipping in the output.
     """
 
-    def __init__(
-        self, transform: Callable[[np.ndarray, int], np.ndarray], method: str  #, **kwargs
-    ):
+    def __init__(self, transform: Callable[[np.ndarray, int], np.ndarray], method: str):
         """
         :param transform: A callable to be applied. It should input
             samples (ndarray), sample_rate (int) and optionally some user-defined
             keyword arguments.
-        :param method: "same_rms", "same_lufs", "peak_normalize_always" or "peak_normalize_always"
+        :param method: "same_rms", "same_lufs"
         """
         self.transform = transform
         self.method = method
-        assert self.method in (
-            "same_rms",
-            "same_lufs",
-            "peak_normalize_always",
-            "peak_normalize_if_too_loud",
-            # "target_rms",
-            # "target_lufs",
-            # "target_peak_dbfs",
-            # "target_true_peak_dbfs",
-        )
-        # if self.method == "target_rms":
-        #     self.target_rms = kwargs["target_rms"]
-        # elif self.method == "target_lufs":
-        #     self.target_lufs = kwargs["target_lufs"]
-        # elif self.method == "target_peak_dbfs":
-        #     self.target_peak_dbfs = kwargs["target_peak_dbfs"]
+        assert self.method in ("same_rms", "same_lufs")
 
     def method_same_rms(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         rms_before = calculate_rms(samples)
@@ -59,10 +41,12 @@ class PostGain:
             import pyloudnorm
         except ImportError:
             print(
-                "Failed to import pyloudnorm. Maybe it is not installed? "
-                "To install the optional pyloudnorm dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` or simply "
-                " `pip install pyloudnorm`",
+                (
+                    "Failed to import pyloudnorm. Maybe it is not installed? "
+                    "To install the optional pyloudnorm dependency of audiomentations,"
+                    " do `pip install audiomentations[extras]` or simply "
+                    " `pip install pyloudnorm`"
+                ),
                 file=sys.stderr,
             )
             raise
@@ -76,26 +60,10 @@ class PostGain:
         samples *= convert_decibels_to_amplitude_ratio(gain_db)
         return samples
 
-    def method_peak_normalize_always(
-        self, samples: np.ndarray, sample_rate: int
-    ) -> np.ndarray:
-        samples = self.transform(samples, sample_rate)
-        return Normalize(apply_to="all", p=1.0)(samples, sample_rate)
-
-    def method_peak_normalize_if_too_loud(
-        self, samples: np.ndarray, sample_rate: int
-    ) -> np.ndarray:
-        samples = self.transform(samples, sample_rate)
-        return Normalize(apply_to="only_too_loud_sounds", p=1.0)(samples, sample_rate)
-
     def __call__(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         if self.method == "same_rms":
             return self.method_same_rms(samples, sample_rate)
         elif self.method == "same_lufs":
             return self.method_same_lufs(samples, sample_rate)
-        elif self.method == "peak_normalize_always":
-            return self.method_peak_normalize_always(samples, sample_rate)
-        elif self.method == "peak_normalize_if_too_loud":
-            return self.method_peak_normalize_if_too_loud(samples, sample_rate)
         else:
             raise Exception()

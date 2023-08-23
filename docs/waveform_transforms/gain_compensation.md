@@ -16,15 +16,12 @@ the original.
     samples (ndarray), sample_rate (int) and optionally some user-defined
     keyword arguments.
 
-[`method`](#method){ #method }: `str` • choices: `"same_rms"`, `"same_lufs"` or `"peak_normalize_always"`
-:   :octicons-milestone-24: This parameter defines the method for choosing the post gain amount.
+[`loudness_metric`](#loudness_metric){ #loudness_metric }: `str` • choices: `"rms"`, `"lufs"`
+:   :octicons-milestone-24: Default: `"rms"`. This parameter defines the loudness metric
+    used when calculating the gain amount.
 
-    * `"same_rms"`: The sound gets post-gained so that the RMS (Root Mean Square) of
+    * `"rms"`: The sound gets post-gained so that the RMS (Root Mean Square) of
         the output matches the RMS of the input.
-    * `"same_lufs"`: The sound gets post-gained so that the LUFS (Loudness Units Full Scale) of
-        the output matches the LUFS of the input.
-    * `"peak_normalize_always"`: The sound gets peak normalized (gained up or down so
-        that the absolute value of the most extreme sample in the output is 1.0)
-    * `"peak_normalize_if_too_loud"`: The sound gets peak normalized if it is too
-        loud (max absolute value greater than 1.0). This option can be useful for
-        avoiding clipping.
+    * `"lufs"`: The sound gets post-gained so that the LUFS (Loudness Units Full Scale) of
+        the output matches the LUFS of the input. This is slower than the "rms", but is
+        more aligned with human's perception of loudness

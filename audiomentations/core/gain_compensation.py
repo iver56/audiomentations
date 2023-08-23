@@ -19,21 +19,21 @@ class GainCompensation:
     the original.
     """
 
-    def __init__(self, transform: Callable[[np.ndarray, int], np.ndarray], method: str):
+    def __init__(self, transform: Callable[[np.ndarray, int], np.ndarray], loudness_metric: str):
         """
         :param transform: A callable to be applied. It should input
             samples (ndarray), sample_rate (int) and optionally some user-defined
             keyword arguments.
-        :param method: "same_rms" or "same_lufs".
-            * "same_rms" is fast to compute
-            * "same_lufs" is slower, but is more aligned with human's perceptual loudness
+        :param loudness_metric: "rms" or "lufs".
+            * "rms" is fast to compute
+            * "lufs" is slower, but is more aligned with human's perceptual loudness
         """
         self.transform = transform
-        self.method = method
-        if self.method not in ("same_rms", "same_lufs"):
-            raise ValueError('method must be set to "same_rms" or "same_lufs"')
+        self.loudness_metric = loudness_metric
+        if self.loudness_metric not in ("rms", "lufs"):
+            raise ValueError('loudness_metric must be set to "rms" or "lufs"')
 
-    def method_same_rms(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def run_with_rms(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         rms_before = calculate_rms(samples)
         samples = self.transform(samples, sample_rate)
         rms_after = calculate_rms(samples)
@@ -41,7 +41,7 @@ class GainCompensation:
         samples *= gain_factor
         return samples
 
-    def method_same_lufs(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def run_with_lufs(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         try:
             import pyloudnorm
         except ImportError:
@@ -66,9 +66,9 @@ class GainCompensation:
         return samples
 
     def __call__(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
-        if self.method == "same_rms":
-            return self.method_same_rms(samples, sample_rate)
-        elif self.method == "same_lufs":
-            return self.method_same_lufs(samples, sample_rate)
+        if self.loudness_metric == "rms":
+            return self.run_with_rms(samples, sample_rate)
+        elif self.loudness_metric == "lufs":
+            return self.run_with_lufs(samples, sample_rate)
         else:
             raise Exception()

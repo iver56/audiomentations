@@ -14,7 +14,7 @@ class TestPostGain:
         sample_rate = 16000
 
         augment = GainCompensation(
-            Gain(min_gain_db=-6, max_gain_db=-6, p=1.0), method="same_rms"
+            Gain(min_gain_db=-6, max_gain_db=-6, p=1.0), loudness_metric="same_rms"
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert_almost_equal(
@@ -30,7 +30,7 @@ class TestPostGain:
         sample_rate = 16000
 
         augment = GainCompensation(
-            Gain(min_gain_db=60, max_gain_db=60, p=1.0), method="same_lufs"
+            Gain(min_gain_db=60, max_gain_db=60, p=1.0), loudness_metric="same_lufs"
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
@@ -48,7 +48,7 @@ class TestPostGain:
 
         augment = GainCompensation(
             Gain(min_gain_db=-55, max_gain_db=-55, p=1.0),
-            method="peak_normalize_always",
+            loudness_metric="peak_normalize_always",
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
@@ -63,7 +63,7 @@ class TestPostGain:
         sample_rate = 16000
         augmenter = GainCompensation(
             Gain(min_gain_db=0.0, max_gain_db=0.0, p=1.0),
-            method="peak_normalize_if_too_loud",
+            loudness_metric="peak_normalize_if_too_loud",
         )
 
         processed_samples = augmenter(samples=samples, sample_rate=sample_rate)

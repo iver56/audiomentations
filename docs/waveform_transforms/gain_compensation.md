@@ -9,7 +9,7 @@ differences introduced by a (set of) transform(s), like `ApplyImpulseResponse`,
 processed audio's RMS (Root Mean Square) or LUFS (Loudness Units Full Scale) matches
 the original.
 
-# PostGain API
+# GainCompensation API
 
 [`transform`](#transform){ #transform }: `Callable[[np.ndarray, int], np.ndarray]`
 :   :octicons-milestone-24: A callable to be applied. It should input

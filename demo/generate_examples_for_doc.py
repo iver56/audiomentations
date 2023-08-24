@@ -406,7 +406,7 @@ class ShiftExample(TransformUsageExample):
     def generate_example(self):
         random.seed(345)
         np.random.seed(345)
-        transform = Shift(min_fraction=0.75, max_fraction=0.75, rollover=True, p=1)
+        transform = Shift(min_shift=0.75, max_shift=0.75, rollover=True, p=1)
 
         sound, sample_rate = load_sound_file(
             librosa.example("libri1"), sample_rate=16000

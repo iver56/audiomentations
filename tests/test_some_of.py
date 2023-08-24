@@ -174,7 +174,7 @@ class TestSomeOf:
                 ),
                 ClippingDistortion(p=1.0),
                 TimeMask(min_band_part=0.2, max_band_part=0.5, p=1.0),
-                Shift(min_fraction=0.5, max_fraction=0.5, p=1.0),
+                Shift(min_shift=0.5, max_shift=0.5, p=1.0),
             ],
         )
         augmenter.freeze_parameters()

@@ -54,7 +54,7 @@ class TestCompose:
                 ),
                 ClippingDistortion(p=0.5),
                 TimeMask(min_band_part=0.2, max_band_part=0.5, p=0.5),
-                Shift(min_fraction=0.5, max_fraction=0.5, p=0.5),
+                Shift(min_shift=0.5, max_shift=0.5, p=0.5),
             ]
         )
         augmenter.freeze_parameters()

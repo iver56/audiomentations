@@ -9,7 +9,7 @@ class TestShift:
         samples = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
         sample_rate = 16000
 
-        forward_augmenter = Compose([Shift(min_fraction=0.5, max_fraction=0.5, p=1.0)])
+        forward_augmenter = Compose([Shift(min_shift=0.5, max_shift=0.5, p=1.0)])
         forward_shifted_samples = forward_augmenter(
             samples=samples, sample_rate=sample_rate
         )
@@ -20,7 +20,7 @@ class TestShift:
         assert len(forward_shifted_samples) == 4
 
         backward_augmenter = Compose(
-            [Shift(min_fraction=-0.25, max_fraction=-0.25, p=1.0)]
+            [Shift(min_shift=-0.25, max_shift=-0.25, p=1.0)]
         )
         backward_shifted_samples = backward_augmenter(
             samples=samples, sample_rate=sample_rate
@@ -37,7 +37,7 @@ class TestShift:
         sample_rate = 16000
 
         forward_augmenter = Compose(
-            [Shift(min_fraction=0.5, max_fraction=0.5, rollover=False, p=1.0)]
+            [Shift(min_shift=0.5, max_shift=0.5, rollover=False, p=1.0)]
         )
         forward_shifted_samples = forward_augmenter(
             samples=samples, sample_rate=sample_rate
@@ -49,7 +49,7 @@ class TestShift:
         assert len(forward_shifted_samples) == 4
 
         backward_augmenter = Compose(
-            [Shift(min_fraction=-0.25, max_fraction=-0.25, rollover=False, p=1.0)]
+            [Shift(min_shift=-0.25, max_shift=-0.25, rollover=False, p=1.0)]
         )
         backward_shifted_samples = backward_augmenter(
             samples=samples, sample_rate=sample_rate
@@ -67,7 +67,7 @@ class TestShift:
         )
         sample_rate = 4000
 
-        augment = Shift(min_fraction=0.5, max_fraction=0.5, p=1.0)
+        augment = Shift(min_shift=0.5, max_shift=0.5, p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
         assert_almost_equal(
@@ -85,7 +85,7 @@ class TestShift:
         )
         sample_rate = 4000
 
-        augment = Shift(min_fraction=0.5, max_fraction=0.5, rollover=False, p=1.0)
+        augment = Shift(min_shift=0.5, max_shift=0.5, rollover=False, p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
         assert_almost_equal(
@@ -102,8 +102,8 @@ class TestShift:
         sample_rate = 4000
 
         augment = Shift(
-            min_fraction=0.5,
-            max_fraction=0.5,
+            min_shift=0.5,
+            max_shift=0.5,
             rollover=False,
             fade=True,
             fade_duration=0.00075,  # 0.00075 * 4000 = 3
@@ -127,8 +127,8 @@ class TestShift:
         sample_rate = 4000
 
         augment = Shift(
-            min_fraction=0.5,
-            max_fraction=0.5,
+            min_shift=0.5,
+            max_shift=0.5,
             rollover=True,
             fade=True,
             fade_duration=0.00075,  # 0.00075 * 4000 = 3
@@ -150,8 +150,8 @@ class TestShift:
         sample_rate = 4000
 
         augment = Shift(
-            min_fraction=-0.5,
-            max_fraction=-0.5,
+            min_shift=-0.5,
+            max_shift=-0.5,
             rollover=True,
             fade=True,
             fade_duration=0.00075,  # 0.00075 * 4000 = 3
@@ -174,8 +174,8 @@ class TestShift:
         sample_rate = 4000
 
         augment = Shift(
-            min_fraction=-0.5,
-            max_fraction=-0.5,
+            min_shift=-0.5,
+            max_shift=-0.5,
             rollover=True,
             fade=True,
             fade_duration=1.0,
@@ -202,7 +202,7 @@ class TestShift:
         sample_rate_2 = 2
 
         augment = Shift(
-            min_fraction=0.5, max_fraction=0.5, rollover=False, fade=False, p=1.0
+            min_shift=0.5, max_shift=0.5, rollover=False, fade=False, p=1.0
         )
         augment.randomize_parameters(samples1, sample_rate_1)
         augment.freeze_parameters()

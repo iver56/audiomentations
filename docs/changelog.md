@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Removed `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
 * Rename `min_fraction` to `min_shift` and `max_fraction` to `max_shift`
 * Add `shift_unit` parameter
+* Fading is enabled by default
 * Smoother fade curve
 
 These are **breaking changes**. The following example shows how you can adapt your code when upgrading from <=v0.32.0 to >=v0.33.0:
@@ -26,6 +27,7 @@ These are **breaking changes**. The following example shows how you can adapt yo
 | <= 0.32.0 | >= 0.33.0                                                                         |
 | --------- |-----------------------------------------------------------------------------------|
 | `Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, fade_duration=0.01)` | `Shift(min_shift=-0.5, max_shift=0.5, shift_unit="fraction", fade_duration=0.01)` |
+| `Shift()` | `Shift(fade_duration=0.0)` |
 
 ### Fixed
 

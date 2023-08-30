@@ -1,6 +1,7 @@
-from audiomentations.core.transforms_interface import BaseWaveformTransform
-import numpy as np
 import librosa
+import numpy as np
+
+from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 
 def next_power_of_2(x: int) -> int:
@@ -108,7 +109,7 @@ class AirAbsorption(BaseWaveformTransform):
         self.min_distance = min_distance
         self.max_distance = max_distance
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         self.parameters["temperature"] = 10 * np.random.randint(
             int(self.min_temperature) // 10, int(self.max_temperature) // 10 + 1
@@ -120,7 +121,7 @@ class AirAbsorption(BaseWaveformTransform):
             self.min_distance, self.max_distance
         )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         assert samples.dtype == np.float32
 
         humidity = self.parameters["humidity"]

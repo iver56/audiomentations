@@ -1,8 +1,14 @@
 import random
+from typing import Union
 
 import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+
+# 0.00025 seconds corresponds to 2 samples at 8000 Hz
+from audiomentations.core.utils import get_crossfade_mask_pair
+
+DURATION_EPSILON = 0.00025
 
 
 class Shift(BaseWaveformTransform):
@@ -14,49 +20,90 @@ class Shift(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_fraction: float = -0.5,
-        max_fraction: float = 0.5,
+        min_shift: Union[float, int] = -0.5,
+        max_shift: Union[float, int] = 0.5,
+        shift_unit: str = "fraction",
         rollover: bool = True,
-        fade: bool = False,
-        fade_duration: float = 0.01,
+        fade_duration: float = 0.005,
         p: float = 0.5,
     ):
         """
-        :param min_fraction: Minimum fraction of total sound length to shift
-        :param max_fraction: Maximum fraction of total sound length to shift
+        :param min_shift: Minimum amount of shifting in time. See also shift_unit.
+        :param max_shift: Maximum amount of shifting in time. See also shift_unit.
+        :param shift_unit: Defines the unit of the value of min_shift and max_shift.
+            "fraction": Fraction of the total sound length
+            "samples": Number of audio samples
+            "seconds": Number of seconds
         :param rollover: When set to True, samples that roll beyond the first or last position
             are re-introduced at the last or first. When set to False, samples that roll beyond
             the first or last position are discarded. In other words, rollover=False results in
             an empty space (with zeroes).
-        :param fade: When set to True, there will be a short fade in and/or out at the "stitch"
-            (that was the start or the end of the audio before the shift). This can smooth out an
-            unwanted abrupt change between two consecutive samples (which sounds like a
-            transient/click/pop).
-        :param fade_duration: If `fade=True`, then this is the duration of the fade in seconds.
+        :param fade_duration: If you set this to a positive number (in seconds), there
+            will be a fade in and/or out at the "stitch" (that was the start or the end
+            of the audio before the shift). This can smooth out an unwanted abrupt
+            change between two consecutive samples (which sounds like a
+            transient/click/pop). This parameter denotes the duration of the fade in
+            seconds. To disable the fading feature, set this parameter to 0.0.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        assert min_fraction >= -1
-        assert max_fraction <= 1
-        assert type(fade_duration) in [int, float] or not fade
-        assert fade_duration > 0 or not fade
-        self.min_fraction = min_fraction
-        self.max_fraction = max_fraction
+
+        if min_shift > max_shift:
+            raise ValueError("min_shift must not be greater than max_shift")
+        if shift_unit not in ("fraction", "samples", "seconds"):
+            raise ValueError('shift_unit must be "fraction", "samples" or "seconds"')
+        if shift_unit == "fraction":
+            if min_shift < -1:
+                raise ValueError(
+                    'min_shift must be >= -1 when shift_unit is "fraction"'
+                )
+            if max_shift > 1:
+                raise ValueError('max_shift must be <= 1 when shift_unit is "fraction"')
+
+        if fade_duration == 0.0:
+            self.fade = False
+        elif fade_duration < 0.0:
+            raise ValueError("fade_duration must not be negative")
+        elif fade_duration < DURATION_EPSILON:
+            raise ValueError(
+                "When fade_duration is set to a positive number, it must be >="
+                f" {DURATION_EPSILON}"
+            )
+        else:
+            self.fade = True
+
+        self.min_shift = min_shift
+        self.max_shift = max_shift
+        self.shift_unit = shift_unit
         self.rollover = rollover
-        self.fade = fade
         self.fade_duration = fade_duration
 
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["fraction_to_shift"] = random.uniform(
-                self.min_fraction, self.max_fraction
-            )
+            if self.shift_unit == "samples":
+                self.parameters["shift_amount"] = random.randint(
+                    self.min_shift, self.max_shift
+                )
+            else:
+                self.parameters["shift_amount"] = random.uniform(
+                    self.min_shift, self.max_shift
+                )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
-        num_places_to_shift = round(
-            self.parameters["fraction_to_shift"] * samples.shape[-1]
-        )
+    def apply(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+        if self.shift_unit == "samples":
+            num_places_to_shift = self.parameters["shift_amount"]
+        elif self.shift_unit == "fraction":
+            num_places_to_shift = int(
+                round(self.parameters["shift_amount"] * samples.shape[-1])
+            )
+        elif self.shift_unit == "seconds":
+            num_places_to_shift = int(
+                round(self.parameters["shift_amount"] * sample_rate)
+            )
+        else:
+            raise ValueError("invalid shift_unit")
+
         shifted_samples = np.roll(samples, num_places_to_shift, axis=-1)
 
         if not self.rollover:
@@ -67,12 +114,9 @@ class Shift(BaseWaveformTransform):
 
         if self.fade:
             fade_length = int(sample_rate * self.fade_duration)
-
-            fade_in = np.linspace(0, 1, num=fade_length)
-            fade_out = np.linspace(1, 0, num=fade_length)
+            fade_in, fade_out = get_crossfade_mask_pair(fade_length)
 
             if num_places_to_shift > 0:
-
                 fade_in_start = num_places_to_shift
                 fade_in_end = min(
                     num_places_to_shift + fade_length, shifted_samples.shape[-1]
@@ -85,7 +129,6 @@ class Shift(BaseWaveformTransform):
                 ] *= fade_in[:fade_in_length]
 
                 if self.rollover:
-
                     fade_out_start = max(num_places_to_shift - fade_length, 0)
                     fade_out_end = num_places_to_shift
                     fade_out_length = fade_out_end - fade_out_start
@@ -95,7 +138,6 @@ class Shift(BaseWaveformTransform):
                     ]
 
             elif num_places_to_shift < 0:
-
                 positive_num_places_to_shift = (
                     shifted_samples.shape[-1] + num_places_to_shift
                 )

@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Changed
+
+The `Shift` API has been changed:
+
+* Removed `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
+* Rename `min_fraction` to `min_shift` and `max_fraction` to `max_shift`
+* Add `shift_unit` parameter
+* Smoother fade curve
+
+The following example shows how you can adapt your code when upgrading from <=v0.32.0 to >=v0.33.0:
+
+| <= 0.32.0 | >= 0.33.0                                                                         |
+| --------- |-----------------------------------------------------------------------------------|
+| `Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, fade_duration=0.01)` | `Shift(min_shift=-0.5, max_shift=0.5, shift_unit="fraction", fade_duration=0.01)` |
+
 ## [0.32.0] - 2023-08-15
 
 ### Added

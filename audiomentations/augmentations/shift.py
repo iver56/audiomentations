@@ -1,8 +1,12 @@
 import random
+from typing import Union
 
 import numpy as np
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+
+# 0.00025 seconds corresponds to 2 samples at 8000 Hz
+DURATION_EPSILON = 0.00025
 
 
 class Shift(BaseWaveformTransform):
@@ -14,12 +18,11 @@ class Shift(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_shift: float = -0.5,
-        max_shift: float = 0.5,
+        min_shift: Union[float, int] = -0.5,
+        max_shift: Union[float, int] = 0.5,
         shift_unit: str = "fraction",
         rollover: bool = True,
-        fade: bool = False,  # TODO: Remove this and let fade_duration=0.0 mean no fade
-        fade_duration: float = 0.01,  # TODO: Consider reducing this to 0.005 after I switched to the smoother fade
+        fade_duration: float = 0.005,
         p: float = 0.5,
     ):
         """
@@ -33,11 +36,12 @@ class Shift(BaseWaveformTransform):
             are re-introduced at the last or first. When set to False, samples that roll beyond
             the first or last position are discarded. In other words, rollover=False results in
             an empty space (with zeroes).
-        :param fade: When set to True, there will be a short fade in and/or out at the "stitch"
-            (that was the start or the end of the audio before the shift). This can smooth out an
-            unwanted abrupt change between two consecutive samples (which sounds like a
-            transient/click/pop).
-        :param fade_duration: If `fade=True`, then this is the duration of the fade in seconds.
+        :param fade_duration: If you set this to a positive number (in seconds), there
+            will be a fade in and/or out at the "stitch" (that was the start or the end
+            of the audio before the shift). This can smooth out an unwanted abrupt
+            change between two consecutive samples (which sounds like a
+            transient/click/pop). This parameter denotes the duration of the fade in
+            seconds. To disable the fading feature, set this parameter to 0.0.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -53,13 +57,23 @@ class Shift(BaseWaveformTransform):
                 )
             if max_shift > 1:
                 raise ValueError('max_shift must be <= 1 when shift_unit is "fraction"')
-        assert type(fade_duration) in [int, float] or not fade
-        assert fade_duration > 0 or not fade
+
+        if fade_duration == 0.0:
+            self.fade = False
+        elif fade_duration < 0.0:
+            raise ValueError("fade_duration must not be negative")
+        elif fade_duration < DURATION_EPSILON:
+            raise ValueError(
+                "When fade_duration is set to a positive number, it must be >="
+                f" {DURATION_EPSILON}"
+            )
+        else:
+            self.fade = True
+
         self.min_shift = min_shift
         self.max_shift = max_shift
         self.shift_unit = shift_unit
         self.rollover = rollover
-        self.fade = fade
         self.fade_duration = fade_duration
 
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
@@ -81,7 +95,7 @@ class Shift(BaseWaveformTransform):
                 min_shift_in_samples, max_shift_in_samples
             )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
         num_places_to_shift = self.parameters["num_samples_to_shift"]
         shifted_samples = np.roll(samples, num_places_to_shift, axis=-1)
 

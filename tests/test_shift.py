@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from numpy.testing import assert_almost_equal
 
 from audiomentations import Shift
@@ -114,12 +115,12 @@ class TestShift:
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
-        assert_almost_equal(
-            processed_samples,
+        assert processed_samples == pytest.approx(
             np.array(
-                [[0.0, 0.0, 0.0, 1.0, 3.0], [0.0, 0.0, 0.0, -1.0, -3.0]],
+                [[0.0, 0.0, 0.0, 1.4067, 3.0], [0.0, 0.0, 0.0, -1.4067, -3.0]],
                 dtype=np.float32,
             ),
+            abs=0.01,
         )
 
     def test_shift_fade_rollover(self):
@@ -137,12 +138,12 @@ class TestShift:
             p=1.0,
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
-        assert_almost_equal(
-            processed_samples,
+        assert processed_samples == pytest.approx(
             np.array(
-                [[2.0, 0.0, 0, 1.0, 3.0], [-2.0, 0.0, 0, -1.0, -3.0]],
+                [[2.81, 0.0, 0, 1.407, 3.0], [-2.81, 0.0, 0, -1.407, -3.0]],
                 dtype=np.float32,
             ),
+            abs=0.01,
         )
 
     def test_shift_fade_rollover_2(self):
@@ -160,12 +161,12 @@ class TestShift:
             p=1.0,
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
-        assert_almost_equal(
-            processed_samples,
+        assert processed_samples == pytest.approx(
             np.array(
-                [[3.0, 2.0, 0.0, 0.0, 1.0], [-3.0, -2.0, 0.0, -0.0, -1.0]],
+                [[3.0, 2.81, 0.0, 0.0, 1.407], [-3.0, -2.81, 0.0, -0.0, -1.407]],
                 dtype=np.float32,
             ),
+            abs=0.01,
         )
 
     def test_shift_fade_rollover_3(self):
@@ -183,12 +184,23 @@ class TestShift:
             p=1.0,
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
-        assert_almost_equal(
-            processed_samples,
+        assert processed_samples == pytest.approx(
             np.array(
                 [
-                    [0.0015004, 0.0010003, 0.0, 0.0, 0.0005001],
-                    [-0.0015004, -0.0010003, -0.0, -0.0, -0.0005001],
+                    [
+                        3.0023373e-06,
+                        1.0004364e-06,
+                        0.0000000e00,
+                        0.0000000e00,
+                        5.0030241e-07,
+                    ],
+                    [
+                        -3.0023373e-06,
+                        -1.0004364e-06,
+                        -0.0000000e00,
+                        -0.0000000e00,
+                        -5.0030241e-07,
+                    ],
                 ],
                 dtype=np.float32,
             ),

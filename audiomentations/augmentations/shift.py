@@ -6,6 +6,8 @@ import numpy as np
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 # 0.00025 seconds corresponds to 2 samples at 8000 Hz
+from audiomentations.core.utils import get_crossfade_mask_pair
+
 DURATION_EPSILON = 0.00025
 
 
@@ -112,10 +114,7 @@ class Shift(BaseWaveformTransform):
 
         if self.fade:
             fade_length = int(sample_rate * self.fade_duration)
-
-            # TODO: Use smooth fade!
-            fade_in = np.linspace(0, 1, num=fade_length)
-            fade_out = np.linspace(1, 0, num=fade_length)
+            fade_in, fade_out = get_crossfade_mask_pair(fade_length)
 
             if num_places_to_shift > 0:
                 fade_in_start = num_places_to_shift

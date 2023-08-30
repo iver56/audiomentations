@@ -9,18 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-The `Shift` transform has been changed:
+* Bump min numpy version from 1.16 to 1.18
+* Bump min scipy version from 1.3 to 1.4
+* Bump min python version from 3.7 to 3.8, because 3.7 is beyond end-of-life already
+* Change some `AssertionError` exceptions to `ValueError`
+
+#### :warning: The `Shift` transform has been changed:
 
 * Removed `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
 * Rename `min_fraction` to `min_shift` and `max_fraction` to `max_shift`
 * Add `shift_unit` parameter
 * Smoother fade curve
 
-The following example shows how you can adapt your code when upgrading from <=v0.32.0 to >=v0.33.0:
+These are **breaking changes**. The following example shows how you can adapt your code when upgrading from <=v0.32.0 to >=v0.33.0:
 
 | <= 0.32.0 | >= 0.33.0                                                                         |
 | --------- |-----------------------------------------------------------------------------------|
 | `Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, fade_duration=0.01)` | `Shift(min_shift=-0.5, max_shift=0.5, shift_unit="fraction", fade_duration=0.01)` |
+
+### Fixed
+
+* Correct some wrong type hints
 
 ## [0.32.0] - 2023-08-15
 

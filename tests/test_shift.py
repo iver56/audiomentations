@@ -6,7 +6,7 @@ from audiomentations import Shift
 
 
 class TestShift:
-    def test_shift(self):
+    def test_shift_fraction(self):
         samples = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
         sample_rate = 16000
 
@@ -33,6 +33,38 @@ class TestShift:
             np.array([0.5, 0.25, 0.125, 1.0], dtype=np.float32),
         )
         assert backward_shifted_samples.dtype == np.float32
+        assert len(forward_shifted_samples) == 4
+
+    def test_shift_samples(self):
+        samples = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
+        sample_rate = 16000
+
+        forward_augmenter = Shift(
+            min_shift=1, max_shift=1, shift_unit="samples", fade_duration=0.0, p=1.0
+        )
+        forward_shifted_samples = forward_augmenter(
+            samples=samples, sample_rate=sample_rate
+        )
+        assert_almost_equal(
+            forward_shifted_samples, np.array([0.125, 1.0, 0.5, 0.25], dtype=np.float32)
+        )
+        assert forward_shifted_samples.dtype == np.float32
+        assert len(forward_shifted_samples) == 4
+
+    def test_shift_seconds(self):
+        samples = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
+        sample_rate = 2
+
+        forward_augmenter = Shift(
+            min_shift=1.0, max_shift=1.0, shift_unit="seconds", fade_duration=0.0, p=1.0
+        )
+        forward_shifted_samples = forward_augmenter(
+            samples=samples, sample_rate=sample_rate
+        )
+        assert_almost_equal(
+            forward_shifted_samples, np.array([0.25, 0.125, 1.0, 0.5], dtype=np.float32)
+        )
+        assert forward_shifted_samples.dtype == np.float32
         assert len(forward_shifted_samples) == 4
 
     def test_shift_without_rollover(self):

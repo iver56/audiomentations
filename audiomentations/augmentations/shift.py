@@ -28,8 +28,8 @@ class Shift(BaseWaveformTransform):
         p: float = 0.5,
     ):
         """
-        :param min_shift: minimum amount of shifting in time. See also shift_unit.
-        :param max_shift: maximum amount of shifting in time. See also shift_unit.
+        :param min_shift: Minimum amount of shifting in time. See also shift_unit.
+        :param max_shift: Maximum amount of shifting in time. See also shift_unit.
         :param shift_unit: Defines the unit of the value of min_shift and max_shift.
             "fraction": Fraction of the total sound length
             "samples": Number of audio samples

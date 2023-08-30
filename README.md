@@ -90,21 +90,31 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.32.0] - 2023-08-15
-
-### Added
-
-* Add new `RepeatPart` transform
+## [0.33.0] - 2023-08-30
 
 ### Changed
 
-* Bump min version of numpy dependency from 1.13 to 1.16
-* If a transform is in "frozen parameters" mode, but has no parameters yet, the transform will randomize/set parameters when it gets called for the first time
-* Increase the threshold for raising `WrongMultichannelAudioShape`. This allows some rare use cases where the number of channels slightly exceeds the number of samples.
+* Bump min numpy version from 1.16 to 1.18
+* Bump min scipy version from 1.3 to 1.4
+* Bump min python version from 3.7 to 3.8, because 3.7 is beyond end-of-life already
+* Change some `AssertionError` exceptions to `ValueError`
+
+#### :warning: The `Shift` transform has been changed:
+
+* Removed `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
+* Rename `min_fraction` to `min_shift` and `max_fraction` to `max_shift`
+* Add `shift_unit` parameter
+* Smoother fade curve
+
+These are **breaking changes**. The following example shows how you can adapt your code when upgrading from <=v0.32.0 to >=v0.33.0:
+
+| <= 0.32.0 | >= 0.33.0                                                                         |
+| --------- |-----------------------------------------------------------------------------------|
+| `Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, fade_duration=0.01)` | `Shift(min_shift=-0.5, max_shift=0.5, shift_unit="fraction", fade_duration=0.01)` |
 
 ### Fixed
 
-* Fix some type hints that were `np.array` instead of `np.ndarray`
+* Correct some wrong type hints
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

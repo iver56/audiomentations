@@ -80,23 +80,28 @@ class Shift(BaseWaveformTransform):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             if self.shift_unit == "samples":
-                min_shift_in_samples = self.min_shift
-                max_shift_in_samples = self.max_shift
-            elif self.shift_unit == "fraction":
-                min_shift_in_samples = int(round(self.min_shift * samples.shape[-1]))
-                max_shift_in_samples = int(round(self.max_shift * samples.shape[-1]))
-            elif self.shift_unit == "seconds":
-                min_shift_in_samples = int(round(self.min_shift * sample_rate))
-                max_shift_in_samples = int(round(self.max_shift * sample_rate))
+                self.parameters["shift_amount"] = random.randint(
+                    self.min_shift, self.max_shift
+                )
             else:
-                raise ValueError("invalid shift_unit")
-
-            self.parameters["num_samples_to_shift"] = random.randint(
-                min_shift_in_samples, max_shift_in_samples
-            )
+                self.parameters["shift_amount"] = random.uniform(
+                    self.min_shift, self.max_shift
+                )
 
     def apply(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
-        num_places_to_shift = self.parameters["num_samples_to_shift"]
+        if self.shift_unit == "samples":
+            num_places_to_shift = self.parameters["shift_amount"]
+        elif self.shift_unit == "fraction":
+            num_places_to_shift = int(
+                round(self.parameters["shift_amount"] * samples.shape[-1])
+            )
+        elif self.shift_unit == "seconds":
+            num_places_to_shift = int(
+                round(self.parameters["shift_amount"] * sample_rate)
+            )
+        else:
+            raise ValueError("invalid shift_unit")
+
         shifted_samples = np.roll(samples, num_places_to_shift, axis=-1)
 
         if not self.rollover:

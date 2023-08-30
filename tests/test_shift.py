@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from audiomentations import Shift, Compose
+from audiomentations import Shift
 
 
 class TestShift:
@@ -9,7 +9,9 @@ class TestShift:
         samples = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
         sample_rate = 16000
 
-        forward_augmenter = Compose([Shift(min_shift=0.5, max_shift=0.5, p=1.0)])
+        forward_augmenter = Shift(
+            min_shift=0.5, max_shift=0.5, fade_duration=0.0, p=1.0
+        )
         forward_shifted_samples = forward_augmenter(
             samples=samples, sample_rate=sample_rate
         )
@@ -19,7 +21,9 @@ class TestShift:
         assert forward_shifted_samples.dtype == np.float32
         assert len(forward_shifted_samples) == 4
 
-        backward_augmenter = Compose([Shift(min_shift=-0.25, max_shift=-0.25, p=1.0)])
+        backward_augmenter = Shift(
+            min_shift=-0.25, max_shift=-0.25, fade_duration=0.0, p=1.0
+        )
         backward_shifted_samples = backward_augmenter(
             samples=samples, sample_rate=sample_rate
         )
@@ -34,8 +38,8 @@ class TestShift:
         samples = np.array([1.0, 0.5, 0.25, 0.125], dtype=np.float32)
         sample_rate = 16000
 
-        forward_augmenter = Compose(
-            [Shift(min_shift=0.5, max_shift=0.5, rollover=False, p=1.0)]
+        forward_augmenter = Shift(
+            min_shift=0.5, max_shift=0.5, rollover=False, fade_duration=0.0, p=1.0
         )
         forward_shifted_samples = forward_augmenter(
             samples=samples, sample_rate=sample_rate
@@ -46,8 +50,8 @@ class TestShift:
         assert forward_shifted_samples.dtype == np.float32
         assert len(forward_shifted_samples) == 4
 
-        backward_augmenter = Compose(
-            [Shift(min_shift=-0.25, max_shift=-0.25, rollover=False, p=1.0)]
+        backward_augmenter = Shift(
+            min_shift=-0.25, max_shift=-0.25, rollover=False, fade_duration=0.0, p=1.0
         )
         backward_shifted_samples = backward_augmenter(
             samples=samples, sample_rate=sample_rate
@@ -65,7 +69,7 @@ class TestShift:
         )
         sample_rate = 4000
 
-        augment = Shift(min_shift=0.5, max_shift=0.5, p=1.0)
+        augment = Shift(min_shift=0.5, max_shift=0.5, fade_duration=0.0, p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
         assert_almost_equal(
@@ -83,7 +87,9 @@ class TestShift:
         )
         sample_rate = 4000
 
-        augment = Shift(min_shift=0.5, max_shift=0.5, rollover=False, p=1.0)
+        augment = Shift(
+            min_shift=0.5, max_shift=0.5, rollover=False, fade_duration=0.0, p=1.0
+        )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
         assert_almost_equal(

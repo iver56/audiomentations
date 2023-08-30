@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-The `Shift` API has been changed:
+The `Shift` transform has been changed:
 
 * Removed `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
 * Rename `min_fraction` to `min_shift` and `max_fraction` to `max_shift`

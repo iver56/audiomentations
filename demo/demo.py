@@ -401,6 +401,16 @@ if __name__ == "__main__":
             "num_runs": 5,
             "name": "ShiftWithoutRolloverWithLongFade",
         },
+        {
+            "instance": Shift(
+                min_shift=-0.5,
+                max_shift=0.5,
+                shift_unit="seconds",
+                p=1.0,
+            ),
+            "num_runs": 5,
+            "name": "ShiftSeconds",
+        },
         {"instance": TanhDistortion(p=1.0), "num_runs": 5},
         {"instance": TimeMask(p=1.0), "num_runs": 5},
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},

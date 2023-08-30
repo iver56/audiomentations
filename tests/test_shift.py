@@ -19,9 +19,7 @@ class TestShift:
         assert forward_shifted_samples.dtype == np.float32
         assert len(forward_shifted_samples) == 4
 
-        backward_augmenter = Compose(
-            [Shift(min_shift=-0.25, max_shift=-0.25, p=1.0)]
-        )
+        backward_augmenter = Compose([Shift(min_shift=-0.25, max_shift=-0.25, p=1.0)])
         backward_shifted_samples = backward_augmenter(
             samples=samples, sample_rate=sample_rate
         )
@@ -105,7 +103,6 @@ class TestShift:
             min_shift=0.5,
             max_shift=0.5,
             rollover=False,
-            fade=True,
             fade_duration=0.00075,  # 0.00075 * 4000 = 3
             p=1.0,
         )
@@ -130,7 +127,6 @@ class TestShift:
             min_shift=0.5,
             max_shift=0.5,
             rollover=True,
-            fade=True,
             fade_duration=0.00075,  # 0.00075 * 4000 = 3
             p=1.0,
         )
@@ -138,7 +134,8 @@ class TestShift:
         assert_almost_equal(
             processed_samples,
             np.array(
-                [[2.0, 0.0, 0, 1.0, 3.0], [-2.0, 0.0, 0, -1.0, -3.0]], dtype=np.float32,
+                [[2.0, 0.0, 0, 1.0, 3.0], [-2.0, 0.0, 0, -1.0, -3.0]],
+                dtype=np.float32,
             ),
         )
 
@@ -153,7 +150,6 @@ class TestShift:
             min_shift=-0.5,
             max_shift=-0.5,
             rollover=True,
-            fade=True,
             fade_duration=0.00075,  # 0.00075 * 4000 = 3
             p=1.0,
         )
@@ -177,7 +173,6 @@ class TestShift:
             min_shift=-0.5,
             max_shift=-0.5,
             rollover=True,
-            fade=True,
             fade_duration=1.0,
             p=1.0,
         )
@@ -202,7 +197,7 @@ class TestShift:
         sample_rate_2 = 2
 
         augment = Shift(
-            min_shift=0.5, max_shift=0.5, rollover=False, fade=False, p=1.0
+            min_shift=0.5, max_shift=0.5, rollover=False, fade_duration=0.0, p=1.0
         )
         augment.randomize_parameters(samples1, sample_rate_1)
         augment.freeze_parameters()
@@ -214,4 +209,3 @@ class TestShift:
 
         assert num_samples1_shifted == 2
         assert num_samples2_shifted == 4
-

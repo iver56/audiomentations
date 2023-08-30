@@ -381,12 +381,12 @@ if __name__ == "__main__":
             "name": "SevenBandParametricEQ",
         },
         {
-            "instance": Shift(min_shift=-0.5, max_shift=0.5, fade=False, p=1.0),
+            "instance": Shift(min_shift=-0.5, max_shift=0.5, fade_duration=0.0, p=1.0),
             "num_runs": 5,
             "name": "ShiftWithoutFade",
         },
         {
-            "instance": Shift(min_shift=-0.5, max_shift=0.5, fade=True, p=1.0),
+            "instance": Shift(min_shift=-0.5, max_shift=0.5, fade_duration=0.01, p=1.0),
             "num_runs": 5,
             "name": "ShiftWithShortFade",
         },
@@ -395,7 +395,6 @@ if __name__ == "__main__":
                 min_shift=-0.5,
                 max_shift=0.5,
                 rollover=False,
-                fade=True,
                 fade_duration=0.3,
                 p=1.0,
             ),

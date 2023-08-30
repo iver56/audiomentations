@@ -259,3 +259,21 @@ class TestShift:
 
         assert num_samples1_shifted == 2
         assert num_samples2_shifted == 4
+
+    def test_invalid_parameters(self):
+        with pytest.raises(ValueError):
+            Shift(min_shift=-1.5)
+        with pytest.raises(ValueError):
+            Shift(min_shift=1.5)
+        with pytest.raises(ValueError):
+            Shift(max_shift=-1.5)
+        with pytest.raises(ValueError):
+            Shift(max_shift=1.5)
+        with pytest.raises(ValueError):
+            Shift(min_shift=0.2, max_shift=0.1)
+        with pytest.raises(ValueError):
+            Shift(fade_duration=0.000001)
+        with pytest.raises(ValueError):
+            Shift(fade_duration=-1337)
+        with pytest.raises(ValueError):
+            Shift(shift_unit="lightyears")

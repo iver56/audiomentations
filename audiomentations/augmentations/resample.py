@@ -2,6 +2,7 @@ import random
 
 import librosa
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -29,14 +30,14 @@ class Resample(BaseWaveformTransform):
         self.min_sample_rate = min_sample_rate
         self.max_sample_rate = max_sample_rate
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["target_sample_rate"] = random.randint(
                 self.min_sample_rate, self.max_sample_rate
             )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         samples = librosa.core.resample(
             samples,
             orig_sr=sample_rate,

@@ -1,6 +1,7 @@
 import random
 
 import numpy as np
+from numpy.typing import NDArray
 from scipy.signal import sosfilt, sosfilt_zi
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -104,7 +105,7 @@ class HighShelfFilter(BaseWaveformTransform):
 
         return sos
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
 
         center_mel = np.random.uniform(
@@ -115,7 +116,7 @@ class HighShelfFilter(BaseWaveformTransform):
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         nyquist_freq = sample_rate // 2
         center_freq = self.parameters["center_freq"]
         if center_freq > nyquist_freq:

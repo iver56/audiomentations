@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -17,12 +18,12 @@ class Normalize(BaseWaveformTransform):
         assert apply_to in ("all", "only_too_loud_sounds")
         self.apply_to = apply_to
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["max_amplitude"] = np.amax(np.abs(samples))
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         if (
             self.apply_to == "only_too_loud_sounds"
             and self.parameters["max_amplitude"] < 1.0

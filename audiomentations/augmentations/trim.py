@@ -1,5 +1,6 @@
 import librosa
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -19,6 +20,6 @@ class Trim(BaseWaveformTransform):
         super().__init__(p)
         self.top_db = top_db
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         samples, lens = librosa.effects.trim(samples, top_db=self.top_db)
         return samples

@@ -2,6 +2,7 @@ import random
 import warnings
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
@@ -68,7 +69,7 @@ class AddGaussianSNR(BaseWaveformTransform):
         else:
             self.max_snr_db = 40.0  # the default
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             # Pick SNR in decibel scale
@@ -80,7 +81,7 @@ class AddGaussianSNR(BaseWaveformTransform):
             # In gaussian noise, the RMS gets roughly equal to the std
             self.parameters["noise_std"] = noise_rms
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         noise = np.random.normal(
             0.0, self.parameters["noise_std"], size=samples.shape
         ).astype(np.float32)

@@ -1,5 +1,6 @@
 import librosa
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -109,7 +110,7 @@ class AirAbsorption(BaseWaveformTransform):
         self.min_distance = min_distance
         self.max_distance = max_distance
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         self.parameters["temperature"] = 10 * np.random.randint(
             int(self.min_temperature) // 10, int(self.max_temperature) // 10 + 1
@@ -121,7 +122,7 @@ class AirAbsorption(BaseWaveformTransform):
             self.min_distance, self.max_distance
         )
 
-    def apply(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         assert samples.dtype == np.float32
 
         humidity = self.parameters["humidity"]

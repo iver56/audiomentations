@@ -3,6 +3,7 @@ import warnings
 from typing import Optional, Callable
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import get_crossfade_mask_pair
@@ -115,7 +116,7 @@ class RepeatPart(BaseWaveformTransform):
         self.crossfade_duration = crossfade_duration
         self.part_transform = part_transform
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["part_num_samples"] = random.randint(
@@ -158,7 +159,7 @@ class RepeatPart(BaseWaveformTransform):
             crossfade_length += 1
         return crossfade_length
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         crossfade_length = 0
         half_crossfade_length = 0
         equal_energy_fade_in_mask = None

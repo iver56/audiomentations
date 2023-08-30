@@ -1,6 +1,7 @@
 import random
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -24,14 +25,14 @@ class AddGaussianNoise(BaseWaveformTransform):
         self.min_amplitude = min_amplitude
         self.max_amplitude = max_amplitude
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["amplitude"] = random.uniform(
                 self.min_amplitude, self.max_amplitude
             )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         noise = np.random.randn(*samples.shape).astype(np.float32)
         samples = samples + self.parameters["amplitude"] * noise
         return samples

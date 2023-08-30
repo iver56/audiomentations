@@ -2,6 +2,7 @@ from typing import Callable
 
 import numpy as np
 import sys
+from numpy.typing import NDArray
 
 from audiomentations import Normalize
 from audiomentations.core.utils import (
@@ -46,7 +47,7 @@ class PostGain:
         # elif self.method == "target_peak_dbfs":
         #     self.target_peak_dbfs = kwargs["target_peak_dbfs"]
 
-    def method_same_rms(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def method_same_rms(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         rms_before = calculate_rms(samples)
         samples = self.transform(samples, sample_rate)
         rms_after = calculate_rms(samples)
@@ -54,7 +55,7 @@ class PostGain:
         samples *= gain_factor
         return samples
 
-    def method_same_lufs(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def method_same_lufs(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         try:
             import pyloudnorm
         except ImportError:
@@ -77,18 +78,18 @@ class PostGain:
         return samples
 
     def method_peak_normalize_always(
-        self, samples: np.ndarray, sample_rate: int
+        self, samples: NDArray[np.float32], sample_rate: int
     ) -> np.ndarray:
         samples = self.transform(samples, sample_rate)
         return Normalize(apply_to="all", p=1.0)(samples, sample_rate)
 
     def method_peak_normalize_if_too_loud(
-        self, samples: np.ndarray, sample_rate: int
+        self, samples: NDArray[np.float32], sample_rate: int
     ) -> np.ndarray:
         samples = self.transform(samples, sample_rate)
         return Normalize(apply_to="only_too_loud_sounds", p=1.0)(samples, sample_rate)
 
-    def __call__(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def __call__(self, samples: NDArray[np.float32], sample_rate: int) -> np.ndarray:
         if self.method == "same_rms":
             return self.method_same_rms(samples, sample_rate)
         elif self.method == "same_lufs":

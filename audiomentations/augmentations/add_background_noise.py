@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional, List, Callable, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -162,7 +163,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def _load_sound(file_path, sample_rate):
         return load_sound_file(file_path, sample_rate)
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["snr_db"] = random.uniform(self.min_snr_db, self.max_snr_db)
@@ -186,7 +187,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
                 self.parameters["noise_start_index"] + num_samples
             )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         noise_sound, _ = self._load_sound(
             self.parameters["noise_file_path"], sample_rate
         )

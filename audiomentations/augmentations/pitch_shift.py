@@ -3,6 +3,7 @@ import warnings
 
 import librosa
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -27,14 +28,14 @@ class PitchShift(BaseWaveformTransform):
         self.min_semitones = min_semitones
         self.max_semitones = max_semitones
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["num_semitones"] = random.uniform(
                 self.min_semitones, self.max_semitones
             )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         try:
             resample_type = (
                 "kaiser_best" if librosa.__version__.startswith("0.8.") else "soxr_hq"

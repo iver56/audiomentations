@@ -3,6 +3,7 @@ import warnings
 
 import numpy as np
 import sys
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -67,7 +68,7 @@ class LoudnessNormalization(BaseWaveformTransform):
         else:
             self.max_lufs = -13.0  # the default
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         try:
             import pyloudnorm
         except ImportError:
@@ -91,7 +92,7 @@ class LoudnessNormalization(BaseWaveformTransform):
                 random.uniform(self.min_lufs, self.max_lufs)
             )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         try:
             import pyloudnorm
         except ImportError:

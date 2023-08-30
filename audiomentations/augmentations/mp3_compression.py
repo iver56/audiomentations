@@ -6,6 +6,7 @@ import uuid
 import librosa
 import numpy as np
 import sys
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
@@ -101,7 +102,7 @@ class Mp3Compression(BaseWaveformTransform):
         self.backend = backend
         self.post_gain_factor = None
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             bitrate_choices = [
@@ -111,7 +112,7 @@ class Mp3Compression(BaseWaveformTransform):
             ]
             self.parameters["bitrate"] = random.choice(bitrate_choices)
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         if self.backend == "lameenc":
             return self.apply_lameenc(samples, sample_rate)
         elif self.backend == "pydub":
@@ -138,7 +139,7 @@ class Mp3Compression(BaseWaveformTransform):
             samples = samples * self.post_gain_factor
         return samples
 
-    def apply_lameenc(self, samples: np.ndarray, sample_rate: int):
+    def apply_lameenc(self, samples: NDArray[np.float32], sample_rate: int):
         try:
             import lameenc
         except ImportError:
@@ -193,7 +194,7 @@ class Mp3Compression(BaseWaveformTransform):
 
         return degraded_samples
 
-    def apply_pydub(self, samples: np.ndarray, sample_rate: int):
+    def apply_pydub(self, samples: NDArray[np.float32], sample_rate: int):
         try:
             import pydub
         except ImportError:

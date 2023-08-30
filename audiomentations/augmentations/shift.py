@@ -2,12 +2,12 @@ import random
 from typing import Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-
-# 0.00025 seconds corresponds to 2 samples at 8000 Hz
 from audiomentations.core.utils import get_crossfade_mask_pair
 
+# 0.00025 seconds corresponds to 2 samples at 8000 Hz
 DURATION_EPSILON = 0.00025
 
 
@@ -78,7 +78,7 @@ class Shift(BaseWaveformTransform):
         self.rollover = rollover
         self.fade_duration = fade_duration
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             if self.shift_unit == "samples":
@@ -90,7 +90,7 @@ class Shift(BaseWaveformTransform):
                     self.min_shift, self.max_shift
                 )
 
-    def apply(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         if self.shift_unit == "samples":
             num_places_to_shift = self.parameters["shift_amount"]
         elif self.shift_unit == "fraction":

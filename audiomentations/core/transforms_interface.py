@@ -2,6 +2,7 @@ import random
 import warnings
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.utils import (
     is_waveform_multichannel,
@@ -50,13 +51,13 @@ class BaseTransform:
 
 
 class BaseWaveformTransform(BaseTransform):
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         raise NotImplementedError
 
     def is_multichannel(self, samples):
         return is_waveform_multichannel(samples)
 
-    def __call__(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def __call__(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         if samples.dtype == np.float64:
             warnings.warn(
                 "Warning: input samples dtype is np.float64. Converting to np.float32"
@@ -92,7 +93,7 @@ class BaseWaveformTransform(BaseTransform):
             return self.apply(samples, sample_rate)
         return samples
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         self.parameters["should_apply"] = random.random() < self.p
 
 

@@ -280,6 +280,27 @@ class AirAbsorptionExample(TransformUsageExample):
 
 
 @register
+class ApplyImpulseResponseExample(TransformUsageExample):
+    transform_class = ApplyImpulseResponse
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = ApplyImpulseResponse(
+            ir_path=os.path.join(DEMO_DIR, "ir", "rir48000.wav"), p=1.0
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
 class LimiterExample(TransformUsageExample):
     transform_class = Limiter
 

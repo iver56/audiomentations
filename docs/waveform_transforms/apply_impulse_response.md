@@ -26,15 +26,15 @@ specific equipment, can introduce a noticeable delay when convolved with an audi
 signal. In some applications, this delay is a desirable property. However, in some other
 applications, the convolved audio should not have a delay compared to the original
 audio. If this is the case for you, you can align the audio afterwards with
-[fast-align-audio](https://github.com/nomonosound/fast-align-audio), for example.
+[fast-align-audio :octicons-link-external-16:](https://github.com/nomonosound/fast-align-audio), for example.
 
-Impulse responses can be created using e.g. [http://tulrich.com/recording/ir_capture/](http://tulrich.com/recording/ir_capture/)
+Impulse responses can be created using e.g. [http://tulrich.com/recording/ir_capture/ :octicons-link-external-16:](http://tulrich.com/recording/ir_capture/)
 
 Some datasets of impulse responses are publicly available:
 
-* [EchoThief](http://www.echothief.com/) containing 115 impulse responses acquired in a
+* [EchoThief :octicons-link-external-16:](http://www.echothief.com/) containing 115 impulse responses acquired in a
  wide range of locations.
-* [The MIT McDermott](https://mcdermottlab.mit.edu/Reverb/IR_Survey.html) dataset
+* [The MIT McDermott :octicons-link-external-16:](https://mcdermottlab.mit.edu/Reverb/IR_Survey.html) dataset
  containing 271 impulse responses acquired in everyday places.
 
 Impulse responses are represented as audio (ideally wav) files in the given `ir_path`.

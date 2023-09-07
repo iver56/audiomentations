@@ -4,11 +4,11 @@ _Added in v0.7.0_
 
 This transform convolves the audio with a randomly selected (room) impulse response file.
 
-`ApplyImpulseResponse` is commonly used as a data augmentation technique to **add
-realistic-sounding reverb to recordings**, for example to make denoisers and speech
-recognition systems more robust to different acoustic environments as well as a range of
-different distances between the main sound source and the microphone. It could also be
-used to generate roomy audio examples for the training of dereverberation models.
+`ApplyImpulseResponse` is commonly used as a data augmentation technique that adds
+**realistic-sounding reverb** to recordings. This can for example make denoisers and speech
+recognition systems more robust to different acoustic environments and distances between
+the sound source and the microphone. It could also be used to generate roomy audio
+examples for the training of dereverberation models.
 
 Convolution with an impulse response is a powerful technique in signal processing that
 can be employed to emulate the acoustic characteristics of specific environments or

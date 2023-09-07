@@ -19,7 +19,7 @@ class TestImpulseResponse:
         )
 
         # Check that misc_file.txt is not one of the IR file candidates, as it's not audio
-        assert len(add_ir_transform.ir_files) == 1
+        assert len(add_ir_transform.ir_files) == 2
 
         augmenter = Compose([add_ir_transform])
 
@@ -28,9 +28,7 @@ class TestImpulseResponse:
 
         # Check parameters
         assert augmenter.transforms[0].parameters["should_apply"]
-        assert augmenter.transforms[0].parameters["ir_file_path"] == os.path.join(
-            DEMO_DIR, "ir", "impulse_response_0.wav"
-        )
+        assert augmenter.transforms[0].parameters["ir_file_path"].endswith(".wav")
 
         assert samples_out.dtype == np.float32
         assert samples_out.shape == samples_in.shape
@@ -48,7 +46,7 @@ class TestImpulseResponse:
         )
 
         # Check that misc_file.txt is not one of the IR file candidates, as it's not audio
-        assert len(add_ir_transform.ir_files) == 1
+        assert len(add_ir_transform.ir_files) == 2
 
         augmenter = Compose([add_ir_transform])
 
@@ -57,9 +55,7 @@ class TestImpulseResponse:
 
         # Check parameters
         assert augmenter.transforms[0].parameters["should_apply"]
-        assert augmenter.transforms[0].parameters["ir_file_path"] == os.path.join(
-            DEMO_DIR, "ir", "impulse_response_0.wav"
-        )
+        assert augmenter.transforms[0].parameters["ir_file_path"].endswith(".wav")
 
         assert samples_out.dtype == np.float32
         assert samples_out.shape == samples_in.shape

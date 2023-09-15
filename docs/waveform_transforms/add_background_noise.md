@@ -114,7 +114,7 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
 [`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel
 :   :warning: Deprecated as of v0.31.0. Use [`max_absolute_rms_in_db`](#max_absolute_rms_in_db) instead
 
-[`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[np.ndarray, int], np.ndarray]]`
+[`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[NDArray[np.float32], int], NDArray[np.float32]]]`
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or
     composition of transforms) that gets applied to the noise before it gets mixed in.
     The callable is expected to input audio waveform (numpy array) and sample rate (int).

@@ -43,7 +43,9 @@ class RepeatPart(BaseWaveformTransform):
         max_part_duration: float = 1.2,
         mode: str = "insert",
         crossfade_duration: float = 0.005,
-        part_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
+        part_transform: Optional[
+            Callable[[NDArray[np.float32], int], NDArray[np.float32]]
+        ] = None,
         p: float = 0.5,
     ):
         """

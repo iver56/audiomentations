@@ -20,7 +20,9 @@ class PostGain:
     """
 
     def __init__(
-        self, transform: Callable[[np.ndarray, int], np.ndarray], method: str  #, **kwargs
+        self,
+        transform: Callable[[NDArray[np.float32], int], NDArray[np.float32]],
+        method: str,  # , **kwargs
     ):
         """
         :param transform: A callable to be applied. It should input
@@ -47,7 +49,9 @@ class PostGain:
         # elif self.method == "target_peak_dbfs":
         #     self.target_peak_dbfs = kwargs["target_peak_dbfs"]
 
-    def method_same_rms(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def method_same_rms(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         rms_before = calculate_rms(samples)
         samples = self.transform(samples, sample_rate)
         rms_after = calculate_rms(samples)
@@ -55,15 +59,19 @@ class PostGain:
         samples *= gain_factor
         return samples
 
-    def method_same_lufs(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def method_same_lufs(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         try:
             import pyloudnorm
         except ImportError:
             print(
-                "Failed to import pyloudnorm. Maybe it is not installed? "
-                "To install the optional pyloudnorm dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` or simply "
-                " `pip install pyloudnorm`",
+                (
+                    "Failed to import pyloudnorm. Maybe it is not installed? "
+                    "To install the optional pyloudnorm dependency of audiomentations,"
+                    " do `pip install audiomentations[extras]` or simply "
+                    " `pip install pyloudnorm`"
+                ),
                 file=sys.stderr,
             )
             raise
@@ -79,17 +87,17 @@ class PostGain:
 
     def method_peak_normalize_always(
         self, samples: NDArray[np.float32], sample_rate: int
-    ) -> np.ndarray:
+    ) -> NDArray[np.float32]:
         samples = self.transform(samples, sample_rate)
         return Normalize(apply_to="all", p=1.0)(samples, sample_rate)
 
     def method_peak_normalize_if_too_loud(
         self, samples: NDArray[np.float32], sample_rate: int
-    ) -> np.ndarray:
+    ) -> NDArray[np.float32]:
         samples = self.transform(samples, sample_rate)
         return Normalize(apply_to="only_too_loud_sounds", p=1.0)(samples, sample_rate)
 
-    def __call__(self, samples: NDArray[np.float32], sample_rate: int) -> np.ndarray:
+    def __call__(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         if self.method == "same_rms":
             return self.method_same_rms(samples, sample_rate)
         elif self.method == "same_lufs":

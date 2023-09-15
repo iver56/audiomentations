@@ -43,7 +43,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
         max_absolute_rms_in_db: float = None,
         min_absolute_rms_db: float = None,
         max_absolute_rms_db: float = None,
-        noise_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
+        noise_transform: Optional[
+            Callable[[NDArray[np.float32], int], NDArray[np.float32]]
+        ] = None,
         p: float = 0.5,
         lru_cache_size: int = 2,
     ):

@@ -171,7 +171,7 @@ Here we add some short noise sounds to a voice recording.
         speech with a cough)
     * simulate an ECG off-lead condition (electrodes are temporarily disconnected)
 
-[`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[np.ndarray, int], np.ndarray]]`
+[`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[NDArray[np.float32], int], NDArray[np.float32]]]`
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or
     composition of transforms) that gets applied to noises before they get mixed in.
 

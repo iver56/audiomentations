@@ -96,7 +96,7 @@ In this speech example, the audio was transformed with
   If you know what you're doing, and impulses/clicks are desired for your use case,
   you can disable the crossfading by setting this value to `0.0`.
 
-[`part_transform`](#part_transform){ #part_transform }: `Optional[Callable[[np.ndarray, int], np.ndarray]]`
+[`part_transform`](#part_transform){ #part_transform }: `Optional[Callable[[NDArray[np.float32], int], NDArray[np.float32]]]`
 :   :octicons-milestone-24: An optional callable (audiomentations transform) that
   gets applied individually to each repeat. This can be used to make each
   repeat slightly different from the previous one. Note that a `part_transform`

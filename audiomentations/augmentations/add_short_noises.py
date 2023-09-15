@@ -48,7 +48,9 @@ class AddShortNoises(BaseWaveformTransform):
         max_fade_out_time: float = 0.1,
         signal_gain_in_db_during_noise: float = None,
         signal_gain_db_during_noise: float = None,
-        noise_transform: Optional[Callable[[np.ndarray, int], np.ndarray]] = None,
+        noise_transform: Optional[
+            Callable[[NDArray[np.float32], int], NDArray[np.float32]]
+        ] = None,
         p: float = 0.5,
         lru_cache_size: Optional[int] = 64,
     ):
@@ -176,16 +178,23 @@ class AddShortNoises(BaseWaveformTransform):
 
         assert self.min_snr_db <= self.max_snr_db
 
-        if signal_gain_db_during_noise is not None and signal_gain_in_db_during_noise is not None:
+        if (
+            signal_gain_db_during_noise is not None
+            and signal_gain_in_db_during_noise is not None
+        ):
             raise ValueError(
-                "Passing both signal_gain_db_during_noise and signal_gain_in_db_during_noise is not supported. Use only"
+                "Passing both signal_gain_db_during_noise and"
+                " signal_gain_in_db_during_noise is not supported. Use only"
                 " signal_gain_db_during_noise."
             )
         elif signal_gain_db_during_noise is not None:
             self.signal_gain_db_during_noise = signal_gain_db_during_noise
         elif signal_gain_in_db_during_noise is not None:
             warnings.warn(
-                "The signal_gain_in_db_during_noise parameter is deprecated. Use signal_gain_db_during_noise instead.",
+                (
+                    "The signal_gain_in_db_during_noise parameter is deprecated. Use"
+                    " signal_gain_db_during_noise instead."
+                ),
                 DeprecationWarning,
             )
             self.signal_gain_db_during_noise = signal_gain_in_db_during_noise
@@ -296,9 +305,7 @@ class AddShortNoises(BaseWaveformTransform):
                     )
 
                     if not self.add_all_noises_with_same_level:
-                        snr_db = random.uniform(
-                            self.min_snr_db, self.max_snr_db
-                        )
+                        snr_db = random.uniform(self.min_snr_db, self.max_snr_db)
                         rms_db = random.uniform(
                             self.min_absolute_noise_rms_db,
                             self.max_absolute_noise_rms_db,
@@ -407,7 +414,8 @@ class AddShortNoises(BaseWaveformTransform):
                 noise_placeholder[start_sample_index:end_sample_index] += noise_samples
                 if gain_signal:
                     signal_mask[start_sample_index:end_sample_index] = np.maximum(
-                        signal_mask[start_sample_index:end_sample_index], noise_gain,
+                        signal_mask[start_sample_index:end_sample_index],
+                        noise_gain,
                     )
 
         if gain_signal:
@@ -423,8 +431,8 @@ class AddShortNoises(BaseWaveformTransform):
         state = self.__dict__.copy()
         warnings.warn(
             "Warning: the LRU cache of AddShortNoises gets discarded when pickling it."
-            " E.g. this means the cache will not be used when using AddShortNoises together"
-            " with multiprocessing on Windows"
+            " E.g. this means the cache will not be used when using AddShortNoises"
+            " together with multiprocessing on Windows"
         )
         del state["_load_sound"]
         return state

@@ -35,8 +35,8 @@ class LowShelfFilter(BaseWaveformTransform):
         """
         :param min_center_freq: The minimum center frequency of the shelving filter
         :param max_center_freq: The maximum center frequency of the shelving filter
-        :param min_gain_db: The minimum gain at DC (0 hz)
-        :param max_gain_db: The maximum gain at DC (0 hz)
+        :param min_gain_db: The minimum gain at DC (0 Hz)
+        :param max_gain_db: The maximum gain at DC (0 Hz)
         :param min_q: The minimum quality factor q. The higher the Q, the steeper the
             transition band will be.
         :param max_q: The maximum quality factor q. The higher the Q, the steeper the

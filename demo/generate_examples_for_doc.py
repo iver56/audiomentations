@@ -91,10 +91,15 @@ def plot_waveforms_and_spectrograms(
 
     def get_magnitude_spectrogram(samples):
         complex_spec = librosa.stft(samples)
-        return librosa.amplitude_to_db(np.abs(complex_spec), ref=np.max)
+        return np.abs(complex_spec)
 
     sound_spec = get_magnitude_spectrogram(sound)
     transformed_sound_spec = get_magnitude_spectrogram(transformed_sound)
+
+    vmax = max(np.amax(sound_spec), np.amax(transformed_sound_spec))
+
+    sound_spec = librosa.amplitude_to_db(sound_spec, ref=vmax)
+    transformed_sound_spec = librosa.amplitude_to_db(transformed_sound_spec, ref=vmax)
 
     vmax = max(np.amax(sound_spec), np.amax(transformed_sound_spec))
     vmin = vmax - 85.0

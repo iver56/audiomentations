@@ -20,7 +20,7 @@ class Mp3Compression(BaseWaveformTransform):
 
     This transform depends on either lameenc or pydub/ffmpeg.
 
-    Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 hz).
+    Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 Hz).
 
     Note: When using the lameenc backend, the output may be slightly longer than the input due
     to the fact that the LAME encoder inserts some silence at the beginning of the audio.

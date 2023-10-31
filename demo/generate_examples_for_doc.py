@@ -301,6 +301,31 @@ class ApplyImpulseResponseExample(TransformUsageExample):
 
 
 @register
+class BandPassFilterExample(TransformUsageExample):
+    transform_class = BandPassFilter
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = BandPassFilter(
+            min_center_freq=2500.0,
+            max_center_freq=2500.0,
+            min_bandwidth_fraction=0.8,
+            max_bandwidth_fraction=0.8,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
 class LimiterExample(TransformUsageExample):
     transform_class = Limiter
 

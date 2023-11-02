@@ -13,10 +13,10 @@ frequency of 2500 Hz and a bandwidth fraction of 0.8, which means that the bandw
 this example is 2000 Hz, so the low frequency cutoff is 1500 Hz and the high frequency
 cutoff is 3500 Hz. One can see in the spectrogram that the high and the low frequencies
 are both attenuated in the output. If you listen to the audio example, you might notice
-that the transformed output almost sounds like a phone conversation from the time when
+that the transformed output almost sounds like a phone call from the time when
 phone audio was narrowband and mostly contained frequencies between ~300 and ~3400 Hz.
 
-![Input-output waveforms and spectrograms](AirAbsorption.webp)
+![Input-output waveforms and spectrograms](BandPassFilter.webp)
 
 | Input sound                                                                           | Transformed sound                                                                           |
 |---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|

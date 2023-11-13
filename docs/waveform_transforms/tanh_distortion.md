@@ -41,7 +41,7 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 [`min_distortion`](#min_distortion){ #min_distortion }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.01`. Minimum "amount" of distortion to apply to the signal.
 
-[`max_distortion`](#min_distortion){ #min_distortion }: `float` • range: [0.0, 1.0]
+[`max_distortion`](#max_distortion){ #max_distortion }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.7`. Maximum "amount" of distortion to apply to the signal.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

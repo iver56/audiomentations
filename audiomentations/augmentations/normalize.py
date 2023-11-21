@@ -2,6 +2,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+from audiomentations.core.utils import get_max_abs_amplitude
 
 
 class Normalize(BaseWaveformTransform):
@@ -21,7 +22,7 @@ class Normalize(BaseWaveformTransform):
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["max_amplitude"] = np.amax(np.abs(samples))
+            self.parameters["max_amplitude"] = get_max_abs_amplitude(samples)
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int):
         if (

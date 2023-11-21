@@ -5,6 +5,7 @@ from typing import List, Union, Tuple
 
 import math
 import numpy as np
+from numpy.typing import NDArray
 
 SUPPORTED_EXTENSIONS = (
     ".aac",
@@ -188,3 +189,10 @@ def get_crossfade_mask_pair(
     fade_in = c * c
     fade_out = d * d
     return fade_in, fade_out
+
+
+def get_max_abs_amplitude(samples: NDArray):
+    min_amplitude = np.amin(samples)
+    max_amplitude = np.amax(samples)
+    max_abs_amplitude = max(abs(min_amplitude), abs(max_amplitude))
+    return max_abs_amplitude

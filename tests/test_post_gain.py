@@ -5,7 +5,7 @@ from numpy.testing import assert_almost_equal, assert_array_equal
 
 from audiomentations import Gain
 from audiomentations.core.post_gain import PostGain
-from audiomentations.core.utils import calculate_rms
+from audiomentations.core.utils import calculate_rms, get_max_abs_amplitude
 
 
 class TestPostGain:
@@ -52,7 +52,7 @@ class TestPostGain:
         )
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
-        assert np.amax(np.abs(processed_samples)) == pytest.approx(1.0)
+        assert get_max_abs_amplitude(processed_samples) == pytest.approx(1.0)
         assert processed_samples.dtype == np.float32
 
     def test_peak_normalize_if_too_loud(self):

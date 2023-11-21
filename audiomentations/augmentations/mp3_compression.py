@@ -10,7 +10,7 @@ from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
-    convert_float_samples_to_int16,
+    convert_float_samples_to_int16, get_max_abs_amplitude,
 )
 
 
@@ -125,7 +125,7 @@ class Mp3Compression(BaseWaveformTransform):
         If the audio is too loud, gain it down to avoid distortion in the audio file to
         be encoded.
         """
-        greatest_abs_sample = np.amax(np.abs(samples))
+        greatest_abs_sample = get_max_abs_amplitude(samples)
         if greatest_abs_sample > 1.0:
             self.post_gain_factor = greatest_abs_sample
             samples = samples * (1.0 / greatest_abs_sample)

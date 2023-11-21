@@ -6,7 +6,7 @@ import sys
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import convert_decibels_to_amplitude_ratio
+from audiomentations.core.utils import convert_decibels_to_amplitude_ratio, get_max_abs_amplitude
 
 
 class Limiter(BaseWaveformTransform):
@@ -98,7 +98,7 @@ class Limiter(BaseWaveformTransform):
             self.parameters["delay"] = max(round(0.6 * attack_seconds * sample_rate), 1)
 
             threshold_factor = (
-                np.amax(np.abs(samples))
+                get_max_abs_amplitude(samples)
                 if self.threshold_mode == "relative_to_signal_peak"
                 else 1.0
             )

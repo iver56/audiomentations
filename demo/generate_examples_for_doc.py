@@ -52,6 +52,7 @@ from audiomentations import (
     AddGaussianSNR,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
+from audiomentations.core.utils import get_max_abs_amplitude
 
 DEMO_DIR = os.path.dirname(__file__)
 transform_usage_example_classes = dict()
@@ -61,7 +62,10 @@ def plot_waveforms_and_spectrograms(
     sound, transformed_sound, sample_rate, output_file_path
 ):
     xmax = max(sound.shape[0], transformed_sound.shape[0])
-    ylim = max(np.amax(np.abs(sound)), np.amax(np.abs(transformed_sound))) * 1.1
+    ylim = (
+        max(get_max_abs_amplitude(sound), get_max_abs_amplitude(transformed_sound))
+        * 1.1
+    )
     sound = sound[:xmax]
     transformed_sound = transformed_sound[:xmax]
     fig, axs = plt.subplots(

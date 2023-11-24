@@ -98,10 +98,6 @@ The API documentation, along with guides, example code, illustrations and exampl
 * Use numpy.typing in type hints
 * Optimize max abs calculations in terms of memory and speed. This makes `Normalize`, `Mp3Compression` and `Limiter` slightly faster.
 
-### Fixed
-
-* Correct some wrong type hints
-
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 
 # Acknowledgements

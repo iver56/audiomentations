@@ -90,7 +90,7 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.34.0] - 2023-11-24
+## [0.34.1] - 2023-11-24
 
 ### Changed
 

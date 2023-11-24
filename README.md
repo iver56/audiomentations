@@ -90,29 +90,13 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.33.0] - 2023-08-30
+## [0.34.0] - 2023-11-24
 
 ### Changed
 
-* Bump min numpy version from 1.16 to 1.18
-* Bump min scipy version from 1.3 to 1.4
-* Bump min python version from 3.7 to 3.8, because 3.7 is beyond end-of-life already
-* Change some `AssertionError` exceptions to `ValueError`
-
-#### :warning: The `Shift` transform has been changed:
-
-* Removed `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
-* Rename `min_fraction` to `min_shift` and `max_fraction` to `max_shift`
-* Add `shift_unit` parameter
-* Fading is enabled by default
-* Smoother fade curve
-
-These are **breaking changes**. The following example shows how you can adapt your code when upgrading from <=v0.32.0 to >=v0.33.0:
-
-| <= 0.32.0 | >= 0.33.0                                                                         |
-| --------- |-----------------------------------------------------------------------------------|
-| `Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, fade_duration=0.01)` | `Shift(min_shift=-0.5, max_shift=0.5, shift_unit="fraction", fade_duration=0.01)` |
-| `Shift()` | `Shift(fade_duration=0.0)` |
+* Bump min numpy version from 1.18 to 1.21
+* Use numpy.typing in type hints
+* Optimize max abs calculations in terms of memory and speed. This makes `Normalize`, `Mp3Compression` and `Limiter` slightly faster.
 
 ### Fixed
 

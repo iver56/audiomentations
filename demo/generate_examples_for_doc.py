@@ -1,10 +1,8 @@
 import argparse
 import os
 import random
-import sys
 from pathlib import Path
 from typing import Tuple
-from functools import partial
 
 import librosa
 import numpy as np

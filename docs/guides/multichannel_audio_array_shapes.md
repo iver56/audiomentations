@@ -6,7 +6,7 @@ When working with audio files in Python, you may encounter two main formats for 
 
 This format has the shape `(channels, samples)`. In the context of a stereo audio file, the number of channels would be 2 (for left and right), and samples are the individual data points in the audio file. For example, a stereo audio file with a duration of 1 second sampled at 44100 Hz would have a shape of `(2, 44100)`.
 
-This is the format expected by the `audiomentations` library when dealing with multichannel audio. If you provide multichannel audio data in a different format, a `WrongMultichannelAudioShape` exception will be raised.
+**This is the format expected by audiomentations when dealing with multichannel audio**. If you provide multichannel audio data in a different format, a `WrongMultichannelAudioShape` exception will be raised.
 
 Note that `audiomentations` also supports mono audio, i.e. shape like `(1, samples)` or `(samples,)`
 

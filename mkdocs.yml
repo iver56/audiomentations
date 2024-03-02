@@ -31,6 +31,7 @@ nav:
       - PitchShift: waveform_transforms/pitch_shift.md
       - PolarityInversion: waveform_transforms/polarity_inversion.md
       #- PostGain: waveform_transforms/post_gain.md
+      - RepeatPart: waveform_transforms/repeat_part.md
       - Resample: waveform_transforms/resample.md
       - Reverse: waveform_transforms/reverse.md
       - RoomSimulator: waveform_transforms/room_simulator.md
@@ -43,11 +44,14 @@ nav:
   - Spectrogram transforms: spectrogram_transforms.md
   - Guides:
       - CPU vs. GPU:  guides/cpu_vs_gpu.md
+      - Multichannel audio array shapes: guides/multichannel_audio_array_shapes.md
       - Transform parameters: guides/transform_parameters.md
   - Changelog: changelog.md
   - Alternatives: alternatives.md
 theme:
   name: material
+  features:
+    - navigation.expand
 repo_name: 'iver56/audiomentations'
 repo_url: 'https://github.com/iver56/audiomentations'
 edit_uri: edit/main/docs/

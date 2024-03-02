@@ -25,6 +25,7 @@ from .augmentations.padding import Padding
 from .augmentations.peaking_filter import PeakingFilter
 from .augmentations.pitch_shift import PitchShift
 from .augmentations.polarity_inversion import PolarityInversion
+from .augmentations.repeat_part import RepeatPart
 from .augmentations.resample import Resample
 from .augmentations.reverse import Reverse
 from .augmentations.room_simulator import RoomSimulator
@@ -38,4 +39,4 @@ from .core.composition import Compose, SpecCompose, OneOf, SomeOf
 from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle
 from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask
 
-__version__ = "0.30.0"
+__version__ = "0.34.1"

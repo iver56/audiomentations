@@ -60,8 +60,6 @@ samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32
 augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
-Check out the source code at [audiomentations/augmentations/](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/) to see the waveform transforms you can apply, and what arguments they have.
-
 ## Spectrogram
 
 ```python
@@ -81,8 +79,6 @@ spectrogram = np.random.random((1025, 256, 2))
 # Augment/transform/perturb the spectrogram
 augmented_spectrogram = augment(spectrogram)
 ```
-
-See [audiomentations/spec_augmentations/spectrogram_transforms.py](https://github.com/iver56/audiomentations/blob/main/audiomentations/spec_augmentations/spectrogram_transforms.py) for spectrogram transforms.
 
 # Waveform transforms
 
@@ -123,7 +119,7 @@ Contributions are welcome!
 
 # Multichannel audio
 
-As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` support not only mono audio (1-dimensional numpy arrays), but also stereo audio, i.e. 2D arrays with shape like `(num_channels, num_samples)`
+As of v0.22.0, all transforms except `AddBackgroundNoise` and `AddShortNoises` support not only mono audio (1-dimensional numpy arrays), but also stereo audio, i.e. 2D arrays with shape like `(num_channels, num_samples)`. See also the [guide on multichannel audio array shapes](guides/multichannel_audio_array_shapes.md).
 
 # Acknowledgements
 

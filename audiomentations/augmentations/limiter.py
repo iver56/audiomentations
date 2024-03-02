@@ -1,11 +1,12 @@
 import random
-import math
-import sys
 
+import math
 import numpy as np
+import sys
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import convert_decibels_to_amplitude_ratio
+from audiomentations.core.utils import convert_decibels_to_amplitude_ratio, get_max_abs_amplitude
 
 
 class Limiter(BaseWaveformTransform):
@@ -81,7 +82,7 @@ class Limiter(BaseWaveformTransform):
             decay_threshold = convert_decibels_to_amplitude_ratio(-60)
         return 10 ** (math.log10(decay_threshold) / max(sample_rate * t, 1.0))
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
 
         if self.parameters["should_apply"]:
@@ -97,7 +98,7 @@ class Limiter(BaseWaveformTransform):
             self.parameters["delay"] = max(round(0.6 * attack_seconds * sample_rate), 1)
 
             threshold_factor = (
-                np.amax(np.abs(samples))
+                get_max_abs_amplitude(samples)
                 if self.threshold_mode == "relative_to_signal_peak"
                 else 1.0
             )
@@ -107,7 +108,7 @@ class Limiter(BaseWaveformTransform):
                 "threshold"
             ] = threshold_factor * convert_decibels_to_amplitude_ratio(threshold_db)
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         if self.parameters["threshold"] == 0.0:
             # Digital silence input can cause this to happen
             return samples

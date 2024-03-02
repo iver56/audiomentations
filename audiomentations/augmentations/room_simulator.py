@@ -3,9 +3,11 @@ from typing import Optional, Dict
 
 import numpy as np
 import sys
+from numpy.typing import NDArray
 from scipy.signal import convolve
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+
 
 class RoomSimulator(BaseWaveformTransform):
     """
@@ -187,7 +189,7 @@ class RoomSimulator(BaseWaveformTransform):
         else:
             self.ray_tracing_options = ray_tracing_options
 
-    def randomize_parameters(self, samples: np.array, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
 
         try:
             import pyroomacoustics as pra
@@ -334,7 +336,7 @@ class RoomSimulator(BaseWaveformTransform):
         # Do the simulation
         self.room.compute_rir()
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         assert samples.dtype == np.float32
 
         rir = self.room.rir[0][0]

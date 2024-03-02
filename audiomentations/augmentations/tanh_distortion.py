@@ -1,6 +1,7 @@
 import random
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import calculate_rms
@@ -36,14 +37,14 @@ class TanhDistortion(BaseWaveformTransform):
         self.min_distortion = min_distortion
         self.max_distortion = max_distortion
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             self.parameters["distortion_amount"] = random.uniform(
                 self.min_distortion, self.max_distortion
             )
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         # Find out how much to pre-gain the audio to get a given amount of distortion
         percentile = 100 - 99 * self.parameters["distortion_amount"]
         threshold = np.percentile(abs(samples), percentile)

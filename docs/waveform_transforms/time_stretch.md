@@ -5,6 +5,19 @@ _Added in v0.2.0_
 Change the speed or duration of the signal without changing the pitch. This transform
 employs `librosa.effects.time_stretch` under the hood to achieve the effect.
 
+Under the hood this uses phase vocoding. Note that phase vocoding can degrade audio
+quality by "smearing" transient sounds, altering the timbre of harmonic sounds, and
+distorting pitch modulations. This may result in a loss of sharpness, clarity, or
+naturalness in the transformed audio, especially when the rate is set to an extreme
+value.
+
+If you need a higher quality time stretch method, consider the following alternatives:
+
+* [atempo in ffmpeg](https://ffmpeg.org//ffmpeg-all.html#atempo)
+* [Rubber Band library](https://breakfastquay.com/rubberband/)
+* [https://github.com/KAIST-MACLab/PyTSMod](https://github.com/KAIST-MACLab/PyTSMod)
+* [https://github.com/vinusankars/ESOLA](https://github.com/vinusankars/ESOLA)
+
 ## Input-output example
 
 In this example we speed up a sound by 25%. This corresponds to a rate of 1.25.

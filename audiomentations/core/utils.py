@@ -1,9 +1,11 @@
 import os
+from functools import lru_cache
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Tuple
 
 import math
 import numpy as np
+from numpy.typing import NDArray
 
 SUPPORTED_EXTENSIONS = (
     ".aac",
@@ -186,3 +188,31 @@ def a_weighting_frequency_envelope(n_fft, sample_rate):
         )
     ) + 2.00
     return weighting
+
+
+@lru_cache(maxsize=8)
+def get_crossfade_mask_pair(
+    length: int, equal_energy=True
+) -> Tuple[np.array, np.array]:
+    """
+    Equal-gain or equal-energy (within ~1%) cross-fade mask pair with
+    smooth start and end.
+    https://signalsmith-audio.co.uk/writing/2021/cheap-energy-crossfade/
+    """
+    x = np.linspace(0, 1, length, dtype=np.float32)
+    x2 = 1 - x
+    a = x * x2
+    k = 1.4186 if equal_energy else -0.70912
+    b = a * (1 + k * a)
+    c = b + x
+    d = b + x2
+    fade_in = c * c
+    fade_out = d * d
+    return fade_in, fade_out
+
+
+def get_max_abs_amplitude(samples: NDArray):
+    min_amplitude = np.amin(samples)
+    max_amplitude = np.amax(samples)
+    max_abs_amplitude = max(abs(min_amplitude), abs(max_amplitude))
+    return max_abs_amplitude

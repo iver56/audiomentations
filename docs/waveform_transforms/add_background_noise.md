@@ -77,13 +77,19 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     with audio files. Can be str or Path instance(s). The audio files given here are
     supposed to be background noises.
 
-[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
+[`min_snr_db`](#min_snr_db){ #min_snr_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `3.0`. Minimum signal-to-noise ratio in dB. Is only
     used if `noise_rms` is set to `"relative"`
 
-[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
+[`max_snr_db`](#max_snr_db){ #max_snr_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `30.0`. Maximum signal-to-noise ratio in dB. Is
     only used if `noise_rms` is set to `"relative"`
+
+[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated as of v0.31.0. Use [`min_snr_db`](#min_snr_db) instead
+
+[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated as of v0.31.0. Use [`max_snr_db`](#max_snr_db) instead
 
 [`noise_rms`](#noise_rms){ #noise_rms }: `str` • choices: `"absolute"`, `"relative"`
 :   :octicons-milestone-24: Default: `"relative"`. Defines how the background noise will
@@ -92,17 +98,23 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     If the chosen option is `"absolute"`, the background noise will have an RMS
     independent of the rms of the input audio file
 
-[`min_absolute_rms_in_db`](#min_absolute_rms_in_db){ #min_absolute_rms_in_db }: `float` • unit: Decibel
+[`min_absolute_rms_db`](#min_absolute_rms_db){ #min_absolute_rms_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-45.0`. Is only used if `noise_rms` is set to
     `"absolute"`. It is the minimum RMS value in dB that the added noise can take. The
     lower the RMS is, the lower the added sound will be.
 
-[`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel
+[`max_absolute_rms_db`](#max_absolute_rms_db){ #max_absolute_rms_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-15.0`. Is only used if `noise_rms` is set to
     `"absolute"`. It is the maximum RMS value in dB that the added noise can take. Note
     that this value can not exceed 0.
 
-[`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[np.ndarray, int], np.ndarray]]`
+[`min_absolute_rms_in_db`](#min_absolute_rms_in_db){ #min_absolute_rms_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated as of v0.31.0. Use [`min_absolute_rms_db`](#min_absolute_rms_db) instead
+
+[`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel
+:   :warning: Deprecated as of v0.31.0. Use [`max_absolute_rms_in_db`](#max_absolute_rms_in_db) instead
+
+[`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[NDArray[np.float32], int], NDArray[np.float32]]]`
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or
     composition of transforms) that gets applied to the noise before it gets mixed in.
     The callable is expected to input audio waveform (numpy array) and sample rate (int).

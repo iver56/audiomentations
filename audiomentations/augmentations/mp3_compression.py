@@ -6,10 +6,11 @@ import uuid
 import librosa
 import numpy as np
 import sys
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
-    convert_float_samples_to_int16,
+    convert_float_samples_to_int16, get_max_abs_amplitude,
 )
 
 
@@ -19,7 +20,7 @@ class Mp3Compression(BaseWaveformTransform):
 
     This transform depends on either lameenc or pydub/ffmpeg.
 
-    Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 hz).
+    Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 Hz).
 
     Note: When using the lameenc backend, the output may be slightly longer than the input due
     to the fact that the LAME encoder inserts some silence at the beginning of the audio.
@@ -71,16 +72,37 @@ class Mp3Compression(BaseWaveformTransform):
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        assert self.SUPPORTED_BITRATES[0] <= min_bitrate <= self.SUPPORTED_BITRATES[-1]
-        assert self.SUPPORTED_BITRATES[0] <= max_bitrate <= self.SUPPORTED_BITRATES[-1]
-        assert min_bitrate <= max_bitrate
+        if min_bitrate < self.SUPPORTED_BITRATES[0]:
+            raise ValueError(
+                "min_bitrate must be greater than or equal to"
+                f" {self.SUPPORTED_BITRATES[0]}"
+            )
+        if max_bitrate > self.SUPPORTED_BITRATES[-1]:
+            raise ValueError(
+                "max_bitrate must be less than or equal to"
+                f" {self.SUPPORTED_BITRATES[-1]}"
+            )
+        if max_bitrate < min_bitrate:
+            raise ValueError("max_bitrate must be >= min_bitrate")
+
+        is_any_supported_bitrate_in_range = any(
+            min_bitrate <= bitrate <= max_bitrate for bitrate in self.SUPPORTED_BITRATES
+        )
+        if not is_any_supported_bitrate_in_range:
+            raise ValueError(
+                "There is no supported bitrate in the range between the specified"
+                " min_bitrate and max_bitrate. The supported bitrates are:"
+                f" {self.SUPPORTED_BITRATES}"
+            )
+
         self.min_bitrate = min_bitrate
         self.max_bitrate = max_bitrate
-        assert backend in ("pydub", "lameenc")
+        if backend not in ("pydub", "lameenc"):
+            raise ValueError('backend must be set to either "pydub" or "lameenc"')
         self.backend = backend
         self.post_gain_factor = None
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             bitrate_choices = [
@@ -90,7 +112,7 @@ class Mp3Compression(BaseWaveformTransform):
             ]
             self.parameters["bitrate"] = random.choice(bitrate_choices)
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         if self.backend == "lameenc":
             return self.apply_lameenc(samples, sample_rate)
         elif self.backend == "pydub":
@@ -103,7 +125,7 @@ class Mp3Compression(BaseWaveformTransform):
         If the audio is too loud, gain it down to avoid distortion in the audio file to
         be encoded.
         """
-        greatest_abs_sample = np.amax(np.abs(samples))
+        greatest_abs_sample = get_max_abs_amplitude(samples)
         if greatest_abs_sample > 1.0:
             self.post_gain_factor = greatest_abs_sample
             samples = samples * (1.0 / greatest_abs_sample)
@@ -117,15 +139,17 @@ class Mp3Compression(BaseWaveformTransform):
             samples = samples * self.post_gain_factor
         return samples
 
-    def apply_lameenc(self, samples: np.ndarray, sample_rate: int):
+    def apply_lameenc(self, samples: NDArray[np.float32], sample_rate: int):
         try:
             import lameenc
         except ImportError:
             print(
-                "Failed to import the lame encoder. Maybe it is not installed? "
-                "To install the optional lameenc dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` or simply"
-                " `pip install lameenc`",
+                (
+                    "Failed to import the lame encoder. Maybe it is not installed? "
+                    "To install the optional lameenc dependency of audiomentations,"
+                    " do `pip install audiomentations[extras]` or simply"
+                    " `pip install lameenc`"
+                ),
                 file=sys.stderr,
             )
             raise
@@ -170,15 +194,17 @@ class Mp3Compression(BaseWaveformTransform):
 
         return degraded_samples
 
-    def apply_pydub(self, samples: np.ndarray, sample_rate: int):
+    def apply_pydub(self, samples: NDArray[np.float32], sample_rate: int):
         try:
             import pydub
         except ImportError:
             print(
-                "Failed to import pydub. Maybe it is not installed? "
-                "To install the optional pydub dependency of audiomentations,"
-                " do `pip install audiomentations[extras]` or simply"
-                " `pip install pydub`",
+                (
+                    "Failed to import pydub. Maybe it is not installed? "
+                    "To install the optional pydub dependency of audiomentations,"
+                    " do `pip install audiomentations[extras]` or simply"
+                    " `pip install pydub`"
+                ),
                 file=sys.stderr,
             )
             raise

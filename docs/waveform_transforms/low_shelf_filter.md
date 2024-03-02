@@ -17,10 +17,10 @@ Filter coefficients are taken from [the W3 Audio EQ Cookbook :octicons-link-exte
 :   :octicons-milestone-24: Default: `4000.0`. The maximum center frequency of the shelving filter
 
 [`min_gain_db`](#min_gain_db){ #min_gain_db }: `float` • unit: Decibel
-:   :octicons-milestone-24: Default: `-18.0`. The minimum gain at DC (0 hz)
+:   :octicons-milestone-24: Default: `-18.0`. The minimum gain at DC (0 Hz)
 
 [`max_gain_db`](#max_gain_db){ #max_gain_db }: `float` • unit: Decibel
-:   :octicons-milestone-24: Default: `18.0`. The maximum gain at DC (0 hz)
+:   :octicons-milestone-24: Default: `18.0`. The maximum gain at DC (0 Hz)
 
 [`min_q`](#min_q){ #min_q }: `float` • range: (0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.1`. The minimum quality factor Q. The higher

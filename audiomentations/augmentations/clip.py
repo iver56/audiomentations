@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -33,5 +34,5 @@ class Clip(BaseWaveformTransform):
         self.a_min = a_min
         self.a_max = a_max
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         return np.clip(samples, self.a_min, self.a_max)

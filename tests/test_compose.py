@@ -21,8 +21,8 @@ class TestCompose:
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    min_snr_in_db=15,
-                    max_snr_in_db=35,
+                    min_snr_db=15,
+                    max_snr_db=35,
                     p=1.0,
                 ),
                 ClippingDistortion(p=0.5),
@@ -48,13 +48,13 @@ class TestCompose:
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    min_snr_in_db=15,
-                    max_snr_in_db=35,
+                    min_snr_db=15,
+                    max_snr_db=35,
                     p=1.0,
                 ),
                 ClippingDistortion(p=0.5),
                 TimeMask(min_band_part=0.2, max_band_part=0.5, p=0.5),
-                Shift(min_fraction=0.5, max_fraction=0.5, p=0.5),
+                Shift(min_shift=0.5, max_shift=0.5, p=0.5),
             ]
         )
         augmenter.freeze_parameters()

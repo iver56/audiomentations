@@ -13,7 +13,7 @@ class TestLoudnessNormalization:
         )
         sample_rate = 16000
 
-        augment = LoudnessNormalization(min_lufs_in_db=-32, max_lufs_in_db=-12, p=1.0)
+        augment = LoudnessNormalization(min_lufs=-32, max_lufs=-12, p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         gain_factors = processed_samples / samples
         assert np.amin(gain_factors) == pytest.approx(np.amax(gain_factors))
@@ -23,7 +23,7 @@ class TestLoudnessNormalization:
         samples = np.zeros(8000, dtype=np.float32)
         sample_rate = 16000
 
-        augment = LoudnessNormalization(min_lufs_in_db=-32, max_lufs_in_db=-12, p=1.0)
+        augment = LoudnessNormalization(min_lufs=-32, max_lufs=-12, p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         assert_almost_equal(processed_samples, np.zeros(8000, dtype=np.float32))
         assert processed_samples.dtype == np.float32
@@ -34,7 +34,7 @@ class TestLoudnessNormalization:
         )
         sample_rate = 16000
 
-        augment = LoudnessNormalization(min_lufs_in_db=-32, max_lufs_in_db=-12, p=1.0)
+        augment = LoudnessNormalization(min_lufs=-32, max_lufs=-12, p=1.0)
         with pytest.raises(ValueError):
             _ = augment(samples=samples, sample_rate=sample_rate)
 
@@ -44,7 +44,7 @@ class TestLoudnessNormalization:
         )
         sample_rate = 16000
 
-        augment = LoudnessNormalization(min_lufs_in_db=-32, max_lufs_in_db=-12, p=1.0)
+        augment = LoudnessNormalization(min_lufs=-32, max_lufs=-12, p=1.0)
         processed_samples = augment(samples=samples, sample_rate=sample_rate)
         gain_factors = processed_samples / samples
         assert np.amin(gain_factors) == pytest.approx(np.amax(gain_factors))

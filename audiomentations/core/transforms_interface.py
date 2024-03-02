@@ -2,6 +2,7 @@ import random
 import warnings
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.utils import (
     is_waveform_multichannel,
@@ -14,6 +15,10 @@ class MultichannelAudioNotSupportedException(Exception):
 
 
 class MonoAudioNotSupportedException(Exception):
+    pass
+
+
+class WrongMultichannelAudioShape(Exception):
     pass
 
 
@@ -46,32 +51,36 @@ class BaseTransform:
 
 
 class BaseWaveformTransform(BaseTransform):
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         raise NotImplementedError
 
     def is_multichannel(self, samples):
         return is_waveform_multichannel(samples)
 
-    def __call__(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    def __call__(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         if samples.dtype == np.float64:
             warnings.warn(
                 "Warning: input samples dtype is np.float64. Converting to np.float32"
             )
             samples = np.float32(samples)
-        if not self.are_parameters_frozen:
+        if not self.are_parameters_frozen or self.parameters["should_apply"] is None:
             self.randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"] and len(samples) > 0:
             if self.is_multichannel(samples):
-                if samples.shape[0] > samples.shape[1]:
-                    warnings.warn(
-                        "Multichannel audio must have channels first, not channels last. In"
-                        " other words, the shape must be (channels, samples), not"
-                        " (samples, channels)"
+                # Note: We multiply by 8 here to allow big batches of very short audio
+                if samples.shape[0] > samples.shape[1] * 8:
+                    raise WrongMultichannelAudioShape(
+                        "Multichannel audio must have channels first, not channels"
+                        " last. In other words, the shape must be (channels, samples),"
+                        " not (samples, channels). See"
+                        " https://iver56.github.io/audiomentations/guides/multichannel_audio_array_shapes/"
+                        " for more info."
                     )
                 if not self.supports_multichannel:
                     raise MultichannelAudioNotSupportedException(
-                        "{} only supports mono audio, not multichannel audio. In other words, a 1-dimensional input"
-                        " ndarray was expected, but the input had more than 1 dimension.".format(
+                        "{} only supports mono audio, not multichannel audio. In other"
+                        " words, a 1-dimensional input ndarray was expected, but the"
+                        " input had more than 1 dimension.".format(
                             self.__class__.__name__
                         )
                     )
@@ -84,7 +93,7 @@ class BaseWaveformTransform(BaseTransform):
             return self.apply(samples, sample_rate)
         return samples
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         self.parameters["should_apply"] = random.random() < self.p
 
 

@@ -6,6 +6,32 @@ Apply band-pass filtering to the input audio. Filter steepness (6/12/18... dB / 
 is parametrized. Can also be set for zero-phase filtering (will result in a 6 dB drop at
 cutoffs).
 
+## Input-output example
+
+Here we input a high-quality speech recording and apply `BandPassFilter` with a center
+frequency of 2500 Hz and a bandwidth fraction of 0.8, which means that the bandwidth in
+this example is 2000 Hz, so the low frequency cutoff is 1500 Hz and the high frequency
+cutoff is 3500 Hz. One can see in the spectrogram that the high and the low frequencies
+are both attenuated in the output. If you listen to the audio example, you might notice
+that the transformed output almost sounds like a phone call from the time when
+phone audio was narrowband and mostly contained frequencies between ~300 and ~3400 Hz.
+
+![Input-output waveforms and spectrograms](BandPassFilter.webp)
+
+| Input sound                                                                           | Transformed sound                                                                           |
+|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| <audio controls><source src="../BandPassFilter_input.flac" type="audio/flac"></audio> | <audio controls><source src="../BandPassFilter_transformed.flac" type="audio/flac"></audio> | 
+
+## Usage example
+
+```python
+from audiomentations import BandPassFilter
+
+transform = BandPassFilter(min_center_freq=100.0, max_center_freq=6000, p=1.0)
+
+augmented_sound = transform(my_waveform_ndarray, sample_rate=48000)
+```
+
 # BandPassFilter API
 
 [`min_center_freq`](#min_center_freq){ #min_center_freq }: `float` • unit: hertz
@@ -14,10 +40,10 @@ cutoffs).
 [`max_center_freq`](#max_center_freq){ #max_center_freq }: `float` • unit: hertz
 :   :octicons-milestone-24: Default: `4000.0`. Maximum center frequency in hertz
 
-[`min_bandwidth_fraction`](#min_bandwidth_fraction){ #min_bandwidth_fraction }: `float`
+[`min_bandwidth_fraction`](#min_bandwidth_fraction){ #min_bandwidth_fraction }: `float` • range: [0.0, 2.0]
 :   :octicons-milestone-24: Default: `0.5`. Minimum bandwidth relative to center frequency
 
-[`max_bandwidth_fraction`](#max_bandwidth_fraction){ #max_bandwidth_fraction }: `float`
+[`max_bandwidth_fraction`](#max_bandwidth_fraction){ #max_bandwidth_fraction }: `float` • range: [0.0, 2.0]
 :   :octicons-milestone-24: Default: `1.99`. Maximum bandwidth relative to center frequency
 
 [`min_rolloff`](#min_rolloff){ #min_rolloff }: `float` • unit: Decibels/octave

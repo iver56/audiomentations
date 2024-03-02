@@ -22,9 +22,12 @@ def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto"):
 
     if sample_rate is not None and actual_sample_rate != sample_rate:
         if resample_type == "auto":
-            resample_type = (
-                "kaiser_fast" if actual_sample_rate < sample_rate else "kaiser_best"
-            )
+            if librosa.__version__.startswith("0.8."):
+                resample_type = (
+                    "kaiser_fast" if actual_sample_rate < sample_rate else "kaiser_best"
+                )
+            else:
+                resample_type = "soxr_hq"
         samples = librosa.resample(
             samples,
             orig_sr=actual_sample_rate,
@@ -32,7 +35,7 @@ def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto"):
             res_type=resample_type,
         )
         warnings.warn(
-            "{} had to be resampled from {} hz to {} hz. This hurt execution time.".format(
+            "{} had to be resampled from {} Hz to {} Hz. This hurt execution time.".format(
                 str(file_path), actual_sample_rate, sample_rate
             )
         )

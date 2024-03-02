@@ -7,7 +7,7 @@ learning models deal with compressed, low-quality audio.
 
 This transform depends on either lameenc or pydub/ffmpeg.
 
-Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 hz).
+Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 Hz).
 
 Note: When using the `"lameenc"` backend, the output may be slightly longer than the input due
 to the fact that the LAME encoder inserts some silence at the beginning of the audio.
@@ -16,10 +16,10 @@ Warning: This transform writes to disk, so it may be slow.
 
 # Mp3Compression API
 
-[`min_bitrate`](#min_bitrate){ #min_bitrate }: `int` • unit: kbps • range: [8, 320]
+[`min_bitrate`](#min_bitrate){ #min_bitrate }: `int` • unit: kbps • range: [8, `max_bitrate`]
 :   :octicons-milestone-24: Default: `8`. Minimum bitrate in kbps
 
-[`max_bitrate`](#max_bitrate){ #max_bitrate }: `int` • unit: kbps • range: [8, 320]
+[`max_bitrate`](#max_bitrate){ #max_bitrate }: `int` • unit: kbps • range: [`min_bitrate`, 320]
 :   :octicons-milestone-24: Default: `64`. Maximum bitrate in kbps
 
 [`backend`](#backend){ #backend }: `str` • choices: `"pydub"`, `"lameenc"`

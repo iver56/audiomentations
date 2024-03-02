@@ -27,14 +27,21 @@ setup(
     name="audiomentations",
     version=find_version("audiomentations", "__init__.py"),
     author="Iver Jordal",
-    description="A Python library for audio data augmentation. Inspired by albumentations."
-    " Useful for machine learning.",
+    description=(
+        "A Python library for audio data augmentation. Inspired by albumentations."
+        " Useful for machine learning."
+    ),
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/iver56/audiomentations",
     packages=find_packages(exclude=["demo", "tests"]),
-    install_requires=["numpy>=1.13.0", "librosa>0.7.2,<0.10.0", "scipy>=1.0.0,<2"],
+    install_requires=[
+        "numpy>=1.21.0",
+        "librosa>=0.8.0,!=0.10.0,<0.11.0",
+        "scipy>=1.4.0,<2",
+        "soxr>=0.3.2,<1.0.0",
+    ],
     extras_require={
         "extras": [
             "cylimiter==0.3.0",
@@ -44,7 +51,7 @@ setup(
             "pyroomacoustics>=0.6.0",
         ]
     },
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
@@ -58,8 +65,8 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     project_urls={
-        'Documentation': 'https://iver56.github.io/audiomentations/',
-        'Changelog': 'https://iver56.github.io/audiomentations/changelog/',
-        'Issue Tracker': 'https://github.com/iver56/audiomentations/issues',
+        "Documentation": "https://iver56.github.io/audiomentations/",
+        "Changelog": "https://iver56.github.io/audiomentations/changelog/",
+        "Issue Tracker": "https://github.com/iver56/audiomentations/issues",
     },
 )

@@ -5,17 +5,81 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<<<<<<< HEAD
 ## [0.31.0] - 
 
 ### Added
 
 * Add `AddColorNoise` transform
+=======
+## [0.34.1] - 2023-11-24
+
+### Changed
+
+* Bump min numpy version from 1.18 to 1.21
+* Use numpy.typing in type hints
+* Optimize max abs calculations in terms of memory and speed. This makes `Normalize`, `Mp3Compression` and `Limiter` slightly faster.
+
+## [0.33.0] - 2023-08-30
+
+### Changed
+
+* Bump min numpy version from 1.16 to 1.18
+* Bump min scipy version from 1.3 to 1.4
+* Bump min python version from 3.7 to 3.8, because 3.7 is beyond end-of-life already
+* Change some `AssertionError` exceptions to `ValueError`
+
+#### :warning: The `Shift` transform has been changed:
+
+* Removed `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
+* Rename `min_fraction` to `min_shift` and `max_fraction` to `max_shift`
+* Add `shift_unit` parameter
+* Fading is enabled by default
+* Smoother fade curve
+
+These are **breaking changes**. The following example shows how you can adapt your code when upgrading from <=v0.32.0 to >=v0.33.0:
+
+| <= 0.32.0 | >= 0.33.0                                                                         |
+| --------- |-----------------------------------------------------------------------------------|
+| `Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, fade_duration=0.01)` | `Shift(min_shift=-0.5, max_shift=0.5, shift_unit="fraction", fade_duration=0.01)` |
+| `Shift()` | `Shift(fade_duration=0.0)` |
+
+### Fixed
+
+* Correct some wrong type hints
+
+## [0.32.0] - 2023-08-15
+
+### Added
+
+* Add new `RepeatPart` transform
+
+### Changed
+
+* Bump min version of numpy dependency from 1.13 to 1.16
+* If a transform is in "frozen parameters" mode, but has no parameters yet, the transform will randomize/set parameters when it gets called for the first time
+* Increase the threshold for raising `WrongMultichannelAudioShape`. This allows some rare use cases where the number of channels slightly exceeds the number of samples.
+
+### Fixed
+
+* Fix some type hints that were `np.array` instead of `np.ndarray`
+
+## [0.31.0] - 2023-06-21
+
+### Changed
+
+* Raise exception instead of warning when the given multichannel ndarray has wrong shape
+* Add support for the latest librosa 0.10 version
+* Switch to a faster default resampler internally in `PitchShift`, leading to much faster execution. This requires `soxr`.
+* Bump min `scipy` requirement from 1.0 to 1.3
+* Rename "_in_db" to "_db" in args and parameters. Passing args with the old names still works, but is deprecated and will stop working in a future version.
+>>>>>>> main
 
 ## [0.30.0] - 2023-05-02
 
 ### Added
 
-* Add `AdjustDuration` transform
+* Add new `AdjustDuration` transform
 
 ### Fixed
 
@@ -443,7 +507,11 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
-[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.30.0...HEAD
+[Unreleased]: https://github.com/iver56/audiomentations/compare/v0.34.1...HEAD
+[0.34.1]: https://github.com/iver56/audiomentations/compare/v0.33.0...v0.34.1
+[0.33.0]: https://github.com/iver56/audiomentations/compare/v0.32.0...v0.33.0
+[0.32.0]: https://github.com/iver56/audiomentations/compare/v0.31.0...v0.32.0
+[0.31.0]: https://github.com/iver56/audiomentations/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/iver56/audiomentations/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/iver56/audiomentations/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/iver56/audiomentations/compare/v0.27.0...v0.28.0

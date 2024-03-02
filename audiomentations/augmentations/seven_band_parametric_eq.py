@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations import LowShelfFilter, PeakingFilter, HighShelfFilter
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -23,13 +24,13 @@ class SevenBandParametricEQ(BaseWaveformTransform):
 
     The seven bands have center frequencies picked in the following ranges (min-max):
 
-    * 42-95 hz
-    * 91-204 hz
-    * 196-441 hz
-    * 421-948 hz
-    * 909-2045 hz
-    * 1957-4404 hz
-    * 4216-9486 hz
+    * 42-95 Hz
+    * 91-204 Hz
+    * 196-441 Hz
+    * 421-948 Hz
+    * 909-2045 Hz
+    * 1957-4404 Hz
+    * 4216-9486 Hz
     """
 
     supports_multichannel = True
@@ -104,14 +105,14 @@ class SevenBandParametricEQ(BaseWaveformTransform):
             self.peaking_filters[i].freeze_parameters()
         self.high_shelf_filter.freeze_parameters()
 
-    def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
+    def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         self.low_shelf_filter.randomize_parameters(samples, sample_rate)
         for i in range(len(self.peaking_filters)):
             self.peaking_filters[i].randomize_parameters(samples, sample_rate)
         self.high_shelf_filter.randomize_parameters(samples, sample_rate)
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         samples = self.low_shelf_filter(samples, sample_rate)
         for i in range(len(self.peaking_filters)):
             samples = self.peaking_filters[i](samples, sample_rate)

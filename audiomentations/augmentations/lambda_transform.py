@@ -1,6 +1,7 @@
 from typing import Callable
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 
@@ -24,5 +25,5 @@ class Lambda(BaseWaveformTransform):
         self.transform = transform
         self.kwargs = kwargs
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
         return self.transform(samples, sample_rate, **self.kwargs)

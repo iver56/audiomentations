@@ -1,10 +1,8 @@
 import argparse
 import os
 import random
-import sys
 from pathlib import Path
 from typing import Tuple
-from functools import partial
 
 import librosa
 import numpy as np
@@ -37,6 +35,7 @@ from audiomentations import (
     PeakingFilter,
     PitchShift,
     PolarityInversion,
+    RepeatPart,
     Resample,
     Reverse,
     RoomSimulator,
@@ -47,8 +46,11 @@ from audiomentations import (
     TimeStretch,
     Trim,
     AdjustDuration,
+    Limiter,
+    AddGaussianSNR,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
+from audiomentations.core.utils import get_max_abs_amplitude
 
 DEMO_DIR = os.path.dirname(__file__)
 transform_usage_example_classes = dict()
@@ -58,7 +60,10 @@ def plot_waveforms_and_spectrograms(
     sound, transformed_sound, sample_rate, output_file_path
 ):
     xmax = max(sound.shape[0], transformed_sound.shape[0])
-    ylim = max(np.amax(np.abs(sound)), np.amax(np.abs(transformed_sound))) * 1.1
+    ylim = (
+        max(get_max_abs_amplitude(sound), get_max_abs_amplitude(transformed_sound))
+        * 1.1
+    )
     sound = sound[:xmax]
     transformed_sound = transformed_sound[:xmax]
     fig, axs = plt.subplots(
@@ -88,10 +93,15 @@ def plot_waveforms_and_spectrograms(
 
     def get_magnitude_spectrogram(samples):
         complex_spec = librosa.stft(samples)
-        return librosa.amplitude_to_db(np.abs(complex_spec), ref=np.max)
+        return np.abs(complex_spec)
 
     sound_spec = get_magnitude_spectrogram(sound)
     transformed_sound_spec = get_magnitude_spectrogram(transformed_sound)
+
+    vmax = max(np.amax(sound_spec), np.amax(transformed_sound_spec))
+
+    sound_spec = librosa.amplitude_to_db(sound_spec, ref=vmax)
+    transformed_sound_spec = librosa.amplitude_to_db(transformed_sound_spec, ref=vmax)
 
     vmax = max(np.amax(sound_spec), np.amax(transformed_sound_spec))
     vmin = vmax - 85.0
@@ -150,8 +160,8 @@ class AddBackgroundNoiseExample(TransformUsageExample):
         np.random.seed(345)
         transform = AddBackgroundNoise(
             sounds_path=librosa.example("pistachio"),
-            min_snr_in_db=5.0,
-            max_snr_in_db=5.0,
+            min_snr_db=5.0,
+            max_snr_db=5.0,
             p=1.0,
         )
 
@@ -186,6 +196,25 @@ class AddGaussianNoiseExample(TransformUsageExample):
 
 
 @register
+class AddGaussianSNRExample(TransformUsageExample):
+    transform_class = AddGaussianSNR
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = AddGaussianSNR(min_snr_db=16.0, max_snr_db=16.0, p=1.0)
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("libri1"), sample_rate=16000
+        )
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
 class AddShortNoisesExample(TransformUsageExample):
     transform_class = AddShortNoises
 
@@ -196,8 +225,8 @@ class AddShortNoisesExample(TransformUsageExample):
             os.path.join(DEMO_DIR, "short_noises"),
             min_time_between_sounds=0.8,
             max_time_between_sounds=2.5,
-            min_snr_in_db=0.0,
-            max_snr_in_db=15.0,
+            min_snr_db=0.0,
+            max_snr_db=15.0,
             p=1.0,
         )
 
@@ -224,6 +253,186 @@ class AdjustDurationExample(TransformUsageExample):
             librosa.example("pistachio"), sample_rate=None
         )
         sound = sound[..., 0 : int(4.6 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class AirAbsorptionExample(TransformUsageExample):
+    transform_class = AirAbsorption
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = AirAbsorption(
+            min_temperature=20.0,
+            max_temperature=20.0,
+            min_humidity=70.0,
+            max_humidity=70.0,
+            min_distance=20.0,
+            max_distance=20.0,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class ApplyImpulseResponseExample(TransformUsageExample):
+    transform_class = ApplyImpulseResponse
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = ApplyImpulseResponse(
+            ir_path=os.path.join(DEMO_DIR, "ir", "rir48000.wav"), p=1.0
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class BandPassFilterExample(TransformUsageExample):
+    transform_class = BandPassFilter
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = BandPassFilter(
+            min_center_freq=2500.0,
+            max_center_freq=2500.0,
+            min_bandwidth_fraction=0.8,
+            max_bandwidth_fraction=0.8,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class BandStopFilterExample(TransformUsageExample):
+    transform_class = BandStopFilter
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = BandStopFilter(
+            min_center_freq=2500.0,
+            max_center_freq=2500.0,
+            min_bandwidth_fraction=0.8,
+            max_bandwidth_fraction=0.8,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class LimiterExample(TransformUsageExample):
+    transform_class = Limiter
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = Limiter(min_threshold_db=-10, max_threshold_db=-10, p=1)
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("libri1"), sample_rate=16000
+        )
+        sound = sound[..., 0 : int(4.7 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class PitchShiftExample(TransformUsageExample):
+    transform_class = PitchShift
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = PitchShift(min_semitones=-4, max_semitones=-4, p=1.0)
+
+        sound, sample_rate = load_sound_file(
+            librosa.example("pistachio"), sample_rate=None
+        )
+        sound = sound[..., 0 : int(4.6 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class RepeatPartExample(TransformUsageExample):
+    transform_class = RepeatPart
+
+    def generate_example(self):
+        random.seed(66)
+        np.random.seed(66)
+        transform = RepeatPart(
+            min_part_duration=0.1,
+            max_part_duration=0.5,
+            crossfade_duration=0.03,
+            part_transform=SevenBandParametricEQ(
+                min_gain_db=-6.0, max_gain_db=6.0, p=1.0
+            ),
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class ReverseExample(TransformUsageExample):
+    transform_class = Reverse
+
+    def generate_example(self):
+        transform = Reverse(p=1.0)
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
 
         transformed_sound = transform(sound, sample_rate)
 
@@ -275,7 +484,7 @@ class ShiftExample(TransformUsageExample):
     def generate_example(self):
         random.seed(345)
         np.random.seed(345)
-        transform = Shift(min_fraction=0.75, max_fraction=0.75, rollover=True, p=1)
+        transform = Shift(min_shift=0.75, max_shift=0.75, rollover=True, p=1)
 
         sound, sample_rate = load_sound_file(
             librosa.example("libri1"), sample_rate=16000

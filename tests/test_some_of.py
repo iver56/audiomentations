@@ -26,7 +26,7 @@ class TestSomeOf:
         num_transforms_applied_list = []
         num_runs = 30
         list_transforms = [
-            Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
+            Gain(min_gain_db=-12, max_gain_db=-6, p=1.0),
             PolarityInversion(p=1.0),
         ]
         augmenter = SomeOf(1, list_transforms)
@@ -51,7 +51,7 @@ class TestSomeOf:
         num_transforms_applied_list = []
         num_runs = 30
         list_transforms = [
-            Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
+            Gain(min_gain_db=-12, max_gain_db=-6, p=1.0),
             PolarityInversion(p=1.0),
         ]
         augmenter = SomeOf((1, 2), list_transforms)
@@ -76,7 +76,7 @@ class TestSomeOf:
         num_transforms_applied_list = []
         num_runs = 30
         list_transforms = [
-            Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
+            Gain(min_gain_db=-12, max_gain_db=-6, p=1.0),
             PolarityInversion(p=1.0),
         ]
         augmenter = SomeOf((2, None), list_transforms)
@@ -101,7 +101,7 @@ class TestSomeOf:
         num_transforms_applied_list = []
         num_runs = 30
         list_transforms = [
-            Gain(min_gain_in_db=-12, max_gain_in_db=-6, p=1.0),
+            Gain(min_gain_db=-12, max_gain_db=-6, p=1.0),
             PolarityInversion(p=1.0),
         ]
         augmenter = SomeOf((0, None), list_transforms)
@@ -168,13 +168,13 @@ class TestSomeOf:
             [
                 AddBackgroundNoise(
                     sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-                    min_snr_in_db=15,
-                    max_snr_in_db=35,
+                    min_snr_db=15,
+                    max_snr_db=35,
                     p=1.0,
                 ),
                 ClippingDistortion(p=1.0),
                 TimeMask(min_band_part=0.2, max_band_part=0.5, p=1.0),
-                Shift(min_fraction=0.5, max_fraction=0.5, p=1.0),
+                Shift(min_shift=0.5, max_shift=0.5, p=1.0),
             ],
         )
         augmenter.freeze_parameters()

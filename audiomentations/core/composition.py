@@ -1,6 +1,7 @@
 import random
 
 import numpy as np
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseSpectrogramTransform
 
@@ -64,7 +65,7 @@ class Compose(BaseCompose):
         AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
         TimeStretch(min_rate=0.8, max_rate=1.25, p=0.5),
         PitchShift(min_semitones=-4, max_semitones=4, p=0.5),
-        Shift(min_fraction=-0.5, max_fraction=0.5, p=0.5),
+        Shift(min_shift=-0.5, max_shift=0.5, p=0.5),
     ])
 
     # Generate 2 seconds of dummy audio for the sake of example
@@ -78,7 +79,7 @@ class Compose(BaseCompose):
     def __init__(self, transforms, p=1.0, shuffle=False):
         super().__init__(transforms, p, shuffle)
 
-    def __call__(self, samples: np.ndarray, sample_rate: int):
+    def __call__(self, samples: NDArray[np.float32], sample_rate: int):
         transforms = self.transforms.copy()
         should_apply = random.random() < self.p
         # TODO: Adhere to self.are_parameters_frozen

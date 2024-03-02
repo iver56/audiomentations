@@ -19,13 +19,13 @@ the spectrum, for example:
 
 The seven bands have center frequencies picked in the following ranges (min-max):
 
-* 42-95 hz
-* 91-204 hz
-* 196-441 hz
-* 421-948 hz
-* 909-2045 hz
-* 1957-4404 hz
-* 4216-9486 hz
+* 42-95 Hz
+* 91-204 Hz
+* 196-441 Hz
+* 421-948 Hz
+* 909-2045 Hz
+* 1957-4404 Hz
+* 4216-9486 Hz
 
 
 ## SevenBandParametricEQ API

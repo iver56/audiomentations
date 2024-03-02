@@ -77,8 +77,8 @@ class TestAddColorNoise:
         augmenter = AddColorNoise(
             min_f_decay=f_decay,
             max_f_decay=f_decay,
-            min_snr_in_db=0.0,
-            max_snr_in_db=0.0,
+            min_snr_db=0.0,
+            max_snr_db=0.0,
             p=1.0,
         )
         noise = augmenter(samples=samples_in, sample_rate=16000) - samples_in
@@ -91,7 +91,7 @@ class TestAddColorNoise:
         np.random.seed(42)
         samples_in = np.random.normal(0, 1, size=1024).astype(np.float32)
 
-        augmenter = AddColorNoise(min_snr_in_db=5, max_snr_in_db=5, p=1.0)
+        augmenter = AddColorNoise(min_snr_db=5, max_snr_db=5, p=1.0)
         rms_in = np.sqrt(np.mean(samples_in**2))
         samples_out = augmenter(samples=samples_in, sample_rate=16000)
         rms_noise = np.sqrt(np.mean((samples_out - samples_in) ** 2))

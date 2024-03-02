@@ -84,8 +84,8 @@ class AddColorNoise(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_snr_in_db: float = 5.0,
-        max_snr_in_db: float = 40.0,
+        min_snr_db: float = 5.0,
+        max_snr_db: float = 40.0,
         min_f_decay: float = -2.0,
         max_f_decay: float = 2.0,
         p_apply_a_weighting: float = 0.0,
@@ -93,8 +93,8 @@ class AddColorNoise(BaseWaveformTransform):
         n_fft: int = 128,
     ):
         """
-        :param min_snr_in_db: Minimum signal-to-noise ratio in dB. A lower number means more noise.
-        :param max_snr_in_db: Maximum signal-to-noise ratio in dB. A greater number means less noise.
+        :param min_snr_db: Minimum signal-to-noise ratio in dB. A lower number means more noise.
+        :param max_snr_db: Maximum signal-to-noise ratio in dB. A greater number means less noise.
         :param min_f_decay: Minimum frequency decay in dB.
         :param max_f_decay: Maximum frequency decay in dB.
         :param p: The probability of applying this transform
@@ -121,8 +121,8 @@ class AddColorNoise(BaseWaveformTransform):
         equal loudness curve, which results in grey-noise when f_decay = 0.0.
         """
         super().__init__(p)
-        self.min_snr_in_db = min_snr_in_db
-        self.max_snr_in_db = max_snr_in_db
+        self.min_snr_db = min_snr_db
+        self.max_snr_db = max_snr_db
         self.min_f_decay = min_f_decay
         self.max_f_decay = max_f_decay
         self.p_apply_a_weighting = p_apply_a_weighting
@@ -132,7 +132,7 @@ class AddColorNoise(BaseWaveformTransform):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             # Pick SNR in decibel scale
-            snr = random.uniform(self.min_snr_in_db, self.max_snr_in_db)
+            snr = random.uniform(self.min_snr_db, self.max_snr_db)
 
             # Pick f_decay
             f_decay = random.uniform(self.min_f_decay, self.max_f_decay)

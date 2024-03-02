@@ -7,6 +7,7 @@ from .augmentations.air_absorption import AirAbsorption
 from .augmentations.apply_impulse_response import ApplyImpulseResponse
 from .augmentations.band_pass_filter import BandPassFilter
 from .augmentations.band_stop_filter import BandStopFilter
+from .augmentations.bit_crush import BitCrush
 from .augmentations.clip import Clip
 from .augmentations.clipping_distortion import ClippingDistortion
 from .augmentations.gain import Gain

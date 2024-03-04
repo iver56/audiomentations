@@ -1,6 +1,6 @@
 # `AddColorNoise`
 
-_Added in v0.31.0_
+_Added in v0.35.0_
 
 Mix in noise with color, additionally weighted by an [A-weighting](https://en.wikipedia.org/wiki/A-weighting) curve. When `f_decay=0` this is equivalent to `AddGaussianNoise`, with an option for weighting it with an `A-weighting` curve. Otherwise, see: [Colors of Noise](https://en.wikipedia.org/wiki/Colors_of_noise).
 

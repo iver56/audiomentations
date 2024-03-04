@@ -150,7 +150,8 @@ class AddColorNoise(BaseWaveformTransform):
         :param min_f_decay: Minimum frequency decay in dB per octave.
         :param max_f_decay: Maximum frequency decay in dB per octave.
         :param p: The probability of applying this transform
-        :param p_apply_a_weighting: The probability of applying A-weighting to the noise.
+        :param p_apply_a_weighting: The probability of applying A-weighting to the noise. Useful for
+                                    generating "grey" noise. See here: https://en.wikipedia.org/wiki/Grey_noise
         :param n_fft: Noise is 'colorized' by applying a decay in the frequency domain. The decay envelope
                       is generated in the fft domain. This parameter controls the number of fft points. For
                       unweighted colored noise, you should use low n_fft (e.g. 128 points) values, but
@@ -171,6 +172,7 @@ class AddColorNoise(BaseWaveformTransform):
         | azure    |                  3.01 |
         | violet   |                  6.02 |
         | white    |                   0.0 |
+        For information about those values, see here: https://en.wikipedia.org/wiki/Colors_of_noise
 
         Additionally, p_apply_a_weighting gives the probability the noise to be weighted by a psychoacoustic
         equal loudness curve, which results in grey-noise when f_decay = 0.0.

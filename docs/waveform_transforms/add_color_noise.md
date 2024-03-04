@@ -35,6 +35,7 @@ Those values can be chosen from the following table:
 | violet   |                  6.02 |
 | white    |                   0.0 |
 
+See [Colors of noise](https://en.wikipedia.org/wiki/Colors_of_noise) on Wikipedia about those values.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

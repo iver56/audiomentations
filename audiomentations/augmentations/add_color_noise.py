@@ -11,22 +11,69 @@ from audiomentations.core.utils import (
 import scipy.signal as sp
 
 NOISE_COLOR_DECAYS = {
-    "pink": 1.0,
-    "brown": 2.0,
-    "brownian": 2.0,
-    "red": 2.0,
-    "blue": -1.0,
-    "azure": -1.0,
-    "violet": -2.0,
-    "white": 0.0,
+    "pink": -1.0 * 10 * np.log10(2),
+    "brown": -2.0 * 10 * np.log10(2),
+    "brownian": -2.0 * 10 * np.log10(2),
+    "red": -2.0 * 10 * np.log10(2),
+    "blue": 1.0 * 10 * np.log10(2),
+    "azure": 1.0 * 10 * np.log10(2),
+    "violet": 2.0 * 10 * np.log10(2),
+    "white": 0.0 * 10 * np.log10(2),
 }
 
 
+def decay_to_beta(decay: float) -> float:
+    """
+    Converts a decay given in db/octave to the beta exponent
+    in the PSD logarithmic decay function:
+
+    logarithmic_decay = \sqrt{\frac{1}{f^{\beta}}}
+
+    where logarithmic_decay is the rate of change of the PSD
+    over frequency (in log-space).
+    """
+
+    return decay / (-10.0) / np.log10(2.0)
+
+
+def beta_to_decay(beta: float) -> float:
+    """
+    Converts the beta exponent in:
+
+    logarithmic_decay = \sqrt{\frac{1}{f^{\beta}}}
+
+    to a decay in db per octave,
+    where logarithmic_decay is the rate of change of the PSD
+    over frequency (in log-space).
+    """
+    return -10.0 * beta * np.log10(2.0)
+
+
 def generate_decaying_white_noise(
-    size, f_decay, sample_rate, apply_a_weighting=False, n_fft=64
+    size,
+    beta,
+    sample_rate,
+    apply_a_weighting=False,
+    n_fft=64,
+    in_db_per_octave=True,
 ):
     """
-    Generates a white noise signal decaying by 1/f^beta.
+    Generates a white noise signal decaying linearly by 1/f^beta
+    (when in_db_per_octave==False) or changing (decaying or increasing)
+    linearly by beta db/octave (when in_db_per_octave==False).
+
+    The values for beta are given below:
+
+    | Colour   |  in_db_per_octave=False | in_db_per_octave=True |
+    |----------+-------------------------+-----------------------|
+    | pink     |                     1.0 |                 -3.01 |
+    | brown    |                     2.0 |                 -6.02 |
+    | Brownian |                     2.0 |                 -6.02 |
+    | red      |                     2.0 |                 -6.02 |
+    | blue     |                    -1.0 |                  3.01 |
+    | azure    |                    -1.0 |                  3.01 |
+    | violet   |                    -2.0 |                  6.02 |
+    | white    |                     0.0 |                   0.0 |
 
     Note that you can get away with low n_fft (e.g. 128 points) values
     if you are not using a_weighting, but keep it higher otherwise.
@@ -34,7 +81,7 @@ def generate_decaying_white_noise(
 
     sig = np.random.normal(0, 1, size=size)
 
-    if f_decay == 0.0 and not apply_a_weighting:
+    if beta == 0.0 and not apply_a_weighting:
         # No decay, return white noise
         return sig.astype(np.float32)
 
@@ -43,8 +90,13 @@ def generate_decaying_white_noise(
     f[0] = 1
     decay = np.ones(n_fft // 2 + 1, dtype=complex)
 
+    # If beta is given as decay in db/octave, convert it to a
+    # decay exponent.
+    if in_db_per_octave:
+        beta = decay_to_beta(beta)
+
     # Decay is in PSD, for magnitude, take sqrt and add random phase
-    decay = np.sqrt(1 / f**f_decay) * np.exp(
+    decay = np.sqrt(1 / f**beta) * np.exp(
         1j * np.random.uniform(0, 2 * np.pi, len(decay))
     )
 
@@ -161,7 +213,7 @@ class AddColorNoise(BaseWaveformTransform):
 
         noise_with_unit_rms = generate_decaying_white_noise(
             size=samples.shape,
-            f_decay=self.parameters["f_decay"],
+            beta=self.parameters["f_decay"],
             sample_rate=sample_rate,
             apply_a_weighting=self.parameters["apply_a_weighting"],
             n_fft=self.n_fft,

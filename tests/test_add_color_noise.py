@@ -40,7 +40,7 @@ def calculate_decay_rate(noise: np.ndarray, n_fft=8192):
     # Linear regression using polyfit
     m, _ = np.polyfit(x[1:], 10 * np.log10(pxx[1:]), 1)
 
-    return -m * np.log10(2)
+    return m * np.log10(2)
 
 
 class TestAddColorNoise:
@@ -114,7 +114,7 @@ class TestAddColorNoise:
 
         # TODO: Decrease the value of abs= below. To do that, we need a better
         #       calculate_decay_rate function.
-        assert decay_rate == pytest.approx(10 * np.log10(2) * f_decay, abs=2)
+        assert decay_rate == pytest.approx(f_decay, abs=1.6)
 
     @pytest.mark.parametrize("color", NOISE_COLOR_DECAYS.keys())
     @pytest.mark.parametrize("a_weighted", [False, True])
@@ -125,7 +125,7 @@ class TestAddColorNoise:
 
         noise = generate_decaying_white_noise(
             size=size,
-            f_decay=f_decay,
+            beta=f_decay,
             apply_a_weighting=a_weighted,
             n_fft=64,
             sample_rate=16000,

@@ -5,6 +5,8 @@ import pytest
 
 from audiomentations import RoomSimulator
 
+import joblib
+
 DEBUG = False
 
 

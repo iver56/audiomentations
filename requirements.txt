@@ -9,7 +9,7 @@ numba==0.57.0
 numpy==1.23.0
 pydub==0.23.1
 pyloudnorm==0.1.0
-pyroomacoustics==0.6.0
+pyroomacoustics==0.7.3
 pytest==5.3.4
 pytest-cov==2.8.1
 scipy>=1.4.0,<2.0.0

@@ -36,19 +36,6 @@ def decay_to_beta(decay: float) -> float:
     return decay / (-10.0) / np.log10(2.0)
 
 
-def beta_to_decay(beta: float) -> float:
-    """
-    Converts the beta exponent in:
-
-    logarithmic_decay = \sqrt{\frac{1}{f^{\beta}}}
-
-    to a decay in db per octave,
-    where logarithmic_decay is the rate of change of the PSD
-    over frequency (in log-space).
-    """
-    return -10.0 * beta * np.log10(2.0)
-
-
 def generate_decaying_white_noise(
     size,
     beta,

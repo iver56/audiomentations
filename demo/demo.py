@@ -1,9 +1,9 @@
 import os
 import random
+import time
 from pathlib import Path
 
 import numpy as np
-import time
 from scipy.io import wavfile
 from tqdm import tqdm
 
@@ -44,6 +44,7 @@ from audiomentations import (
     Lambda,
     AdjustDuration,
     RepeatPart,
+    BitCrush,
 )
 from audiomentations.augmentations.limiter import Limiter
 from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
@@ -291,6 +292,7 @@ if __name__ == "__main__":
             "num_runs": 1,
             "name": "AdjustDurationPadStartReflect",
         },
+        {"instance": BitCrush(p=1.0), "num_runs": 5},
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": BandStopFilter(p=1.0), "num_runs": 5},
         {"instance": ClippingDistortion(p=1.0), "num_runs": 5},

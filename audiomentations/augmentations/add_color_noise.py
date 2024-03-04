@@ -138,8 +138,8 @@ class AddColorNoise(BaseWaveformTransform):
         self,
         min_snr_db: float = 5.0,
         max_snr_db: float = 40.0,
-        min_f_decay: float = -2.0,
-        max_f_decay: float = 2.0,
+        min_f_decay: float = -6.0,
+        max_f_decay: float = 6.0,
         p_apply_a_weighting: float = 0.0,
         p: float = 0.5,
         n_fft: int = 128,
@@ -147,8 +147,8 @@ class AddColorNoise(BaseWaveformTransform):
         """
         :param min_snr_db: Minimum signal-to-noise ratio in dB. A lower number means more noise.
         :param max_snr_db: Maximum signal-to-noise ratio in dB. A greater number means less noise.
-        :param min_f_decay: Minimum frequency decay in dB.
-        :param max_f_decay: Maximum frequency decay in dB.
+        :param min_f_decay: Minimum frequency decay in dB per octave.
+        :param max_f_decay: Maximum frequency decay in dB per octave.
         :param p: The probability of applying this transform
         :param p_apply_a_weighting: The probability of applying A-weighting to the noise.
         :param n_fft: Noise is 'colorized' by applying a decay in the frequency domain. The decay envelope
@@ -161,13 +161,16 @@ class AddColorNoise(BaseWaveformTransform):
         spectral density is flat, equivalent to applying white noise. Below are common noise colors and
         their corresponding f_decay values:
 
-        Color          f_decay
-        ----------------------
-        white              0.0
-        pink               1.0
-        brown(ian)/red     2.0
-        blue/azure        -1.0
-        violet            -2.0
+        | Colour   | f_decay (db/octave)   |
+        |----------+-----------------------|
+        | pink     |                 -3.01 |
+        | brown    |                 -6.02 |
+        | Brownian |                 -6.02 |
+        | red      |                 -6.02 |
+        | blue     |                  3.01 |
+        | azure    |                  3.01 |
+        | violet   |                  6.02 |
+        | white    |                   0.0 |
 
         Additionally, p_apply_a_weighting gives the probability the noise to be weighted by a psychoacoustic
         equal loudness curve, which results in grey-noise when f_decay = 0.0.

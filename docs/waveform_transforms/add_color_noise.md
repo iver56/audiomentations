@@ -17,22 +17,23 @@ Mix in noise with color, additionally weighted by an [A-weighting](https://en.wi
     greater number means less noise.
 
 [`min_f_decay`](#min_f_decay){ #min_f_decay }: `float` • unit: 
-:   :octicons-milestone-24: Default: `-2.0`. Minimum noise decay per unit of bandwidth.
+:   :octicons-milestone-24: Default: `-6.0`. Minimum noise decay in db per octave.
 
 [`max_f_decay`](#max_f_decay){ #max_f_decay }: `float` • unit: 
-:   :octicons-milestone-24: Default: `2.0`. Maximum noise decay per unit of bandwidth.
+:   :octicons-milestone-24: Default: `6.0`. Maximum noise decay in db per octave.
 
 Those values can be chosen from the following table:
 
-|Noise Color| `f_decay`|
-|---------------|---------------|
-|        white             | 0.0|
-|        pink              | 1.0|
-|        brown(ian)/red    | 2.0|
-|       blue/azure         |-1.0|
-|violet                    |-2.0|
-
-
+| Colour   | `f_decay`` (db/octave)|
+|----------|-----------------------|
+| pink     |                 -3.01 |
+| brown    |                 -6.02 |
+| Brownian |                 -6.02 |
+| red      |                 -6.02 |
+| blue     |                  3.01 |
+| azure    |                  3.01 |
+| violet   |                  6.02 |
+| white    |                   0.0 |
 
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

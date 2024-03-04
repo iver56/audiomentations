@@ -24,7 +24,7 @@ Mix in noise with color, additionally weighted by an [A-weighting](https://en.wi
 
 Those values can be chosen from the following table:
 
-| Colour   | `f_decay`` (db/octave)|
+| Colour   | `f_decay`  (db/octave)|
 |----------|-----------------------|
 | pink     |                 -3.01 |
 | brown    |                 -6.02 |

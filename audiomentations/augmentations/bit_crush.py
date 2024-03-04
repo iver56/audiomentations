@@ -28,10 +28,8 @@ class BitCrush(BaseWaveformTransform):
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["bit_depth"] = int(
-                random.uniform(
-                    self.min_bit_depth, self.max_bit_depth
-                )
+            self.parameters["bit_depth"] = random.randint(
+                self.min_bit_depth, self.max_bit_depth
             )
         
     def apply(self, samples: NDArray[np.float32], sample_rate: int):

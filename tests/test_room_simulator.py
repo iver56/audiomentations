@@ -40,8 +40,8 @@ class TestRoomSimulatorTransform:
             np.float32
         ).flatten()
 
-        assert pytest.approx(
-            augmented_samples_apply, augmented_samples_simulate, abs=1e-15
+        assert augmented_samples_simulate == pytest.approx(
+            augmented_samples_apply, abs=1e-15
         )
 
     def test_failing_case(self):

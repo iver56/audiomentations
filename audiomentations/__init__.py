@@ -1,6 +1,7 @@
 from .augmentations.add_background_noise import AddBackgroundNoise
 from .augmentations.add_gaussian_noise import AddGaussianNoise
 from .augmentations.add_gaussian_snr import AddGaussianSNR
+from .augmentations.add_color_noise import AddColorNoise, NOISE_COLOR_DECAYS
 from .augmentations.add_short_noises import AddShortNoises
 from .augmentations.adjust_duration import AdjustDuration
 from .augmentations.air_absorption import AirAbsorption

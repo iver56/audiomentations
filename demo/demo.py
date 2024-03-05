@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from audiomentations import (
     AddGaussianNoise,
+    AddColorNoise,
     TimeStretch,
     PitchShift,
     Shift,
@@ -52,6 +53,7 @@ from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
 )
+from audiomentations.augmentations.add_color_noise import NOISE_COLOR_DECAYS
 
 DEMO_DIR = os.path.dirname(__file__)
 
@@ -150,6 +152,61 @@ if __name__ == "__main__":
             "instance": AddGaussianSNR(p=1.0),
             "num_runs": 5,
             "name": "AddGaussianSNR",
+        },
+        {
+            "instance": AddColorNoise(
+                p=1.0,
+                min_f_decay=NOISE_COLOR_DECAYS["brown"],
+                max_f_decay=NOISE_COLOR_DECAYS["brown"],
+            ),
+            "num_runs": 2,
+            "name": "AddColorNoise_Brown",
+        },
+        {
+            "instance": AddColorNoise(
+                p=1.0,
+                min_f_decay=NOISE_COLOR_DECAYS["violet"],
+                max_f_decay=NOISE_COLOR_DECAYS["violet"],
+            ),
+            "num_runs": 2,
+            "name": "AddColorNoise_Violet",
+        },
+        {
+            "instance": AddColorNoise(
+                p=1.0,
+                min_f_decay=NOISE_COLOR_DECAYS["blue"],
+                max_f_decay=NOISE_COLOR_DECAYS["blue"],
+            ),
+            "num_runs": 2,
+            "name": "AddColorNoise_Blue",
+        },
+        {
+            "instance": AddColorNoise(
+                p=1.0,
+                min_f_decay=NOISE_COLOR_DECAYS["pink"],
+                max_f_decay=NOISE_COLOR_DECAYS["pink"],
+            ),
+            "num_runs": 2,
+            "name": "AddColorNoise_Pink",
+        },
+        {
+            "instance": AddColorNoise(
+                p=1.0,
+                min_f_decay=NOISE_COLOR_DECAYS["white"],
+                max_f_decay=NOISE_COLOR_DECAYS["white"],
+            ),
+            "num_runs": 2,
+            "name": "AddColorNoise_White",
+        },
+        {
+            "instance": AddColorNoise(
+                p=1.0,
+                min_f_decay=NOISE_COLOR_DECAYS["white"],
+                max_f_decay=NOISE_COLOR_DECAYS["white"],
+                p_apply_a_weighting=1.0,
+            ),
+            "num_runs": 2,
+            "name": "AddColorNoise_Grey",
         },
         {
             "instance": ApplyImpulseResponse(

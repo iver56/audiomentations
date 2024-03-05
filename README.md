@@ -50,6 +50,7 @@ The API documentation, along with guides, example code, illustrations and exampl
 # Transforms
 
 * [AddBackgroundNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_background_noise/): Mixes in another sound to add background noise
+* [AddColorNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_color_noise/): Adds noise with specific color
 * [AddGaussianNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_noise/): Adds gaussian noise to the audio samples
 * [AddGaussianSNR](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_snr/): Injects gaussian noise using a randomly chosen signal-to-noise ratio
 * [AddShortNoises](https://iver56.github.io/audiomentations/waveform_transforms/add_short_noises/): Mixes in various short noise sounds

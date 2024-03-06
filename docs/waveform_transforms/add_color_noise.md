@@ -25,16 +25,15 @@ with an `A-weighting` curve. Otherwise, see: [Colors of Noise :octicons-link-ext
 
 Those values can be chosen from the following table:
 
-| Colour   | `f_decay` (db/octave) |
-|----------|-----------------------|
-| pink     | -3.01                 |
-| brown    | -6.02                 |
-| Brownian | -6.02                 |
-| red      | -6.02                 |
-| blue     | 3.01                  |
-| azure    | 3.01                  |
-| violet   | 6.02                  |
-| white    | 0.0                   |
+| Colour         | `f_decay` (db/octave) |
+|----------------|-----------------------|
+| pink           | -3.01                 |
+| brown/brownian | -6.02                 |
+| red            | -6.02                 |
+| blue           | 3.01                  |
+| azure          | 3.01                  |
+| violet         | 6.02                  |
+| white          | 0.0                   |
 
 See [Colors of noise :octicons-link-external-16:](https://en.wikipedia.org/wiki/Colors_of_noise){target=_blank} on Wikipedia about those values.
 

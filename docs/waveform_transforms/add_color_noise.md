@@ -2,9 +2,9 @@
 
 _To be added in v0.35.0_
 
-Mix in noise with color, additionally weighted by an [A-weighting](https://en.wikipedia.org/wiki/A-weighting) curve. When
+Mix in noise with color, additionally weighted by an [A-weighting :octicons-link-external-16:](https://en.wikipedia.org/wiki/A-weighting){target=_blank} curve. When
 `f_decay=0` this is equivalent to `AddGaussianNoise`, with an option for weighting it
-with an `A-weighting` curve. Otherwise, see: [Colors of Noise](https://en.wikipedia.org/wiki/Colors_of_noise).
+with an `A-weighting` curve. Otherwise, see: [Colors of Noise :octicons-link-external-16:](https://en.wikipedia.org/wiki/Colors_of_noise){target=_blank}.
 
 
 ## AddColorNoise API
@@ -36,7 +36,7 @@ Those values can be chosen from the following table:
 | violet   | 6.02                  |
 | white    | 0.0                   |
 
-See [Colors of noise](https://en.wikipedia.org/wiki/Colors_of_noise) on Wikipedia about those values.
+See [Colors of noise :octicons-link-external-16:](https://en.wikipedia.org/wiki/Colors_of_noise){target=_blank} on Wikipedia about those values.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

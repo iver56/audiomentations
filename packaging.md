@@ -6,7 +6,7 @@
 * Commit and push the change with a commit message like this: "Release vx.y.z" (replace x.y.z with the package version)
 * Add and push a git tag to the release commit
 * Add a release here: https://github.com/iver56/audiomentations/releases/new
-* Update the Zenodo badge in README.md. Commit and push.
+* Update the Zenodo badge in README.md and docs/index.md. Commit and push.
 * Remove any old files inside the dist folder
 * `python setup.py sdist bdist_wheel`
 * `python -m twine upload dist/*`

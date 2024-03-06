@@ -12,14 +12,14 @@ Mix in noise with color, optionally weighted by an [A-weighting :octicons-link-e
 :   :octicons-milestone-24: Default: `5.0`. Minimum signal-to-noise ratio in dB. A lower
     number means more noise.
 
-[`max_snr_db`](#max_snr_db){ #max_snr_db }: `float` • unit: decibel
+[`max_snr_db`](#max_snr_db){ #max_snr_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `40.0`. Maximum signal-to-noise ratio in dB. A
     greater number means less noise.
 
-[`min_f_decay`](#min_f_decay){ #min_f_decay }: `float` • unit: dB per octave
+[`min_f_decay`](#min_f_decay){ #min_f_decay }: `float` • unit: Decibels/octave
 :   :octicons-milestone-24: Default: `-6.0`. Minimum noise decay in dB per octave.
 
-[`max_f_decay`](#max_f_decay){ #max_f_decay }: `float` • unit: dB per octave
+[`max_f_decay`](#max_f_decay){ #max_f_decay }: `float` • unit: Decibels/octave
 :   :octicons-milestone-24: Default: `6.0`. Maximum noise decay in dB per octave.
 
 Those values can be chosen from the following table:

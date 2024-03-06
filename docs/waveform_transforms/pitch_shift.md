@@ -9,6 +9,13 @@ Note that phase vocoding can degrade audio quality by "smearing" transient sound
 altering the timbre of harmonic sounds, and distorting pitch modulations. This may
 result in a loss of sharpness, clarity, or naturalness in the transformed audio.
 
+If you need a better sounding pitch shifting method, consider the following alternatives:
+
+* [signalsmith-stretch](https://github.com/Signalsmith-Audio/signalsmith-stretch)
+* [Rubber Band library](https://breakfastquay.com/rubberband/)
+* [https://github.com/KAIST-MACLab/PyTSMod](https://github.com/KAIST-MACLab/PyTSMod)
+* [https://github.com/vinusankars/ESOLA](https://github.com/vinusankars/ESOLA)
+
 ## Input-output example
 
 Here we pitch down a piano recording by 4 semitones:

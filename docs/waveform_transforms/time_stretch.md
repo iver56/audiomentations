@@ -11,7 +11,7 @@ distorting pitch modulations. This may result in a loss of sharpness, clarity, o
 naturalness in the transformed audio, especially when the rate is set to an extreme
 value.
 
-If you need a higher quality time stretch method, consider the following alternatives:
+If you need a better sounding time stretch method, consider the following alternatives:
 
 * [atempo in ffmpeg](https://ffmpeg.org//ffmpeg-all.html#atempo)
 * [Rubber Band library](https://breakfastquay.com/rubberband/)

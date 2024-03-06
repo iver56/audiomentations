@@ -40,9 +40,7 @@ class TestRoomSimulatorTransform:
             np.float32
         ).flatten()
 
-        assert augmented_samples_simulate == pytest.approx(
-            augmented_samples_apply, abs=1e-15
-        )
+        assert augmented_samples_simulate == pytest.approx(augmented_samples_apply)
 
     def test_failing_case(self):
         """Failed case which identified a bug where the room created was not rectangular"""

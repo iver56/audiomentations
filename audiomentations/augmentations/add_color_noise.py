@@ -115,7 +115,7 @@ def generate_decaying_white_noise(
 class AddColorNoise(BaseWaveformTransform):
     """
     Adds noise to the input samples with a decaying frequency spectrum resulting in "color" noise.
-    For more see the Wikipedia article here: https://en.wikipedia.org/wiki/Colors_of_noise
+    For info, more see the Wikipedia article here: https://en.wikipedia.org/wiki/Colors_of_noise
     """
 
     supports_multichannel = True

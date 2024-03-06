@@ -2,9 +2,8 @@
 
 _To be added in v0.35.0_
 
-Mix in noise with color, additionally weighted by an [A-weighting :octicons-link-external-16:](https://en.wikipedia.org/wiki/A-weighting){target=_blank} curve. When
-`f_decay=0` this is equivalent to `AddGaussianNoise`, with an option for weighting it
-with an `A-weighting` curve. Otherwise, see: [Colors of Noise :octicons-link-external-16:](https://en.wikipedia.org/wiki/Colors_of_noise){target=_blank}.
+Mix in noise with color, optionally weighted by an [A-weighting :octicons-link-external-16:](https://en.wikipedia.org/wiki/A-weighting){target=_blank} curve. When
+`f_decay=0`, this is equivalent to `AddGaussianNoise`. Otherwise, see: [Colors of Noise :octicons-link-external-16:](https://en.wikipedia.org/wiki/Colors_of_noise){target=_blank}.
 
 
 ## AddColorNoise API

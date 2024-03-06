@@ -51,16 +51,15 @@ def generate_decaying_white_noise(
 
     The values for beta are given below:
 
-    | Colour   |  in_db_per_octave=False | in_db_per_octave=True |
-    |----------+-------------------------+-----------------------|
-    | pink     |                     1.0 |                 -3.01 |
-    | brown    |                     2.0 |                 -6.02 |
-    | Brownian |                     2.0 |                 -6.02 |
-    | red      |                     2.0 |                 -6.02 |
-    | blue     |                    -1.0 |                  3.01 |
-    | azure    |                    -1.0 |                  3.01 |
-    | violet   |                    -2.0 |                  6.02 |
-    | white    |                     0.0 |                   0.0 |
+    | Colour         |  in_db_per_octave=False | in_db_per_octave=True |
+    |----------------+-------------------------+-----------------------|
+    | pink           |                     1.0 |                 -3.01 |
+    | brown/brownian |                     2.0 |                 -6.02 |
+    | red            |                     2.0 |                 -6.02 |
+    | blue           |                    -1.0 |                  3.01 |
+    | azure          |                    -1.0 |                  3.01 |
+    | violet         |                    -2.0 |                  6.02 |
+    | white          |                     0.0 |                   0.0 |
 
     Note that you can get away with low n_fft (e.g. 128 points) values
     if you are not using a_weighting, but keep it higher otherwise.
@@ -116,7 +115,7 @@ def generate_decaying_white_noise(
 class AddColorNoise(BaseWaveformTransform):
     """
     Adds noise to the input samples with a decaying frequency spectrum resulting in "color" noise.
-    For more see the Wikipedia article here: https://en.wikipedia.org/wiki/Colors_of_noise
+    For info, more see the Wikipedia article here: https://en.wikipedia.org/wiki/Colors_of_noise
     """
 
     supports_multichannel = True

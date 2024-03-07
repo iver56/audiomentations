@@ -2,7 +2,6 @@ import random
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy import signal
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 

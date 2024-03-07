@@ -14,7 +14,7 @@ class TestAliasing:
 
         assert samples.dtype == distorted_samples.dtype
         assert samples.shape == distorted_samples.shape
-        assert len(distorted_samples) == len(samples)
+        assert not np.array_equal(samples, distorted_samples)
 
     def test_multichannel(self):
         num_channels = 3
@@ -26,5 +26,5 @@ class TestAliasing:
 
         assert samples.dtype == distorted_samples.dtype
         assert samples.shape == distorted_samples.shape
-        assert len(distorted_samples) == len(samples)
+        assert not np.array_equal(samples, distorted_samples)
 

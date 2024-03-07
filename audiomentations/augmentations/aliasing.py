@@ -37,7 +37,16 @@ class Aliasing(BaseWaveformTransform):
             )
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int):
-        n = len(samples)
+        n = samples.shape[-1]
+        x = np.linspace(0, n, num=n)
         dwn_n = round(n * float(self.parameters["new_sample_rate"]) / sample_rate)
-        dwn_samples = signal.resample(samples, dwn_n)
-        return signal.resample(dwn_samples, n)
+        dwn_x = np.linspace(0, n, num=dwn_n)
+        if len(samples.shape) > 1:
+            distorted_samples = np.zeros((samples.shape[0], n), dtype=np.float32)
+            for i in range(samples.shape[0]):
+                dwn_samples = np.interp(dwn_x, x, samples[i])
+                distorted_samples[i] = np.interp(x, dwn_x, dwn_samples)
+        else:
+             dwn_samples = np.interp(dwn_x, x, samples)
+             distorted_samples = np.interp(x, dwn_x, dwn_samples).astype(np.float32)
+        return distorted_samples

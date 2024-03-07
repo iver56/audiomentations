@@ -46,14 +46,15 @@ from audiomentations import (
     AdjustDuration,
     RepeatPart,
     BitCrush,
+    Aliasing,
 )
+from audiomentations.augmentations.add_color_noise import NOISE_COLOR_DECAYS
 from audiomentations.augmentations.limiter import Limiter
 from audiomentations.augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import (
     MultichannelAudioNotSupportedException,
 )
-from audiomentations.augmentations.add_color_noise import NOISE_COLOR_DECAYS
 
 DEMO_DIR = os.path.dirname(__file__)
 
@@ -349,6 +350,7 @@ if __name__ == "__main__":
             "num_runs": 1,
             "name": "AdjustDurationPadStartReflect",
         },
+        {"instance": Aliasing(p=1.0), "num_runs": 5},
         {"instance": BitCrush(p=1.0), "num_runs": 5},
         {"instance": BandPassFilter(p=1.0), "num_runs": 5},
         {"instance": BandStopFilter(p=1.0), "num_runs": 5},

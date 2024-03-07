@@ -4,6 +4,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+from audiomentations.core.utils import convert_frequency_to_mel, convert_mel_to_frequency
 
 
 class Aliasing(BaseWaveformTransform):
@@ -25,14 +26,14 @@ class Aliasing(BaseWaveformTransform):
         if min_sample_rate > max_sample_rate:
             raise ValueError("min_sample_rate must not be larger than max_sample_rate")
         
-        self.min_sample_rate = min_sample_rate
-        self.max_sample_rate = max_sample_rate
+        self.min_mel = convert_frequency_to_mel(min_sample_rate)
+        self.max_mel = convert_frequency_to_mel(max_sample_rate)
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["new_sample_rate"] = random.randint(
-                self.min_sample_rate, self.max_sample_rate
+            self.parameters["new_sample_rate"] = convert_mel_to_frequency(
+                random.uniform(self.min_mel, self.max_mel)
             )
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int):

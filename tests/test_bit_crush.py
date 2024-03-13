@@ -14,7 +14,9 @@ class TestBitCrush:
 
         assert samples.dtype == distorted_samples.dtype
         assert samples.shape == distorted_samples.shape
-        assert 2**augmenter.parameters["bit_depth"] + 1 > len(np.unique(np.round(distorted_samples, 5)))
+        assert 2 ** augmenter.parameters["bit_depth"] + 1 > len(
+            np.unique(np.round(distorted_samples, 5))
+        )
 
     def test_multichannel(self):
         num_channels = 3
@@ -26,5 +28,14 @@ class TestBitCrush:
 
         assert samples.dtype == distorted_samples.dtype
         assert samples.shape == distorted_samples.shape
-        assert 2**augmenter.parameters["bit_depth"] + 1 > len(np.unique(np.round(distorted_samples, 5)))
+        assert 2 ** augmenter.parameters["bit_depth"] + 1 > len(
+            np.unique(np.round(distorted_samples, 5))
+        )
 
+    def test_param_range(self):
+        with pytest.raises(ValueError):
+            BitCrush(min_bit_depth=0, max_bit_depth=6, p=1.0)
+        with pytest.raises(ValueError):
+            BitCrush(min_bit_depth=7, max_bit_depth=64, p=1.0)
+        with pytest.raises(ValueError):
+            BitCrush(min_bit_depth=8, max_bit_depth=6, p=1.0)

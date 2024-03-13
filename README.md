@@ -59,6 +59,7 @@ The API documentation, along with guides, example code, illustrations and exampl
 * [ApplyImpulseResponse](https://iver56.github.io/audiomentations/waveform_transforms/apply_impulse_response/): Convolves the audio with a randomly chosen impulse response
 * [BandPassFilter](https://iver56.github.io/audiomentations/waveform_transforms/band_pass_filter/): Applies band-pass filtering within randomized parameters
 * [BandStopFilter](https://iver56.github.io/audiomentations/waveform_transforms/band_stop_filter/): Applies band-stop (notch) filtering within randomized parameters
+* [BitCrush](https://iver56.github.io/audiomentations/waveform_transforms/bit_crush/): Applies bit reduction without dithering
 * [Clip](https://iver56.github.io/audiomentations/waveform_transforms/clip/): Clips audio samples to specified minimum and maximum values
 * [ClippingDistortion](https://iver56.github.io/audiomentations/waveform_transforms/clipping_distortion/): Distorts the signal by clipping a random percentage of samples
 * [Gain](https://iver56.github.io/audiomentations/waveform_transforms/gain/): Multiplies the audio by a random gain factor

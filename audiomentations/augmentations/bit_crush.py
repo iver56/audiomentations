@@ -10,8 +10,8 @@ class BitCrush(BaseWaveformTransform):
     """
     Apply a bit crush effect to the audio by reducing the bit depth. In other words, it
     reduces the number of bits that can be used for representing each audio sample.
-    This adds quantization noise, which can include harmonics, and affects dynamic
-    range. This transform does not apply dithering.
+    This adds quantization noise, and affects dynamic range. This transform does not
+    apply dithering.
     """
 
     supports_multichannel = True
@@ -25,6 +25,12 @@ class BitCrush(BaseWaveformTransform):
         super().__init__(p)
         self.min_bit_depth = min_bit_depth
         self.max_bit_depth = max_bit_depth
+
+        if min_bit_depth < 1:
+            raise ValueError("min_bit_depth must be at least 1")
+
+        if max_bit_depth > 32:
+            raise ValueError("max_bit_depth must not be greater than 32")
 
         if min_bit_depth > max_bit_depth:
             raise ValueError("min_bit_depth must not be larger than max_bit_depth")

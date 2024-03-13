@@ -34,10 +34,10 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 
 # BitCrush API
 
-[`min_bit_depth`](#min_bit_depth){ #min_bit_depth }: `int` • unit: bytes • range: [1, 32]
+[`min_bit_depth`](#min_bit_depth){ #min_bit_depth }: `int` • unit: bits • range: [1, 32]
 :   :octicons-milestone-24: Minimum bit depth the audio will be "converted" to
 
-[`max_bit_depth`](#max_bit_depth){ #max_bit_depth }: `int` • unit: bytes • range: [1, 32]
+[`max_bit_depth`](#max_bit_depth){ #max_bit_depth }: `int` • unit: bits • range: [1, 32]
 :   :octicons-milestone-24: Maximum bit depth the audio will be "converted" to
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

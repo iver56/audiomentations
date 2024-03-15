@@ -93,13 +93,11 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.34.1] - 2023-11-24
+## [0.35.0] - 2024-03-15
 
-### Changed
+### Added
 
-* Bump min numpy version from 1.18 to 1.21
-* Use numpy.typing in type hints
-* Optimize max abs calculations in terms of memory and speed. This makes `Normalize`, `Mp3Compression` and `Limiter` slightly faster.
+* Add new transforms: `AddColorNoise`, `Aliasing` and `BitCrush`
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

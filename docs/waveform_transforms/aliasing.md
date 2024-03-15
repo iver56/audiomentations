@@ -1,6 +1,6 @@
 # `Aliasing`
 
-_To be added in v0.35.0_
+_Added in v0.35.0_
 
 Downsample the audio to a lower sample rate by linear interpolation, without low-pass
 filtering it first, resulting in aliasing artifacts. You get aliasing artifacts when

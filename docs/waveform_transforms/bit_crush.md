@@ -1,6 +1,6 @@
 # `BitCrush`
 
-_To be added in v0.35.0_
+_Added in v0.35.0_
 
 Apply a bit crush effect to the audio by reducing the bit depth. In other words, it
 reduces the number of bits that can be used for representing each audio sample.

@@ -24,7 +24,7 @@ NOISE_COLOR_DECAYS = {
 
 def decay_to_beta(decay: float) -> float:
     """
-    Converts a decay given in db/octave to the beta exponent
+    Converts a decay given in dB/octave to the beta exponent
     in the PSD logarithmic decay function:
 
     logarithmic_decay = \sqrt{\frac{1}{f^{\beta}}}
@@ -47,7 +47,7 @@ def generate_decaying_white_noise(
     """
     Generates a white noise signal decaying linearly by 1/f^beta
     (when in_db_per_octave==False) or changing (decaying or increasing)
-    linearly by beta db/octave (when in_db_per_octave==False).
+    linearly by beta dB/octave (when in_db_per_octave==False).
 
     The values for beta are given below:
 
@@ -148,7 +148,7 @@ class AddColorNoise(BaseWaveformTransform):
         spectral density is flat, equivalent to applying white noise. Below are common noise colors and
         their corresponding f_decay values:
 
-        | Colour   | f_decay (db/octave)   |
+        | Colour   | f_decay (dB/octave)   |
         |----------+-----------------------|
         | pink     |                 -3.01 |
         | brown    |                 -6.02 |

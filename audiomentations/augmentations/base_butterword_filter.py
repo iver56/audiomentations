@@ -41,17 +41,17 @@ class BaseButterworthFilter(BaseWaveformTransform):
         if self.zero_phase:
             assert (
                 self.min_rolloff % 12 == 0
-            ), "Zero phase filters can only have a steepness which is a multiple of 12db/octave"
+            ), "Zero phase filters can only have a steepness which is a multiple of 12 dB/octave"
             assert (
                 self.max_rolloff % 12 == 0
-            ), "Zero phase filters can only have a steepness which is a multiple of 12db/octave"
+            ), "Zero phase filters can only have a steepness which is a multiple of 12 dB/octave"
         else:
             assert (
                 self.min_rolloff % 6 == 0
-            ), "Non zero phase filters can only have a steepness which is a multiple of 6db/octave"
+            ), "Non zero phase filters can only have a steepness which is a multiple of 6 dB/octave"
             assert (
                 self.max_rolloff % 6 == 0
-            ), "Non zero phase filters can only have a steepness which is a multiple of 6db/octave"
+            ), "Non zero phase filters can only have a steepness which is a multiple of 6 dB/octave"
 
         assert (
             self.filter_type in BaseButterworthFilter.ALLOWED_FILTER_TYPES

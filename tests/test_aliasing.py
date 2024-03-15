@@ -28,3 +28,8 @@ class TestAliasing:
         assert samples.shape == distorted_samples.shape
         assert not np.array_equal(samples, distorted_samples)
 
+    def test_param_range(self):
+        with pytest.raises(ValueError):
+            Aliasing(min_sample_rate=0, max_sample_rate=6000, p=1.0)
+        with pytest.raises(ValueError):
+            Aliasing(min_sample_rate=8000, max_sample_rate=6000, p=1.0)

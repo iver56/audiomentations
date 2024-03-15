@@ -49,6 +49,7 @@ from audiomentations import (
     Limiter,
     AddGaussianSNR,
     BitCrush,
+    Aliasing,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.utils import get_max_abs_amplitude
@@ -274,6 +275,29 @@ class AirAbsorptionExample(TransformUsageExample):
             max_humidity=70.0,
             min_distance=20.0,
             max_distance=20.0,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
+class AliasingExample(TransformUsageExample):
+    transform_class = Aliasing
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = Aliasing(
+            min_sample_rate=12000,
+            max_sample_rate=12000,
             p=1.0,
         )
 

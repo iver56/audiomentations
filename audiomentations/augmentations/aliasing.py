@@ -22,11 +22,14 @@ class Aliasing(BaseWaveformTransform):
         self, min_sample_rate: int = 8000, max_sample_rate: int = 30000, p: float = 0.5
     ):
         """
-        :param min_sample_rate: The minimum sample rate used during an aliasing
-        :param max_sample_rate: The maximum sample rate used during an aliasing
+        :param min_sample_rate: Minimum target sample rate to downsample to
+        :param max_sample_rate: Maximum target sample rate to downsample to
         :param p: The probability of applying this transform
         """
         super().__init__(p)
+
+        if min_sample_rate < 2:
+            raise ValueError("min_sample_rate must be greater than or equal to 2")
 
         if min_sample_rate > max_sample_rate:
             raise ValueError("min_sample_rate must not be larger than max_sample_rate")

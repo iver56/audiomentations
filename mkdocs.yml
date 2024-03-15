@@ -11,6 +11,7 @@ nav:
       - AddShortNoises: waveform_transforms/add_short_noises.md
       - AdjustDuration: waveform_transforms/adjust_duration.md
       - AirAbsorption: waveform_transforms/air_absorption.md
+      - Aliasing: waveform_transforms/aliasing.md
       - ApplyImpulseResponse: waveform_transforms/apply_impulse_response.md
       - BitCrush: waveform_transforms/bit_crush.md
       - BandPassFilter: waveform_transforms/band_pass_filter.md

@@ -56,6 +56,7 @@ The API documentation, along with guides, example code, illustrations and exampl
 * [AddShortNoises](https://iver56.github.io/audiomentations/waveform_transforms/add_short_noises/): Mixes in various short noise sounds
 * [AdjustDuration](https://iver56.github.io/audiomentations/waveform_transforms/adjust_duration/): Trims or pads the audio to fit a target duration
 * [AirAbsorption](https://iver56.github.io/audiomentations/waveform_transforms/air_absorption/): Applies frequency-dependent attenuation simulating air absorption
+* [Aliasing](https://iver56.github.io/audiomentations/waveform_transforms/aliasing/): Produces aliasing artifacts by downsampling without low-pass filtering and then upsampling
 * [ApplyImpulseResponse](https://iver56.github.io/audiomentations/waveform_transforms/apply_impulse_response/): Convolves the audio with a randomly chosen impulse response
 * [BandPassFilter](https://iver56.github.io/audiomentations/waveform_transforms/band_pass_filter/): Applies band-pass filtering within randomized parameters
 * [BandStopFilter](https://iver56.github.io/audiomentations/waveform_transforms/band_stop_filter/): Applies band-stop (notch) filtering within randomized parameters

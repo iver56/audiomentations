@@ -9,10 +9,10 @@ sampling rate and vice versa to do upsampling only.
 
 # Resample API
 
-[`min_sample_rate`](#min_sample_rate){ #min_sample_rate }: `int`
+[`min_sample_rate`](#min_sample_rate){ #min_sample_rate }: `int` • unit: Hz
 :   :octicons-milestone-24: Default: `8000`. Minimum sample rate
 
-[`max_sample_rate`](#max_sample_rate){ #max_sample_rate }: `int`
+[`max_sample_rate`](#max_sample_rate){ #max_sample_rate }: `int` • unit: Hz
 :   :octicons-milestone-24: Default: `44100`. Maximum sample rate
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

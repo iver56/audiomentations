@@ -6,7 +6,9 @@ Downsample the audio to a lower sample rate by linear interpolation, without low
 filtering it first, resulting in aliasing artifacts. You get aliasing artifacts when
 there is high-frequency audio in the input audio that falls above the nyquist frequency
 of the chosen target sample rate. Audio with frequencies above the nyquist frequency
-cannot be reproduced accurately and get "reflected"/mirrored to other frequencies.
+cannot be reproduced accurately and get "reflected"/mirrored to other frequencies. The
+aliasing artifacts "replace" the original high frequency signals. The result can be
+described as coarse and metallic.
 
 After the downsampling, the signal gets upsampled to the original signal again, so the
 length of the output becomes the same as the length of the input.
@@ -14,7 +16,7 @@ length of the output becomes the same as the length of the input.
 For more information, see
 
 * [Sample rate reduction :octicons-link-external-16:](https://en.wikipedia.org/wiki/Bitcrusher#Sample_rate_reduction){target=_blank} on Wikipedia
-* [Intro to downsampling :octicons-link-external-16:](http://gdsp.hf.ntnu.no/lessons/1/3/){target=_blank} by NTNU, Department of Music, Music Technology. Note: that article describes a slightly different downsampling technique, called sample-and-hold, while audiomentations implements linear interpolation. However, both methods lead to aliasing artifacts.
+* [Intro to downsampling :octicons-link-external-16:](http://gdsp.hf.ntnu.no/lessons/1/3/){target=_blank} by NTNU, Department of Music, Music Technology. Note: that article describes a slightly different downsampling technique, called sample-and-hold, while `Aliasing` in audiomentations currently implements linear interpolation. However, both methods lead to aliasing artifacts.
 
 ## Input-output example
 

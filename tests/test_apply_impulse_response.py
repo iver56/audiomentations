@@ -19,7 +19,7 @@ class TestImpulseResponse:
         )
 
         # Check that misc_file.txt is not one of the IR file candidates, as it's not audio
-        assert len(add_ir_transform.ir_files) == 2
+        assert len(add_ir_transform.ir_files) == 3
 
         augmenter = Compose([add_ir_transform])
 
@@ -46,7 +46,7 @@ class TestImpulseResponse:
         )
 
         # Check that misc_file.txt is not one of the IR file candidates, as it's not audio
-        assert len(add_ir_transform.ir_files) == 2
+        assert len(add_ir_transform.ir_files) == 3
 
         augmenter = Compose([add_ir_transform])
 

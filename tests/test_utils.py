@@ -54,7 +54,7 @@ class TestUtils:
         file_paths = find_audio_files_in_paths(
             [os.path.join(DEMO_DIR, "short_noises"), os.path.join(DEMO_DIR, "ir")]
         )
-        assert len(file_paths) == 7
+        assert len(file_paths) == 8
         assert file_paths[0].name == "130921_iPhone_rub_channel0_chunk83_aug2.wav"
         assert file_paths[-1].name == "rir48000.wav"
 

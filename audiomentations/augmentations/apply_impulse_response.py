@@ -7,6 +7,7 @@ from typing import List, Union
 import numpy as np
 from numpy.typing import NDArray
 from scipy.signal import convolve
+import itertools
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -40,18 +41,16 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             length of the input.
         """
         super().__init__(p)
-        self.ir_files = find_audio_files_in_paths(ir_path)
-        self.ir_files = [str(p) for p in self.ir_files]
-        assert len(self.ir_files) > 0
-        self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(
-            ApplyImpulseResponse.__load_ir
-        )
+        self.ir_files = [str(p) for p in find_audio_files_in_paths(ir_path)]
+        assert self.ir_files, "No impulse response files found at the specified path."
+        self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(self.__load_ir)
+        self.leave_length_unchanged = leave_length_unchanged
 
         self.leave_length_unchanged = leave_length_unchanged
 
     @staticmethod
-    def __load_ir(file_path, sample_rate):
-        return load_sound_file(file_path, sample_rate)
+    def __load_ir(file_path, sample_rate, mono):
+        return load_sound_file(file_path, sample_rate, mono=mono)
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -59,7 +58,8 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             self.parameters["ir_file_path"] = random.choice(self.ir_files)
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int):
-        ir, sample_rate2 = self.__load_ir(self.parameters["ir_file_path"], sample_rate)
+        load_mono_ir = samples.ndim == 1 # determine if ir should load as mono
+        ir, sample_rate2 = self.__load_ir(self.parameters["ir_file_path"], sample_rate, mono=load_mono_ir)
         if sample_rate != sample_rate2:
             # This will typically not happen, as librosa should automatically resample the
             # impulse response sound to the desired sample rate
@@ -68,14 +68,17 @@ class ApplyImpulseResponse(BaseWaveformTransform):
                 " sample rate {}!".format(sample_rate, sample_rate2)
             )
 
-        if samples.ndim > 1:
-            signal_ir = []
-            for i in range(samples.shape[0]):
-                channel_conv = convolve(samples[i], ir)
-                signal_ir.append(channel_conv)
-            signal_ir = np.array(signal_ir, dtype=samples.dtype)
-        else:
-            signal_ir = convolve(samples, ir)
+        # Expand dimensions to match
+        samples_original_dim = samples.ndim
+        samples, ir = np.atleast_2d(samples), np.atleast_2d(ir)
+
+        # Preallocate the the output array
+        output_shape = (samples.shape[0], samples.shape[1] + ir.shape[1] - 1)
+        signal_ir = np.empty(output_shape, dtype=samples.dtype)
+
+        # Loop over all samples channels for channelwise convolution
+        for i, (sample, impulse_response) in enumerate(zip(samples, itertools.cycle(ir))):
+            signal_ir[i, :] = convolve(sample, impulse_response)
 
         max_value = max(np.amax(signal_ir), -np.amin(signal_ir))
         if max_value > 0.0:
@@ -83,6 +86,11 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             signal_ir *= scale
         if self.leave_length_unchanged:
             signal_ir = signal_ir[..., : samples.shape[-1]]
+
+        # reshape if mono input
+        if samples_original_dim == 1:
+            signal_ir = signal_ir[0]
+
         return signal_ir
 
     def __getstate__(self):

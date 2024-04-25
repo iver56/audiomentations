@@ -36,6 +36,7 @@ Some datasets of impulse responses are publicly available:
  wide range of locations.
 * [The MIT McDermott :octicons-link-external-16:](https://mcdermottlab.mit.edu/Reverb/IR_Survey.html) dataset
  containing 271 impulse responses acquired in everyday places.
+* [RoyJames/room-impulse-responses :octicons-link-external-16:](https://github.com/RoyJames/room-impulse-responses) - a list of publicly available acoustic/room impulse response (AIR/RIR) datasets
 
 Impulse responses are represented as audio (ideally wav) files in the given `ir_path`.
 

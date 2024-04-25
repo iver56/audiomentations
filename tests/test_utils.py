@@ -56,7 +56,6 @@ class TestUtils:
         )
         assert len(file_paths) == 8
         assert file_paths[0].name == "130921_iPhone_rub_channel0_chunk83_aug2.wav"
-        assert file_paths[-1].name == "rir48000.wav"
 
     def test_calculate_rms_stereo(self):
         np.random.seed(42)

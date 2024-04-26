@@ -204,6 +204,9 @@ class RoomSimulator(BaseWaveformTransform):
             raise
 
         super().randomize_parameters(samples, sample_rate)
+        if not self.parameters["should_apply"]:
+            return
+
         self.parameters["size_x"] = random.uniform(self.min_size_x, self.max_size_x)
         self.parameters["size_y"] = random.uniform(self.min_size_y, self.max_size_y)
         self.parameters["size_z"] = random.uniform(self.min_size_z, self.max_size_z)

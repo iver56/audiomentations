@@ -1,6 +1,6 @@
 audioread==2.1.9
 black
-coverage==4.5.2
+coverage==7.3.4
 cylimiter==0.3.0
 lameenc==1.4.2
 librosa==0.10.0.post2
@@ -10,8 +10,8 @@ numpy==1.23.0
 pydub==0.23.1
 pyloudnorm==0.1.0
 pyroomacoustics==0.7.3
-pytest==5.3.4
-pytest-cov==2.8.1
+pytest==7.4.3
+pytest-cov==4.1.0
 scipy>=1.4,<1.13
 soxr==0.3.5
 tqdm==4.31.1

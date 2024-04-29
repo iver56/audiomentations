@@ -1,6 +1,7 @@
 import json
 import random
 
+import fast_align_audio
 import numpy as np
 import pytest
 
@@ -8,16 +9,35 @@ from audiomentations import Limiter
 
 
 class TestLimiter:
-    @pytest.mark.parametrize("samples_in", [
-        np.random.normal(0, 1, size=1024).astype(np.float32),
-        np.random.normal(0, 0.001, size=(1, 50)).astype(np.float32),
-        np.random.normal(0, 0.1, size=(3, 8888)).astype(np.float32)
-    ])
+    @pytest.mark.parametrize(
+        "samples_in",
+        [
+            np.random.normal(0, 1, size=1000).astype(np.float32),
+            np.random.normal(0, 0.001, size=(1, 250)).astype(np.float32),
+            np.random.normal(0, 0.1, size=(3, 8888)).astype(np.float32),
+        ],
+    )
     def test_limiter(self, samples_in):
-        augmenter = Limiter(p=1.0)
+        augmenter = Limiter(p=1.0, min_attack=0.0025, max_attack=0.0025)
         std_in = np.mean(np.abs(samples_in))
         samples_out = augmenter(samples=samples_in, sample_rate=16000)
         std_out = np.mean(np.abs(samples_out))
+        length = samples_in.shape[-1]
+
+        samples_in_mono = samples_in
+        samples_out_mono = samples_out
+        if samples_in_mono.ndim > 1:
+            samples_in_mono = samples_in_mono[0]
+            samples_out_mono = samples_out_mono[0]
+        offset, _ = fast_align_audio.find_best_alignment_offset(
+            reference_signal=samples_in_mono,
+            delayed_signal=samples_out_mono,
+            max_offset_samples=length // 2,
+            lookahead_samples=length // 2,
+        )
+        # Check that the output is aligned with the input, i.e. no delay was introduced
+        assert offset == 0
+
         assert samples_out.dtype == np.float32
         assert samples_out.shape == samples_in.shape
         assert std_out < std_in

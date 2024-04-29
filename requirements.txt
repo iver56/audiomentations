@@ -2,6 +2,7 @@ audioread==2.1.9
 black
 coverage==7.3.4
 cylimiter==0.3.0
+fast-align-audio==0.3.0
 lameenc==1.4.2
 librosa==0.10.0.post2
 matplotlib>=3.0.0,<4

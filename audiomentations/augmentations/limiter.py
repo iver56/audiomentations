@@ -1,12 +1,15 @@
-import random
-
 import math
-import numpy as np
+import random
 import sys
+
+import numpy as np
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import convert_decibels_to_amplitude_ratio, get_max_abs_amplitude
+from audiomentations.core.utils import (
+    convert_decibels_to_amplitude_ratio,
+    get_max_abs_amplitude,
+)
 
 
 class Limiter(BaseWaveformTransform):
@@ -129,9 +132,11 @@ class Limiter(BaseWaveformTransform):
             delay=self.parameters["delay"],
             threshold=self.parameters["threshold"],
         )
+
         if samples.ndim == 1:
-            processed_samples = np.copy(samples)
+            processed_samples = np.pad(samples, (0, self.parameters["delay"]))
             limiter.limit_inplace(processed_samples)
+            processed_samples = processed_samples[self.parameters["delay"] - 1 : -1]
         else:
             # By default, there is no interchannel linking. The channels are processed
             # independently. Support for linking may be added in the future:
@@ -139,8 +144,12 @@ class Limiter(BaseWaveformTransform):
             processed_samples = np.copy(samples)
             for chn_idx in range(samples.shape[0]):
                 limiter.reset()
-                channel = np.ascontiguousarray(processed_samples[chn_idx, :])
+                channel = np.ascontiguousarray(
+                    np.pad(processed_samples[chn_idx, :], (0, self.parameters["delay"]))
+                )
                 limiter.limit_inplace(channel)
-                processed_samples[chn_idx, :] = channel
+                processed_samples[chn_idx, :] = channel[
+                    self.parameters["delay"] - 1 : -1
+                ]
 
         return processed_samples

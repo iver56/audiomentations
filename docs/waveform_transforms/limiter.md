@@ -4,11 +4,12 @@ _Added in v0.26.0_
 
 The `Limiter`, based on [cylimiter :octicons-link-external-16:](https://github.com/pzelasko/cylimiter){target=_blank}, is a straightforward audio transform that applies dynamic range compression.
 It is capable of limiting the audio signal based on certain parameters.
-Additionally, please note that this transform introduces a slight delay in the signal, equivalent to a fraction of the attack time.
 
 * The _threshold_ determines the audio level above which the limiter kicks in.
 * The _attack_ time is how quickly the limiter kicks in once the audio signal starts exceeding the threshold.
 * The _release_ time determines how quickly the limiter stops working after the signal drops below the threshold.
+
+:warning: In audiomentations v0.35.0 and earlier, this transform introduced a delay in the signal, equivalent to a ~60% of the attack time. Starting from v0.36.0, the output is aligned with the input, i.e. no delay.
 
 ## Input-output example
 

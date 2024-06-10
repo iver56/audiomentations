@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.36.0] - 2024-06-10
+
+### Added
+
+* Add support for multichannel impulse responses in `ApplyImpulseResponse`
+
+### Changed
+
+* :warning: `Limiter` no longer introduces delay. This is a backwards-incompatible change.
+* Make `RoomSimulator` faster by avoiding unneeded calculations when the transform is not going to be applied (p<1)
+* Limit scipy dependency to <1.13 because 1.13 is not compatible for now.
+
 ## [0.35.0] - 2024-03-15 
 
 ### Added

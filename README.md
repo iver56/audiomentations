@@ -93,11 +93,17 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.35.0] - 2024-03-15
+## [0.36.0] - 2024-06-10
 
 ### Added
 
-* Add new transforms: `AddColorNoise`, `Aliasing` and `BitCrush`
+* Add support for multichannel impulse responses in `ApplyImpulseResponse`
+
+### Changed
+
+* :warning: `Limiter` no longer introduces delay. This is a backwards-incompatible change.
+* Make `RoomSimulator` faster by avoiding unneeded calculations when the transform is not going to be applied (p<1)
+* Limit scipy dependency to <1.13 because 1.13 is not compatible for now.
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

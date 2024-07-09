@@ -5,6 +5,7 @@ from typing import List, Union, Tuple
 
 import math
 import numpy as np
+import numpy_rms
 from numpy.typing import NDArray
 
 SUPPORTED_EXTENSIONS = (
@@ -80,7 +81,7 @@ def find_audio_files_in_paths(
 
 def calculate_rms(samples):
     """Given a numpy array of audio samples, return its Root Mean Square (RMS)."""
-    return np.sqrt(np.mean(np.square(samples)))
+    return np.mean(numpy_rms.rms(samples))
 
 
 def calculate_rms_without_silence(samples, sample_rate):

@@ -188,7 +188,7 @@ class Mp3Compression(BaseWaveformTransform):
 
         if num_channels == 1:
             if int_samples.ndim == 1 and degraded_samples.ndim == 2:
-                degraded_samples = degraded_samples.flatten()
+                degraded_samples = np.ravel(degraded_samples)
             elif int_samples.ndim == 2 and degraded_samples.ndim == 1:
                 degraded_samples = degraded_samples.reshape((1, -1))
 
@@ -239,7 +239,7 @@ class Mp3Compression(BaseWaveformTransform):
 
         if num_channels == 1:
             if int_samples.ndim == 1 and degraded_samples.ndim == 2:
-                degraded_samples = degraded_samples.flatten()
+                degraded_samples = np.ravel(degraded_samples)
             elif int_samples.ndim == 2 and degraded_samples.ndim == 1:
                 degraded_samples = degraded_samples.reshape((1, -1))
 

@@ -66,6 +66,7 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     project_urls={
+        "Homepage": "https://github.com/iver56/audiomentations",
         "Documentation": "https://iver56.github.io/audiomentations/",
         "Changelog": "https://iver56.github.io/audiomentations/changelog/",
         "Issue Tracker": "https://github.com/iver56/audiomentations/issues",

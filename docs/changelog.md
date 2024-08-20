@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-rms](https://pypi.org/project/numpy-rms/) package for significant speed improvements. These transforms are faster now: `AddBackgroundNoise`, `AddColorNoise`, `AddGaussianSNR`, `AddShortNoises`, `Mp3Compression` and `TanhDistortion`.
+* Leverage the SIMD-accelerated [numpy-rms](https://github.com/nomonosound/numpy-rms) package for significant speed improvements. These transforms are faster now: `AddBackgroundNoise`, `AddColorNoise`, `AddGaussianSNR`, `AddShortNoises`, `Mp3Compression` and `TanhDistortion`.
 
 ## [0.36.0] - 2024-06-10
 

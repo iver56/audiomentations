@@ -93,17 +93,11 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.36.0] - 2024-06-10
-
-### Added
-
-* Add support for multichannel impulse responses in `ApplyImpulseResponse`
+## [0.36.1] - 2024-08-20
 
 ### Changed
 
-* :warning: `Limiter` no longer introduces delay. This is a backwards-incompatible change.
-* Make `RoomSimulator` faster by avoiding unneeded calculations when the transform is not going to be applied (p<1)
-* Limit scipy dependency to <1.13 because 1.13 is not compatible for now.
+* Leverage the SIMD-accelerated [numpy-rms](https://pypi.org/project/numpy-rms/) package for significant speed improvements. These transforms are faster now: `AddBackgroundNoise`, `AddColorNoise`, `AddGaussianSNR`, `AddShortNoises`, `Mp3Compression` and `TanhDistortion`.
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

@@ -5,10 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import (
-    calculate_desired_noise_rms,
-    calculate_rms,
-)
+from audiomentations.core.utils import calculate_desired_noise_rms, calculate_rms
 
 
 class AddGaussianSNR(BaseWaveformTransform):

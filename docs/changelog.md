@@ -9,14 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this change removes support for Intel-based Macs. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations C) submit a patch to numpy-minmax, D) run Linux or Windows.
+* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this change removes support for macOS running on Intel. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations, C) submit a patch to numpy-minmax, D) run Linux or Windows.
 * Limit numpy dependency to >=1.21,<2 for now, since numpy v2 is not officially supported yet.
 
 ## [0.36.1] - 2024-08-20
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-rms](https://github.com/nomonosound/numpy-rms) package for significant speed improvements. These transforms are faster now: `AddBackgroundNoise`, `AddColorNoise`, `AddGaussianSNR`, `AddShortNoises`, `Mp3Compression` and `TanhDistortion`.
+* Leverage the SIMD-accelerated [numpy-rms](https://github.com/nomonosound/numpy-rms) package for significant speed improvements. These transforms are faster now: `AddBackgroundNoise`, `AddColorNoise`, `AddGaussianSNR`, `AddShortNoises` and `TanhDistortion`. Unfortunately, this change removes support for Windows running on ARM.
 
 ## [0.36.0] - 2024-06-10
 

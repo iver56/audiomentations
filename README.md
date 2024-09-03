@@ -98,7 +98,7 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this removes support for Intel-based Macs. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations C) submit a patch to numpy-minmax, D) run Linux or Windows.
+* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this change removes support for macOS running on Intel. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations, C) submit a patch to numpy-minmax, D) run Linux or Windows.
 * Limit numpy dependency to >=1.21,<2 for now, since numpy v2 is not officially supported yet.
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)

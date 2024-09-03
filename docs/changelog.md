@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.37.0] - 2024-09-03
+
+### Changed
+
+* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this change removes support for Intel-based Macs. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations C) submit a patch to numpy-minmax, D) run Linux or Windows.
+* Limit numpy dependency to >=1.21,<2 for now, since numpy v2 is not officially supported yet.
+
 ## [0.36.1] - 2024-08-20
 
 ### Changed
@@ -523,6 +530,7 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
+[0.37.0]: https://github.com/iver56/audiomentations/compare/v0.36.1...v0.37.0
 [0.36.1]: https://github.com/iver56/audiomentations/compare/v0.36.0...v0.36.1
 [0.36.0]: https://github.com/iver56/audiomentations/compare/v0.35.0...v0.36.0
 [0.35.0]: https://github.com/iver56/audiomentations/compare/v0.34.1...v0.35.0

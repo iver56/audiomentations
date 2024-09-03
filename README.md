@@ -20,7 +20,7 @@ Need a Pytorch-specific alternative with GPU support? Check out [torch-audioment
 ![Python version support](https://img.shields.io/pypi/pyversions/audiomentations)
 [![PyPI version](https://img.shields.io/pypi/v/audiomentations.svg?style=flat)](https://pypi.org/project/audiomentations/)
 [![Number of downloads from PyPI per month](https://img.shields.io/pypi/dm/audiomentations.svg?style=flat)](https://pypi.org/project/audiomentations/)
-![os: Linux, macOS, Windows](https://img.shields.io/badge/OS-Linux%20%28arm%20%26%20x86%29%20|%20macOS%20%28arm%20%26%20x86%29%20|%20Windows%20%28x86%29-blue)
+![os: Linux, macOS, Windows](https://img.shields.io/badge/OS-Linux%20%28arm%20%26%20x86%29%20|%20macOS%20%28arm%20|%20Windows%20%28x86%29-blue)
 
 `pip install audiomentations`
 
@@ -94,11 +94,12 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.36.1] - 2024-08-20
+## [0.37.0] - 2024-09-03
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-rms](https://github.com/nomonosound/numpy-rms) package for significant speed improvements. These transforms are faster now: `AddBackgroundNoise`, `AddColorNoise`, `AddGaussianSNR`, `AddShortNoises`, `Mp3Compression` and `TanhDistortion`.
+* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this removes support for Intel-based Macs. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations C) submit a patch to numpy-minmax, D) run Linux or Windows.
+* Limit numpy dependency to >=1.21,<2 for now, since numpy v2 is not officially supported yet.
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

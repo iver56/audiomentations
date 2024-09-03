@@ -1,10 +1,11 @@
+import math
 import os
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Union, Tuple
 
-import math
 import numpy as np
+import numpy_minmax
 import numpy_rms
 from numpy.typing import NDArray
 
@@ -213,7 +214,6 @@ def get_crossfade_mask_pair(
 
 
 def get_max_abs_amplitude(samples: NDArray):
-    min_amplitude = np.amin(samples)
-    max_amplitude = np.amax(samples)
+    min_amplitude, max_amplitude = numpy_minmax.minmax(samples)
     max_abs_amplitude = max(abs(min_amplitude), abs(max_amplitude))
     return max_abs_amplitude

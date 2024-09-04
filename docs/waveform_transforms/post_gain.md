@@ -26,3 +26,7 @@ by a (set of) transform(s), or for preventing clipping in the output.
     * `"peak_normalize_if_too_loud"`: The sound gets peak normalized if it is too
         loud (max absolute value greater than 1.0). This option can be useful for
         avoiding clipping.
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/core/post_gain.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/core/post_gain.py){target=_blank}

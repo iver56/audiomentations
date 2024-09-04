@@ -43,3 +43,7 @@ end of the sound.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/gain_transition.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/gain_transition.py){target=_blank}

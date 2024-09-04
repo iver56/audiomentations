@@ -38,3 +38,7 @@ augmented_sound = transform(my_stereo_waveform_ndarray, sample_rate=16000)
 
 [`**kwargs`](#**kwargs){ #**kwargs }
 :   :octicons-milestone-24: Optional extra parameters passed to the callable transform
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/lambda_transform.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/lambda_transform.py){target=_blank}

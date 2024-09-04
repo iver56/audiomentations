@@ -152,3 +152,7 @@ characteristics or simply to quickly add reverb for augmentation purposes
 [`ray_tracing_options`](#ray_tracing_options){ #ray_tracing_options }: `Optional[Dict]`
 :   :octicons-milestone-24: Default: `None`. Options for the ray tracer. See `set_ray_tracing` here:  
     [https://github.com/LCAV/pyroomacoustics/blob/master/pyroomacoustics/room.py](https://github.com/LCAV/pyroomacoustics/blob/master/pyroomacoustics/room.py)
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/room_simulator.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/room_simulator.py){target=_blank}

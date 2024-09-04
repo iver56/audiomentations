@@ -45,3 +45,6 @@ See [Colors of noise :octicons-link-external-16:](https://en.wikipedia.org/wiki/
 [`n_fft`](#n_fft){ #n_fft }: `int`
 :   :octicons-milestone-24: Default: `128`. The number of points the decay curve is computed (for coloring white noise).
 
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/add_color_noise.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/add_color_noise.py){target=_blank}

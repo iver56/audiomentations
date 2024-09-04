@@ -82,3 +82,7 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=48000)
 :   :octicons-milestone-24: Default: `True`. When set to `True`, the tail of the sound
     (e.g. reverb at the end) will be chopped off so that the length of the output is
     equal to the length of the input.
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/apply_impulse_response.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/apply_impulse_response.py){target=_blank}

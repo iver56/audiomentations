@@ -32,3 +32,7 @@ Filter coefficients are taken from [the W3 Audio EQ Cookbook :octicons-link-exte
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/low_shelf_filter.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/low_shelf_filter.py){target=_blank}

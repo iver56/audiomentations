@@ -105,3 +105,7 @@ In this speech example, the audio was transformed with
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/repeat_part.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/repeat_part.py){target=_blank}

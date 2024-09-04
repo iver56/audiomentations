@@ -73,3 +73,7 @@ version, you can check the ["Old Shift API (<=v0.32.0)" section](#old-shift-api-
 
 `p`: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/shift.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/shift.py){target=_blank}

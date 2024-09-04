@@ -56,3 +56,7 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/time_stretch.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/time_stretch.py){target=_blank}

@@ -181,3 +181,7 @@ Here we add some short noise sounds to a voice recording.
 [`lru_cache_size`](#lru_cache_size){ #lru_cache_size }: `int`
 :   :octicons-milestone-24: Default: `64`. Maximum size of the LRU cache for storing
     noise files in memory
+
+## Source code :octicons-mark-github-16:
+
+[audiomentations/augmentations/add_short_noises.py :octicons-link-external-16:](https://github.com/iver56/audiomentations/blob/main/audiomentations/augmentations/add_short_noises.py){target=_blank}

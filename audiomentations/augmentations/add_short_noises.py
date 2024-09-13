@@ -365,7 +365,7 @@ class AddShortNoises(BaseWaveformTransform):
             )
 
             start_sample_index = int(sound_params["start"] * sample_rate)
-            end_sample_index = start_sample_index + len(noise_samples)
+            end_sample_index = start_sample_index + noise_samples.shape[-1]
 
             if start_sample_index < 0:
                 # crop noise_samples: shave off a chunk in the beginning
@@ -377,46 +377,47 @@ class AddShortNoises(BaseWaveformTransform):
             if end_sample_index > num_samples:
                 # crop noise_samples: shave off a chunk in the end
                 num_samples_to_shave_off = end_sample_index - num_samples
-                end_index = len(noise_samples) - num_samples_to_shave_off
+                end_index = noise_samples.shape[-1] - num_samples_to_shave_off
                 noise_samples = noise_samples[:end_index]
                 noise_gain = noise_gain[:end_index]
                 end_sample_index = num_samples
-
-            # Gain here describes just the gain from the fade in and fade out.
-            noise_samples = noise_samples * noise_gain
 
             if self.noise_rms == "relative_to_whole_input":
                 clean_rms = calculate_rms(samples)
             else:
                 clean_rms = calculate_rms(samples[start_sample_index:end_sample_index])
 
-            if self.include_silence_in_noise_rms_estimation:
-                noise_rms = calculate_rms(noise_samples)
-            else:
-                noise_rms = calculate_rms_without_silence(noise_samples, sample_rate)
+            if noise_samples.shape[-1] > 0:
+                # Gain here describes just the gain from the fade in and fade out.
+                noise_samples = noise_samples * noise_gain
 
-            if noise_rms > 0:
-                if self.noise_rms in ["relative", "relative_to_whole_input"]:
-                    desired_noise_rms = calculate_desired_noise_rms(
-                        clean_rms, sound_params["snr_db"]
-                    )
+                if self.include_silence_in_noise_rms_estimation:
+                    noise_rms = calculate_rms(noise_samples)
+                else:
+                    noise_rms = calculate_rms_without_silence(noise_samples, sample_rate)
 
-                    # Adjust the noise to match the desired noise RMS
-                    noise_samples = noise_samples * (desired_noise_rms / noise_rms)
-                elif self.noise_rms == "absolute":
-                    desired_noise_rms_db = sound_params["rms_db"]
-                    desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
-                        desired_noise_rms_db
-                    )
-                    gain = desired_noise_rms_amp / noise_rms
-                    noise_samples = noise_samples * gain
+                if noise_rms > 0:
+                    if self.noise_rms in ["relative", "relative_to_whole_input"]:
+                        desired_noise_rms = calculate_desired_noise_rms(
+                            clean_rms, sound_params["snr_db"]
+                        )
 
-                noise_placeholder[start_sample_index:end_sample_index] += noise_samples
-                if gain_signal:
-                    signal_mask[start_sample_index:end_sample_index] = np.maximum(
-                        signal_mask[start_sample_index:end_sample_index],
-                        noise_gain,
-                    )
+                        # Adjust the noise to match the desired noise RMS
+                        noise_samples = noise_samples * (desired_noise_rms / noise_rms)
+                    elif self.noise_rms == "absolute":
+                        desired_noise_rms_db = sound_params["rms_db"]
+                        desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
+                            desired_noise_rms_db
+                        )
+                        gain = desired_noise_rms_amp / noise_rms
+                        noise_samples = noise_samples * gain
+
+                    noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+                    if gain_signal:
+                        signal_mask[start_sample_index:end_sample_index] = np.maximum(
+                            signal_mask[start_sample_index:end_sample_index],
+                            noise_gain,
+                        )
 
         if gain_signal:
             # Gain the original signal before mixing in the noises

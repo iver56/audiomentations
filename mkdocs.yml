@@ -57,6 +57,7 @@ theme:
     - navigation.expand
   icon:
     repo: fontawesome/brands/github
+  custom_dir: overrides
 repo_name: 'iver56/audiomentations'
 repo_url: 'https://github.com/iver56/audiomentations'
 edit_uri: edit/main/docs/
@@ -78,3 +79,5 @@ markdown_extensions:
 extra:
   static_templates:
     - google874768f12a0e923e.html
+  analytics:
+    provider: custom

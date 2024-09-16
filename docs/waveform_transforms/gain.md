@@ -22,10 +22,10 @@ Here we input a speech recording and apply a -8 dB gain.
 
 # Gain API
 
-[`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` • unit: Decibel
+~~[`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` • unit: Decibel~~
 :   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`min_gain_db`](#min_gain_db) instead
 
-[`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` • unit: Decibel
+~~[`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` • unit: Decibel~~
 :   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`max_gain_db`](#max_gain_db) instead
 
 [`min_gain_db`](#min_gain_db){ #min_gain_db }: `float` • unit: Decibel

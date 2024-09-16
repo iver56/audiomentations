@@ -425,6 +425,25 @@ class LimiterExample(TransformUsageExample):
 
 
 @register
+class GainExample(TransformUsageExample):
+    transform_class = Gain
+
+    def generate_example(self):
+        random.seed(345)
+        np.random.seed(345)
+        transform = Gain(min_gain_db=-8, max_gain_db=-8, p=1)
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
+
+@register
 class PitchShiftExample(TransformUsageExample):
     transform_class = PitchShift
 

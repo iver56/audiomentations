@@ -48,3 +48,8 @@ def test_gain_multichannel_with_wrong_dimension_ordering():
 
     with pytest.raises(WrongMultichannelAudioShape):
         augment(samples=samples, sample_rate=16000)
+
+
+def test_gain_min_greater_than_max():
+    with pytest.raises(ValueError):
+        Gain(min_gain_db=60, max_gain_db=10, p=1.0)

@@ -6,7 +6,7 @@ import warnings
 
 import numpy as np
 
-from audiomentations import AddBackgroundNoise, Compose, Reverse
+from audiomentations import AddBackgroundNoise, Reverse
 from demo.demo import DEMO_DIR
 
 
@@ -57,15 +57,11 @@ def test_try_add_almost_silent_file():
 def test_try_add_digital_silence():
     samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 40000)).astype(np.float32)
     sample_rate = 48000
-    augmenter = Compose(
-        [
-            AddBackgroundNoise(
-                sounds_path=os.path.join(DEMO_DIR, "digital_silence"),
-                min_snr_db=15,
-                max_snr_db=35,
-                p=1.0,
-            )
-        ]
+    augmenter = AddBackgroundNoise(
+        sounds_path=os.path.join(DEMO_DIR, "digital_silence"),
+        min_snr_db=15,
+        max_snr_db=35,
+        p=1.0,
     )
 
     with warnings.catch_warnings(record=True) as w:

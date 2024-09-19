@@ -5,6 +5,7 @@ import random
 import warnings
 
 import numpy as np
+import pytest
 
 from audiomentations import AddBackgroundNoise, Reverse
 from demo.demo import DEMO_DIR
@@ -122,3 +123,24 @@ def test_noise_transform():
     samples_out_with_transform = augmenter(samples=samples, sample_rate=sample_rate)
 
     assert not np.allclose(samples_out_without_transform, samples_out_with_transform)
+
+
+def test_validation():
+    with pytest.raises(ValueError):
+        AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+            min_snr_db=45.0,
+            max_snr_db=35.0,
+        )
+    with pytest.raises(ValueError):
+        AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+            min_absolute_rms_db=-1.0,
+            max_absolute_rms_db=-5.0,
+        )
+    with pytest.raises(ValueError):
+        AddBackgroundNoise(
+            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
+            min_absolute_rms_db=-1.0,
+            max_absolute_rms_db=10.0,
+        )

@@ -85,11 +85,11 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
 :   :octicons-milestone-24: Default: `30.0`. Maximum signal-to-noise ratio in dB. Is
     only used if `noise_rms` is set to `"relative"`
 
-[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0. Use [`min_snr_db`](#min_snr_db) instead
+~~[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel~~
+:   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`min_snr_db`](#min_snr_db) instead
 
-[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0. Use [`max_snr_db`](#max_snr_db) instead
+~~[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel~~
+:   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`max_snr_db`](#max_snr_db) instead
 
 [`noise_rms`](#noise_rms){ #noise_rms }: `str` • choices: `"absolute"`, `"relative"`
 :   :octicons-milestone-24: Default: `"relative"`. Defines how the background noise will
@@ -108,11 +108,11 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     `"absolute"`. It is the maximum RMS value in dB that the added noise can take. Note
     that this value can not exceed 0.
 
-[`min_absolute_rms_in_db`](#min_absolute_rms_in_db){ #min_absolute_rms_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0. Use [`min_absolute_rms_db`](#min_absolute_rms_db) instead
+~~[`min_absolute_rms_in_db`](#min_absolute_rms_in_db){ #min_absolute_rms_in_db }: `float` • unit: Decibel~~
+:   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`min_absolute_rms_db`](#min_absolute_rms_db) instead
 
-[`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0. Use [`max_absolute_rms_in_db`](#max_absolute_rms_in_db) instead
+~~[`max_absolute_rms_in_db`](#max_absolute_rms_in_db){ #max_absolute_rms_in_db }: `float` • unit: Decibel~~
+:   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`max_absolute_rms_in_db`](#max_absolute_rms_in_db) instead
 
 [`noise_transform`](#noise_transform){ #noise_transform }: `Optional[Callable[[NDArray[np.float32], int], NDArray[np.float32]]]`
 :   :octicons-milestone-24: Default: `None`. A callable waveform transform (or

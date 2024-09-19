@@ -34,15 +34,11 @@ class AddBackgroundNoise(BaseWaveformTransform):
     def __init__(
         self,
         sounds_path: Union[List[Path], List[str], Path, str],
-        min_snr_in_db: float = None,
-        max_snr_in_db: float = None,
-        min_snr_db: float = None,
-        max_snr_db: float = None,
+        min_snr_db: float = 3.0,
+        max_snr_db: float = 30.0,
         noise_rms: str = "relative",
-        min_absolute_rms_in_db: float = None,
-        max_absolute_rms_in_db: float = None,
-        min_absolute_rms_db: float = None,
-        max_absolute_rms_db: float = None,
+        min_absolute_rms_db: float = -45.0,
+        max_absolute_rms_db: float = -15.0,
         noise_transform: Optional[
             Callable[[NDArray[np.float32], int], NDArray[np.float32]]
         ] = None,
@@ -53,22 +49,18 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
             audio files. Can be str or Path instance(s). The audio files given here are
             supposed to be background noises.
-        :param min_snr_in_db: Deprecated. Use min_snr_db instead.
-        :param max_snr_in_db: Deprecated. Use max_snr_db instead.
         :param min_snr_db: Minimum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param max_snr_db: Maximum signal-to-noise ratio in dB. Is only used if noise_rms is set to "relative"
         :param noise_rms: Defines how the background noise will be added to the audio input. If the chosen
             option is "relative", the RMS of the added noise will be proportional to the RMS of
             the input sound. If the chosen option is "absolute", the background noise will have
-            a RMS independent of the RMS of the input audio file. The default option is "relative".
+            an RMS independent of the RMS of the input audio file. The default option is "relative".
         :param min_absolute_rms_db: Is only used if noise_rms is set to "absolute". It is
             the minimum RMS value in dB that the added noise can take. The lower the RMS is,
             the lower the added sound will be. Default: -45.0
         :param max_absolute_rms_db: Is only used if noise_rms is set to "absolute". It is
             the maximum RMS value in dB that the added noise can take. Note that this value
             can not exceed 0. Default: -15.0
-        :param min_absolute_rms_in_db: Deprecated. Use min_absolute_rms_db instead.
-        :param max_absolute_rms_in_db: Deprecated. Use max_absolute_rms_db instead.
         :param noise_transform: A callable waveform transform (or composition of transforms) that
             gets applied to the noise before it gets mixed in. The callable is expected
             to input audio waveform (numpy array) and sample rate (int).
@@ -81,79 +73,19 @@ class AddBackgroundNoise(BaseWaveformTransform):
 
         assert len(self.sound_file_paths) > 0
 
-        if min_snr_db is not None and min_snr_in_db is not None:
+        if min_snr_db > max_snr_db:
+            raise ValueError("min_snr_db must not be greater than max_snr_db")
+        self.min_snr_db = min_snr_db
+        self.max_snr_db = max_snr_db
+
+        if min_absolute_rms_db > max_absolute_rms_db:
             raise ValueError(
-                "Passing both min_snr_db and min_snr_in_db is not supported. Use only"
-                " min_snr_db."
+                "min_absolute_rms_db must not be greater than max_absolute_rms_db"
             )
-        elif min_snr_db is not None:
-            self.min_snr_db = min_snr_db
-        elif min_snr_in_db is not None:
-            warnings.warn(
-                "The min_snr_in_db parameter is deprecated. Use min_snr_db instead.",
-                DeprecationWarning,
-            )
-            self.min_snr_db = min_snr_in_db
-        else:
-            self.min_snr_db = 3.0  # the default
-
-        if max_snr_db is not None and max_snr_in_db is not None:
-            raise ValueError(
-                "Passing both max_snr_db and max_snr_in_db is not supported. Use only"
-                " max_snr_db."
-            )
-        elif max_snr_db is not None:
-            self.max_snr_db = max_snr_db
-        elif max_snr_in_db is not None:
-            warnings.warn(
-                "The max_snr_in_db parameter is deprecated. Use max_snr_db instead.",
-                DeprecationWarning,
-            )
-            self.max_snr_db = max_snr_in_db
-        else:
-            self.max_snr_db = 30.0  # the default
-
-        assert self.min_snr_db <= self.max_snr_db
-
-        if min_absolute_rms_db is not None and min_absolute_rms_in_db is not None:
-            raise ValueError(
-                "Passing both min_absolute_rms_db and min_absolute_rms_in_db is not"
-                " supported. Use only min_absolute_rms_db."
-            )
-        elif min_absolute_rms_db is not None:
-            self.min_absolute_rms_db = min_absolute_rms_db
-        elif min_absolute_rms_in_db is not None:
-            warnings.warn(
-                (
-                    "The min_absolute_rms_in_db parameter is deprecated. Use"
-                    " min_absolute_rms_db instead."
-                ),
-                DeprecationWarning,
-            )
-            self.min_absolute_rms_db = min_absolute_rms_in_db
-        else:
-            self.min_absolute_rms_db = -45.0  # the default
-
-        if max_absolute_rms_db is not None and max_absolute_rms_in_db is not None:
-            raise ValueError(
-                "Passing both max_absolute_rms_db and max_absolute_rms_in_db is not"
-                " supported. Use only max_absolute_rms_db."
-            )
-        elif max_absolute_rms_db is not None:
-            self.max_absolute_rms_db = max_absolute_rms_db
-        elif max_absolute_rms_in_db is not None:
-            warnings.warn(
-                (
-                    "The max_absolute_rms_in_db parameter is deprecated. Use"
-                    " max_absolute_rms_db instead."
-                ),
-                DeprecationWarning,
-            )
-            self.max_absolute_rms_db = max_absolute_rms_in_db
-        else:
-            self.max_absolute_rms_db = -45.0  # the default
-
-        assert self.min_absolute_rms_db <= self.max_absolute_rms_db <= 0
+        if max_absolute_rms_db > 0:
+            raise ValueError("max_absolute_rms_db must not be greater than 0")
+        self.min_absolute_rms_db = min_absolute_rms_db
+        self.max_absolute_rms_db = max_absolute_rms_db
 
         self.noise_rms = noise_rms
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(

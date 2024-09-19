@@ -5,7 +5,6 @@ import random
 import warnings
 
 import numpy as np
-import pytest
 
 from audiomentations import AddBackgroundNoise, Compose, Reverse
 from demo.demo import DEMO_DIR
@@ -23,31 +22,6 @@ def test_add_background_noise():
     samples_out = augmenter(samples=samples, sample_rate=sample_rate)
     assert not np.allclose(samples, samples_out)
     assert samples_out.dtype == np.float32
-
-    # test old API
-    samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 22500)).astype(np.float32)
-    sample_rate = 44100
-    with pytest.warns(DeprecationWarning):
-        augmenter = AddBackgroundNoise(
-            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-            min_snr_in_db=15,
-            max_snr_in_db=35,
-            p=1.0,
-        )
-    samples_out = augmenter(samples=samples, sample_rate=sample_rate)
-    assert not np.allclose(samples, samples_out)
-    assert samples_out.dtype == np.float32
-
-
-def test_pass_both_old_and_new_args():
-    with pytest.raises(ValueError):
-        AddBackgroundNoise(
-            sounds_path=os.path.join(DEMO_DIR, "background_noises"),
-            min_snr_db=15,
-            max_snr_db=35,
-            min_snr_in_db=15,
-            max_snr_in_db=35,
-        )
 
 
 def test_add_background_noise_when_noise_sound_is_too_short():
@@ -83,14 +57,16 @@ def test_try_add_almost_silent_file():
 def test_try_add_digital_silence():
     samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 40000)).astype(np.float32)
     sample_rate = 48000
-    augmenter = Compose([
-        AddBackgroundNoise(
-            sounds_path=os.path.join(DEMO_DIR, "digital_silence"),
-            min_snr_db=15,
-            max_snr_db=35,
-            p=1.0,
-        )
-    ])
+    augmenter = Compose(
+        [
+            AddBackgroundNoise(
+                sounds_path=os.path.join(DEMO_DIR, "digital_silence"),
+                min_snr_db=15,
+                max_snr_db=35,
+                p=1.0,
+            )
+        ]
+    )
 
     with warnings.catch_warnings(record=True) as w:
         # Cause all warnings to always be triggered.

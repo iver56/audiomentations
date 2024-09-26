@@ -14,19 +14,19 @@ The gain starts at the first gain and is held constant until the transition star
 Then it transitions to the second gain. Then that gain is held constant until the
 end of the sound.
 
-# GainTransition API
+## GainTransition API
 
-[`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0. Use [`min_gain_db`](#min_gain_db) instead
+~~[`min_gain_in_db`](#min_gain_in_db){ #min_gain_in_db }: `float` • unit: Decibel~~
+:   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`min_gain_db`](#min_gain_db) instead
 
-[`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0. Use [`max_gain_db`](#max_gain_db) instead
+~~[`max_gain_in_db`](#max_gain_in_db){ #max_gain_in_db }: `float` • unit: Decibel~~
+:   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`max_gain_db`](#max_gain_db) instead
 
 [`min_gain_db`](#min_gain_db){ #min_gain_db }: `float` • unit: Decibel
-:   :octicons-milestone-24: Default: `-24.0`. Minimum gain.
+:   :octicons-milestone-24: Default: `-24.0`. Minimum gain in dB.
 
 [`max_gain_db`](#max_gain_db){ #max_gain_db }: `float` • unit: Decibel
-:   :octicons-milestone-24: Default: `6.0`. Maximum gain.
+:   :octicons-milestone-24: Default: `6.0`. Maximum gain in dB.
 
 [`min_duration`](#min_duration){ #min_duration }: `Union[float, int]` • unit: see [`duration_unit`](#duration_unit)
 :   :octicons-milestone-24: Default: `0.2`. Minimum length of transition.
@@ -36,7 +36,7 @@ end of the sound.
 
 [`duration_unit`](#duration_unit){ #duration_unit }: `str` • choices: `"fraction"`, `"samples"`, `"seconds"`
 :   :octicons-milestone-24: Default: `"seconds"`. Defines the unit of the value of `min_duration` and `max_duration`.
-    
+
     * `"fraction"`: Fraction of the total sound length
     * `"samples"`: Number of audio samples
     * `"seconds"`: Number of seconds

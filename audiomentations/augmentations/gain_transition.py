@@ -1,5 +1,4 @@
 import random
-import warnings
 from typing import Union
 
 import numpy as np
@@ -49,21 +48,16 @@ class GainTransition(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_gain_in_db: float = None,
-        max_gain_in_db: float = None,
-        min_gain_db: float = None,
-        max_gain_db: float = None,
+        min_gain_db: float = -24.0,
+        max_gain_db: float = 6.0,
         min_duration: Union[float, int] = 0.2,
         max_duration: Union[float, int] = 6.0,
         duration_unit: str = "seconds",
         p: float = 0.5,
     ):
         """
-
-        :param min_gain_in_db: Deprecated. Use min_gain_db instead
-        :param max_gain_in_db: Deprecated. Use max_gain_db instead
-        :param min_gain_db: Minimum gain
-        :param max_gain_db: Maximum gain
+        :param min_gain_db: Minimum gain in dB.
+        :param max_gain_db: Maximum gain in dB.
         :param min_duration: Minimum length of transition. See also duration_unit.
         :param max_duration: Maximum length of transition. See also duration_unit.
         :param duration_unit: Defines the unit of the value of min_duration and max_duration.
@@ -74,42 +68,15 @@ class GainTransition(BaseWaveformTransform):
         """
         super().__init__(p)
 
-        if min_gain_db is not None and min_gain_in_db is not None:
-            raise ValueError(
-                "Passing both min_gain_db and min_gain_in_db is not supported. Use only"
-                " min_gain_db."
-            )
-        elif min_gain_db is not None:
-            self.min_gain_db = min_gain_db
-        elif min_gain_in_db is not None:
-            warnings.warn(
-                "The min_gain_in_db parameter is deprecated. Use min_gain_db instead.",
-                DeprecationWarning,
-            )
-            self.min_gain_db = min_gain_in_db
-        else:
-            self.min_gain_db = -24.0  # the default
+        if min_gain_db > max_gain_db:
+            raise ValueError("min_gain_db must not be greater than max_gain_db")
+        self.min_gain_db = min_gain_db
+        self.max_gain_db = max_gain_db
 
-        if max_gain_db is not None and max_gain_in_db is not None:
-            raise ValueError(
-                "Passing both max_gain_db and max_gain_in_db is not supported. Use only"
-                " max_gain_db."
-            )
-        elif max_gain_db is not None:
-            self.max_gain_db = max_gain_db
-        elif max_gain_in_db is not None:
-            warnings.warn(
-                "The max_gain_in_db parameter is deprecated. Use max_gain_db instead.",
-                DeprecationWarning,
-            )
-            self.max_gain_db = max_gain_in_db
-        else:
-            self.max_gain_db = 6.0  # the default
-
-        assert self.min_gain_db <= self.max_gain_db
-
-        assert min_duration > 0
-        assert min_duration <= max_duration
+        if min_duration <= 0:
+            raise ValueError("min_duration must be greater than zero")
+        if min_duration > max_duration:
+            raise ValueError("min_duration must not be greater than max_duration")
         self.min_duration = min_duration
         self.max_duration = max_duration
         self.duration_unit = duration_unit
@@ -139,7 +106,7 @@ class GainTransition(BaseWaveformTransform):
             self.parameters["t0"] = random.randint(
                 -self.parameters["fade_time_samples"] + 2,
                 samples.shape[-1] - 2,
-            )
+                )
             self.parameters["start_gain_db"] = random.uniform(
                 self.min_gain_db, self.max_gain_db
             )

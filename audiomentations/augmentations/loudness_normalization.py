@@ -1,8 +1,7 @@
 import random
-import warnings
+import sys
 
 import numpy as np
-import sys
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -28,45 +27,17 @@ class LoudnessNormalization(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_lufs_in_db: float = None,
-        max_lufs_in_db: float = None,
-        min_lufs: float = None,
-        max_lufs: float = None,
+        min_lufs: float = -31.0,
+        max_lufs: float = -13.0,
         p: float = 0.5,
     ):
         super().__init__(p)
 
-        if min_lufs is not None and min_lufs_in_db is not None:
-            raise ValueError(
-                "Passing both min_lufs and min_lufs_in_db is not supported. Use only"
-                " min_lufs."
-            )
-        elif min_lufs is not None:
-            self.min_lufs = min_lufs
-        elif min_lufs_in_db is not None:
-            warnings.warn(
-                "The min_lufs_in_db parameter is deprecated. Use min_lufs instead.",
-                DeprecationWarning,
-            )
-            self.min_lufs = min_lufs_in_db
-        else:
-            self.min_lufs = -31.0  # the default
+        if min_lufs > max_lufs:
+            raise ValueError("min_lufs must not be greater than max_lufs")
 
-        if max_lufs is not None and max_lufs_in_db is not None:
-            raise ValueError(
-                "Passing both max_lufs and max_lufs_in_db is not supported. Use only"
-                " max_lufs."
-            )
-        elif max_lufs is not None:
-            self.max_lufs = max_lufs
-        elif max_lufs_in_db is not None:
-            warnings.warn(
-                "The max_lufs_in_db parameter is deprecated. Use max_lufs instead.",
-                DeprecationWarning,
-            )
-            self.max_lufs = max_lufs_in_db
-        else:
-            self.max_lufs = -13.0  # the default
+        self.min_lufs = min_lufs
+        self.max_lufs = max_lufs
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         try:
@@ -86,7 +57,7 @@ class LoudnessNormalization(BaseWaveformTransform):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
             meter = pyloudnorm.Meter(sample_rate)  # create BS.1770 meter
-            # transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
+            # Transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
             self.parameters["loudness"] = meter.integrated_loudness(samples.transpose())
             self.parameters["lufs"] = float(
                 random.uniform(self.min_lufs, self.max_lufs)
@@ -109,7 +80,7 @@ class LoudnessNormalization(BaseWaveformTransform):
 
         # Guard against digital silence
         if self.parameters["loudness"] > float("-inf"):
-            # transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
+            # Transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
             return pyloudnorm.normalize.loudness(
                 samples.transpose(),
                 self.parameters["loudness"],

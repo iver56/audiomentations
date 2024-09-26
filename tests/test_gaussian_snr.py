@@ -45,3 +45,9 @@ class TestGaussianSNR:
         assert samples_out.dtype == np.float32
         assert float(np.sum(np.abs(samples_out))) > float(np.sum(np.abs(samples)))
 
+    def test_validation(self):
+        with pytest.raises(ValueError):
+            AddGaussianSNR(
+                min_snr_db=40.0,
+                max_snr_db=20.0,
+            )

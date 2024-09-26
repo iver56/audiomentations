@@ -1,5 +1,4 @@
 import pytest
-
 import numpy as np
 from numpy.testing import assert_almost_equal
 
@@ -49,3 +48,10 @@ class TestLoudnessNormalization:
         gain_factors = processed_samples / samples
         assert np.amin(gain_factors) == pytest.approx(np.amax(gain_factors))
         assert processed_samples.dtype == np.float32
+
+    def test_validation(self):
+        with pytest.raises(ValueError):
+            LoudnessNormalization(
+                min_lufs=-12.0,
+                max_lufs=-32.0,
+            )

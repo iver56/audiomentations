@@ -26,18 +26,18 @@ Here we add some short noise sounds to a voice recording.
 
     ```python
     from audiomentations import AddShortNoises, PolarityInversion
-    
+
     transform = AddShortNoises(
         sounds_path="/path/to/folder_with_sound_files",
-        min_snr_in_db=3.0,
-        max_snr_in_db=30.0,
+        min_snr_db=3.0,
+        max_snr_db=30.0,
         noise_rms="relative_to_whole_input",
         min_time_between_sounds=2.0,
         max_time_between_sounds=8.0,
         noise_transform=PolarityInversion(),
         p=1.0
     )
-    
+
     augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
     ```
 
@@ -45,7 +45,7 @@ Here we add some short noise sounds to a voice recording.
 
     ```python
     from audiomentations import AddShortNoises, PolarityInversion
-    
+
     transform = AddShortNoises(
         sounds_path="/path/to/folder_with_sound_files",
         min_absolute_noise_rms_db=-50.0,
@@ -56,7 +56,7 @@ Here we add some short noise sounds to a voice recording.
         noise_transform=PolarityInversion(),
         p=1.0
     )
-    
+
     augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
     ```
 
@@ -67,11 +67,11 @@ Here we add some short noise sounds to a voice recording.
     with audio files. Can be str or Path instance(s). The audio files given here are
     supposed to be (short) noises.
 
-[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0. Use [`min_snr_db`](#min_snr_db) instead
+~~[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel~~
+:   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`min_snr_db`](#min_snr_db) instead
 
-[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel
-:   :warning: Deprecated as of v0.31.0. Use [`max_snr_db`](#max_snr_db) instead
+~~[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel~~
+:   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`max_snr_db`](#max_snr_db) instead
 
 [`min_snr_db`](#min_snr_db){ #min_snr_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-6.0`. Minimum signal-to-noise ratio in dB. A lower

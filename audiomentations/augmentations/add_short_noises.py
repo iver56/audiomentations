@@ -28,10 +28,8 @@ class AddShortNoises(BaseWaveformTransform):
     def __init__(
         self,
         sounds_path: Union[List[Path], List[str], Path, str],
-        min_snr_in_db: float = None,
-        max_snr_in_db: float = None,
-        min_snr_db: float = None,
-        max_snr_db: float = None,
+        min_snr_db: float = -6.0,
+        max_snr_db: float = 18.0,
         min_time_between_sounds: float = 2.0,
         max_time_between_sounds: float = 8.0,
         noise_rms: str = "relative_to_whole_input",
@@ -58,8 +56,6 @@ class AddShortNoises(BaseWaveformTransform):
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
             audio files. Can be str or Path instance(s). The audio files given here are
             supposed to be (short) noises.
-        :param min_snr_in_db: Deprecated. Use min_snr_db instead.
-        :param max_snr_in_db: Deprecated. Use max_snr_db instead.
         :param min_snr_db: Minimum signal-to-noise ratio in dB. A lower value means the added
             sounds/noises will be louder. This gets ignored if noise_rms is set to "absolute".
         :param max_snr_db: Maximum signal-to-noise ratio in dB. A lower value means the added
@@ -69,11 +65,11 @@ class AddShortNoises(BaseWaveformTransform):
         :param noise_rms: Choices: ["absolute", "relative", "relative_to_whole_input"].
             Defines how the noises will be added to the audio input.
             "relative": the RMS value of the added noise will be proportional to the RMS value of
-            the input sound calculated only for the region where the noise is added.
+                the input sound calculated only for the region where the noise is added.
             "absolute": the added noises will have an RMS independent of the RMS of the input audio
-            file.
+                file.
             "relative_to_whole_input": the RMS of the added noises will be
-            proportional to the RMS of the whole input sound.
+                proportional to the RMS of the whole input sound.
         :param min_absolute_noise_rms_db: Is only used if noise_rms is set to "absolute". It is
             the minimum RMS value in dB that the added noise can take. The lower the RMS is, the
             lower will the added sound be.
@@ -144,39 +140,10 @@ class AddShortNoises(BaseWaveformTransform):
 
         assert noise_rms in ["relative", "absolute", "relative_to_whole_input"]
 
-        if min_snr_db is not None and min_snr_in_db is not None:
-            raise ValueError(
-                "Passing both min_snr_db and min_snr_in_db is not supported. Use only"
-                " min_snr_db."
-            )
-        elif min_snr_db is not None:
-            self.min_snr_db = min_snr_db
-        elif min_snr_in_db is not None:
-            warnings.warn(
-                "The min_snr_in_db parameter is deprecated. Use min_snr_db instead.",
-                DeprecationWarning,
-            )
-            self.min_snr_db = min_snr_in_db
-        else:
-            self.min_snr_db = -6.0  # the default
-
-        if max_snr_db is not None and max_snr_in_db is not None:
-            raise ValueError(
-                "Passing both max_snr_db and max_snr_in_db is not supported. Use only"
-                " max_snr_db."
-            )
-        elif max_snr_db is not None:
-            self.max_snr_db = max_snr_db
-        elif max_snr_in_db is not None:
-            warnings.warn(
-                "The max_snr_in_db parameter is deprecated. Use max_snr_db instead.",
-                DeprecationWarning,
-            )
-            self.max_snr_db = max_snr_in_db
-        else:
-            self.max_snr_db = 18.0  # the default
-
-        assert self.min_snr_db <= self.max_snr_db
+        if min_snr_db > max_snr_db:
+            raise ValueError("min_snr_db must not be greater than max_snr_db")
+        self.min_snr_db = min_snr_db
+        self.max_snr_db = max_snr_db
 
         if (
             signal_gain_db_during_noise is not None

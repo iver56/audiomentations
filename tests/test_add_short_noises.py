@@ -318,3 +318,11 @@ class TestAddShortNoises:
 
             assert len(set(snr_sounds_same_level)) == 1
             assert len(set(snr_sounds_different_level)) > 1
+
+    def test_validation(self):
+        with pytest.raises(ValueError):
+            AddShortNoises(
+                sounds_path=os.path.join(DEMO_DIR, "short_noises"),
+                min_snr_db=40.0,
+                max_snr_db=20.0,
+            )

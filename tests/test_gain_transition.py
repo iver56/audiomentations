@@ -55,9 +55,19 @@ class TestGainTransition:
         assert processed_samples.dtype == np.float32
 
     def test_invalid_params(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             GainTransition(
                 min_duration=-12, max_duration=324, duration_unit="samples", p=1.0
+            )
+
+        with pytest.raises(ValueError):
+            GainTransition(
+                min_duration=45, max_duration=10, duration_unit="samples", p=1.0
+            )
+
+        with pytest.raises(ValueError):
+            GainTransition(
+                min_gain_db=6.0, max_gain_db=-24.0, p=1.0
             )
 
         augment = GainTransition(

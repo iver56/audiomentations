@@ -33,7 +33,7 @@ The seven bands have center frequencies picked in the following ranges (min-max)
 [`min_gain_db`](#min_gain_db){ #min_gain_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-12.0`. Minimum number of dB to cut or boost a band
 
-[`max_gain_db`](#max_gain_db){ #max_gain_db }: `float` • unit: decibel
+[`max_gain_db`](#max_gain_db){ #max_gain_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `12.0`. Maximum number of dB to cut or boost a band
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

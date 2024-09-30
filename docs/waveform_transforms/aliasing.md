@@ -4,13 +4,13 @@ _Added in v0.35.0_
 
 Downsample the audio to a lower sample rate by linear interpolation, without low-pass
 filtering it first, resulting in aliasing artifacts. You get aliasing artifacts when
-there is high-frequency audio in the input audio that falls above the nyquist frequency
-of the chosen target sample rate. Audio with frequencies above the nyquist frequency
-cannot be reproduced accurately and get "reflected"/mirrored to other frequencies. The
-aliasing artifacts "replace" the original high frequency signals. The result can be
+there is high-frequency audio in the input audio that falls above the Nyquist frequency
+of the chosen target sample rate. Audio with frequencies above the Nyquist frequency
+cannot be reproduced accurately and gets "reflected"/mirrored to other frequencies. The
+aliasing artifacts replace the original high-frequency signals. The result can be
 described as coarse and metallic.
 
-After the downsampling, the signal gets upsampled to the original signal again, so the
+After the downsampling, the signal gets upsampled to the original sample rate again, so the
 length of the output becomes the same as the length of the input.
 
 For more information, see

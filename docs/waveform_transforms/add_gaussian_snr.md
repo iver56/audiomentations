@@ -53,14 +53,14 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 :   :octicons-milestone-24: Default: `5.0`. Minimum signal-to-noise ratio in dB. A lower
     number means more noise.
 
-[`max_snr_db`](#max_snr_db){ #max_snr_db }: `float` • unit: decibel
+[`max_snr_db`](#max_snr_db){ #max_snr_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `40.0`. Maximum signal-to-noise ratio in dB. A
     greater number means less noise.
 
 ~~[`min_snr_in_db`](#min_snr_in_db){ #min_snr_in_db }: `float` • unit: Decibel~~
 :   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`min_snr_db`](#min_snr_db) instead
 
-~~[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: decibel~~
+~~[`max_snr_in_db`](#max_snr_in_db){ #max_snr_in_db }: `float` • unit: Decibel~~
 :   :warning: Deprecated as of v0.31.0, removed as of v0.38.0. Use [`max_snr_db`](#max_snr_db) instead
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

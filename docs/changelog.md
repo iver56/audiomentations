@@ -206,7 +206,7 @@ These are **breaking changes**. The following example shows how you can adapt yo
 
 ### Fixed
 
-* Fix filter instability bug related to center freq above nyquist freq in `LowShelfFilter` and `HighShelfFilter`
+* Fix filter instability bug related to center freq above Nyquist freq in `LowShelfFilter` and `HighShelfFilter`
 
 ## [0.23.0] - 2022-03-07
 

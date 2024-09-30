@@ -14,7 +14,7 @@ class Trim(BaseWaveformTransform):
 
     def __init__(self, top_db: float = 30.0, p: float = 0.5):
         """
-        :param top_db: The threshold (in decibels) below reference to consider as silence
+        :param top_db: The threshold (in Decibels) below reference to consider as silence
         :param p: The probability of applying this transform
         """
         super().__init__(p)

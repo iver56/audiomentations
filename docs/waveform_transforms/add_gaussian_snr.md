@@ -4,7 +4,7 @@ _Added in v0.7.0_
 
 The `AddGaussianSNR` transform injects Gaussian noise into an audio signal. It applies
 a **Signal-to-Noise Ratio (SNR)** that is chosen randomly from a **uniform distribution on the
-decibel scale**. This choice is consistent with the nature of human hearing, which is
+Decibel scale**. This choice is consistent with the nature of human hearing, which is
 logarithmic rather than linear.
 
 **SNR** is a common measure used in science and engineering to compare the level of a

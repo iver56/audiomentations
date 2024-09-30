@@ -26,7 +26,7 @@ Here are some examples of datasets that can be downloaded and used as background
 ## Input-output example
 
 Here we add some music to a speech recording, targeting a signal-to-noise ratio (SNR) of
-5 decibels (dB), which means that the speech (_signal_) is 5 dB louder than the music (_noise_).
+5 Decibels (dB), which means that the speech (_signal_) is 5 dB louder than the music (_noise_).
 
 ![Input-output waveforms and spectrograms](AddBackgroundNoise.webp)
 

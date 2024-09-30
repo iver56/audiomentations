@@ -36,8 +36,8 @@ class Limiter(BaseWaveformTransform):
         The attack time is how quickly the limiter kicks in once the audio signal starts exceeding the threshold.
         The release time determines how quickly the limiter stops working after the signal drops below the threshold.
 
-        :param min_threshold_db: Minimum threshold in decibels
-        :param max_threshold_db: Maximum threshold in decibels
+        :param min_threshold_db: Minimum threshold in Decibels
+        :param max_threshold_db: Maximum threshold in Decibels
         :param min_attack: Minimum attack time in seconds
         :param max_attack: Maximum attack time in seconds
         :param min_release: Minimum release time in seconds

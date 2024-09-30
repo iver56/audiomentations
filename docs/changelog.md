@@ -323,7 +323,7 @@ These are **breaking changes**. The following example shows how you can adapt yo
 * When looking for audio files in `AddImpulseResponse`, `AddBackgroundNoise`
   and `AddShortNoises`, follow symlinks by default.
 * When using the new parameters `min_snr_in_db` and `max_snr_in_db` in `AddGaussianSNR`,
-  SNRs will be picked uniformly in _the decibel scale_ instead of in the linear amplitude
+  SNRs will be picked uniformly in _the Decibel scale_ instead of in the linear amplitude
   ratio scale. The new behavior aligns more with human hearing, which is not linear.
 
 ### Fixed

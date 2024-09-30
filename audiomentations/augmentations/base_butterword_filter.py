@@ -188,7 +188,7 @@ class BaseButterworthFilter(BaseWaveformTransform):
             cutoff_freq = self.parameters["cutoff_freq"]
             nyquist_freq = sample_rate // 2
             if cutoff_freq > nyquist_freq:
-                # Ensure that the cutoff frequency does not exceed the nyquist
+                # Ensure that the cutoff frequency does not exceed the Nyquist
                 # frequency to avoid an exception from scipy
                 cutoff_freq = nyquist_freq * 0.9999
             sos = butter(
@@ -206,7 +206,7 @@ class BaseButterworthFilter(BaseWaveformTransform):
             )
             nyquist_freq = sample_rate // 2
             if high_freq > nyquist_freq:
-                # Ensure that the upper critical frequency does not exceed the nyquist
+                # Ensure that the upper critical frequency does not exceed the Nyquist
                 # frequency to avoid an exception from scipy
                 high_freq = nyquist_freq * 0.9999
             sos = butter(

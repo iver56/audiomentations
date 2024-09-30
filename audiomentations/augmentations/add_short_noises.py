@@ -94,7 +94,7 @@ class AddShortNoises(BaseWaveformTransform):
             fraction) the burst sound should start playing. The value must be greater than 0.
         :param min_fade_in_time: Min sound/noise fade in time in seconds. Use a value larger
             than 0 to avoid a "click" at the start of the sound/noise.
-        :param max_fade_in_time: Max sound/noise fade out time in seconds. Use a value larger
+        :param max_fade_in_time: Max sound/noise fade in time in seconds. Use a value larger
             than 0 to avoid a "click" at the start of the sound/noise.
         :param min_fade_out_time: Min sound/noise fade out time in seconds. Use a value larger
             than 0 to avoid a "click" at the end of the sound/noise.

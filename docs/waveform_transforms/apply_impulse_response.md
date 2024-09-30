@@ -46,7 +46,7 @@ will slow down execution, and because some high frequencies may get lost.
 
 ## Input-output example
 
-Here we make a dry speech recording quite reverbant by convolving it with a room impulse response
+Here we make a dry speech recording quite reverberant by convolving it with a room impulse response
 
 ![Input-output waveforms and spectrograms](ApplyImpulseResponse.webp)
 

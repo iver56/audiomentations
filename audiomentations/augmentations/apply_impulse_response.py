@@ -46,8 +46,6 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(self.__load_ir)
         self.leave_length_unchanged = leave_length_unchanged
 
-        self.leave_length_unchanged = leave_length_unchanged
-
     @staticmethod
     def __load_ir(file_path, sample_rate, mono):
         return load_sound_file(file_path, sample_rate, mono=mono)
@@ -58,7 +56,8 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             self.parameters["ir_file_path"] = random.choice(self.ir_files)
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int):
-        load_mono_ir = samples.ndim == 1 # determine if ir should load as mono
+        # Determine if the impulse response should be loaded as mono
+        load_mono_ir = samples.ndim == 1
         ir, sample_rate2 = self.__load_ir(self.parameters["ir_file_path"], sample_rate, mono=load_mono_ir)
         if sample_rate != sample_rate2:
             # This will typically not happen, as librosa should automatically resample the
@@ -72,7 +71,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         samples_original_dim = samples.ndim
         samples, ir = np.atleast_2d(samples), np.atleast_2d(ir)
 
-        # Preallocate the the output array
+        # Preallocate the output array
         output_shape = (samples.shape[0], samples.shape[1] + ir.shape[1] - 1)
         signal_ir = np.empty(output_shape, dtype=samples.dtype)
 

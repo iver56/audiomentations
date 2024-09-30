@@ -92,8 +92,7 @@ Here we add some short noise sounds to a voice recording.
     added sounds/noises
 
 [`noise_rms`](#noise_rms){ #noise_rms }: `str` • choices: `"absolute"`, `"relative"`, `"relative_to_whole_input"`
-:   :octicons-milestone-24: Default: `"relative"` (<=v0.27), but will be changed to
-    `"relative_to_whole_input"` in a future version.
+:   :octicons-milestone-24: Default: `"relative_to_whole_input"` (since v0.29.0)
 
     This parameter defines how the noises will be added to the audio input.
 
@@ -109,7 +108,7 @@ Here we add some short noise sounds to a voice recording.
     `"absolute"`. It is the minimum RMS value in dB that the added noise can take. The
     lower the RMS is, the lower will the added sound be.
 
-[`max_absolute_noise_rms_db`](#max_absolute_noise_rms_db){ #max_absolute_noise_rms_db }: `float` • unit: seconds
+[`max_absolute_noise_rms_db`](#max_absolute_noise_rms_db){ #max_absolute_noise_rms_db }: `float` • unit: Decibel
 :   :octicons-milestone-24: Default: `-20.0`. Is only used if `noise_rms` is set to
     `"absolute"`. It is the maximum RMS value in dB that the added noise can take. Note
     that this value can not exceed 0.

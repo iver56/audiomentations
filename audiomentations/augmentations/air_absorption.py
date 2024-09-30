@@ -13,6 +13,16 @@ def next_power_of_2(x: int) -> int:
     return 1 if x == 0 else 2 ** (x - 1).bit_length()
 
 
+def get_temperature_humidity_key(temperature: float, humidity: float) -> str:
+    key = str(int(temperature)) + "C"
+    bounds = [30, 50, 70, 90]
+    for n in range(1, len(bounds)):
+        if bounds[n - 1] <= humidity <= bounds[n]:
+            key += f"_{bounds[n-1]}-{bounds[n]}%"
+            break
+    return key
+
+
 class AirAbsorption(BaseWaveformTransform):
     """
     Apply a Lowpass-like filterbank with variable octave attenuation that simulates attenuation of
@@ -28,7 +38,7 @@ class AirAbsorption(BaseWaveformTransform):
     is adapted from a lookup table by pyroomacoustics [1]. It can also be seen as a lowpass filter
     with variable octave attenuation.
 
-    Note: This only "simulates" the dampening of high frequencies, and does not
+    Note: This only "simulates" the damping of high frequencies, and does not
     attenuate according to the distance law. Gain augmentation needs to be done separately.
 
     [1] https://github.com/LCAV/pyroomacoustics
@@ -122,23 +132,19 @@ class AirAbsorption(BaseWaveformTransform):
             self.min_distance, self.max_distance
         )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         assert samples.dtype == np.float32
 
-        humidity = self.parameters["humidity"]
-        distance = self.parameters["distance"]
-
         # Choose correct absorption coefficients
-        key = str(int(self.parameters["temperature"])) + "C"
-        bounds = [30, 50, 70, 90]
-        for n in range(1, len(bounds)):
-            if bounds[n - 1] <= humidity or humidity <= bounds[n]:
-                key += f"_{bounds[n-1]}-{bounds[n]}%"
-                break
+        key = get_temperature_humidity_key(
+            self.parameters["temperature"], self.parameters["humidity"]
+        )
 
         # Convert to attenuations
         attenuation_values = np.exp(
-            -distance * np.array(self.air_absorption_table[key])
+            -self.parameters["distance"] * np.array(self.air_absorption_table[key])
         )
 
         # Calculate n_fft so that the lowest band can be stored in a single

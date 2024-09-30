@@ -18,7 +18,7 @@ It can also be seen as a lowpass filter with variable octave attenuation.
 Note that since this transform mostly affects high frequencies, it is only
 suitable for audio with sufficiently high sample rate, like 32 kHz and above.
 
-Note also that this transform only "simulates" the dampening of high frequencies, and
+Note also that this transform only "simulates" the damping of high frequencies, and
 does not attenuate according to the distance law. Gain augmentation needs to be done
 separately.
 

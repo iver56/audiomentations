@@ -24,7 +24,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
     A folder of (background noise) sounds to be mixed in must be specified. These sounds should
     ideally be at least as long as the input sounds to be transformed. Otherwise, the background
     sound will be repeated, which may sound unnatural.
-    Note that the gain of the added noise is relative to the amount of signal in the input if the parameter noise_rms
+    Note that the gain of the added noise is relative to the signal level in the input if the parameter noise_rms
     is set to "relative" (default option). This implies that if the input is completely silent, no noise will be added.
     Here are some examples of datasets that can be downloaded and used as background noise:
     * https://github.com/karolpiczak/ESC-50#download

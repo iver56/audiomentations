@@ -8,6 +8,12 @@ Also known as peak normalization.
 
 # Normalize API
 
+[`apply_to`](#apply_to){ #apply_to }: `str` • choices: `"all"`, `"only_too_loud_sounds"`
+:   :octicons-milestone-24: Default: `"all"`. Defines the criterion for applying the transform.
+
+    * `"all"`: Apply peak normalization to all inputs
+    * `"only_too_loud_sounds"`: Apply peak normalization only to inputs where the maximum absolute peak is greater than 1
+
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.
 

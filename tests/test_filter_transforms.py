@@ -17,7 +17,7 @@ DEBUG = False
 
 
 def get_chirp_test(sample_rate, duration):
-    """Create a `duration` seconds chirp from 0Hz to `nyquist frequency`"""
+    """Create a `duration` seconds chirp from 0Hz to `Nyquist frequency`"""
     n = np.arange(0, duration, 1 / sample_rate)
     samples = scipy.signal.chirp(n, 0, duration, sample_rate // 2, method="linear")
     return samples.astype(np.float32)
@@ -738,7 +738,7 @@ class TestHighPassFilterTransform:
     @pytest.mark.parametrize("zero_phase", [False])
     def test_nyquist_limit(self, cutoff_frequency, rolloff, zero_phase):
         # Test that the filter doesn't raise an exception when
-        # cutoff_frequency is greater than the nyquist frequency
+        # cutoff_frequency is greater than the Nyquist frequency
 
         sample_rate = 8000
 
@@ -947,7 +947,7 @@ class TestBandPassFilterTransform:
         self, center_frequency, bandwidth_fraction, rolloff, zero_phase
     ):
         # Test that the filter doesn't raise an exception when
-        # center_freq + bandwidth / 2 is greater than the nyquist frequency
+        # center_freq + bandwidth / 2 is greater than the Nyquist frequency
 
         sample_rate = 16000
 

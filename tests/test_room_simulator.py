@@ -9,7 +9,7 @@ DEBUG = False
 
 
 def get_sinc_impulse(sample_rate, duration):
-    """Create a `duration` seconds chirp from 0Hz to `nyquist frequency`"""
+    """Create a `duration` seconds chirp from 0Hz to `Nyquist frequency`"""
     n = np.arange(-duration / 2, duration / 2, 1 / sample_rate)
 
     # Full band sinc impulse centered at half the duration

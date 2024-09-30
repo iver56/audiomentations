@@ -10,7 +10,7 @@ from audiomentations.core.utils import calculate_desired_noise_rms, calculate_rm
 class AddGaussianSNR(BaseWaveformTransform):
     """
     Add gaussian noise to the input. A random Signal to Noise Ratio (SNR) will be picked
-    uniformly in the decibel scale. This aligns with human hearing, which is more
+    uniformly in the Decibel scale. This aligns with human hearing, which is more
     logarithmic than linear.
     """
 

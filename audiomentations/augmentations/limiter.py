@@ -15,15 +15,14 @@ from audiomentations.core.utils import (
 class Limiter(BaseWaveformTransform):
     """
     A simple audio limiter (dynamic range compression).
-    Note: This transform also delays the signal by a fraction of the attack time.
     """
 
     supports_multichannel = True
 
     def __init__(
         self,
-        min_threshold_db: float = -24,
-        max_threshold_db: float = -2,
+        min_threshold_db: float = -24.0,
+        max_threshold_db: float = -2.0,
         min_attack: float = 0.0005,
         max_attack: float = 0.025,
         min_release: float = 0.05,
@@ -36,8 +35,8 @@ class Limiter(BaseWaveformTransform):
         The attack time is how quickly the limiter kicks in once the audio signal starts exceeding the threshold.
         The release time determines how quickly the limiter stops working after the signal drops below the threshold.
 
-        :param min_threshold_db: Minimum threshold in decibels
-        :param max_threshold_db: Maximum threshold in decibels
+        :param min_threshold_db: Minimum threshold in Decibels
+        :param max_threshold_db: Maximum threshold in Decibels
         :param min_attack: Minimum attack time in seconds
         :param max_attack: Maximum attack time in seconds
         :param min_release: Minimum release time in seconds

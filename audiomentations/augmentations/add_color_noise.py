@@ -174,7 +174,7 @@ class AddColorNoise(BaseWaveformTransform):
     def randomize_parameters(self, samples: np.ndarray, sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            # Pick SNR in decibel scale
+            # Pick SNR in Decibel scale
             snr = random.uniform(self.min_snr_db, self.max_snr_db)
 
             # Pick f_decay

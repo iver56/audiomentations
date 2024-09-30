@@ -16,7 +16,7 @@ class HighShelfFilter(BaseWaveformTransform):
     A high shelf filter is a filter that either boosts (increases amplitude) or cuts
     (decreases amplitude) frequencies above a certain center frequency. This transform
     applies a high-shelf filter at a specific center frequency in hertz.
-    The gain at nyquist frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
+    The gain at Nyquist frequency is controlled by `{min,max}_gain_db` (note: can be positive or negative!).
     Filter coefficients are taken from the W3 Audio EQ Cookbook: https://www.w3.org/TR/audio-eq-cookbook/
     """
 
@@ -35,8 +35,8 @@ class HighShelfFilter(BaseWaveformTransform):
         """
         :param min_center_freq: The minimum center frequency of the shelving filter
         :param max_center_freq: The maximum center frequency of the shelving filter
-        :param min_gain_db: The minimum gain at the nyquist frequency
-        :param max_gain_db: The maximum gain at the nyquist frequency
+        :param min_gain_db: The minimum gain at the Nyquist frequency
+        :param max_gain_db: The maximum gain at the Nyquist frequency
         :param min_q: The minimum quality factor Q. The higher the Q, the steeper the
             transition band will be.
         :param max_q: The maximum quality factor Q. The higher the Q, the steeper the
@@ -120,7 +120,7 @@ class HighShelfFilter(BaseWaveformTransform):
         nyquist_freq = sample_rate // 2
         center_freq = self.parameters["center_freq"]
         if center_freq > nyquist_freq:
-            # Ensure that the center frequency is below the nyquist
+            # Ensure that the center frequency is below the Nyquist
             # frequency to avoid filter instability
             center_freq = nyquist_freq * 0.9999
 

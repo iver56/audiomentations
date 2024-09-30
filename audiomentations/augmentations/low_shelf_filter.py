@@ -119,7 +119,7 @@ class LowShelfFilter(BaseWaveformTransform):
         nyquist_freq = sample_rate // 2
         center_freq = self.parameters["center_freq"]
         if center_freq > nyquist_freq:
-            # Ensure that the center frequency is below the nyquist
+            # Ensure that the center frequency is below the Nyquist
             # frequency to avoid filter instability
             center_freq = nyquist_freq * 0.9999
 

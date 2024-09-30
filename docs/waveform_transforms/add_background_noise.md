@@ -13,7 +13,7 @@ specified. These sounds should ideally be at least as long as the input sounds t
 transformed. Otherwise, the background sound will be repeated, which may sound unnatural.
 
 Note that in the default case ([`noise_rms="relative"`](#noise_rms)) the gain of the added noise is
-relative to the amount of signal in the input. This implies that if the input is
+relative to the signal level in the input. This implies that if the input is
 completely silent, no noise will be added.
 
 Optionally, the added noise sound can be transformed (with [`noise_transform`](#noise_transform)) before it gets mixed in.
@@ -44,8 +44,8 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     
     transform = AddBackgroundNoise(
         sounds_path="/path/to/folder_with_sound_files",
-        min_snr_in_db=3.0,
-        max_snr_in_db=30.0,
+        min_snr_db=3.0,
+        max_snr_db=30.0,
         noise_transform=PolarityInversion(),
         p=1.0
     )
@@ -61,8 +61,8 @@ Here we add some music to a speech recording, targeting a signal-to-noise ratio 
     transform = AddBackgroundNoise(
         sounds_path="/path/to/folder_with_sound_files",
         noise_rms="absolute",
-        min_absolute_rms_in_db=-45.0,
-        max_absolute_rms_in_db=-15.0,
+        min_absolute_rms_db=-45.0,
+        max_absolute_rms_db=-15.0,
         noise_transform=PolarityInversion(),
         p=1.0
     )

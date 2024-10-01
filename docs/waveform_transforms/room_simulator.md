@@ -5,8 +5,8 @@ _Added in v0.23.0_
 A ShoeBox Room Simulator. Simulates a cuboid of parametrized size and average surface absorption coefficient. It also includes a source
 and microphones in parametrized locations.
 
-Use it when you want a ton of synthetic room impulse responses of specific configurations
-characteristics or simply to quickly add reverb for augmentation purposes
+Use it when you need a large number of synthetic room impulse responses with specific configuration
+characteristics or simply to quickly add reverb for augmentation purposes.
 
 ## RoomSimulator API
 
@@ -78,13 +78,13 @@ characteristics or simply to quickly add reverb for augmentation purposes
 [`min_source_y`](#min_source_y){ #min_source_y }: `float` • unit: meters
 :   :octicons-milestone-24: Default: `0.1`. Minimum y location of the source
 
-[`max_source_x`](#max_source_x){ #max_source_x }: `float` • unit: meters
+[`max_source_y`](#max_source_y){ #max_source_y }: `float` • unit: meters
 :   :octicons-milestone-24: Default: `2.7`. Maximum y location of the source
 
 [`min_source_z`](#min_source_z){ #min_source_z }: `float` • unit: meters
 :   :octicons-milestone-24: Default: `1.0`. Minimum z location of the source
 
-[`max_source_x`](#max_source_x){ #max_source_x }: `float` • unit: meters
+[`max_source_z`](#max_source_z){ #max_source_z }: `float` • unit: meters
 :   :octicons-milestone-24: Default: `2.1`. Maximum z location of the source
 
 [`min_mic_distance`](#min_mic_distance){ #min_mic_distance }: `float` • unit: meters
@@ -117,14 +117,13 @@ characteristics or simply to quickly add reverb for augmentation purposes
     [`min_absorption_value`](#min_absorption_value){ #min_absorption_value } and
     [`max_absorption_value`](#max_absorption_value){ #max_absorption_value }. If set to
     `"rt60"` it will try to assign surface materials that lead to a room impulse
-    response with target rt60 given by
+    response with target RT60 given by
     [`min_target_rt60`](#min_target_rt60){ #min_target_rt60 } and
     [`max_target_rt60`](#max_target_rt60){ #max_target_rt60 }
 
 [`use_ray_tracing`](#use_ray_tracing){ #use_ray_tracing }: `bool`
 :   :octicons-milestone-24: Default: `True`. Whether to use ray_tracing or not (slower
-    but much more accurate). Disable this if you need speed but do not really care for
-    incorrect results.
+    but much more accurate). Disable this if you prioritize speed over accuracy.
 
 [`max_order`](#max_order){ #max_order }: `int` • range: [1, ∞)
 :   :octicons-milestone-24: Default: `1`. Maximum order of reflections for the Image

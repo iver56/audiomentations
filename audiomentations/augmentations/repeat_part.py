@@ -109,11 +109,11 @@ class RepeatPart(BaseWaveformTransform):
             )
         else:
             self.crossfade = True
-        if min_part_duration < 2 * crossfade_duration:
+        if crossfade_duration > (min_part_duration / 2):
             raise ValueError(
-                "crossfade_duration must be >= 2 * min_part_duration. You can fix this"
-                " error by increasing min_part_duration or by decreasing"
-                " crossfade_duration"
+                "`crossfade_duration` must be <= 0.5 * `min_part_duration`. You can fix this"
+                " error by increasing `min_part_duration` or by decreasing"
+                " `crossfade_duration`."
             )
         self.crossfade_duration = crossfade_duration
         self.part_transform = part_transform

@@ -23,7 +23,7 @@ class TestReverse:
         augmenter = Reverse(p=1.0)
         reversed_samples = augmenter(samples=samples, sample_rate=sample_rate)
 
-        assert samples.dtype == np.float32
+        assert reversed_samples.dtype == np.float32
         assert_array_almost_equal(
             reversed_samples,
             np.array(

@@ -17,8 +17,8 @@ class PitchShift(BaseWaveformTransform):
         self, min_semitones: float = -4.0, max_semitones: float = 4.0, p: float = 0.5
     ):
         """
-        :param min_semitones: Minimum semitones to shift. Negative number means shift down.
-        :param max_semitones: Maximum semitones to shift. Positive number means shift up.
+        :param min_semitones: Minimum semitones to shift. A negative number means shift down.
+        :param max_semitones: Maximum semitones to shift. A positive number means shift up.
         :param p: The probability of applying this transform
         """
         super().__init__(p)

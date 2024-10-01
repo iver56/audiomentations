@@ -15,8 +15,8 @@ class RoomSimulator(BaseWaveformTransform):
     average surface absorption coefficient. It also includes a source \
     and microphones in parametrized locations.
 
-    Use it when you want a ton of synthetic room impulse responses of specific configurations
-    characteristics or simply to quickly add reverb for augmentation purposes
+    Use it when you need a large number of synthetic room impulse responses with specific configuration
+    characteristics or simply to quickly add reverb for augmentation purposes.
 
     Some examples:
 
@@ -26,10 +26,10 @@ class RoomSimulator(BaseWaveformTransform):
     > augment = RoomSimulator(calculation_mode="rt60", min_target_rt60=0.06, max_target_rt60=0.06, min_size_x = ...)
     Augment with randomly selected room impulse responses that have an RT60 of 0.06.
 
-    > augment = RoomSimulator(min_mic_radius=1.0, max_min_radius=1.0)
+    > augment = RoomSimulator(min_mic_distance=1.0, max_mic_distance=1.0)
     Augment with a RIR captured by all positions of the microphone on a sphere, centred around the source at 1m
 
-    > augment = RoomSimulator(min_mic_radius=1.0, max_min_radius=1.0, min_mic_elevation=0.0, max_mic_elevation=0.0)
+    > augment = RoomSimulator(min_mic_distance=1.0, max_mic_distance=1.0, min_mic_elevation=0.0, max_mic_elevation=0.0)
     Augment with a RIR captured by all positions of the microphone on a circle, centred around the source at 1m    
     """
 
@@ -57,8 +57,8 @@ class RoomSimulator(BaseWaveformTransform):
         max_mic_distance: float = 0.35,
         min_mic_azimuth: float = -np.pi,
         max_mic_azimuth: float = np.pi,
-        min_mic_elevation: float = -np.pi,
-        max_mic_elevation: float = np.pi,
+        min_mic_elevation: float = -np.pi,  # TODO: Check if it should default to -np.pi / 2 instead
+        max_mic_elevation: float = np.pi,  # TODO: Check if it should default to np.pi / 2 instead
         calculation_mode: str = "absorption",
         use_ray_tracing: bool = True,
         max_order: int = 1,
@@ -86,7 +86,7 @@ class RoomSimulator(BaseWaveformTransform):
         :param max_absorption_value:
 
         :param min_target_rt60: When `calculation_mode` is `rt60`, it tries to set the absorption value
-            of the surfaces of the room to achieve a target rt60 (in seconds). Note that this parameter
+            of the surfaces of the room to achieve a target RT60 (in seconds). Note that this parameter
             changes only the materials (absorption coefficients) of the surfaces, NOT the dimension of the rooms.
 
             Example values (may differ!):
@@ -105,14 +105,13 @@ class RoomSimulator(BaseWaveformTransform):
         :param min_mic_azimuth: Minimum azimuth (angle around z axis) of the microphone
             relative to the source, in radians.
         :param max_mic_azimuth:
-        :param min_mic_elevation:
-            Minimum elevation of the microphone relative to the source, in radians.
-        :param max_mic_elevation:
+        :param min_mic_elevation: Minimum elevation of the microphone relative to the source, in radians.
+        :param max_mic_elevation: Maximum elevation of the microphone relative to the source, in radians.
         :param calculation_mode: When set to `absorption`, it will create the room with surfaces based on
             `min_absorption_value` and `max_absorption_value`. If set to `rt60` it will try to assign surface
-            materials that lead to a room impulse response with target rt60 given by `min_target_rt60` and `max_target_rt60`
+            materials that lead to a room impulse response with target RT60 given by `min_target_rt60` and `max_target_rt60`
         :param use_ray_tracing: Whether to use ray_tracing or not (slower but much more accurate).
-            Disable this if you need speed but do not really care for incorrect results.
+            Disable this if you prioritize speed over accuracy.
         :param max_order: Maximum order of reflections for the Image Source Model. E.g. a value of
             1 will only add first order reflections while a value of 4 will add a
             diffuse reverberation tail. *Warning* Placing this higher than 11-12 will result

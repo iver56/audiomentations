@@ -5,7 +5,7 @@ _Added in v0.2.0_
 Change the speed or duration of the signal without changing the pitch. This transform
 employs `librosa.effects.time_stretch` under the hood to achieve the effect.
 
-Under the hood this uses phase vocoding. Note that phase vocoding can degrade audio
+Under the hood, this uses phase vocoding. Note that phase vocoding can degrade audio
 quality by "smearing" transient sounds, altering the timbre of harmonic sounds, and
 distorting pitch modulations. This may result in a loss of sharpness, clarity, or
 naturalness in the transformed audio, especially when the rate is set to an extreme

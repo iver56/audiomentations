@@ -116,8 +116,8 @@ characteristics or simply to quickly add reverb for augmentation purposes.
     create the room with surfaces based on
     [`min_absorption_value`](#min_absorption_value){ #min_absorption_value } and
     [`max_absorption_value`](#max_absorption_value){ #max_absorption_value }. If set to
-    `"rt60"` it will try to assign surface materials that lead to a room impulse
-    response with target RT60 given by
+    `"rt60"`, it will try to assign surface materials that lead to a room impulse
+    response with the target RT60 given by
     [`min_target_rt60`](#min_target_rt60){ #min_target_rt60 } and
     [`max_target_rt60`](#max_target_rt60){ #max_target_rt60 }
 
@@ -128,10 +128,10 @@ characteristics or simply to quickly add reverb for augmentation purposes.
 [`max_order`](#max_order){ #max_order }: `int` • range: [1, ∞)
 :   :octicons-milestone-24: Default: `1`. Maximum order of reflections for the Image
     Source Model. E.g. a value of 1 will only add first order reflections while a value
-    of 12 will add a diffuse reverberation tail. 
+    of 4-12 will add a diffuse reverberation tail.
 
     !!! warning 
-        Placing this higher than 11-12 will result in a very slow augmentation process when `calculation_mode="rt60"`. 
+        Setting this higher than 11-12 can significantly slow down the augmentation process when `calculation_mode="rt60"`. 
     
     !!! tip
         When using `calculation_mode="rt60"`, keep it around `3-4`.

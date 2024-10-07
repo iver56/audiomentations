@@ -12,7 +12,7 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 class RoomSimulator(BaseWaveformTransform):
     """
     A ShoeBox Room Simulator. Simulates a cuboid of parametrized size and 
-    average surface absorption coefficient. It also includes a source \
+    average surface absorption coefficient. It also includes a source
     and microphones in parametrized locations.
 
     Use it when you need a large number of synthetic room impulse responses with specific configuration
@@ -108,14 +108,14 @@ class RoomSimulator(BaseWaveformTransform):
         :param min_mic_elevation: Minimum elevation of the microphone relative to the source, in radians.
         :param max_mic_elevation: Maximum elevation of the microphone relative to the source, in radians.
         :param calculation_mode: When set to `absorption`, it will create the room with surfaces based on
-            `min_absorption_value` and `max_absorption_value`. If set to `rt60` it will try to assign surface
-            materials that lead to a room impulse response with target RT60 given by `min_target_rt60` and `max_target_rt60`
+            `min_absorption_value` and `max_absorption_value`. If set to `rt60`, it will try to assign surface
+            materials that lead to a room impulse response with the target RT60 given by `min_target_rt60` and `max_target_rt60`
         :param use_ray_tracing: Whether to use ray_tracing or not (slower but much more accurate).
             Disable this if you prioritize speed over accuracy.
         :param max_order: Maximum order of reflections for the Image Source Model. E.g. a value of
-            1 will only add first order reflections while a value of 4 will add a
-            diffuse reverberation tail. *Warning* Placing this higher than 11-12 will result
-            in a very slow augmentation process when `calculation_mode="rt60"`. In that case, keep it around `3-4`.
+            1 will only add first order reflections while a value of 4-12 will add a
+            diffuse reverberation tail. *Warning* Setting this higher than 11-12 can significantly slow down the
+            augmentation process when `calculation_mode="rt60"`. In that case, keep it around `3-4`.
         :param leave_length_unchanged: When set to True, the tail of the sound (e.g. reverb at
             the end) will be chopped off so that the length of the output is equal to the
             length of the input.

@@ -34,5 +34,5 @@ class Clip(BaseWaveformTransform):
         self.a_min = a_min
         self.a_max = a_max
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         return np.clip(samples, self.a_min, self.a_max)

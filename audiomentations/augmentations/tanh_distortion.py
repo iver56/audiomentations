@@ -44,7 +44,7 @@ class TanhDistortion(BaseWaveformTransform):
                 self.min_distortion, self.max_distortion
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         # Find out how much to pre-gain the audio to get a given amount of distortion
         percentile = 100 - 99 * self.parameters["distortion_amount"]
         threshold = np.percentile(np.abs(samples), percentile)

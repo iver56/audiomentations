@@ -338,7 +338,7 @@ class RoomSimulator(BaseWaveformTransform):
         # Do the simulation
         self.room.compute_rir()
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         assert samples.dtype == np.float32
 
         rir = self.room.rir[0][0]

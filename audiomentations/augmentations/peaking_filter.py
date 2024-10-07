@@ -94,7 +94,7 @@ class PeakingFilter(BaseWaveformTransform):
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         assert samples.dtype == np.float32
 
         sos = self._get_biquad_coefficients_from_input_parameters(

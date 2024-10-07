@@ -110,7 +110,7 @@ class Limiter(BaseWaveformTransform):
                 "threshold"
             ] = threshold_factor * convert_decibels_to_amplitude_ratio(threshold_db)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         if self.parameters["threshold"] == 0.0:
             # Digital silence input can cause this to happen
             return samples

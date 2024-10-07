@@ -52,7 +52,7 @@ class AdjustDuration(BaseWaveformTransform):
             assert duration_samples > 0
             self.get_target_samples = lambda sr: duration_samples
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         target_samples = self.get_target_samples(sample_rate)
         sample_length = samples.shape[-1]
 

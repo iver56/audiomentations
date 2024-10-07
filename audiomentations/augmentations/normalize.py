@@ -24,7 +24,7 @@ class Normalize(BaseWaveformTransform):
         if self.parameters["should_apply"]:
             self.parameters["max_amplitude"] = get_max_abs_amplitude(samples)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         if (
             self.apply_to == "only_too_loud_sounds"
             and self.parameters["max_amplitude"] < 1.0

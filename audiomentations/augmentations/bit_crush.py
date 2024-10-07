@@ -42,6 +42,6 @@ class BitCrush(BaseWaveformTransform):
                 self.min_bit_depth, self.max_bit_depth
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         q = (2 ** self.parameters["bit_depth"] / 2) + 1
         return np.round(samples * q) / q

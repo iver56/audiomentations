@@ -63,7 +63,7 @@ class LoudnessNormalization(BaseWaveformTransform):
                 random.uniform(self.min_lufs, self.max_lufs)
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         try:
             import pyloudnorm
         except ImportError:

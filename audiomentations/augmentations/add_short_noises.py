@@ -301,7 +301,7 @@ class AddShortNoises(BaseWaveformTransform):
 
             self.parameters["sounds"] = sounds
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         num_samples = samples.shape[-1]
         noise_placeholder = np.zeros_like(samples)
 

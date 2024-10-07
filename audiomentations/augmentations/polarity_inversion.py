@@ -11,7 +11,7 @@ class PolarityInversion(BaseWaveformTransform):
     the same compared to the original when played back in isolation. However, when mixed with
     other audio sources, the result may be different. This waveform inversion technique
     is sometimes used for audio cancellation or obtaining the difference between two waveforms.
-    However, in the context of audio data augmentation, this transform can be useful when
+    In the context of audio data augmentation, this transform can be useful when
     training phase-aware machine learning models.
     """
 
@@ -26,5 +26,5 @@ class PolarityInversion(BaseWaveformTransform):
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         return -samples

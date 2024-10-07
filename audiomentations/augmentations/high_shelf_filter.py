@@ -116,7 +116,7 @@ class HighShelfFilter(BaseWaveformTransform):
         self.parameters["gain_db"] = random.uniform(self.min_gain_db, self.max_gain_db)
         self.parameters["q_factor"] = random.uniform(self.min_q, self.max_q)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         nyquist_freq = sample_rate // 2
         center_freq = self.parameters["center_freq"]
         if center_freq > nyquist_freq:

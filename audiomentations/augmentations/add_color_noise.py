@@ -1,14 +1,12 @@
 import random
 
 import numpy as np
+import scipy.signal as sp
+from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+from audiomentations.core.utils import a_weighting_frequency_envelope
 from audiomentations.core.utils import calculate_desired_noise_rms, calculate_rms
-from audiomentations.core.utils import (
-    a_weighting_frequency_envelope,
-)
-
-import scipy.signal as sp
 
 NOISE_COLOR_DECAYS = {
     "pink": -1.0 * 10 * np.log10(2),
@@ -194,7 +192,9 @@ class AddColorNoise(BaseWaveformTransform):
             self.parameters["f_decay"] = f_decay
             self.parameters["apply_a_weighting"] = apply_a_weighting
 
-    def apply(self, samples: np.ndarray, sample_rate: int):
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         desired_noise_rms = self.parameters["desired_noise_rms"]
 
         if samples.ndim == 1:

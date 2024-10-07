@@ -114,7 +114,7 @@ class GainTransition(BaseWaveformTransform):
                 self.min_gain_db, self.max_gain_db
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         num_samples = samples.shape[-1]
         fade_mask = get_fade_mask(
             start_level_db=self.parameters["start_gain_db"],

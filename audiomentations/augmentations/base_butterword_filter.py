@@ -181,7 +181,7 @@ class BaseButterworthFilter(BaseWaveformTransform):
                 self.parameters["center_freq"] * bandwidth_fraction
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int = None):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int = None) -> NDArray[np.float32]:
         assert samples.dtype == np.float32
 
         if self.filter_type in BaseButterworthFilter.ALLOWED_ONE_SIDE_FILTER_TYPES:

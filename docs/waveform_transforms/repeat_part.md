@@ -7,7 +7,7 @@ This can be useful when simulating scenarios where a short audio snippet gets
 repeated, for example:
 
 * Repetitions of some musical note or sound in a rhythmical way
-* A person stutters or says the same word (with variations) multiple times on a row
+* A person stutters or says the same word (with variations) multiple times in a row
 * A mechanical noise with periodic repetitions
 * A "skip in the record" or a "stuck needle" effect, reminiscent of vinyl records or
   CDs when they repeatedly play a short section due to a scratch or other

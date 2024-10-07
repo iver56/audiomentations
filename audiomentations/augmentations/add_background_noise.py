@@ -121,7 +121,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
                 self.parameters["noise_start_index"] + num_samples
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         noise_sound, _ = self._load_sound(
             self.parameters["noise_file_path"], sample_rate
         )

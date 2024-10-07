@@ -10,7 +10,8 @@ from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
-    convert_float_samples_to_int16, get_max_abs_amplitude,
+    convert_float_samples_to_int16,
+    get_max_abs_amplitude,
 )
 
 
@@ -112,7 +113,9 @@ class Mp3Compression(BaseWaveformTransform):
             ]
             self.parameters["bitrate"] = random.choice(bitrate_choices)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         if self.backend == "lameenc":
             return self.apply_lameenc(samples, sample_rate)
         elif self.backend == "pydub":
@@ -139,7 +142,9 @@ class Mp3Compression(BaseWaveformTransform):
             samples = samples * self.post_gain_factor
         return samples
 
-    def apply_lameenc(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply_lameenc(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         try:
             import lameenc
         except ImportError:
@@ -194,7 +199,9 @@ class Mp3Compression(BaseWaveformTransform):
 
         return degraded_samples
 
-    def apply_pydub(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply_pydub(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         try:
             import pydub
         except ImportError:

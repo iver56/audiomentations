@@ -19,7 +19,7 @@ class RepeatPart(BaseWaveformTransform):
     repeated, for example:
 
     * Repetitions of some musical note or sound in a rhythmical way
-    * A person stutters or says the same word (with variations) multiple times on a row
+    * A person stutters or says the same word (with variations) multiple times in a row
     * A mechanical noise with periodic repetitions
     * A "skip in the record" or a "stuck needle" effect, reminiscent of vinyl records or
         CDs when they repeatedly play a short section due to a scratch or other
@@ -111,9 +111,9 @@ class RepeatPart(BaseWaveformTransform):
             self.crossfade = True
         if crossfade_duration > (min_part_duration / 2):
             raise ValueError(
-                "`crossfade_duration` must be <= 0.5 * `min_part_duration`. You can fix this"
-                " error by increasing `min_part_duration` or by decreasing"
-                " `crossfade_duration`."
+                "crossfade_duration must be <= 0.5 * min_part_duration. You can fix this"
+                " error by increasing min_part_duration or by decreasing"
+                " crossfade_duration."
             )
         self.crossfade_duration = crossfade_duration
         self.part_transform = part_transform
@@ -161,7 +161,7 @@ class RepeatPart(BaseWaveformTransform):
             crossfade_length += 1
         return crossfade_length
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         crossfade_length = 0
         half_crossfade_length = 0
         equal_energy_fade_in_mask = None

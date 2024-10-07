@@ -54,7 +54,7 @@ class TimeMask(BaseWaveformTransform):
                 0, num_samples - self.parameters["t"]
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         new_samples = samples.copy()
         t = self.parameters["t"]
         t0 = self.parameters["t0"]

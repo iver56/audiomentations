@@ -11,8 +11,9 @@ class Resample(BaseWaveformTransform):
     """
     Resample signal using librosa.core.resample
 
-    To do downsampling only set both minimum and maximum sampling rate lower than
-    original sampling rate and vice versa to do upsampling only.
+    To do downsampling only, set both minimum and maximum sampling rate lower than
+    original sampling rate. Conversely, to perform upsampling only, set both rates higher than the original sampling
+    rate.
     """
 
     supports_multichannel = True
@@ -21,8 +22,8 @@ class Resample(BaseWaveformTransform):
         self, min_sample_rate: int = 8000, max_sample_rate: int = 44100, p: float = 0.5
     ):
         """
-        :param min_sample_rate: Minimum sample rate
-        :param max_sample_rate: Maximum sample rate
+        :param min_sample_rate: The minimum sample rate
+        :param max_sample_rate: The maximum sample rate
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -37,7 +38,7 @@ class Resample(BaseWaveformTransform):
                 self.min_sample_rate, self.max_sample_rate
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         samples = librosa.core.resample(
             samples,
             orig_sr=sample_rate,

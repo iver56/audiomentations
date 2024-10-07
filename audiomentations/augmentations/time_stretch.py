@@ -36,7 +36,7 @@ class TimeStretch(BaseWaveformTransform):
             """
             self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         try:
             time_stretched_samples = librosa.effects.time_stretch(
                 samples, rate=self.parameters["rate"]

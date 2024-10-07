@@ -35,7 +35,7 @@ class PitchShift(BaseWaveformTransform):
                 self.min_semitones, self.max_semitones
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         try:
             resample_type = (
                 "kaiser_best" if librosa.__version__.startswith("0.8.") else "soxr_hq"

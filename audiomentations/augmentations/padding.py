@@ -53,7 +53,7 @@ class Padding(BaseWaveformTransform):
                 int(round(self.max_fraction * input_length)),
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         padding_length = self.parameters["padding_length"]
         if padding_length == 0:
             return samples

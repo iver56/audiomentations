@@ -32,7 +32,7 @@ class AddGaussianNoise(BaseWaveformTransform):
                 self.min_amplitude, self.max_amplitude
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         noise = np.random.randn(*samples.shape).astype(np.float32)
         samples = samples + self.parameters["amplitude"] * noise
         return samples

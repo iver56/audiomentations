@@ -44,7 +44,7 @@ class Aliasing(BaseWaveformTransform):
                 random.uniform(self.min_mel, self.max_mel)
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         n = samples.shape[-1]
         x = np.linspace(0, n, num=n)
         dwn_n = round(n * float(self.parameters["new_sample_rate"]) / sample_rate)

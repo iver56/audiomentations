@@ -14,7 +14,7 @@ See this page for examples: [http://gdsp.hf.ntnu.no/lessons/3/17/](http://gdsp.h
 
 ## Input-output example
 
-In this example we apply tanh distortion with the "distortion amount" (think of it as a knob that goes from 0 to 1) set to 0.25
+In this example, we apply tanh distortion with the distortion amount (think of it as a knob that goes from 0 to 1) set to 0.25
 
 ![Input-output waveforms and spectrograms](TanhDistortion.webp)
 

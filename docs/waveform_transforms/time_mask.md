@@ -43,9 +43,9 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
     fraction of the total sound length.
 
 [`fade`](#fade){ #fade }: `bool`
-:   :octicons-milestone-24: Default: `False`. When set to `True`, add a linear fade in
-    and fade out of the silent part. This can smooth out an unwanted abrupt change
-    between two consecutive samples (which sounds like a transient/click/pop).
+:   :octicons-milestone-24: Default: `False`. When set to `True`, a linear fade-in and fade-out is added to the silent part.
+    This can smooth out unwanted abrupt changes between consecutive samples, which might
+    otherwise sound like transients/clicks/pops.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

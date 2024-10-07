@@ -34,15 +34,16 @@ class Shift(BaseWaveformTransform):
             "fraction": Fraction of the total sound length
             "samples": Number of audio samples
             "seconds": Number of seconds
-        :param rollover: When set to True, samples that roll beyond the first or last position
-            are re-introduced at the last or first. When set to False, samples that roll beyond
+        :param rollover: When set to True, samples that roll beyond the
+            last position are re-introduced at the first position, and samples that roll beyond the first
+            position are re-introduced at the last position. When set to False, samples that roll beyond
             the first or last position are discarded. In other words, rollover=False results in
             an empty space (with zeroes).
         :param fade_duration: If you set this to a positive number (in seconds), there
             will be a fade in and/or out at the "stitch" (that was the start or the end
             of the audio before the shift). This can smooth out an unwanted abrupt
-            change between two consecutive samples (which sounds like a
-            transient/click/pop). This parameter denotes the duration of the fade in
+            change between two consecutive samples, which would otherwise sound like a transient/click/pop.
+            This parameter denotes the duration of the fade in
             seconds. To disable the fading feature, set this parameter to 0.0.
         :param p: The probability of applying this transform
         """

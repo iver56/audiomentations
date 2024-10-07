@@ -56,16 +56,17 @@ version, you can check the ["Old Shift API (<=v0.32.0)" section](#old-shift-api-
     shift.
 
 `rollover`: `bool`
-:   :octicons-milestone-24: Default: `True`. When set to `True`, samples that roll
-    beyond the first or last position are re-introduced at the last or first. When set
-    to `False`, samples that roll beyond the first or last position are discarded. In
-    other words, `rollover=False` results in an empty space (with zeroes).
+:   :octicons-milestone-24: Default: `True`. When set to `True`, samples that roll beyond the
+    last position are re-introduced at the first position, and samples that roll beyond the first
+    position are re-introduced at the last position. When set to `False`, samples that roll
+    beyond the first or last position are discarded. In other words, `rollover=False` results
+    in an empty space (with zeroes).
 
 `fade`: `bool`
 :   :octicons-milestone-24: Default: `False`. When set to `True`, there will be a short
     fade in and/or out at the "stitch" (that was the start or the end of the audio
     before the shift). This can smooth out an unwanted abrupt change between two
-    consecutive samples (which sounds like a transient/click/pop).
+    consecutive samples, which would otherwise sound like a transient/click/pop.
 
 `fade_duration`: `float` • unit: seconds
 :   :octicons-milestone-24: Default: `0.01`. If `fade=True`, then this is the duration

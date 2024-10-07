@@ -26,9 +26,9 @@ class TimeMask(BaseWaveformTransform):
             total sound length. Must be between 0.0 and 1.0
         :param max_band_part: Maximum length of the silent part as a fraction of the
             total sound length. Must be between 0.0 and 1.0
-        :param fade: When set to True, add a linear fade in and fade out of the silent
-            part. This can smooth out an unwanted abrupt change between two consecutive
-            samples (which sounds like a transient/click/pop).
+        :param fade: When set to True, a linear fade-in and fade-out is added to the silent part.
+            This can smooth out unwanted abrupt changes between consecutive samples, which might
+            otherwise sound like transients/clicks/pops.
         :param p: The probability of applying this transform
         """
         super().__init__(p)

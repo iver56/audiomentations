@@ -45,3 +45,9 @@ class Resample(BaseWaveformTransform):
             target_sr=self.parameters["target_sample_rate"],
         )
         return samples
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_sample_rate",
+            "max_sample_rate"
+        )

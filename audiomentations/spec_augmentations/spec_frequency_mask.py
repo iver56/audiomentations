@@ -70,4 +70,12 @@ class SpecFrequencyMask(BaseSpectrogramTransform):
         ]
         ] = fill_value
         return magnitude_spectrogram
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_mask_fraction",
+            "max_mask_fraction",
+            "fill_mode",
+            "fill_constant"
+        )
 

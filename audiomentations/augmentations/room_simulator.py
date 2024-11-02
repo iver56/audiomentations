@@ -93,6 +93,7 @@ class RoomSimulator(BaseWaveformTransform):
                 Recording studio:  0.3s
                 Office          :  0.5s
                 Concert hall    :  1.5s
+        :param max_target_rt60:
 
         :param min_source_x: Minimum x location of the source (meters)
         :param max_source_x: Minimum x location of the source (meters)
@@ -356,3 +357,36 @@ class RoomSimulator(BaseWaveformTransform):
         if self.leave_length_unchanged:
             signal_ir = signal_ir[..., : samples.shape[-1]]
         return signal_ir
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_size_x",
+            "max_size_x",
+            "min_size_y",
+            "max_size_y",
+            "min_size_z",
+            "max_size_z",
+            "min_absorption_value",
+            "max_absorption_value",
+            "min_target_rt60",
+            "max_target_rt60",
+            "min_source_x",
+            "max_source_x",
+            "min_source_y",
+            "max_source_y",
+            "min_source_z",
+            "max_source_z",
+            "min_mic_distance",
+            "max_mic_distance",
+            "min_mic_azimuth",
+            "max_mic_azimuth",
+            "min_mic_elevation",
+            "max_mic_elevation",
+            "calculation_mode",
+            "use_ray_tracing",
+            "max_order",
+            "leave_length_unchanged",
+            "padding",
+            "ray_tracing_options"
+        )
+

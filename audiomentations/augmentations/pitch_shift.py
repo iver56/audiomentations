@@ -64,3 +64,9 @@ class PitchShift(BaseWaveformTransform):
                 )
 
         return pitch_shifted_samples
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_semitones",
+            "max_semitones"
+        )

@@ -1,9 +1,10 @@
-from typing import Callable
+from typing import Callable, Any
 
 import numpy as np
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+from audiomentations.core.utils import format_args
 
 
 class Lambda(BaseWaveformTransform):
@@ -22,8 +23,15 @@ class Lambda(BaseWaveformTransform):
         :param **kwargs: Any extra keyword arguments to be passed to the transform.
         """
         super().__init__(p=p)
+        self.name = "custom_transform"
         self.transform = transform
         self.kwargs = kwargs
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         return self.transform(samples, sample_rate, **self.kwargs)
+    
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "transform",
+            "transform"
+        )

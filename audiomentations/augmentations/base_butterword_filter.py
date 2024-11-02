@@ -242,3 +242,11 @@ class BaseButterworthFilter(BaseWaveformTransform):
                     )
 
         return processed_samples
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_rolloff",
+            "max_rolloff",
+            "filter_type",
+            "zero_phase"
+        )

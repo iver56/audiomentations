@@ -19,3 +19,6 @@ class SpecChannelShuffle(BaseSpectrogramTransform):
 
     def apply(self, magnitude_spectrogram):
         return magnitude_spectrogram[..., self.parameters["shuffled_channel_indexes"]]
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return ()

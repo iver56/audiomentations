@@ -46,3 +46,9 @@ class Gain(BaseWaveformTransform):
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         return samples * self.parameters["amplitude_ratio"]
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_gain_db",
+            "max_gain_db"
+        )

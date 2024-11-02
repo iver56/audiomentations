@@ -35,3 +35,9 @@ class Normalize(BaseWaveformTransform):
             return samples / self.parameters["max_amplitude"]
         else:
             return samples
+            
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "apply_to",
+            "apply_to"
+        )

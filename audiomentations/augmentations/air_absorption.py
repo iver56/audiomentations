@@ -187,3 +187,13 @@ class AirAbsorption(BaseWaveformTransform):
                 result[chn_idx, :] = librosa.istft(stft * mask, length=result.shape[1])
 
         return result
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_temperature",
+            "max_temperature",
+            "min_humidity",
+            "max_humidity",
+            "min_distance",
+            "max_distance"
+        )

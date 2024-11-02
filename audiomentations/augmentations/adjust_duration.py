@@ -51,6 +51,9 @@ class AdjustDuration(BaseWaveformTransform):
         elif duration_samples:
             assert duration_samples > 0
             self.get_target_samples = lambda sr: duration_samples
+            
+        self.duration_samples = duration_samples
+        self.duration_seconds = duration_seconds
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         target_samples = self.get_target_samples(sample_rate)
@@ -76,3 +79,11 @@ class AdjustDuration(BaseWaveformTransform):
                 else:
                     pad_width = ((0, 0), (0, padding_length))
             return np.pad(samples, pad_width, self.padding_mode)
+            
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "duration_samples",
+            "duration_seconds",
+            "padding_mode",
+            "padding_position"
+        )

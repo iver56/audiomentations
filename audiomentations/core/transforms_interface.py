@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import random
 import warnings
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -7,6 +10,14 @@ from numpy.typing import NDArray
 from audiomentations.core.utils import (
     is_waveform_multichannel,
     is_spectrogram_multichannel,
+)
+from audiomentations.core.serialization import (
+    Serializable,
+    SerializableMeta,
+    get_shortest_class_fullname
+)
+from audiomentations.core.utils import (
+    format_args
 )
 
 
@@ -21,8 +32,10 @@ class MonoAudioNotSupportedException(Exception):
 class WrongMultichannelAudioShape(Exception):
     pass
 
+class CombinedMeta(SerializableMeta):
+    pass
 
-class BaseTransform:
+class BaseTransform(Serializable, metaclass=CombinedMeta):
     supports_mono = True
     supports_multichannel = False
 
@@ -31,6 +44,19 @@ class BaseTransform:
         self.p = p
         self.parameters = {"should_apply": None}
         self.are_parameters_frozen = False
+
+    def __repr__(self) -> str:
+        state = self.get_base_init_args()
+        state.update(self.get_transform_init_args())
+        return f"{self.__class__.__name__}({format_args(state)})"
+
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        """Returns names of arguments that are used in __init__ method of the transform."""
+        msg = (
+            f"Class {self.get_class_fullname()} is not serializable because the `get_transform_init_args_names` "
+            "method is not implemented"
+        )
+        raise NotImplementedError(msg)
 
     def serialize_parameters(self):
         """Return the parameters as a JSON-serializable dict."""
@@ -48,6 +74,24 @@ class BaseTransform:
         Unmark all parameters as frozen, i.e. let them be randomized for each call.
         """
         self.are_parameters_frozen = False
+        
+    @classmethod
+    def get_class_fullname(cls) -> str:
+        return get_shortest_class_fullname(cls)
+        
+    @classmethod
+    def is_serializable(cls) -> bool:
+        return True
+
+    def get_base_init_args(self) -> dict[str, Any]:
+        """Returns base init args - p"""
+        return {"p": self.p}
+
+    def get_transform_init_args(self) -> dict[str, Any]:
+        """Exclude seed from init args during serialization"""
+        args = {k: getattr(self, k) for k in self.get_transform_init_args_names()}
+        args.pop("seed", None)  # Remove seed from args
+        return args
 
 
 class BaseWaveformTransform(BaseTransform):
@@ -95,6 +139,16 @@ class BaseWaveformTransform(BaseTransform):
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         self.parameters["should_apply"] = random.random() < self.p
+        
+    @classmethod
+    def get_class_fullname(cls) -> str:
+        return get_shortest_class_fullname(cls)        
+
+    def to_dict_private(self) -> dict[str, Any]:
+        state = {"__class_fullname__": self.get_class_fullname()}
+        state.update(self.get_base_init_args())
+        state.update(self.get_transform_init_args())
+        return state
 
 
 class BaseSpectrogramTransform(BaseTransform):
@@ -137,3 +191,13 @@ class BaseSpectrogramTransform(BaseTransform):
 
     def randomize_parameters(self, magnitude_spectrogram):
         self.parameters["should_apply"] = random.random() < self.p
+        
+    @classmethod
+    def get_class_fullname(cls) -> str:
+        return get_shortest_class_fullname(cls)        
+
+    def to_dict_private(self) -> dict[str, Any]:
+        state = {"__class_fullname__": self.get_class_fullname()}
+        state.update(self.get_base_init_args())
+        state.update(self.get_transform_init_args())
+        return state

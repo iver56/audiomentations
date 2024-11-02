@@ -43,3 +43,12 @@ class LowPassFilter(BaseButterworthFilter):
             p=p,
             filter_type="lowpass",
         )
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_cutoff_freq",
+            "max_cutoff_freq",
+            "min_rolloff",
+            "max_rolloff",
+            "zero_phase"
+        )

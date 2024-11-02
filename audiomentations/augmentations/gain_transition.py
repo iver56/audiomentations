@@ -147,3 +147,12 @@ class GainTransition(BaseWaveformTransform):
                 self.parameters["end_gain_db"]
             )
         return samples
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_gain_db",
+            "max_gain_db",
+            "min_duration",
+            "max_duration",
+            "duration_unit"
+        )

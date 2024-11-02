@@ -214,3 +214,13 @@ class AddColorNoise(BaseWaveformTransform):
             return samples + noise_with_unit_rms * desired_noise_rms
         else:
             return samples + noise_with_unit_rms * desired_noise_rms
+            
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_snr_db",
+            "max_snr_db",
+            "min_f_decay",
+            "max_f_decay",
+            "p_apply_a_weighting",
+            "n_fft"
+        )

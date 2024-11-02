@@ -51,3 +51,9 @@ class AddGaussianSNR(BaseWaveformTransform):
             0.0, self.parameters["noise_std"], size=samples.shape
         ).astype(np.float32)
         return samples + noise
+        
+    def get_transform_init_args_names(self) -> tuple[str, ...]:
+        return (
+            "min_snr_db",
+            "max_snr_db"
+        )

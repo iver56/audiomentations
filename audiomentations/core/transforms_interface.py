@@ -83,7 +83,7 @@ class BaseTransform(Serializable, metaclass=CombinedMeta):
     def get_transform_init_args(self) -> dict[str, Any]:
         """Exclude seed from init args during serialization"""
         init_signature = inspect.signature(self.__init__)
-        args = {k: getattr(self, k) for k, params in init_signature.parameters.items()}
+        args = {k: getattr(self, k) for k, _ in init_signature.parameters.items()}
         args.pop("seed", None)  # Remove seed from args
         return args
 

@@ -88,9 +88,3 @@ class LoudnessNormalization(BaseWaveformTransform):
             ).transpose()
         else:
             return samples
-            
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_lufs",
-            "max_lufs"
-        )

@@ -152,14 +152,3 @@ class Limiter(BaseWaveformTransform):
                 ]
 
         return processed_samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_threshold_db",
-            "max_threshold_db",
-            "min_attack",
-            "max_attack",
-            "min_release",
-            "max_release",
-            "threshold_mode"
-        )

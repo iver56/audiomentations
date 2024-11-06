@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import random
 import warnings
 from typing import Any
@@ -50,14 +51,6 @@ class BaseTransform(Serializable, metaclass=CombinedMeta):
         state.update(self.get_transform_init_args())
         return f"{self.__class__.__name__}({format_args(state)})"
 
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        """Returns names of arguments that are used in __init__ method of the transform."""
-        msg = (
-            f"Class {self.get_class_fullname()} is not serializable because the `get_transform_init_args_names` "
-            "method is not implemented"
-        )
-        raise NotImplementedError(msg)
-
     def serialize_parameters(self):
         """Return the parameters as a JSON-serializable dict."""
         return self.parameters
@@ -89,7 +82,8 @@ class BaseTransform(Serializable, metaclass=CombinedMeta):
 
     def get_transform_init_args(self) -> dict[str, Any]:
         """Exclude seed from init args during serialization"""
-        args = {k: getattr(self, k) for k in self.get_transform_init_args_names()}
+        init_signature = inspect.signature(self.__init__)
+        args = {k: getattr(self, k) for k, params in init_signature.parameters.items()}
         args.pop("seed", None)  # Remove seed from args
         return args
 

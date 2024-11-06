@@ -36,9 +36,3 @@ class AddGaussianNoise(BaseWaveformTransform):
         noise = np.random.randn(*samples.shape).astype(np.float32)
         samples = samples + self.parameters["amplitude"] * noise
         return samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_amplitude",
-            "max_amplitude"
-        )

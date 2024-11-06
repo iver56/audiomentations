@@ -65,10 +65,3 @@ class TimeMask(BaseWaveformTransform):
             mask[-fade_length:] = np.linspace(0, 1, num=fade_length)
         new_samples[..., t0 : t0 + t] *= mask
         return new_samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_band_part",
-            "max_band_part",
-            "fade"
-        )

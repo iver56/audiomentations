@@ -61,9 +61,3 @@ class TanhDistortion(BaseWaveformTransform):
             distorted_samples = post_gain * distorted_samples
 
         return distorted_samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_distortion",
-            "max_distortion"
-        )

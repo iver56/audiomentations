@@ -26,6 +26,3 @@ class Reverse(BaseWaveformTransform):
             return np.fliplr(samples)
         else:
             return np.flipud(samples)
-            
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return ()

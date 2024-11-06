@@ -167,8 +167,6 @@ class AddShortNoises(BaseWaveformTransform):
             self.signal_gain_db_during_noise = signal_gain_in_db_during_noise
         else:
             self.signal_gain_db_during_noise = 0.0  # the default
-            
-        self.signal_gain_in_db_during_noise = self.signal_gain_db_during_noise
 
         self.min_time_between_sounds = min_time_between_sounds
         self.max_time_between_sounds = max_time_between_sounds
@@ -405,27 +403,3 @@ class AddShortNoises(BaseWaveformTransform):
         )
         del state["_load_sound"]
         return state
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "sound_file_paths",
-            "min_snr_db",
-            "max_snr_db",
-            "min_time_between_sounds",
-            "max_time_between_sounds",
-            "noise_rms",
-            "min_absolute_noise_rms_db",
-            "max_absolute_noise_rms_db",
-            "add_all_noises_with_same_level",
-            "include_silence_in_noise_rms_estimation",
-            "burst_probability",
-            "min_pause_factor_during_burst",
-            "max_pause_factor_during_burst",
-            "min_fade_in_time",
-            "max_fade_in_time",
-            "min_fade_out_time",
-            "max_fade_out_time",
-            "signal_gain_in_db_during_noise",
-            "signal_gain_db_during_noise",
-            "noise_transform"
-        )

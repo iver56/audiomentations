@@ -164,12 +164,3 @@ class Shift(BaseWaveformTransform):
                     ] *= fade_in[:fade_in_length]
 
         return shifted_samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_shift",
-            "max_shift",
-            "shift_unit",
-            "rollover",
-            "fade_duration"
-        )

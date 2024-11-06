@@ -41,11 +41,9 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             length of the input.
         """
         super().__init__(p)
-        self.ir_path = ir_path
         self.ir_files = [str(p) for p in find_audio_files_in_paths(ir_path)]
         assert self.ir_files, "No impulse response files found at the specified path."
-        self.lru_cache_size = lru_cache_size
-        self.__load_ir = functools.lru_cache(maxsize=self.lru_cache_size)(self.__load_ir)
+        self.__load_ir = functools.lru_cache(maxsize=lru_cache_size)(self.__load_ir)
         self.leave_length_unchanged = leave_length_unchanged
 
     @staticmethod
@@ -103,10 +101,3 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         )
         del state["_ApplyImpulseResponse__load_ir"]
         return state
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "ir_path",
-            "lru_cache_size",
-            "leave_length_unchanged"
-        )

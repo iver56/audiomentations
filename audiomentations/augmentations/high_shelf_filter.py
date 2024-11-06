@@ -144,13 +144,3 @@ class HighShelfFilter(BaseWaveformTransform):
                 )
 
         return processed_samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_center_freq",
-            "max_center_freq",
-            "min_gain_db",
-            "max_gain_db",
-            "min_q",
-            "max_q"
-        )

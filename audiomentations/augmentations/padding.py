@@ -86,12 +86,3 @@ class Padding(BaseWaveformTransform):
             samples = np.pad(samples, pad_width, self.mode)
 
         return samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "mode",
-            "min_fraction",
-            "max_fraction",
-            "pad_section"
-        )
-

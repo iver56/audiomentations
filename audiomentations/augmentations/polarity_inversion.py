@@ -28,6 +28,3 @@ class PolarityInversion(BaseWaveformTransform):
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         return -samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return ()

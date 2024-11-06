@@ -45,9 +45,3 @@ class BitCrush(BaseWaveformTransform):
     def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         q = (2 ** self.parameters["bit_depth"] / 2) + 1
         return np.round(samples * q) / q
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_bit_depth",
-            "max_bit_depth"
-        )

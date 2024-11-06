@@ -51,14 +51,3 @@ class BandPassFilter(BaseButterworthFilter):
             p=p,
             filter_type="bandpass",
         )
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_center_freq",
-            "max_center_freq",
-            "min_bandwidth_fraction",
-            "max_bandwidth_fraction",
-            "min_rolloff",
-            "max_rolloff",
-            "zero_phase"
-        )

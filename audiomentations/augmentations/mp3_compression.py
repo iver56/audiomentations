@@ -251,11 +251,3 @@ class Mp3Compression(BaseWaveformTransform):
                 degraded_samples = degraded_samples.reshape((1, -1))
 
         return degraded_samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_bitrate",
-            "max_bitrate",
-            "backend"
-        )
-

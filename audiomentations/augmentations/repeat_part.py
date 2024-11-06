@@ -387,14 +387,3 @@ class RepeatPart(BaseWaveformTransform):
         super().unfreeze_parameters()
         if hasattr(self.part_transform, "unfreeze_parameters"):
             self.part_transform.unfreeze_parameters()
-            
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_repeats",
-            "max_repeats",
-            "min_part_duration",
-            "max_part_duration",
-            "mode",
-            "crossfade_duration",
-            "part_transform"
-        )

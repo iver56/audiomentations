@@ -178,14 +178,3 @@ class AddBackgroundNoise(BaseWaveformTransform):
         )
         del state["_load_sound"]
         return state
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "sound_file_paths",
-            "min_snr_db",
-            "max_snr_db",
-            "noise_rms",
-            "min_absolute_rms_db",
-            "max_absolute_rms_db",
-            "noise_transform"
-        )

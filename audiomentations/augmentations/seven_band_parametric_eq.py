@@ -48,8 +48,6 @@ class SevenBandParametricEQ(BaseWaveformTransform):
         """
         super().__init__(p)
         assert min_gain_db <= max_gain_db
-        self.min_gain_db = min_gain_db
-        self.max_gain_db = max_gain_db
 
         self.low_shelf_filter = LowShelfFilter(
             min_center_freq=42.0,
@@ -120,9 +118,3 @@ class SevenBandParametricEQ(BaseWaveformTransform):
             samples = self.peaking_filters[i](samples, sample_rate)
         samples = self.high_shelf_filter(samples, sample_rate)
         return samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_gain_db",
-            "max_gain_db"
-        )

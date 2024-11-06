@@ -50,9 +50,3 @@ class ClippingDistortion(BaseWaveformTransform):
         )
         samples = np.clip(samples, lower_threshold, upper_threshold)
         return samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_percentile_threshold",
-            "max_percentile_threshold"
-        )

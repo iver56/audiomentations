@@ -66,10 +66,3 @@ class TimeStretch(BaseWaveformTransform):
             padded_samples[..., :actual_window_length] = window
             time_stretched_samples = padded_samples
         return time_stretched_samples
-        
-    def get_transform_init_args_names(self) -> tuple[str, ...]:
-        return (
-            "min_rate",
-            "max_rate",
-            "leave_length_unchanged"
-        )

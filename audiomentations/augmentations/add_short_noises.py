@@ -116,7 +116,8 @@ class AddShortNoises(BaseWaveformTransform):
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
         super().__init__(p)
-        self.sound_file_paths = find_audio_files_in_paths(sounds_path)
+        self.sounds_path = sounds_path
+        self.sound_file_paths = find_audio_files_in_paths(self.sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
         assert len(self.sound_file_paths) > 0
 
@@ -144,6 +145,7 @@ class AddShortNoises(BaseWaveformTransform):
             raise ValueError("min_snr_db must not be greater than max_snr_db")
         self.min_snr_db = min_snr_db
         self.max_snr_db = max_snr_db
+        self.signal_gain_in_db_during_noise = signal_gain_in_db_during_noise
 
         if (
             signal_gain_db_during_noise is not None
@@ -185,6 +187,7 @@ class AddShortNoises(BaseWaveformTransform):
         )
         self.add_all_noises_with_same_level = add_all_noises_with_same_level
         self.noise_transform = noise_transform
+        self.lru_cache_size = lru_cache_size
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddShortNoises.__load_sound
         )

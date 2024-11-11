@@ -83,7 +83,15 @@ class BaseTransform(Serializable, metaclass=CombinedMeta):
     def get_transform_init_args(self) -> dict[str, Any]:
         """Exclude seed from init args during serialization"""
         init_signature = inspect.signature(self.__init__)
-        args = {k: getattr(self, k) for k, _ in init_signature.parameters.items()}
+        args = {}
+        for k, _ in init_signature.parameters.items():
+            attr = getattr(self, k, None)
+            if attr is not None:
+                args[k] = attr
+            else:
+                warnings.warn(
+                    f"Warning: attribute {k} is not found in the transform definition and it won't be printed."
+                )
         args.pop("seed", None)  # Remove seed from args
         return args
 

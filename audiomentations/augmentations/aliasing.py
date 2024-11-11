@@ -33,7 +33,9 @@ class Aliasing(BaseWaveformTransform):
 
         if min_sample_rate > max_sample_rate:
             raise ValueError("min_sample_rate must not be larger than max_sample_rate")
-
+        
+        self.min_sample_rate = min_sample_rate
+        self.max_sample_rate = max_sample_rate
         self.min_mel = convert_frequency_to_mel(min_sample_rate)
         self.max_mel = convert_frequency_to_mel(max_sample_rate)
 

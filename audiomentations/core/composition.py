@@ -1,10 +1,16 @@
 import random
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseSpectrogramTransform
+from audiomentations.core.serialization import (
+    get_shortest_class_fullname
+)
+from audiomentations.core.utils import format_args
 
+REPR_INDENT_STEP = 2
 
 class BaseCompose:
     def __init__(self, transforms, p: float = 1.0, shuffle: bool = False):
@@ -20,6 +26,9 @@ class BaseCompose:
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
+        
+    def __repr__(self) -> str:
+        return self.indented_repr()
 
     def randomize_parameters(self, *args, **kwargs):
         """
@@ -51,8 +60,29 @@ class BaseCompose:
         if apply_to_children:
             for transform in self.transforms:
                 transform.unfreeze_parameters()
+                
+    def indented_repr(self, indent: int = REPR_INDENT_STEP) -> str:
+        args = {k: v for k, v in self.to_dict_private().items() if not (k.startswith("__") or k == "transforms")}
+        repr_string = self.__class__.__name__ + "(["
+        for t in self.transforms:
+            repr_string += "\n"
+            t_repr = t.indented_repr(indent + REPR_INDENT_STEP) if hasattr(t, "indented_repr") else repr(t)
+            repr_string += " " * indent + t_repr + ","
+        repr_string += "\n" + " " * (indent - REPR_INDENT_STEP) + f"], {format_args(args)})"
+        return repr_string
+        
+    @classmethod
+    def get_class_fullname(cls) -> str:
+        return get_shortest_class_fullname(cls)
 
-
+    def to_dict_private(self) -> dict[str, Any]:
+        return {
+            "__class_fullname__": self.get_class_fullname(),
+            "p": self.p,
+            "transforms": [t.to_dict_private() for t in self.transforms],
+        }
+        
+        
 class Compose(BaseCompose):
     """
     Compose applies the given sequence of transforms when called,

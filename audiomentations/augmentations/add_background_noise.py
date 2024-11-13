@@ -68,7 +68,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
         super().__init__(p)
-        self.sound_file_paths = find_audio_files_in_paths(sounds_path)
+        self.sounds_path = sounds_path
+        self.sound_file_paths = find_audio_files_in_paths(self.sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
 
         assert len(self.sound_file_paths) > 0
@@ -88,7 +89,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
         self.max_absolute_rms_db = max_absolute_rms_db
 
         self.noise_rms = noise_rms
-        self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
+        self.lru_cache_size = lru_cache_size
+        self._load_sound = functools.lru_cache(maxsize=self.lru_cache_size)(
             AddBackgroundNoise._load_sound
         )
         self.noise_transform = noise_transform

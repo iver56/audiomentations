@@ -39,7 +39,7 @@ class AdjustDuration(BaseWaveformTransform):
 
         assert padding_position in ("start", "end")
         self.padding_position = padding_position
-
+        
         assert duration_samples is not None or duration_seconds is not None
         if duration_samples is not None and duration_seconds is not None:
             raise ValueError(
@@ -51,6 +51,9 @@ class AdjustDuration(BaseWaveformTransform):
         elif duration_samples:
             assert duration_samples > 0
             self.get_target_samples = lambda sr: duration_samples
+            
+        self.duration_samples = duration_samples
+        self.duration_seconds = duration_seconds
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         target_samples = self.get_target_samples(sample_rate)

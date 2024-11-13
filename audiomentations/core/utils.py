@@ -2,7 +2,7 @@ import math
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Any
 
 import numpy as np
 import numpy_minmax
@@ -22,6 +22,12 @@ SUPPORTED_EXTENSIONS = (
     ".wav",
 )
 
+def format_args(args_dict: dict[str, Any]) -> str:
+    formatted_args = []
+    for k, v in args_dict.items():
+        v_formatted = f"'{v}'" if isinstance(v, str) else str(v)
+        formatted_args.append(f"{k}={v_formatted}")
+    return ", ".join(formatted_args)
 
 def find_audio_files(
     root_path,

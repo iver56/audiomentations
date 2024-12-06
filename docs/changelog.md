@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.38.0] - 2024-12-06
+
+### Added
+
+* Add/improve parameter validation in `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
+* Add/update type hints for consistency
+* Add human-readable string representation of audiomentations class instances
+
+### Changed
+
+* Improve documentation with respect to consistency, clarity and grammar
+* Adjust Python version compatibility range, so all patches of Python 3.12 are supported
+
+### Removed
+
+* Remove deprecated _in_db args in `Gain`, `AddBackgroundNoises`, `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
+
+### Fixed
+
+* Fix a bug where `AirAbsorption` often chose the wrong humidity bucket
+* Fix wrong logic in validation check of relation between `crossfade_duration` and `min_part_duration` in `RepeatPart`
+* Fix default value of `max_absolute_rms_db` in `AddBackgroundNoises`. It was incorrectly set to -45.0, but is now -15.0. This bug was introduced in 0.31.0.
+* Fix various errors in the documentation of `AddShortNoises` and `AirAbsorption`
+* Fix a bug where `AddShortNoises` sometimes raised a `ValueError` because of an empty array. This bug was introduced in 0.36.1.
+
 ## [0.37.0] - 2024-09-03
 
 ### Changed
@@ -530,6 +555,7 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
+[0.37.0]: https://github.com/iver56/audiomentations/compare/v0.37.0...v0.38.0
 [0.37.0]: https://github.com/iver56/audiomentations/compare/v0.36.1...v0.37.0
 [0.36.1]: https://github.com/iver56/audiomentations/compare/v0.36.0...v0.36.1
 [0.36.0]: https://github.com/iver56/audiomentations/compare/v0.35.0...v0.36.0

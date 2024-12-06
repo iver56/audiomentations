@@ -94,12 +94,30 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.37.0] - 2024-09-03
+## [0.38.0] - 2024-12-06
+
+### Added
+
+* Add/improve parameter validation in `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
+* Add/update type hints for consistency
+* Add human-readable string representation of audiomentations class instances
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this change removes support for macOS running on Intel. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations, C) submit a patch to numpy-minmax, D) run Linux or Windows.
-* Limit numpy dependency to >=1.21,<2 for now, since numpy v2 is not officially supported yet.
+* Improve documentation with respect to consistency, clarity and grammar
+* Adjust Python version compatibility range, so all patches of Python 3.12 are supported
+
+### Removed
+
+* Remove deprecated _in_db args in `Gain`, `AddBackgroundNoises`, `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
+
+### Fixed
+
+* Fix a bug where `AirAbsorption` often chose the wrong humidity bucket
+* Fix wrong logic in validation check of relation between `crossfade_duration` and `min_part_duration` in `RepeatPart`
+* Fix default value of `max_absolute_rms_db` in `AddBackgroundNoises`. It was incorrectly set to -45.0, but is now -15.0. This bug was introduced in 0.31.0.
+* Fix various errors in the documentation of `AddShortNoises` and `AirAbsorption`
+* Fix a bug where `AddShortNoises` sometimes raised a `ValueError` because of an empty array. This bug was introduced in 0.36.1.
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

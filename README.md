@@ -109,7 +109,7 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 ### Removed
 
-* Remove deprecated _in_db args in `Gain`, `AddBackgroundNoises`, `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
+* Remove deprecated _in_db args in `Gain`, `AddBackgroundNoise`, `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
 
 ### Fixed
 

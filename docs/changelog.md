@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-* Remove deprecated _in_db args in `Gain`, `AddBackgroundNoises`, `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
+* Remove deprecated _in_db args in `Gain`, `AddBackgroundNoise`, `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
 
 ### Fixed
 

@@ -109,15 +109,21 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 ### Removed
 
-* Remove deprecated _in_db args in `Gain`, `AddBackgroundNoise`, `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
+* Remove deprecated *_in_db args in [Gain](https://iver56.github.io/audiomentations/waveform_transforms/gain/), [AddBackgroundNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_background_noise/), [AddGaussianSNR](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_snr/), [GainTransition](https://iver56.github.io/audiomentations/waveform_transforms/gain_transition/), [LoudnessNormalization](https://iver56.github.io/audiomentations/waveform_transforms/loudness_normalization/) and [AddShortNoises](https://iver56.github.io/audiomentations/waveform_transforms/add_short_noises/). Those args were deprecated since v0.31.0, and now they are gone. For details, check the documentation page of each transform.
+
+For example:
+
+| Old (deprecated since v0.31.0) | New                       |
+|--------------------------------|---------------------------|
+| `Gain(min_gain_in_db=-12.0)`   | `Gain(min_gain_db=-12.0)` |
 
 ### Fixed
 
 * Fix a bug where `AirAbsorption` often chose the wrong humidity bucket
 * Fix wrong logic in validation check of relation between `crossfade_duration` and `min_part_duration` in `RepeatPart`
-* Fix default value of `max_absolute_rms_db` in `AddBackgroundNoises`. It was incorrectly set to -45.0, but is now -15.0. This bug was introduced in 0.31.0.
+* Fix default value of `max_absolute_rms_db` in `AddBackgroundNoises`. It was incorrectly set to -45.0, but is now -15.0. This bug was introduced in v0.31.0.
 * Fix various errors in the documentation of `AddShortNoises` and `AirAbsorption`
-* Fix a bug where `AddShortNoises` sometimes raised a `ValueError` because of an empty array. This bug was introduced in 0.36.1.
+* Fix a bug where `AddShortNoises` sometimes raised a `ValueError` because of an empty array. This bug was introduced in v0.36.1.
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

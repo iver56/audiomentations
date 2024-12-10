@@ -13,6 +13,7 @@ from .augmentations.bit_crush import BitCrush
 from .augmentations.clip import Clip
 from .augmentations.clipping_distortion import ClippingDistortion
 from .augmentations.gain import Gain
+from .augmentations.gain_peak import GainPeak
 from .augmentations.gain_transition import GainTransition
 from .augmentations.high_pass_filter import HighPassFilter
 from .augmentations.high_shelf_filter import HighShelfFilter

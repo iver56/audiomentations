@@ -93,11 +93,21 @@ class AddBackgroundNoise(BaseWaveformTransform):
             AddBackgroundNoise._load_sound
         )
         self.noise_transform = noise_transform
+        self.time_dict_info = self._get_time_info(sounds_path=self.sound_file_paths)
 
     @staticmethod
     def _load_sound(file_path, sample_rate, offset = 0.0, duration = None):
         
         return load_sound_file(file_path, sample_rate,offset=offset,duration=duration)
+    
+    def _get_time_info(self,sounds_path):
+        time_info_dict = {}
+        
+        for file in sounds_path:
+            seconds = librosa.get_duration(path = file)
+            time_info_dict[file] = seconds
+            
+        return time_info_dict
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -109,7 +119,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
             )
             self.parameters["noise_file_path"] = random.choice(self.sound_file_paths)
 
-            noise_files_seconds = librosa.get_duration(path = self.parameters['noise_file_path'])
+            noise_files_seconds = self.time_dict_info[self.parameters['noise_file_path']]
             signal_file_seconds = len(samples)/sample_rate
 
             min_noise_offset = 0.0

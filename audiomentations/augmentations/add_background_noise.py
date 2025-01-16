@@ -94,7 +94,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
             AddBackgroundNoise._load_sound
         )
         self.noise_transform = noise_transform
-        self.time_info_arr = np.zeros(shape = (len(self.sound_file_paths,)),dtype=float)
+        self.time_info_arr = np.zeros(shape = (len(self.sound_file_paths,)),dtype=np.float32)
         self.time_info_arr.fill(-1.0)
 
     @staticmethod

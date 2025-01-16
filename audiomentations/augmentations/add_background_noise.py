@@ -68,6 +68,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
+        
         super().__init__(p)
         self.sound_file_paths = find_audio_files_in_paths(sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
@@ -93,11 +94,11 @@ class AddBackgroundNoise(BaseWaveformTransform):
             AddBackgroundNoise._load_sound
         )
         self.noise_transform = noise_transform
-        self.time_dict_info = {}
+        self.time_info_arr = np.zeros(shape = (len(self.sound_file_paths,)),dtype=float)
+        self.time_info_arr.fill(-1.0)
 
     @staticmethod
     def _load_sound(file_path, sample_rate, offset = 0.0, duration = None):
-        
         return load_sound_file(file_path, sample_rate,offset=offset,duration=duration)
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
@@ -108,13 +109,13 @@ class AddBackgroundNoise(BaseWaveformTransform):
             self.parameters["rms_db"] = random.uniform(
                 self.min_absolute_rms_db, self.max_absolute_rms_db
             )
-            self.parameters["noise_file_path"] = random.choice(self.sound_file_paths)
+            file_idx = random.randint(0,len(self.sound_file_paths)-1)
+            self.parameters["noise_file_path"] = self.sound_file_paths[file_idx]
 
-            if self.parameters['noise_file_path'] not in self.time_dict_info:
-                seconds = librosa.get_duration(path = self.parameters['noise_file_path'])
-                self.time_dict_info[self.parameters['noise_file_path']] = seconds
-            else:
-                noise_files_seconds = self.time_dict_info[self.parameters['noise_file_path']]
+            if self.time_info_arr[file_idx] != -1.0:
+                self.time_info_arr[file_idx] = librosa.get_duration(path = self.parameters['noise_file_path'])
+            
+            noise_files_seconds = self.time_info_arr[file_idx]
             
             signal_file_seconds = len(samples)/sample_rate
 
@@ -126,7 +127,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int):
 
-        noise_sound = self._load_sound(
+        noise_sound,_ = self._load_sound(
             self.parameters["noise_file_path"], sample_rate,offset=self.parameters['offset'],duration=self.parameters['duration']
         )
 

@@ -301,17 +301,15 @@ if __name__ == "__main__":
                 max_fade_in_time=0.08,
                 min_fade_out_time=0.01,
                 max_fade_out_time=0.1,
-                noise_transform=OneOf(
-                    [
-                        TanhDistortion(min_distortion=0.8, max_distortion=0.99),
-                        RoomSimulator(
-                            calculation_mode="rt60",
-                            min_target_rt60=2.2,
-                            max_target_rt60=3.0,
-                            leave_length_unchanged=False,
-                        ),
-                    ]
-                ),
+                noise_transform=OneOf([
+                    TanhDistortion(min_distortion=0.8, max_distortion=0.99),
+                    RoomSimulator(
+                        calculation_mode="rt60",
+                        min_target_rt60=2.2,
+                        max_target_rt60=3.0,
+                        leave_length_unchanged=False,
+                    ),
+                ]),
                 p=1.0,
             ),
             "num_runs": 5,
@@ -362,8 +360,18 @@ if __name__ == "__main__":
         {"instance": LowPassFilter(p=1.0), "num_runs": 5},
         {"instance": LowShelfFilter(p=1.0), "num_runs": 5},
         {
-            "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
+            "instance": PitchShift(
+                min_semitones=-24, max_semitones=-24, method="librosa_phase_vocoder", p=1.0
+            ),
             "num_runs": 5,
+            "name": "PitchShiftLibrosaPhaseVocoder"
+        },
+        {
+            "instance": PitchShift(
+                min_semitones=-24, max_semitones=-24, method="signalsmith_stretch", p=1.0
+            ),
+            "num_runs": 5,
+            "name": "PitchShiftSignalsmithStretch"
         },
         {
             "instance": Lambda(
@@ -430,9 +438,9 @@ if __name__ == "__main__":
         {"instance": Resample(p=1.0), "num_runs": 5},
         {"instance": Reverse(p=1.0), "num_runs": 1},
         {
-            "instance": Compose(
-                [RoomSimulator(p=1.0, leave_length_unchanged=True), Normalize(p=1.0)]
-            ),
+            "instance": Compose([
+                RoomSimulator(p=1.0, leave_length_unchanged=True), Normalize(p=1.0)
+            ]),
             "num_runs": 5,
             "name": "RoomSimulator",
         },
@@ -477,20 +485,18 @@ if __name__ == "__main__":
         {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
         {"instance": Trim(p=1.0), "num_runs": 1},
         {
-            "instance": Compose(
-                [
-                    AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
-                    SomeOf(
-                        (0, 2),
-                        [
-                            TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
-                            PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
-                        ],
-                    ),
-                    Shift(min_shift=-0.5, max_shift=0.5, p=0.5),
-                    OneOf([TanhDistortion(p=1.0), ClippingDistortion(p=1.0)], p=0.25),
-                ]
-            ),
+            "instance": Compose([
+                AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
+                SomeOf(
+                    (0, 2),
+                    [
+                        TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
+                        PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
+                    ],
+                ),
+                Shift(min_shift=-0.5, max_shift=0.5, p=0.5),
+                OneOf([TanhDistortion(p=1.0), ClippingDistortion(p=1.0)], p=0.25),
+            ]),
             "num_runs": 10,
             "name": "BigCompose",
         },

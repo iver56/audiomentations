@@ -1,3 +1,4 @@
+import python_stretch
 import random
 import warnings
 
@@ -14,19 +15,35 @@ class PitchShift(BaseWaveformTransform):
     supports_multichannel = True
 
     def __init__(
-        self, min_semitones: float = -4.0, max_semitones: float = 4.0, p: float = 0.5
+        self,
+        min_semitones: float = -4.0,
+        max_semitones: float = 4.0,
+        method="signalsmith_stretch",
+        p: float = 0.5,
     ):
         """
         :param min_semitones: Minimum semitones to shift. A negative number means shift down.
         :param max_semitones: Maximum semitones to shift. A positive number means shift up.
+        :param method:
+            "librosa_phase_vocoder": slow, low quality, supports any number of channels
+            "signalsmith_stretch" (default): fast, high quality, only supports mono and stereo
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        assert min_semitones >= -12
-        assert max_semitones <= 12
-        assert min_semitones <= max_semitones
+        if min_semitones < -24:
+            raise ValueError("min_semitones must be >= -24")
+        if max_semitones > 24:
+            raise ValueError("max_semitones must be <= 24")
+        if min_semitones > max_semitones:
+            raise ValueError("min_semitones must not be greater than max_semitones")
         self.min_semitones = min_semitones
         self.max_semitones = max_semitones
+        if method not in ("librosa_phase_vocoder", "signalsmith_stretch"):
+            raise ValueError(
+                'method must be set to either "librosa_phase_vocoder" or'
+                ' "signalsmith_stretch"'
+            )
+        self.method = method
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -35,7 +52,22 @@ class PitchShift(BaseWaveformTransform):
                 self.min_semitones, self.max_semitones
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
+        if self.method == "signalsmith_stretch":
+            original_ndim = samples.ndim
+            if original_ndim == 1:
+                samples = samples[np.newaxis, :]
+
+            stretch = python_stretch.Signalsmith.Stretch()
+            stretch.preset(samples.shape[0], sample_rate)
+            stretch.setTransposeSemitones(self.parameters["num_semitones"])
+            samples = stretch.process(samples)
+            if samples.ndim > original_ndim:
+                samples = samples[0]
+            return samples
+
         try:
             resample_type = (
                 "kaiser_best" if librosa.__version__.startswith("0.8.") else "soxr_hq"

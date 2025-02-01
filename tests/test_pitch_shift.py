@@ -6,6 +6,7 @@ from numpy.testing import assert_array_equal
 
 from audiomentations import PitchShift
 
+
 @pytest.mark.parametrize("method", ["librosa_phase_vocoder", "signalsmith_stretch"])
 def test_apply_pitch_shift_1dim(method):
     samples = np.zeros((2048,), dtype=np.float32)
@@ -59,3 +60,5 @@ def test_validate_parameters():
         PitchShift(max_semitones=40)
     with pytest.raises(ValueError):
         PitchShift(min_semitones=5, max_semitones=2)
+    with pytest.raises(ValueError):
+        PitchShift(method="invalidvalue")

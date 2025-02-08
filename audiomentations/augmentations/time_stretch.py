@@ -21,6 +21,14 @@ class TimeStretch(BaseWaveformTransform):
         method: str = "signalsmith_stretch",
         p: float = 0.5,
     ):
+        """
+        :param min_rate: Minimum rate of change of total duration of the signal. A rate below 1 means the audio is slowed down.
+        :param max_rate: Maximum rate of change of total duration of the signal. A rate greater than 1 means the audio is sped up.
+        :param leave_length_unchanged: The rate changes the duration and effects the samples.
+            This flag is used to keep the total length of the generated output to be same as that of the input signal.
+        :param method: "librosa_phase_vocoder" or "signalsmith_stretch"
+        :param p: The probability of applying this transform.
+        """
         super().__init__(p)
         if min_rate < 0.1:
             raise ValueError("min_rate must be >= 0.1")

@@ -2,16 +2,9 @@
 
 _Added in v0.2.0_
 
-Change the speed or duration of the signal without changing the pitch. This transform
-employs `librosa.effects.time_stretch` under the hood to achieve the effect.
-
-Under the hood, this uses phase vocoding. Note that phase vocoding can degrade audio
-quality by "smearing" transient sounds, altering the timbre of harmonic sounds, and
-distorting pitch modulations. This may result in a loss of sharpness, clarity, or
-naturalness in the transformed audio, especially when the rate is set to an extreme
-value.
-
-If you need a better sounding time stretch method, consider the following alternatives:
+Change the speed or duration of the signal without changing the pitch. This transform lets you choose
+between `method="signalsmith_stretch"` and `method="librosa_phase_vocoder"`. If you need other time stretching methods,
+consider the following alternatives:
 
 * [atempo in ffmpeg](https://ffmpeg.org//ffmpeg-all.html#atempo)
 * [Rubber Band library](https://breakfastquay.com/rubberband/)
@@ -54,8 +47,8 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 [`leave_length_unchanged`](#leave_length_unchanged){ #leave_length_unchanged }: `bool`
 :   :octicons-milestone-24: Default: `True`. The rate changes the duration and effects the samples. This flag is used to keep the total length of the generated output to be same as that of the input signal.
 
-[`method`](#method){ #method }: `str` • choices: "librosa_phase_vocoder", "signalsmith_stretch"
-:   :octicons-milestone-24: Default: "signalsmith_stretch".
+[`method`](#method){ #method }: `str` • choices: `"librosa_phase_vocoder"`, `"signalsmith_stretch"`
+:   :octicons-milestone-24: Default: `"signalsmith_stretch"`.
 
     * `"signalsmith_stretch"`: Use signalsmith-stretch. Pros: 50-100% faster than librosa_phase_vocoder, and provides significantly higher audio quality. Con: Does not support more than 2 channels (stereo).
     * `"librosa_phase_vocoder"`: Use librosa.effects.time_stretch. Pro: Supports any number of channels. Con: phase vocoding can significantly degrade the audio quality by "smearing" transient sounds, altering the timbre of harmonic sounds, and distorting pitch modulations. This may result in a loss of sharpness, clarity, or naturalness in the transformed audio.

@@ -361,17 +361,23 @@ if __name__ == "__main__":
         {"instance": LowShelfFilter(p=1.0), "num_runs": 5},
         {
             "instance": PitchShift(
-                min_semitones=-24, max_semitones=-24, method="librosa_phase_vocoder", p=1.0
+                min_semitones=-24,
+                max_semitones=-24,
+                method="librosa_phase_vocoder",
+                p=1.0,
             ),
             "num_runs": 5,
-            "name": "PitchShiftLibrosaPhaseVocoder"
+            "name": "PitchShiftLibrosaPhaseVocoder",
         },
         {
             "instance": PitchShift(
-                min_semitones=-24, max_semitones=-24, method="signalsmith_stretch", p=1.0
+                min_semitones=-24,
+                max_semitones=-24,
+                method="signalsmith_stretch",
+                p=1.0,
             ),
             "num_runs": 5,
-            "name": "PitchShiftSignalsmithStretch"
+            "name": "PitchShiftSignalsmithStretch",
         },
         {
             "instance": Lambda(
@@ -482,7 +488,20 @@ if __name__ == "__main__":
         },
         {"instance": TanhDistortion(p=1.0), "num_runs": 5},
         {"instance": TimeMask(p=1.0), "num_runs": 5},
-        {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
+        {
+            "instance": TimeStretch(
+                min_rate=0.8, max_rate=1.25, method="signalsmith_stretch", p=1.0
+            ),
+            "num_runs": 5,
+            "name": "TimeStretchSignalsmithStretch",
+        },
+        {
+            "instance": TimeStretch(
+                min_rate=0.8, max_rate=1.25, method="librosa_phase_vocoder", p=1.0
+            ),
+            "num_runs": 5,
+            "name": "TimeStretchLibrosaPhaseVocoder",
+        },
         {"instance": Trim(p=1.0), "num_runs": 1},
         {
             "instance": Compose([

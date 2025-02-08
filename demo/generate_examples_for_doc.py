@@ -622,10 +622,9 @@ class TimeStretchExample(TransformUsageExample):
         )
 
         sound, sample_rate = load_sound_file(
-            librosa.example("libri1"), sample_rate=16000
+            librosa.example("pistachio"), sample_rate=None
         )
-
-        sound = sound[..., 0 : int(4.7 * sample_rate)]
+        sound = sound[..., 0 : int(4.6 * sample_rate)]
 
         transformed_sound = transform(sound, sample_rate)
 

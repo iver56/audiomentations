@@ -39,13 +39,13 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 ## TimeStretch API
 
 [`min_rate`](#min_rate){ #min_rate }: `float` • range: [0.1, 10.0]
-:   :octicons-milestone-24: Default: `0.8`. Minimum rate of change of total duration of the signal. A rate below 1 means the audio is slowed down.
+:   :octicons-milestone-24: Default: `0.8`. Minimum time-stretch rate. Values less than 1.0 slow down the audio (reduce the playback speed).
 
 [`max_rate`](#max_rate){ #max_rate }: `float` • range: [0.1, 10.0]
-:   :octicons-milestone-24: Default: `1.25`. Maximum rate of change of total duration of the signal. A rate greater than 1 means the audio is sped up.
+:   :octicons-milestone-24: Default: `1.25`. Maximum time-stretch rate. Values greater than 1.0 speed up the audio (increase the playback speed).
 
 [`leave_length_unchanged`](#leave_length_unchanged){ #leave_length_unchanged }: `bool`
-:   :octicons-milestone-24: Default: `True`. The rate changes the duration and effects the samples. This flag is used to keep the total length of the generated output to be same as that of the input signal.
+:   :octicons-milestone-24: Default: `True`.  If `True`, the output audio will have the same duration as the input audio. If `False`, the duration of the output audio will be altered by the time-stretch rate.
 
 [`method`](#method){ #method }: `str` • choices: `"librosa_phase_vocoder"`, `"signalsmith_stretch"`
 :   :octicons-milestone-24: Default: `"signalsmith_stretch"`.

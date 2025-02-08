@@ -22,10 +22,10 @@ class TimeStretch(BaseWaveformTransform):
         p: float = 0.5,
     ):
         """
-        :param min_rate: Minimum rate of change of total duration of the signal. A rate below 1 means the audio is slowed down.
-        :param max_rate: Maximum rate of change of total duration of the signal. A rate greater than 1 means the audio is sped up.
-        :param leave_length_unchanged: The rate changes the duration and effects the samples.
-            This flag is used to keep the total length of the generated output to be same as that of the input signal.
+        :param min_rate: Minimum time-stretch rate. Values less than 1.0 slow down the audio (reduce the playback speed).
+        :param max_rate: Maximum time-stretch rate. Values greater than 1.0 speed up the audio (increase the playback speed).
+        :param leave_length_unchanged: If `True`, the output audio will have the same duration as the input audio.
+            If `False`, the duration of the output audio will be altered by the time-stretch rate.
         :param method: "librosa_phase_vocoder" or "signalsmith_stretch"
         :param p: The probability of applying this transform.
         """

@@ -64,10 +64,10 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=48000)
 [`max_humidity`](#max_humidity){ #max_humidity }: `float` • unit: percent • range: [30.0, 90.0]
 :   :octicons-milestone-24: Default: `90.0`. Maximum humidity in percent (between 30.0 and 90.0)
 
-[`min_distance`](#min_distance){ #min_distance }: `float` • unit: meters
+[`min_distance`](#min_distance){ #min_distance }: `float` • unit: meters • range: (0.0, 2500.0]
 :   :octicons-milestone-24: Default: `10.0`. Minimum microphone-source distance in meters.
 
-[`max_distance`](#max_distance){ #max_distance }: `float` • unit: meters
+[`max_distance`](#max_distance){ #max_distance }: `float` • unit: meters • range: (0.0, 2500.0]
 :   :octicons-milestone-24: Default: `100.0`. Maximum microphone-source distance in meters.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

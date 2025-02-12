@@ -91,7 +91,7 @@ def calculate_rms(samples):
     return np.mean(numpy_rms.rms(samples))
 
 
-def calculate_rms_without_silence(samples, sample_rate):
+def calculate_rms_without_silence(samples: NDArray[np.float32], sample_rate: int):
     """
     This function returns the rms of a given noise whose silent periods have been removed. This ensures
     that the rms of the noise is not underestimated. Is most useful for short non-stationary noises.
@@ -115,8 +115,12 @@ def calculate_rms_without_silence(samples, sample_rate):
 
     # The segments with a too low rms are identified and discarded
     rms_all_windows = rms_all_windows[rms_all_windows > rms_threshold]
-    # Beware that each window must have the same number of samples so that this calculation of the rms is valid.
-    return calculate_rms(rms_all_windows)
+    if rms_all_windows.shape[-1] > 0:
+        # Beware that each window must have the same number of samples so that this calculation of the rms is valid.
+        return calculate_rms(rms_all_windows)
+    else:
+        # Handle edge case: No windows remain. This can happen if there was just one window before discarding.
+        return calculate_rms(samples)
 
 
 def calculate_desired_noise_rms(clean_rms, snr):

@@ -20,9 +20,9 @@ from audiomentations.core.utils import (
 
 class AddShortNoises(BaseWaveformTransform):
     """Mix in various (bursts of overlapping) sounds with random pauses between. Useful if your
-    original sound is clean and you want to simulate an environment where short noises sometimes
+    original sound is clean, and you want to simulate an environment where short noises sometimes
     occur.
-    A folder of (noise) sounds to be mixed in must be specified.
+    A file or folder of (noise) sound(s) to be mixed in must be specified.
     """
 
     def __init__(

@@ -94,36 +94,24 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.38.0] - 2024-12-06
-
-### Added
-
-* Add/improve parameter validation in `AddGaussianSNR`, `GainTransition`, `LoudnessNormalization` and `AddShortNoises`
-* Add/update type hints for consistency
-* Add human-readable string representation of audiomentations class instances
+## [0.39.0] - 2025-02-12
 
 ### Changed
 
-* Improve documentation with respect to consistency, clarity and grammar
-* Adjust Python version compatibility range, so all patches of Python 3.12 are supported
+* Place an upper distance limit of 2500 meters in `AirAbsorption` in order to avoid numerical issues
+* Expand the allowed shift range in `PitchShift` from [-12, 12] to [-24, 24]
+* Switch to a higher quality method, `"signalsmith_stretch"`, in `PitchShift` and `TimeStretch`. It sounds significantly better (e.g. less smearing) and is 50-100% faster than `"librosa_phase_vocoder"`
 
-### Removed
+If you want to keep using the old method, `"librosa_phase_vocoder"`, it can be done like this:
 
-* Remove deprecated *_in_db args in [Gain](https://iver56.github.io/audiomentations/waveform_transforms/gain/), [AddBackgroundNoise](https://iver56.github.io/audiomentations/waveform_transforms/add_background_noise/), [AddGaussianSNR](https://iver56.github.io/audiomentations/waveform_transforms/add_gaussian_snr/), [GainTransition](https://iver56.github.io/audiomentations/waveform_transforms/gain_transition/), [LoudnessNormalization](https://iver56.github.io/audiomentations/waveform_transforms/loudness_normalization/) and [AddShortNoises](https://iver56.github.io/audiomentations/waveform_transforms/add_short_noises/). Those args were deprecated since v0.31.0, and now they are gone. For details, check the documentation page of each transform.
-
-For example:
-
-| Old (deprecated since v0.31.0) | New                       |
-|--------------------------------|---------------------------|
-| `Gain(min_gain_in_db=-12.0)`   | `Gain(min_gain_db=-12.0)` |
+```
+PitchShift(method="librosa_phase_vocoder")
+TimeStretch(method="librosa_phase_vocoder")
+```
 
 ### Fixed
 
-* Fix a bug where `AirAbsorption` often chose the wrong humidity bucket
-* Fix wrong logic in validation check of relation between `crossfade_duration` and `min_part_duration` in `RepeatPart`
-* Fix default value of `max_absolute_rms_db` in `AddBackgroundNoises`. It was incorrectly set to -45.0, but is now -15.0. This bug was introduced in v0.31.0.
-* Fix various errors in the documentation of `AddShortNoises` and `AirAbsorption`
-* Fix a bug where `AddShortNoises` sometimes raised a `ValueError` because of an empty array. This bug was introduced in v0.36.1.
+* Fix a bug where `AddShortNoises(include_silence_in_noise_rms_estimation=False)` sometimes raised a `ValueError` due to digital silence in a portion of a short noise. This bug was introduced in v0.36.1.
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

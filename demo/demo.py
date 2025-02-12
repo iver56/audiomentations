@@ -361,8 +361,8 @@ if __name__ == "__main__":
         {"instance": LowShelfFilter(p=1.0), "num_runs": 5},
         {
             "instance": PitchShift(
-                min_semitones=-24,
-                max_semitones=-24,
+                min_semitones=-4,
+                max_semitones=4,
                 method="librosa_phase_vocoder",
                 p=1.0,
             ),
@@ -371,8 +371,8 @@ if __name__ == "__main__":
         },
         {
             "instance": PitchShift(
-                min_semitones=-24,
-                max_semitones=-24,
+                min_semitones=-4,
+                max_semitones=4,
                 method="signalsmith_stretch",
                 p=1.0,
             ),

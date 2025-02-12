@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.39.0] - 2025-02-12
+
+### Changed
+
+* Place an upper distance limit of 2500 meters in `AirAbsorption` in order to avoid numerical issues
+* Expand the allowed shift range in `PitchShift` from [-12, 12] to [-24, 24]
+* Switch to a higher quality method, `"signalsmith_stretch"`, in `PitchShift` and `TimeStretch`. It sounds significantly better (e.g. less smearing) and is 50-100% faster than `"librosa_phase_vocoder"`
+
+If you want to keep using the old method, `"librosa_phase_vocoder"`, it can be done like this:
+
+```
+PitchShift(method="librosa_phase_vocoder")
+TimeStretch(method="librosa_phase_vocoder")
+```
+
+### Fixed
+
+* Fix a bug where `AddShortNoises(include_silence_in_noise_rms_estimation=False)` sometimes raised a `ValueError` due to digital silence in a portion of a short noise. This bug was introduced in v0.36.1.
+
 ## [0.38.0] - 2024-12-06
 
 ### Added
@@ -561,6 +580,7 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
+[0.39.0]: https://github.com/iver56/audiomentations/compare/v0.38.0...v0.39.0
 [0.38.0]: https://github.com/iver56/audiomentations/compare/v0.37.0...v0.38.0
 [0.37.0]: https://github.com/iver56/audiomentations/compare/v0.36.1...v0.37.0
 [0.36.1]: https://github.com/iver56/audiomentations/compare/v0.36.0...v0.36.1

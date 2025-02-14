@@ -45,7 +45,7 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=44100)
 [`backend`](#backend){ #backend }: `str` • choices: `"librosa_phase_vocoder"`, `"signalsmith_stretch"`
 :   :octicons-milestone-24: Default: `"signalsmith_stretch"`.
 
-    * `"signalsmith_stretch"`: Use signalsmith-stretch. Pros: 50-100% faster than librosa_phase_vocoder, and provides significantly higher audio quality. Con: Does not support more than 2 channels (stereo).
+    * `"signalsmith_stretch"`: Use signalsmith-stretch. It is 50-100% faster than librosa_phase_vocoder, and provides significantly higher perceived audio quality.
     * `"librosa_phase_vocoder"`: Use librosa.effects.pitch_shift, which performs time stretching (by phase vocoding) followed by resampling. Pro: Supports any number of channels. Con: phase vocoding can significantly degrade the audio quality by "smearing" transient sounds, altering the timbre of harmonic sounds, and distorting pitch modulations. This may result in a loss of sharpness, clarity, or naturalness in the transformed audio.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

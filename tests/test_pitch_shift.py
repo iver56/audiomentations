@@ -20,7 +20,7 @@ def test_apply_pitch_shift_1dim(method):
 
 @pytest.mark.parametrize("method", ["librosa_phase_vocoder", "signalsmith_stretch"])
 def test_apply_pitch_shift_multichannel(method):
-    num_channels = 2
+    num_channels = 3
     samples = np.random.normal(0, 0.1, size=(num_channels, 5555)).astype(np.float32)
     sample_rate = 16000
     augmenter = PitchShift(min_semitones=1, max_semitones=2, method=method, p=1.0)

@@ -13,7 +13,7 @@ consider the following alternatives:
 
 ## Input-output example
 
-In this example we speed up a sound by 25%. This corresponds to a rate of 1.25.
+In this example we speed up a sound by 25% (i.e. a rate of 1.25), using the `signalsmith_stretch` method:
 
 ![Input-output waveforms and spectrograms](TimeStretch.webp)
 
@@ -50,7 +50,7 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 [`method`](#method){ #method }: `str` • choices: `"librosa_phase_vocoder"`, `"signalsmith_stretch"`
 :   :octicons-milestone-24: Default: `"signalsmith_stretch"`.
 
-    * `"signalsmith_stretch"`: Use signalsmith-stretch. Pros: 50-100% faster than librosa_phase_vocoder, and provides significantly higher audio quality. Con: Does not support more than 2 channels (stereo).
+    * `"signalsmith_stretch"`: Use signalsmith-stretch. It is 50-100% faster than librosa_phase_vocoder, and provides significantly higher perceived audio quality.
     * `"librosa_phase_vocoder"`: Use librosa.effects.time_stretch. Pro: Supports any number of channels. Con: phase vocoding can significantly degrade the audio quality by "smearing" transient sounds, altering the timbre of harmonic sounds, and distorting pitch modulations. This may result in a loss of sharpness, clarity, or naturalness in the transformed audio.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

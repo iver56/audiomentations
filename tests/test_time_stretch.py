@@ -36,12 +36,7 @@ def test_fixed_length(method):
 
 @pytest.mark.parametrize("method", ["librosa_phase_vocoder", "signalsmith_stretch"])
 def test_multichannel(method):
-    # For signalsmith_stretch, only test with up to 2 channels
-    if method == "signalsmith_stretch":
-        num_channels = 2
-    else:
-        num_channels = 3
-
+    num_channels = 3
     samples = np.random.normal(0, 0.1, size=(num_channels, 5555)).astype(np.float32)
     sample_rate = 16000
     augmenter = TimeStretch(

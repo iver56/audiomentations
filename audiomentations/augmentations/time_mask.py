@@ -61,7 +61,8 @@ class TimeMask(BaseWaveformTransform):
         mask = np.zeros(t)
         if self.fade:
             fade_length = min(int(sample_rate * 0.01), int(t * 0.1))
-            mask[0:fade_length] = np.linspace(1, 0, num=fade_length)
-            mask[-fade_length:] = np.linspace(0, 1, num=fade_length)
+            if fade_length:
+                mask[0:fade_length] = np.linspace(1, 0, num=fade_length)
+                mask[-fade_length:] = np.linspace(0, 1, num=fade_length)
         new_samples[..., t0 : t0 + t] *= mask
         return new_samples

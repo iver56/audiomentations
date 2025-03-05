@@ -32,10 +32,10 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=48000)
 
 # HighPassFilter API
 
-[`min_cutoff_freq`](#min_cutoff_freq){ #min_cutoff_freq }: `float` • unit: hertz
+[`min_cutoff_freq`](#min_cutoff_freq){ #min_cutoff_freq }: `float` • unit: hertz • range: (0.0, `max_cutoff_freq`]
 :   :octicons-milestone-24: Default: `20.0`. Minimum cutoff frequency
 
-[`max_cutoff_freq`](#max_cutoff_freq){ #max_cutoff_freq }: `float` • unit: hertz
+[`max_cutoff_freq`](#max_cutoff_freq){ #max_cutoff_freq }: `float` • unit: hertz • range: [`min_cutoff_freq`, sample_rate/2)
 :   :octicons-milestone-24: Default: `2400.0`. Maximum cutoff frequency
 
 [`min_rolloff`](#min_rolloff){ #min_rolloff }: `float` • unit: Decibels/octave

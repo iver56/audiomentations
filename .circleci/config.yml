@@ -30,7 +30,6 @@ jobs:
             sudo apt update
             sudo apt install software-properties-common
             sudo apt install ffmpeg
-
       - save_cache:
           paths:
             - ./venv
@@ -42,6 +41,5 @@ jobs:
           command: |
             . venv/bin/activate
             pytest
-
       - codecov/upload:
           file: coverage.xml

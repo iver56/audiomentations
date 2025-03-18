@@ -42,7 +42,7 @@ setup(
         "numpy-rms>=0.4.2,<1",
         "librosa>=0.8.0,!=0.10.0,<0.11.0",
         "python-stretch>=0.3.1,<1",
-        "scipy>=1.4,<1.13",
+        "scipy>=1.4,<2",
         "soxr>=0.3.2,<1.0.0",
     ],
     extras_require={
@@ -51,7 +51,7 @@ setup(
             "lameenc>=1.2.0,<2",
             "pydub>=0.22.0,<1",
             "pyloudnorm>=0.1.0",
-            "pyroomacoustics>=0.6.0",
+            "pyroomacoustics>=0.7.4",
         ]
     },
     python_requires=">=3.8,<3.13",

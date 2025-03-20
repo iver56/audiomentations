@@ -34,15 +34,11 @@ jobs:
             - ./venv
           key: v4-dependencies-numpy1-{{ checksum "dev_requirements.txt" }}
 
-      # Run tests and measure code coverage
       - run:
           name: run tests (numpy1)
           command: |
             . venv/bin/activate
-            pytest --cov=. --cov-report=xml
-
-      - codecov/upload:
-          file: coverage.xml
+            pytest
 
   build-numpy2:
     docker:

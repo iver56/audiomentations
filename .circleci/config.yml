@@ -46,7 +46,7 @@ jobs:
 
   build-numpy2:
     docker:
-      - image: cimg/python:3.10.16
+      - image: cimg/python:3.11.11
     working_directory: ~/repo
     steps:
       - checkout
@@ -54,9 +54,9 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v4-dependencies-numpy2-{{ checksum "dev_requirements_np2x.txt" }}
+            - v5-dependencies-numpy2-{{ checksum "dev_requirements_np2x.txt" }}
             # Fall back to using the latest cache if no exact match is found
-            - v4-dependencies-numpy2-
+            - v5-dependencies-numpy2-
 
       - run:
           name: install dependencies (numpy2)
@@ -72,7 +72,7 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v4-dependencies-numpy2-{{ checksum "dev_requirements_np2x.txt" }}
+          key: v5-dependencies-numpy2-{{ checksum "dev_requirements_np2x.txt" }}
 
       # Run tests and measure code coverage
       - run:

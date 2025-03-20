@@ -40,6 +40,7 @@ class AdjustDuration(BaseWaveformTransform):
         assert padding_position in ("start", "end")
         self.padding_position = padding_position
 
+        assert duration_samples is not None or duration_seconds is not None
         if duration_samples is not None and duration_seconds is not None:
             raise ValueError(
                 "You must specify either duration_samples or duration_seconds, but not both."
@@ -47,12 +48,10 @@ class AdjustDuration(BaseWaveformTransform):
         elif duration_seconds is not None:
             if duration_seconds <= 0:
                 raise ValueError("duration_seconds must be a positive float")
-            #self.get_target_samples = lambda sr: int(duration_seconds * sr)
             self._get_target_samples_func = self._get_target_samples_from_seconds
         elif duration_samples is not None:
             if duration_samples <= 0:
                 raise ValueError("duration_samples must be a positive int")
-            # self.get_target_samples = lambda sr: duration_samples
             self._get_target_samples_func = self._get_target_samples_from_samples
 
         self.duration_samples = duration_samples

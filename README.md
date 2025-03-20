@@ -6,12 +6,11 @@
 [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15056865.svg)](https://doi.org/10.5281/zenodo.15056865)
 
-A Python library for audio data augmentation. Inspired by
-[albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
-CPU. Supports mono audio and multichannel audio. Can be
-integrated in training pipelines in e.g. Tensorflow/Keras or Pytorch. Has helped people get
-world-class results in Kaggle competitions. Is used by companies making next-generation audio
-products.
+Audiomentations is a Python library for audio data augmentation, built to be fast and easy to use - its API is inspired by
+[albumentations](https://github.com/albu/albumentations). It's useful for making audio deep learning models work well in the real world, not just in the lab.
+Audiomentations runs on CPU, supports mono audio and multichannel audio and integrates well in training pipelines,
+such as those built with TensorFlow/Keras or PyTorch. It has helped users achieve
+world-class results in Kaggle competitions and is trusted by companies building next-generation audio products with AI.
 
 Need a Pytorch-specific alternative with GPU support? Check out [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)!
 

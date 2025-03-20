@@ -161,7 +161,9 @@ class RepeatPart(BaseWaveformTransform):
             crossfade_length += 1
         return crossfade_length
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         crossfade_length = 0
         half_crossfade_length = 0
         equal_energy_fade_in_mask = None
@@ -284,15 +286,13 @@ class RepeatPart(BaseWaveformTransform):
             )
             result_placeholder[
                 ...,
-                repeats_start_index
-                - half_crossfade_length : repeats_start_index
+                repeats_start_index - half_crossfade_length : repeats_start_index
                 + half_crossfade_length,
             ] = (
                 equal_energy_fade_out_mask
                 * samples[
                     ...,
-                    repeats_start_index
-                    - half_crossfade_length : repeats_start_index
+                    repeats_start_index - half_crossfade_length : repeats_start_index
                     + half_crossfade_length,
                 ]
             )
@@ -316,9 +316,9 @@ class RepeatPart(BaseWaveformTransform):
                 parts[-1]["start_idx"] : parts[-1]["start_idx"] + truncated_part_length,
             ] += truncated_part
         else:
-            result_placeholder[
-                ..., parts[-1]["start_idx"] : parts[-1]["end_idx"]
-            ] += parts[-1]["array"]
+            result_placeholder[..., parts[-1]["start_idx"] : parts[-1]["end_idx"]] += (
+                parts[-1]["array"]
+            )
 
         del parts
 

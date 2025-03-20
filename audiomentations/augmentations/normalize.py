@@ -22,7 +22,7 @@ class Normalize(BaseWaveformTransform):
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            self.parameters["max_amplitude"] = get_max_abs_amplitude(samples)
+            self.parameters["max_amplitude"] = float(get_max_abs_amplitude(samples))
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         if (

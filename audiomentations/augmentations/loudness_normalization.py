@@ -58,12 +58,16 @@ class LoudnessNormalization(BaseWaveformTransform):
         if self.parameters["should_apply"]:
             meter = pyloudnorm.Meter(sample_rate)  # create BS.1770 meter
             # Transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
-            self.parameters["loudness"] = meter.integrated_loudness(samples.transpose())
+            self.parameters["loudness"] = float(
+                meter.integrated_loudness(samples.transpose())
+            )
             self.parameters["lufs"] = float(
                 random.uniform(self.min_lufs, self.max_lufs)
             )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         try:
             import pyloudnorm
         except ImportError:
@@ -80,11 +84,9 @@ class LoudnessNormalization(BaseWaveformTransform):
 
         # Guard against digital silence
         if self.parameters["loudness"] > float("-inf"):
-            # Transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
-            return pyloudnorm.normalize.loudness(
-                samples.transpose(),
-                self.parameters["loudness"],
-                self.parameters["lufs"],
-            ).transpose()
-        else:
-            return samples
+            # Normalize loudness
+            delta_loudness = self.parameters["lufs"] - self.parameters["loudness"]
+            gain = np.power(10.0, delta_loudness / 20.0, dtype=np.float32)
+            return gain * samples
+
+        return samples

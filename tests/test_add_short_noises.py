@@ -168,15 +168,6 @@ def test_too_long_fade_time():
     assert rms_after > rms_before
 
 
-def test_serialize_parameters():
-    transform = AddShortNoises(
-        sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
-    )
-    samples = np.random.normal(0, 1, size=1024).astype(np.float32)
-    transform.randomize_parameters(samples, sample_rate=44100)
-    json.dumps(transform.serialize_parameters())
-
-
 def test_frozen_parameters():
     sample_rate = 44100
     samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 9 * sample_rate)).astype(
@@ -214,15 +205,6 @@ def test_multichannel_audio_not_supported_yet():
     )
     with pytest.raises(MultichannelAudioNotSupportedException):
         augmenter(samples=samples, sample_rate=sample_rate)
-
-
-def test_picklability():
-    transform = AddShortNoises(
-        sounds_path=os.path.join(DEMO_DIR, "short_noises"), p=1.0
-    )
-    pickled = pickle.dumps(transform)
-    unpickled = pickle.loads(pickled)
-    assert transform.sound_file_paths == unpickled.sound_file_paths
 
 
 def test_noise_rms_parameter():

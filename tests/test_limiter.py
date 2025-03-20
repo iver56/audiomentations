@@ -34,6 +34,7 @@ def test_limiter(samples_in):
         delayed_signal=samples_out_mono,
         max_offset_samples=length // 2,
         lookahead_samples=length // 2,
+        method="corr",
     )
     # Check that the output is aligned with the input, i.e. no delay was introduced
     assert offset == 0

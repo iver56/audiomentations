@@ -48,5 +48,7 @@ class ClippingDistortion(BaseWaveformTransform):
         lower_threshold, upper_threshold = np.percentile(
             samples, [lower_percentile_threshold, 100 - lower_percentile_threshold]
         )
+        lower_threshold = np.float32(lower_threshold)
+        upper_threshold = np.float32(upper_threshold)
         samples = np.clip(samples, lower_threshold, upper_threshold)
         return samples

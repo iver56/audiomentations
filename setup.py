@@ -37,9 +37,9 @@ setup(
     url="https://github.com/iver56/audiomentations",
     packages=find_packages(exclude=["demo", "tests"]),
     install_requires=[
-        "numpy>=1.22.0,<2",
-        "numpy-minmax>=0.3.0,<1",
-        "numpy-rms>=0.4.2,<1",
+        "numpy>=1.22.0,<3",
+        "numpy-minmax>=0.4.0,<1",
+        "numpy-rms>=0.5.0,<1",
         "librosa>=0.8.0,!=0.10.0,<0.11.0",
         "python-stretch>=0.3.1,<1",
         "scipy>=1.4,<2",

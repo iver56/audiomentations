@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Add support for numpy 2.x
 * Add support for scipy>=1.13
 
 ### Changed
 
+* Lay the groundwork for NumPy 2.x support (version constraint update coming in the next release)
 * Speed up `LoudnessNormalization` by ~20%
 * Improve test coverage and documentation
 * Bump min `python-stretch` version and remove the limitation on the number of channels in `PitchShift`

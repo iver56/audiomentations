@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.40.0] - 2025-03-20
+
+### Added
+
+* Add support for numpy 2.x
+* Add support for scipy>=1.13
+
+### Changed
+
+* Speed up `LoudnessNormalization` by ~20%
+* Improve test coverage and documentation
+* Bump min `python-stretch` version and remove the limitation on the number of channels in `PitchShift`
+* Bump min numpy version to 1.22
+* Bump min pyroomacoustics version to 0.7.4
+
+### Fix
+
+* Fix a bug where `TimeMask` could raise an exception if the fade length became 0
+* Disallow `min_cutoff_freq` <= 0 in `HighPassFilter`
+* Make `AdjustDuration` picklable (useful for multiprocessing)
+
+### Removed
+
+* Remove support for Python 3.8
+
 ## [0.39.0] - 2025-02-12
 
 ### Changed
@@ -580,6 +605,7 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
+[0.40.0]: https://github.com/iver56/audiomentations/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/iver56/audiomentations/compare/v0.38.0...v0.39.0
 [0.38.0]: https://github.com/iver56/audiomentations/compare/v0.37.0...v0.38.0
 [0.37.0]: https://github.com/iver56/audiomentations/compare/v0.36.1...v0.37.0

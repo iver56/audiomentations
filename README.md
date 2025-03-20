@@ -94,24 +94,30 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.39.0] - 2025-02-12
+## [0.40.0] - 2025-03-20
+
+### Added
+
+* Add support for numpy 2.x
+* Add support for scipy>=1.13
 
 ### Changed
 
-* Place an upper distance limit of 2500 meters in `AirAbsorption` in order to avoid numerical issues
-* Expand the allowed shift range in `PitchShift` from [-12, 12] to [-24, 24]
-* Switch to a higher quality method, `"signalsmith_stretch"`, in `PitchShift` and `TimeStretch`. It sounds significantly better (e.g. less smearing) and is 50-100% faster than `"librosa_phase_vocoder"`
+* Speed up `LoudnessNormalization` by ~20%
+* Improve test coverage and documentation
+* Bump min `python-stretch` version and remove the limitation on the number of channels in `PitchShift`
+* Bump min numpy version to 1.22
+* Bump min pyroomacoustics version to 0.7.4
 
-If you want to keep using the old method, `"librosa_phase_vocoder"`, it can be done like this:
+### Fix
 
-```
-PitchShift(method="librosa_phase_vocoder")
-TimeStretch(method="librosa_phase_vocoder")
-```
+* Fix a bug where `TimeMask` could raise an exception if the fade length became 0
+* Disallow `min_cutoff_freq` <= 0 in `HighPassFilter`
+* Make `AdjustDuration` picklable (useful for multiprocessing)
 
-### Fixed
+### Removed
 
-* Fix a bug where `AddShortNoises(include_silence_in_noise_rms_estimation=False)` sometimes raised a `ValueError` due to digital silence in a portion of a short noise. This bug was introduced in v0.36.1.
+* Remove support for Python 3.8
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

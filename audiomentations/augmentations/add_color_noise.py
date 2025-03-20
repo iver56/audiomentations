@@ -188,7 +188,7 @@ class AddColorNoise(BaseWaveformTransform):
             )
 
             # Set the parameters
-            self.parameters["desired_noise_rms"] = desired_noise_rms
+            self.parameters["desired_noise_rms"] = float(desired_noise_rms)
             self.parameters["f_decay"] = f_decay
             self.parameters["apply_a_weighting"] = apply_a_weighting
 

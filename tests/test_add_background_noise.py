@@ -1,6 +1,4 @@
-import json
 import os
-import pickle
 import random
 import warnings
 
@@ -74,24 +72,6 @@ def test_try_add_digital_silence():
 
     assert np.allclose(samples, samples_out)
     assert samples_out.dtype == np.float32
-
-
-def test_serialize_parameters():
-    transform = AddBackgroundNoise(
-        sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
-    )
-    samples = np.random.normal(0, 1, size=1024).astype(np.float32)
-    transform.randomize_parameters(samples, sample_rate=44100)
-    json.dumps(transform.serialize_parameters())
-
-
-def test_picklability():
-    transform = AddBackgroundNoise(
-        sounds_path=os.path.join(DEMO_DIR, "background_noises"), p=1.0
-    )
-    pickled = pickle.dumps(transform)
-    unpickled = pickle.loads(pickled)
-    assert transform.sound_file_paths == unpickled.sound_file_paths
 
 
 def test_absolute_option():

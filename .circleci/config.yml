@@ -1,12 +1,10 @@
-# Python CircleCI 2.1 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2.1
+
 orbs:
   codecov: codecov/codecov@3.2.3
+
 jobs:
-  build:
+  build-numpy1:
     docker:
       - image: cimg/python:3.10.16
     working_directory: ~/repo
@@ -16,17 +14,17 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v4-dependencies-{{ checksum "requirements.txt" }}
+            - v4-dependencies-numpy1-{{ checksum "dev_requirements.txt" }}
             # Fall back to using the latest cache if no exact match is found
-            - v4-dependencies-
+            - v4-dependencies-numpy1-
 
       - run:
-          name: install dependencies
+          name: install dependencies (numpy1)
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install wheel
-            pip install -r requirements.txt
+            pip install -r dev_requirements.txt
             sudo apt update
             sudo apt install software-properties-common
             sudo apt install ffmpeg
@@ -34,14 +32,60 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v3-dependencies-{{ checksum "requirements.txt" }}
+          key: v4-dependencies-numpy1-{{ checksum "dev_requirements.txt" }}
 
       # Run tests and measure code coverage
       - run:
-          name: run tests
+          name: run tests (numpy1)
           command: |
             . venv/bin/activate
-            pytest
+            pytest --cov=. --cov-report=xml
 
       - codecov/upload:
           file: coverage.xml
+
+  build-numpy2:
+    docker:
+      - image: cimg/python:3.10.16
+    working_directory: ~/repo
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v4-dependencies-numpy2-{{ checksum "dev_requirements_np2x.txt" }}
+            # Fall back to using the latest cache if no exact match is found
+            - v4-dependencies-numpy2-
+
+      - run:
+          name: install dependencies (numpy2)
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install wheel
+            pip install -r dev_requirements_np2x.txt
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo apt install ffmpeg
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v4-dependencies-numpy2-{{ checksum "dev_requirements_np2x.txt" }}
+
+      # Run tests and measure code coverage
+      - run:
+          name: run tests (numpy2)
+          command: |
+            . venv/bin/activate
+            pytest --cov=. --cov-report=xml
+
+      - codecov/upload:
+          file: coverage.xml
+
+workflows:
+  build_and_test:
+    jobs:
+      - build-numpy1
+      - build-numpy2

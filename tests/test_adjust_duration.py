@@ -49,3 +49,32 @@ def test_padding_second(mode, pad_section, second, ndim):
 
     assert samples.dtype == np.float32
     assert samples.shape == target_shape
+
+
+def test_adjust_duration_raises_with_both_samples_and_seconds():
+    with pytest.raises(ValueError) as exc_info:
+        _ = AdjustDuration(duration_samples=100, duration_seconds=1.0)
+    assert (
+        "You must specify either duration_samples or duration_seconds, but not both."
+        in str(exc_info.value)
+    )
+
+
+def test_adjust_duration_raises_with_non_positive_seconds():
+    with pytest.raises(ValueError) as exc_info:
+        _ = AdjustDuration(duration_seconds=0.0)
+    assert "duration_seconds must be a positive float" in str(exc_info.value)
+
+    with pytest.raises(ValueError) as exc_info:
+        _ = AdjustDuration(duration_seconds=-1.0)
+    assert "duration_seconds must be a positive float" in str(exc_info.value)
+
+
+def test_adjust_duration_raises_with_non_positive_samples():
+    with pytest.raises(ValueError) as exc_info:
+        _ = AdjustDuration(duration_samples=0)
+    assert "duration_samples must be a positive int" in str(exc_info.value)
+
+    with pytest.raises(ValueError) as exc_info:
+        _ = AdjustDuration(duration_samples=-1)
+    assert "duration_samples must be a positive int" in str(exc_info.value)

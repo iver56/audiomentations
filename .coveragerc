@@ -1,7 +1,9 @@
 [run]
 source = audiomentations
 omit =
+    demo/*
     tests/*
+    setup.py
 
 [report]
 exclude_lines =

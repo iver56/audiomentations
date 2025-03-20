@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Bump min numpy version to 1.22
 * Bump min pyroomacoustics version to 0.7.4
 
-### Fix
+### Fixed
 
 * Fix a bug where `TimeMask` could raise an exception if the fade length became 0
 * Disallow `min_cutoff_freq` <= 0 in `HighPassFilter`

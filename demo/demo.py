@@ -487,7 +487,8 @@ if __name__ == "__main__":
             "name": "ShiftSeconds",
         },
         {"instance": TanhDistortion(p=1.0), "num_runs": 5},
-        {"instance": TimeMask(p=1.0), "num_runs": 5},
+        {"instance": TimeMask(fade=True, p=1.0), "num_runs": 5, "name": "TimeMaskWithFade"},
+        {"instance": TimeMask(fade=False, p=1.0), "num_runs": 5, "name": "TimeMaskWithoutFade"},
         {
             "instance": TimeStretch(
                 min_rate=0.8, max_rate=1.25, method="signalsmith_stretch", p=1.0

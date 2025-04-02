@@ -10,6 +10,7 @@ from audiomentations.core.utils import (
     calculate_rms,
     calculate_rms_without_silence,
     a_weighting_frequency_envelope,
+    get_crossfade_length,
 )
 from demo.demo import DEMO_DIR
 
@@ -109,3 +110,15 @@ def test_a_weighting_curve(sample_rate, n_fft):
     assert a_weighting_frequency_envelope(n_fft, sample_rate) == pytest.approx(
         weighting, abs=0.01
     )
+
+
+def test_get_crossfade_duration_too_short_duration():
+    with pytest.warns(UserWarning, match="crossfade_duration is too small"):
+        result = get_crossfade_length(sample_rate=44_100, crossfade_duration=0.00001)
+    assert result == 2
+
+
+def test_get_crossfade_duration_odd_length_case():
+    result = get_crossfade_length(sample_rate=10, crossfade_duration=0.3)
+    # The function should add 1 to 3, resulting in an even value of 4.
+    assert result == 4

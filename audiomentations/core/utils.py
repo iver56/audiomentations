@@ -1,5 +1,6 @@
 import math
 import os
+import warnings
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Union, Tuple, Any
@@ -22,12 +23,14 @@ SUPPORTED_EXTENSIONS = (
     ".wav",
 )
 
+
 def format_args(args_dict: dict[str, Any]) -> str:
     formatted_args = []
     for k, v in args_dict.items():
         v_formatted = f"'{v}'" if isinstance(v, str) else str(v)
         formatted_args.append(f"{k}={v_formatted}")
     return ", ".join(formatted_args)
+
 
 def find_audio_files(
     root_path,
@@ -221,6 +224,21 @@ def get_crossfade_mask_pair(
     fade_in = c * c
     fade_out = d * d
     return fade_in, fade_out
+
+
+def get_crossfade_length(sample_rate: int, crossfade_duration: float) -> int:
+    if crossfade_duration == 0.0:
+        return 0
+    crossfade_length = int(crossfade_duration * sample_rate)
+    if crossfade_length < 2:
+        warnings.warn(
+            "crossfade_duration is too small for the given sample rate. Using a"
+            " crossfade length of 2 samples."
+        )
+        crossfade_length = 2
+    elif crossfade_length % 2 == 1:
+        crossfade_length += 1
+    return crossfade_length
 
 
 def get_max_abs_amplitude(samples: NDArray):

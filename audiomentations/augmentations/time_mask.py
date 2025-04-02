@@ -4,6 +4,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
+from audiomentations.core.utils import get_crossfade_mask_pair
 
 
 class TimeMask(BaseWaveformTransform):
@@ -18,7 +19,7 @@ class TimeMask(BaseWaveformTransform):
         self,
         min_band_part: float = 0.0,
         max_band_part: float = 0.5,
-        fade: bool = False,
+        fade: bool = True,
         p: float = 0.5,
     ):
         """
@@ -26,7 +27,7 @@ class TimeMask(BaseWaveformTransform):
             total sound length. Must be between 0.0 and 1.0
         :param max_band_part: Maximum length of the silent part as a fraction of the
             total sound length. Must be between 0.0 and 1.0
-        :param fade: When set to True, a linear fade-in and fade-out is added to the silent part.
+        :param fade: When set to True, a smooth fade-in and fade-out is added to the silent part.
             This can smooth out unwanted abrupt changes between consecutive samples, which might
             otherwise sound like transients/clicks/pops.
         :param p: The probability of applying this transform
@@ -58,11 +59,12 @@ class TimeMask(BaseWaveformTransform):
         new_samples = samples.copy()
         t = self.parameters["t"]
         t0 = self.parameters["t0"]
-        mask = np.zeros(t)
+        mask = np.zeros(t, dtype=np.float32)
         if self.fade:
             fade_length = min(int(sample_rate * 0.01), int(t * 0.1))
-            if fade_length:
-                mask[0:fade_length] = np.linspace(1, 0, num=fade_length)
-                mask[-fade_length:] = np.linspace(0, 1, num=fade_length)
+            if fade_length >= 2:
+                fade_in, fade_out = get_crossfade_mask_pair(fade_length, equal_energy=False)
+                mask[:fade_length] = fade_out
+                mask[-fade_length:] = fade_in
         new_samples[..., t0 : t0 + t] *= mask
         return new_samples

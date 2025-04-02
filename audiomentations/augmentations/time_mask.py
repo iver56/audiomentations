@@ -58,7 +58,7 @@ class TimeMask(BaseWaveformTransform):
         new_samples = samples.copy()
         t = self.parameters["t"]
         t0 = self.parameters["t0"]
-        mask = np.zeros(t)
+        mask = np.zeros(t, dtype=np.float32)
         if self.fade:
             fade_length = min(int(sample_rate * 0.01), int(t * 0.1))
             if fade_length:

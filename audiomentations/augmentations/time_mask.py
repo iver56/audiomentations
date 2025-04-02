@@ -19,7 +19,7 @@ class TimeMask(BaseWaveformTransform):
         self,
         min_band_part: float = 0.0,
         max_band_part: float = 0.5,
-        fade: bool = False,
+        fade: bool = True,
         p: float = 0.5,
     ):
         """

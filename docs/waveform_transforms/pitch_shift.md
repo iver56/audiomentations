@@ -4,7 +4,7 @@ _Added in v0.4.0_
 
 Pitch shift the sound up or down without changing the tempo.
 
-You can choose between method="signalsmith_stretch" and method="librosa_phase_vocoder". If you need other pitch shifting methods, consider the following alternatives:
+You can choose between `method="signalsmith_stretch"` and `method="librosa_phase_vocoder"`. If you need other pitch shifting methods, consider the following alternatives:
 
 * [Rubber Band library](https://breakfastquay.com/rubberband/)
 * [https://github.com/KAIST-MACLab/PyTSMod](https://github.com/KAIST-MACLab/PyTSMod)

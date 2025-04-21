@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 from audiomentations.core.transforms_interface import BaseSpectrogramTransform
 from audiomentations.core.serialization import get_shortest_class_fullname
 from audiomentations.core.utils import format_args
+from audiomentations.core.sampling import WeightedChoiceSampler
 
 REPR_INDENT_STEP = 2
 
@@ -278,7 +279,7 @@ class OneOf(BaseCompose):
         super().__init__(transforms, p)
         self.transform_index = 0
         self.should_apply = True
-        
+
         # Handle weights initialization and validation
         if weights is not None:
             if len(weights) != len(transforms):
@@ -292,14 +293,15 @@ class OneOf(BaseCompose):
             self.weights /= np.sum(self.weights)
         else:
             # If no weights provided, use uniform distribution
-            # np.random.choice() will use the uniform distribution if p=None
-            self.weights = None
+            self.weights = np.ones(len(transforms)) / len(transforms)
+
+        self.sampler = WeightedChoiceSampler(self.weights)
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
         self.should_apply = random.random() < self.p
         if self.should_apply:
-            self.transform_index = np.random.choice(len(self.transforms), p=self.weights)
+            self.transform_index = self.sampler.sample(size=1)[0]
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:

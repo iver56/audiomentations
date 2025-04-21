@@ -1,5 +1,5 @@
 import random
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -265,7 +265,7 @@ class OneOf(BaseCompose):
     augment = OneOf([
         TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
         PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
-    ], weights=[0.8, 0.2])
+    ], weights=[0.2, 0.8])
     # Generate 2 seconds of dummy audio for the sake of example
     samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
     # Augment/transform/perturb the audio data
@@ -274,7 +274,7 @@ class OneOf(BaseCompose):
     ```
     """
 
-    def __init__(self, transforms, p: float = 1.0, weights: list[float] | None = None):
+    def __init__(self, transforms, p: float = 1.0, weights: Optional[list[float]] = None):
         super().__init__(transforms, p)
         self.transform_index = 0
         self.should_apply = True
@@ -288,10 +288,12 @@ class OneOf(BaseCompose):
             if sum(weights) == 0:
                 raise ValueError("Sum of weights must be greater than 0")
             # Normalize weights to sum to 1
-            self.weights = np.array(weights) / sum(weights)
+            self.weights = np.array(weights)
+            self.weights /= np.sum(self.weights)
         else:
             # If no weights provided, use uniform distribution
-            self.weights = np.ones(len(transforms)) / len(transforms)
+            # np.random.choice() will use the uniform distribution if p=None
+            self.weights = None
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)

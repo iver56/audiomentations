@@ -4,7 +4,6 @@ from typing import Any, Optional
 import numpy as np
 from numpy.typing import NDArray
 
-from audiomentations.core.transforms_interface import BaseSpectrogramTransform
 from audiomentations.core.serialization import get_shortest_class_fullname
 from audiomentations.core.utils import format_args
 from audiomentations.core.sampling import WeightedChoiceSampler
@@ -133,24 +132,6 @@ class Compose(BaseCompose):
         return samples
 
 
-class SpecCompose(BaseCompose):
-    def __init__(self, transforms, p=1.0, shuffle=False):
-        super().__init__(transforms, p, shuffle)
-
-    def __call__(self, magnitude_spectrogram):
-        transforms = self.transforms.copy()
-        should_apply = random.random() < self.p
-        # TODO: Adhere to self.are_parameters_frozen
-        # https://github.com/iver56/audiomentations/issues/135
-        if should_apply:
-            if self.shuffle:
-                random.shuffle(transforms)
-            for transform in transforms:
-                magnitude_spectrogram = transform(magnitude_spectrogram)
-
-        return magnitude_spectrogram
-
-
 class SomeOf(BaseCompose):
     """
     SomeOf randomly picks several of the given transforms when called, and applies these
@@ -224,35 +205,20 @@ class SomeOf(BaseCompose):
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
 
-            if issubclass(type(self.transforms[0]), BaseSpectrogramTransform):
-                if "magnitude_spectrogram" in kwargs:
-                    magnitude_spectrogram = kwargs["magnitude_spectrogram"]
-                else:
-                    magnitude_spectrogram = args[0]
+            if "sample_rate" in kwargs:
+                samples = kwargs["samples"] if "samples" in kwargs else args[0]
+                sample_rate = kwargs["sample_rate"]
+            else:
+                samples = args[0]
+                sample_rate = args[1]
 
-                for transform_index in self.transform_indexes:
-                    magnitude_spectrogram = self.transforms[transform_index](
-                        magnitude_spectrogram
-                    )
+            for transform_index in self.transform_indexes:
+                samples = self.transforms[transform_index](samples, sample_rate)
 
-                return magnitude_spectrogram
-            else:  # The transforms are subclasses of BaseWaveformTransform
-                if "sample_rate" in kwargs:
-                    samples = kwargs["samples"] if "samples" in kwargs else args[0]
-                    sample_rate = kwargs["sample_rate"]
-                else:
-                    samples = args[0]
-                    sample_rate = args[1]
-
-                for transform_index in self.transform_indexes:
-                    samples = self.transforms[transform_index](samples, sample_rate)
-
-                return samples
+            return samples
 
         if "samples" in kwargs:
             return kwargs["samples"]
-        elif "magnitude_spectrogram" in kwargs:
-            return kwargs["magnitude_spectrogram"]
         else:
             return args[0]
 
@@ -318,7 +284,5 @@ class OneOf(BaseCompose):
 
         if "samples" in kwargs:
             return kwargs["samples"]
-        elif "magnitude_spectrogram" in kwargs:
-            return kwargs["magnitude_spectrogram"]
         else:
             return args[0]

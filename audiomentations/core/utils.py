@@ -152,16 +152,6 @@ def is_waveform_multichannel(samples):
     """
     return len(samples.shape) > 1
 
-
-def is_spectrogram_multichannel(spectrogram):
-    """
-    Return bool that answers the question: Is the given ndarray a multichannel spectrogram?
-    :param samples: numpy ndarray
-    :return:
-    """
-    return len(spectrogram.shape) > 2 and spectrogram.shape[-1] > 1
-
-
 def convert_float_samples_to_int16(y):
     """Convert floating-point numpy array of audio samples to int16."""
     if not issubclass(y.dtype.type, np.floating):

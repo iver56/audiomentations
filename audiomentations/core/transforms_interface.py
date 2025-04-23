@@ -8,18 +8,13 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from audiomentations.core.utils import (
-    is_waveform_multichannel,
-    is_spectrogram_multichannel,
-)
+from audiomentations.core.utils import is_waveform_multichannel
 from audiomentations.core.serialization import (
     Serializable,
     SerializableMeta,
-    get_shortest_class_fullname
+    get_shortest_class_fullname,
 )
-from audiomentations.core.utils import (
-    format_args
-)
+from audiomentations.core.utils import format_args
 
 
 class MultichannelAudioNotSupportedException(Exception):
@@ -33,8 +28,10 @@ class MonoAudioNotSupportedException(Exception):
 class WrongMultichannelAudioShape(Exception):
     pass
 
+
 class CombinedMeta(SerializableMeta):
     pass
+
 
 class BaseTransform(Serializable, metaclass=CombinedMeta):
     supports_mono = True
@@ -67,11 +64,11 @@ class BaseTransform(Serializable, metaclass=CombinedMeta):
         Unmark all parameters as frozen, i.e. let them be randomized for each call.
         """
         self.are_parameters_frozen = False
-        
+
     @classmethod
     def get_class_fullname(cls) -> str:
         return get_shortest_class_fullname(cls)
-        
+
     @classmethod
     def is_serializable(cls) -> bool:
         return True
@@ -103,7 +100,9 @@ class BaseWaveformTransform(BaseTransform):
     def is_multichannel(self, samples):
         return is_waveform_multichannel(samples)
 
-    def __call__(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def __call__(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         if samples.dtype == np.float64:
             warnings.warn(
                 "Warning: input samples dtype is np.float64. Converting to np.float32"
@@ -141,62 +140,10 @@ class BaseWaveformTransform(BaseTransform):
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         self.parameters["should_apply"] = random.random() < self.p
-        
+
     @classmethod
     def get_class_fullname(cls) -> str:
-        return get_shortest_class_fullname(cls)        
-
-    def to_dict_private(self) -> dict[str, Any]:
-        state = {"__class_fullname__": self.get_class_fullname()}
-        state.update(self.get_base_init_args())
-        state.update(self.get_transform_init_args())
-        return state
-
-
-class BaseSpectrogramTransform(BaseTransform):
-    def apply(self, magnitude_spectrogram):
-        raise NotImplementedError
-
-    def is_multichannel(self, samples):
-        return is_spectrogram_multichannel(samples)
-
-    def __call__(self, magnitude_spectrogram):
-        if not self.are_parameters_frozen:
-            self.randomize_parameters(magnitude_spectrogram)
-        if (
-            self.parameters["should_apply"]
-            and magnitude_spectrogram.shape[0] > 0
-            and magnitude_spectrogram.shape[1] > 0
-        ):
-            if self.is_multichannel(magnitude_spectrogram):
-                """
-                if magnitude_spectrogram.shape[0] > magnitude_spectrogram.shape[1]:
-                    warnings.warn(
-                        "Multichannel audio must have channels first, not channels last"
-                    )
-                """
-                if not self.supports_multichannel:
-                    raise MultichannelAudioNotSupportedException(
-                        "{} only supports mono audio, not multichannel audio".format(
-                            self.__class__.__name__
-                        )
-                    )
-            elif not self.supports_mono:
-                raise MonoAudioNotSupportedException(
-                    "{} only supports multichannel audio, not mono audio".format(
-                        self.__class__.__name__
-                    )
-                )
-
-            return self.apply(magnitude_spectrogram)
-        return magnitude_spectrogram
-
-    def randomize_parameters(self, magnitude_spectrogram):
-        self.parameters["should_apply"] = random.random() < self.p
-        
-    @classmethod
-    def get_class_fullname(cls) -> str:
-        return get_shortest_class_fullname(cls)        
+        return get_shortest_class_fullname(cls)
 
     def to_dict_private(self) -> dict[str, Any]:
         state = {"__class_fullname__": self.get_class_fullname()}

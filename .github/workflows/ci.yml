@@ -26,10 +26,15 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Install OS dependencies
+      - name: Install ffmpeg
         run: |
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common ffmpeg
+          sudo apt-get install -y libopus0 libmp3lame0
+          wget https://github.com/nomonosound/ffmpeg-build/releases/download/v5.1.4-nomono-audio-v7/ffmpeg-5.1.4-audio-x86_64-linux-gnu.tar.gz -O ffmpeg.tar.gz && \
+            tar -xzvf ffmpeg.tar.gz && \
+            rm ffmpeg.tar.gz && \
+            sudo mv ffmpeg-5.1.4-audio-x86_64-linux-gnu/bin/ffmpeg /usr/local/bin/ && \
+            sudo chmod +x /usr/local/bin/ffmpeg && \
+            ffmpeg -version
 
       - name: Cache venv
         id: cache-venv

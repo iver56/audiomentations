@@ -84,8 +84,6 @@ The API documentation, along with guides, example code, illustrations and exampl
 * [RoomSimulator](https://iver56.github.io/audiomentations/waveform_transforms/room_simulator/): Simulates the effect of a room on an audio source
 * [SevenBandParametricEQ](https://iver56.github.io/audiomentations/waveform_transforms/seven_band_parametric_eq/): Adjusts the volume of 7 frequency bands
 * [Shift](https://iver56.github.io/audiomentations/waveform_transforms/shift/): Shifts the samples forwards or backwards
-* [SpecChannelShuffle](https://iver56.github.io/audiomentations/spectrogram_transforms/): Shuffles channels in the spectrogram
-* [SpecFrequencyMask](https://iver56.github.io/audiomentations/spectrogram_transforms/): Applies a frequency mask to the spectrogram
 * [TanhDistortion](https://iver56.github.io/audiomentations/waveform_transforms/tanh_distortion/): Applies tanh distortion to distort the signal
 * [TimeMask](https://iver56.github.io/audiomentations/waveform_transforms/time_mask/): Makes a random part of the audio silent
 * [TimeStretch](https://iver56.github.io/audiomentations/waveform_transforms/time_stretch/): Changes the speed without changing the pitch

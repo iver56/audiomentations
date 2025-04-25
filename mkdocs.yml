@@ -44,7 +44,6 @@ nav:
       - TimeMask: waveform_transforms/time_mask.md
       - TimeStretch: waveform_transforms/time_stretch.md
       - Trim: waveform_transforms/trim.md
-  - Spectrogram transforms: spectrogram_transforms.md
   - Guides:
       - CPU vs. GPU:  guides/cpu_vs_gpu.md
       - Multichannel audio array shapes: guides/multichannel_audio_array_shapes.md

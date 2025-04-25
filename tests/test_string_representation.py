@@ -1,4 +1,4 @@
-from audiomentations import Compose, GainTransition, Shift, SpecChannelShuffle
+from audiomentations import Compose, GainTransition, Shift
 
 
 def test_print_compose():
@@ -10,8 +10,3 @@ def test_print_compose():
   Shift(p=0.5, min_shift=-0.5, max_shift=0.5, shift_unit='fraction', rollover=True, fade_duration=0.005),
 ], p=1.0)"""
     )
-
-
-def test_print_spec_transform():
-    augmenter = SpecChannelShuffle()
-    assert str(augmenter) == """SpecChannelShuffle(p=0.5)"""

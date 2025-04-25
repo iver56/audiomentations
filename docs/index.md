@@ -59,45 +59,17 @@ samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32
 augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
-## Spectrogram
-
-```python
-from audiomentations import SpecCompose, SpecChannelShuffle, SpecFrequencyMask
-import numpy as np
-
-augment = SpecCompose(
-    [
-        SpecChannelShuffle(p=0.5),
-        SpecFrequencyMask(p=0.5),
-    ]
-)
-
-# Example spectrogram with 1025 frequency bins, 256 time steps and 2 audio channels
-spectrogram = np.random.random((1025, 256, 2))
-
-# Augment/transform/perturb the spectrogram
-augmented_spectrogram = augment(spectrogram)
-```
-
 # Waveform transforms
 
 For a list and explanation of all waveform transforms, see Waveform transforms in the menu.
 
 Waveform transforms can be visualized (for understanding) by the [audio-transformation-visualization GUI](https://share.streamlit.io/phrasenmaeher/audio-transformation-visualization/main/visualize_transformation.py) (made by [phrasenmaeher](https://github.com/phrasenmaeher)), where you can upload your own input wav file
 
-# Spectrogram transforms
-
-For a list and brief explanation of all spectrogram transforms, see [Spectrogram transforms](spectrogram_transforms.md)
-
 # Composition classes
 
 ## `Compose`
 
 Compose applies the given sequence of transforms when called, optionally shuffling the sequence for every call.
-
-## `SpecCompose`
-
-Same as Compose, but for spectrogram transforms
 
 ## `OneOf`
 

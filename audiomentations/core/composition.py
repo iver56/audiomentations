@@ -275,12 +275,16 @@ class OneOf(BaseCompose):
     ```
     """
 
-    def __init__(self, transforms, p: float = 1.0, weights: Optional[list[float]] = None):
+    def __init__(
+        self,
+        transforms,
+        p: float = 1.0,
+        weights: Optional[list[float]] = None,
+    ):
         super().__init__(transforms, p)
         self.transform_index = 0
         self.should_apply = True
 
-        # Handle weights initialization and validation
         if weights is not None:
             if len(weights) != len(transforms):
                 raise ValueError("Length of weights must match length of transforms")
@@ -288,12 +292,11 @@ class OneOf(BaseCompose):
                 raise ValueError("All weights must be non-negative")
             if sum(weights) == 0:
                 raise ValueError("Sum of weights must be greater than 0")
-            # Normalize weights to sum to 1
-            self.weights = np.array(weights)
-            self.weights /= np.sum(self.weights)
+
+            self.weights = np.asarray(weights, dtype=float)
+            self.weights /= self.weights.sum()
         else:
-            # If no weights provided, use uniform distribution
-            self.weights = np.ones(len(transforms)) / len(transforms)
+            self.weights = np.ones(len(transforms), dtype=float) / len(transforms)
 
         self.sampler = WeightedChoiceSampler(self.weights)
 

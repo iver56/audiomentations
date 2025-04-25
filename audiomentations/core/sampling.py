@@ -1,4 +1,7 @@
+from typing import List, Optional, Union
+
 import numpy as np
+from numpy.typing import NDArray
 
 
 class WeightedChoiceSampler:
@@ -9,22 +12,27 @@ class WeightedChoiceSampler:
     >>> sampler = WeightedChoiceSampler(weights=[0.2, 0.8])
     >>> samples = sampler.sample(size=10)
     """
-    def __init__(self, weights: list[float] = None):
+
+    def __init__(self, weights: Optional[Union[List[float], NDArray]] = None):
         assert weights is not None and len(weights) > 0, "Weights must be provided"
 
-        # ensure weights are normalized
-        weights = np.array(weights)
-        weights /= np.sum(weights)
-        assert np.all(weights >= 0), "Weights must be non-negative"
+        weights = np.asarray(weights, dtype=float)
+        if np.any(weights < 0):
+            raise AssertionError("Weights must be non-negative")
+        total = float(weights.sum())
+        if total == 0:
+            raise AssertionError("Weights must be non-negative")
 
-        # initialize the sampler
-        self.num_transforms = len(weights)
+        weights /= total
+        self.num_transforms = weights.size
+
         self.cdf = np.cumsum(weights)
         # Ensure the last element is exactly 1.0 due to potential floating point errors
         self.cdf[-1] = 1.0
 
-    # Modified sample method to take size
     def sample(self, size: int = 1) -> np.ndarray:
+        """
+        Draw `size` indices according to the stored weight distribution.
+        """
         random_vals = np.random.rand(size)
-        # Use searchsorted with the array of random values
-        return np.searchsorted(self.cdf, random_vals, side='right')
+        return np.searchsorted(self.cdf, random_vals, side="right")

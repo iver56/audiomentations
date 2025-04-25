@@ -213,9 +213,9 @@ def test_one_of_weights():
     for _ in range(num_runs):
         perturbed_samples = augmenter(samples=samples, sample_rate=sample_rate)
         # Check which transform was applied based on the gain effect
-        if np.allclose(perturbed_samples[0], samples[0] * 2.0, atol=1e-5):
+        if np.allclose(perturbed_samples[0], samples[0] * 1.99526, atol=1e-4):
             counts[0] += 1
-        elif np.allclose(perturbed_samples[0], samples[0] * 0.5, atol=1e-5):
+        elif np.allclose(perturbed_samples[0], samples[0] * 0.501187, atol=1e-4):
             counts[1] += 1
         else:
              # This should not happen if p=1.0 and gains are fixed
@@ -246,10 +246,13 @@ def test_one_of_weights_normalization():
     num_runs = 2000
     for _ in range(num_runs):
         perturbed_samples = augmenter(samples=samples, sample_rate=sample_rate)
-        if np.allclose(perturbed_samples[0], samples[0] * 2.0, atol=1e-5):
+        if np.allclose(perturbed_samples[0], samples[0] * 1.99526, atol=1e-4):
             counts[0] += 1
-        elif np.allclose(perturbed_samples[0], samples[0] * 0.5, atol=1e-5):
+        elif np.allclose(perturbed_samples[0], samples[0] * 0.501187, atol=1e-4):
             counts[1] += 1
+        else:
+            # This should not happen if p=1.0 and gains are fixed
+            raise AssertionError("Unexpected output sample value")
 
     observed_proportions = np.array(counts) / num_runs
     # Check proportions match the *normalized* weights

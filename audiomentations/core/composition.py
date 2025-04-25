@@ -1,5 +1,5 @@
 import random
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 from audiomentations.core.transforms_interface import BaseSpectrogramTransform
 from audiomentations.core.serialization import get_shortest_class_fullname
 from audiomentations.core.utils import format_args
+from audiomentations.core.sampling import WeightedChoiceSampler
 
 REPR_INDENT_STEP = 2
 
@@ -259,31 +260,48 @@ class SomeOf(BaseCompose):
 class OneOf(BaseCompose):
     """
     OneOf randomly picks one of the given transforms when called, and applies that
-    transform.
+    transform. Optional `weights` can be supplied to guide the probability of each transform being chosen.
     Usage example:
     ```
     augment = OneOf([
         TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
         PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
-    ])
+    ], weights=[0.2, 0.8])
     # Generate 2 seconds of dummy audio for the sake of example
     samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
     # Augment/transform/perturb the audio data
     augmented_samples = augment(samples=samples, sample_rate=16000)
-    # Result: The audio was either time-stretched or pitch-shifted, but not both
+    # Result: The audio was either time-stretched (less likely) or pitch-shifted (4x more likely), but not both
     ```
     """
 
-    def __init__(self, transforms, p: float = 1.0):
+    def __init__(self, transforms, p: float = 1.0, weights: Optional[list[float]] = None):
         super().__init__(transforms, p)
         self.transform_index = 0
         self.should_apply = True
+
+        # Handle weights initialization and validation
+        if weights is not None:
+            if len(weights) != len(transforms):
+                raise ValueError("Length of weights must match length of transforms")
+            if any(w < 0 for w in weights):
+                raise ValueError("All weights must be non-negative")
+            if sum(weights) == 0:
+                raise ValueError("Sum of weights must be greater than 0")
+            # Normalize weights to sum to 1
+            self.weights = np.array(weights)
+            self.weights /= np.sum(self.weights)
+        else:
+            # If no weights provided, use uniform distribution
+            self.weights = np.ones(len(transforms)) / len(transforms)
+
+        self.sampler = WeightedChoiceSampler(self.weights)
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
         self.should_apply = random.random() < self.p
         if self.should_apply:
-            self.transform_index = random.randint(0, len(self.transforms) - 1)
+            self.transform_index = self.sampler.sample(size=1)[0]
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:

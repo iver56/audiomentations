@@ -101,7 +101,9 @@ Same as Compose, but for spectrogram transforms
 
 ## `OneOf`
 
-OneOf randomly picks one of the given transforms when called, and applies that transform.
+OneOf randomly picks one of the given transforms when called, and applies that transform. 
+
+An optional `weights` list of floats may be given to guide the probability of each transform for being chosen. If not specified, a transform is chosen uniformly at random.
 
 ## `SomeOf`
 

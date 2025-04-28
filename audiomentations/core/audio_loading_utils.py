@@ -1,10 +1,9 @@
 import warnings
-
 import librosa
 import numpy as np
 
 
-def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto"):
+def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto", offset = 0.0, duration = None):
     """
     Load an audio file as a floating point time series. Audio will be automatically
     resampled to the given sample rate.
@@ -17,7 +16,7 @@ def load_sound_file(file_path, sample_rate, mono=True, resample_type="auto"):
     """
     file_path = str(file_path)
     samples, actual_sample_rate = librosa.load(
-        str(file_path), sr=None, mono=mono, dtype=np.float32
+        str(file_path), sr=None, mono=mono, dtype=np.float32, offset = offset, duration = duration
     )
 
     if sample_rate is not None and actual_sample_rate != sample_rate:

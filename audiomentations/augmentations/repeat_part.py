@@ -1,6 +1,6 @@
 import random
 import warnings
-from typing import Optional, Callable
+from typing import Optional, Callable, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -41,7 +41,7 @@ class RepeatPart(BaseWaveformTransform):
         max_repeats: int = 3,
         min_part_duration: float = 0.25,
         max_part_duration: float = 1.2,
-        mode: str = "insert",
+        mode: Literal["insert", "replace"] = "insert",
         crossfade_duration: float = 0.005,
         part_transform: Optional[
             Callable[[NDArray[np.float32], int], NDArray[np.float32]]

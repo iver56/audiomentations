@@ -1,5 +1,5 @@
 import random
-from typing import Optional, Dict
+from typing import Optional, Dict, Literal
 
 import numpy as np
 import sys
@@ -59,7 +59,7 @@ class RoomSimulator(BaseWaveformTransform):
         max_mic_azimuth: float = np.pi,
         min_mic_elevation: float = -np.pi,  # TODO: Check if it should default to -np.pi / 2 instead
         max_mic_elevation: float = np.pi,  # TODO: Check if it should default to np.pi / 2 instead
-        calculation_mode: str = "absorption",
+        calculation_mode: Literal["rt60", "absorption"] = "absorption",
         use_ray_tracing: bool = True,
         max_order: int = 1,
         leave_length_unchanged: bool = False,
@@ -75,7 +75,7 @@ class RoomSimulator(BaseWaveformTransform):
         :param max_size_y: Maximum depth of the room in meters
         :param min_size_z: Minimum height (z coordinate) of the room in meters
         :param max_size_z: Maximum height of the room in meters
-        :param min_absorption_value: When `calculation_mode` is 'absorption' it will set
+        :param min_absorption_value: When `calculation_mode` is "absorption" it will set
             a given coefficient value for the surfaces of the room (walls, ceilings, and floor).
             This coefficient takes values between 0 (fully reflective surface) and 1 (fully absorbing surface).
 
@@ -85,7 +85,7 @@ class RoomSimulator(BaseWaveformTransform):
                 Factory                  ~ 0.05
         :param max_absorption_value:
 
-        :param min_target_rt60: When `calculation_mode` is `rt60`, it tries to set the absorption value
+        :param min_target_rt60: When `calculation_mode` is "rt60", it tries to set the absorption value
             of the surfaces of the room to achieve a target RT60 (in seconds). Note that this parameter
             changes only the materials (absorption coefficients) of the surfaces, NOT the dimension of the rooms.
 

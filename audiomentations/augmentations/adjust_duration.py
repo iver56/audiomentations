@@ -1,3 +1,5 @@
+from typing import Literal
+
 import numpy as np
 from numpy.typing import NDArray
 
@@ -18,8 +20,8 @@ class AdjustDuration(BaseWaveformTransform):
         self,
         duration_samples: int = None,
         duration_seconds: float = None,
-        padding_mode: str = "silence",
-        padding_position: str = "end",
+        padding_mode: Literal["silence", "wrap", "reflect"] = "silence",
+        padding_position: Literal["start", "end"] = "end",
         p: float = 0.5,
     ):
         """

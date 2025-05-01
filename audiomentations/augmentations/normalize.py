@@ -1,3 +1,5 @@
+from typing import Literal
+
 import numpy as np
 from numpy.typing import NDArray
 
@@ -14,7 +16,9 @@ class Normalize(BaseWaveformTransform):
 
     supports_multichannel = True
 
-    def __init__(self, apply_to: str = "all", p: float = 0.5):
+    def __init__(
+        self, apply_to: Literal["all", "only_too_loud_sounds"] = "all", p: float = 0.5
+    ):
         super().__init__(p)
         assert apply_to in ("all", "only_too_loud_sounds")
         self.apply_to = apply_to
@@ -24,7 +28,9 @@ class Normalize(BaseWaveformTransform):
         if self.parameters["should_apply"]:
             self.parameters["max_amplitude"] = float(get_max_abs_amplitude(samples))
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         if (
             self.apply_to == "only_too_loud_sounds"
             and self.parameters["max_amplitude"] < 1.0

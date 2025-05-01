@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from typing import Literal
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -11,11 +12,12 @@ DURATION_EPSILON = 0.00025
 
 class TimeMask(BaseWaveformTransform):
     """
-    Make a randomly chosen part of the audio silent (time-masking augmentation).
+    Make a chosen part of the audio silent (time-masking augmentation).
 
     The silent part can optionally be faded in/out to avoid hard transients.
 
-    Inspired by SpecAugment, A Simple Data Augmentation Method for Automatic Speech Recognition https://arxiv.org/pdf/1904.08779.pdf
+    Inspired by *SpecAugment: A Simple Data Augmentation Method for Automatic
+    Speech Recognition* (https://arxiv.org/pdf/1904.08779.pdf)
     """
 
     supports_multichannel = True
@@ -25,6 +27,7 @@ class TimeMask(BaseWaveformTransform):
         min_band_part: float = 0.01,
         max_band_part: float = 0.2,
         fade_duration: float = 0.005,
+        mask_location: Literal["start", "end", "random"] = "random",
         p: float = 0.5,
     ):
         """
@@ -37,12 +40,17 @@ class TimeMask(BaseWaveformTransform):
             changes, which can otherwise produce impulses or clicks in the audio.
             If you need hard edges or clicks, set this to `0.0` to disable fading.
             Positive values must be at least 0.00025 seconds.
+        :param mask_location: Where to place the silent region.
+            * "start": silence begins at index 0
+            * "end": silence ends at the last sample
+            * "random" (default): silence starts at a random position
         :param p: The probability of applying this transform
         """
         super().__init__(p)
-        if min_band_part < 0.0 or min_band_part > 1.0:
+
+        if not (0.0 <= min_band_part <= 1.0):
             raise ValueError("min_band_part must be between 0.0 and 1.0")
-        if max_band_part < 0.0 or max_band_part > 1.0:
+        if not (0.0 <= max_band_part <= 1.0):
             raise ValueError("max_band_part must be between 0.0 and 1.0")
         if min_band_part > max_band_part:
             raise ValueError("min_band_part must not be greater than max_band_part")
@@ -51,25 +59,40 @@ class TimeMask(BaseWaveformTransform):
             raise ValueError("fade_duration must be non-negative")
         if 0 < fade_duration < DURATION_EPSILON:
             raise ValueError(
-                "When fade_duration is set to a positive number, it must be >="
-                f" {DURATION_EPSILON}"
+                f"When fade_duration is positive it must be >= {DURATION_EPSILON}"
             )
+
+        if mask_location not in {"start", "end", "random"}:
+            raise ValueError('mask_location must be "start", "end" or "random"')
 
         self.min_band_part = min_band_part
         self.max_band_part = max_band_part
         self.fade_duration = fade_duration
+        self.mask_location = mask_location
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
-        if self.parameters["should_apply"]:
-            num_samples = samples.shape[-1]
-            self.parameters["t"] = random.randint(
-                int(num_samples * self.min_band_part),
-                int(num_samples * self.max_band_part),
-            )
-            self.parameters["t0"] = random.randint(
-                0, num_samples - self.parameters["t"]
-            )
+        if not self.parameters["should_apply"]:
+            return
+
+        num_samples = samples.shape[-1]
+
+        # Mask length
+        t = random.randint(
+            int(num_samples * self.min_band_part),
+            int(num_samples * self.max_band_part),
+        )
+
+        # Start index based on mask_location
+        loc = self.mask_location
+        if loc == "start":
+            t0 = 0
+        elif loc == "end":
+            t0 = num_samples - t
+        else:  # "random"
+            t0 = random.randint(0, num_samples - t)
+
+        self.parameters.update({"t": t, "t0": t0})
 
     def apply(
         self, samples: NDArray[np.float32], sample_rate: int
@@ -78,11 +101,10 @@ class TimeMask(BaseWaveformTransform):
         t: int = self.parameters["t"]
         t0: int = self.parameters["t0"]
 
+        fade_len = 0
         if self.fade_duration > 0.0:
             fade_len = int(round(sample_rate * self.fade_duration))
             fade_len = min(fade_len, t // 2)
-        else:
-            fade_len = 0
 
         if fade_len >= 2:
             fade_in, fade_out = get_crossfade_mask_pair(fade_len, equal_energy=False)

@@ -75,20 +75,27 @@ class TimeMask(BaseWaveformTransform):
         self, samples: NDArray[np.float32], sample_rate: int
     ) -> NDArray[np.float32]:
         new_samples = samples.copy()
-        t = self.parameters["t"]
-        t0 = self.parameters["t0"]
-        mask = np.zeros(t, dtype=np.float32)
+        t: int = self.parameters["t"]
+        t0: int = self.parameters["t0"]
 
-        if self.fade_duration > 0:
-            fade_length = int(round(sample_rate * self.fade_duration))
-            # Don't let the fade be longer than half of the silent region
-            fade_length = min(fade_length, t // 2)
+        if self.fade_duration > 0.0:
+            fade_len = int(round(sample_rate * self.fade_duration))
+            fade_len = min(fade_len, t // 2)
+        else:
+            fade_len = 0
 
-            if fade_length >= 2:
-                fade_in, fade_out = get_crossfade_mask_pair(
-                    fade_length, equal_energy=False
-                )
-                mask[:fade_length] = fade_out
-                mask[-fade_length:] = fade_in
-        new_samples[..., t0 : t0 + t] *= mask
+        if fade_len >= 2:
+            fade_in, fade_out = get_crossfade_mask_pair(fade_len, equal_energy=False)
+
+            left = slice(t0, t0 + fade_len)
+            mid = slice(t0 + fade_len, t0 + t - fade_len)
+            right = slice(t0 + t - fade_len, t0 + t)
+
+            new_samples[..., left] *= fade_out
+            if mid.start < mid.stop:
+                new_samples[..., mid] = 0.0
+            new_samples[..., right] *= fade_in
+        else:
+            new_samples[..., t0 : t0 + t] = 0.0
+
         return new_samples

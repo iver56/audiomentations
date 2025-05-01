@@ -1,4 +1,5 @@
 import random
+from typing import Literal
 
 import librosa
 import numpy as np
@@ -18,7 +19,7 @@ class TimeStretch(BaseWaveformTransform):
         min_rate: float = 0.8,
         max_rate: float = 1.25,
         leave_length_unchanged: bool = True,
-        method: str = "signalsmith_stretch",
+        method: Literal["librosa_phase_vocoder", "signalsmith_stretch"] = "signalsmith_stretch",
         p: float = 0.5,
     ):
         """

@@ -1,4 +1,5 @@
 import random
+from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -16,10 +17,10 @@ class Padding(BaseWaveformTransform):
 
     def __init__(
         self,
-        mode: str = "silence",
+        mode: Literal["silence", "wrap", "reflect"] = "silence",
         min_fraction: float = 0.01,
         max_fraction: float = 0.7,
-        pad_section: str = "end",
+        pad_section: Literal["start", "end"] = "end",
         p: float = 0.5,
     ):
         """

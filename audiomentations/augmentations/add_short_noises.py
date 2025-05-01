@@ -2,7 +2,7 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, List, Union, Callable
+from typing import Optional, List, Union, Callable, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -32,7 +32,7 @@ class AddShortNoises(BaseWaveformTransform):
         max_snr_db: float = 18.0,
         min_time_between_sounds: float = 2.0,
         max_time_between_sounds: float = 8.0,
-        noise_rms: str = "relative_to_whole_input",
+        noise_rms: Literal["absolute", "relative", "relative_to_whole_input"] = "relative_to_whole_input",
         min_absolute_noise_rms_db: float = -50.0,
         max_absolute_noise_rms_db: float = -20.0,
         add_all_noises_with_same_level: bool = False,

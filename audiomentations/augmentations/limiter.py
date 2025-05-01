@@ -1,6 +1,7 @@
 import math
 import random
 import sys
+from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -27,7 +28,7 @@ class Limiter(BaseWaveformTransform):
         max_attack: float = 0.025,
         min_release: float = 0.05,
         max_release: float = 0.7,
-        threshold_mode: str = "relative_to_signal_peak",
+        threshold_mode: Literal["relative_to_signal_peak", "absolute"] = "relative_to_signal_peak",
         p: float = 0.5,
     ):
         """

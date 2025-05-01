@@ -2,6 +2,7 @@ import os
 import random
 import tempfile
 import uuid
+from typing import Literal
 
 import librosa
 import numpy as np
@@ -57,7 +58,7 @@ class Mp3Compression(BaseWaveformTransform):
         self,
         min_bitrate: int = 8,
         max_bitrate: int = 64,
-        backend: str = "pydub",
+        backend: Literal["pydub", "lameenc"] = "pydub",
         p: float = 0.5,
     ):
         """

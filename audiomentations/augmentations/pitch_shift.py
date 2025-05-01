@@ -1,3 +1,5 @@
+from typing import Literal
+
 import python_stretch
 import random
 import warnings
@@ -18,7 +20,9 @@ class PitchShift(BaseWaveformTransform):
         self,
         min_semitones: float = -4.0,
         max_semitones: float = 4.0,
-        method="signalsmith_stretch",
+        method: Literal[
+            "librosa_phase_vocoder", "signalsmith_stretch"
+        ] = "signalsmith_stretch",
         p: float = 0.5,
     ):
         """

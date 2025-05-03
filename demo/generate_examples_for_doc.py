@@ -618,7 +618,6 @@ class TimeMaskExample(TransformUsageExample):
         transform = TimeMask(
             min_band_part=0.1,
             max_band_part=0.15,
-            fade=True,
             p=1.0,
         )
 

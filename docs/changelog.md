@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.41.0] - 2025-05-05
+
+### Added
+
+* Add support for NumPy 2.x
+* Add `weights` parameter to `OneOf`. This lets you guide the probability of each transform being chosen.
+
+### Changed
+
+* Improve type hints
+
+#### :warning: The `TimeMask` transform has been changed significantly:
+
+* **Breaking change**: Remove `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
+* Enable fading by default
+* Apply a smooth fade curve instead of a linear one
+* Add `mask_location` parameter
+* Change the default value of `min_band_part` from 0.0 to 0.01
+* Change the default value of `max_band_part` from 0.5 to 0.2
+* ~50% faster
+
+The following examples show how you can adapt your code when upgrading from <=v0.40.0 to >=v0.41.0:
+
+| <= 0.40.0                                                    | >= 0.41.0                                                             |
+|--------------------------------------------------------------|-----------------------------------------------------------------------|
+| `TimeMask(min_band_part=0.1, max_band_part=0.15, fade=True)` | `TimeMask(min_band_part=0.1, max_band_part=0.15, fade_duration=0.01)` |
+| `TimeMask()`                                                 | `TimeMask(min_band_part=0.0, max_band_part=0.5, fade_duration=0.0)`   |
+
+### Removed
+
+* `SpecCompose`, `SpecChannelShuffle` and `SpecFrequencyMask` have been removed. You can read more about this here: [#391](https://github.com/iver56/audiomentations/pull/391)
+
 ## [0.40.0] - 2025-03-20
 
 ### Added
@@ -36,7 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Place an upper distance limit of 2500 meters in `AirAbsorption` in order to avoid numerical issues
 * Expand the allowed shift range in `PitchShift` from [-12, 12] to [-24, 24]
-* Switch to a higher quality method, `"signalsmith_stretch"`, in `PitchShift` and `TimeStretch`. It sounds significantly better (e.g. less smearing) and is 50-100% faster than `"librosa_phase_vocoder"`
+* Switch to a higher quality method, `"signalsmith_stretch"`, in `PitchShift` and `TimeStretch`. It sounds significantly
+  better (e.g. less smearing) and is 50-100% faster than `"librosa_phase_vocoder"`
 
 If you want to keep using the old method, `"librosa_phase_vocoder"`, it can be done like this:
 
@@ -47,7 +80,8 @@ TimeStretch(method="librosa_phase_vocoder")
 
 ### Fixed
 
-* Fix a bug where `AddShortNoises(include_silence_in_noise_rms_estimation=False)` sometimes raised a `ValueError` due to digital silence in a portion of a short noise. This bug was introduced in v0.36.1.
+* Fix a bug where `AddShortNoises(include_silence_in_noise_rms_estimation=False)` sometimes raised a `ValueError` due to
+  digital silence in a portion of a short noise. This bug was introduced in v0.36.1.
 
 ## [0.38.0] - 2024-12-06
 
@@ -64,7 +98,10 @@ TimeStretch(method="librosa_phase_vocoder")
 
 ### Removed
 
-* Remove deprecated *_in_db args in [Gain](../waveform_transforms/gain/), [AddBackgroundNoise](../waveform_transforms/add_background_noise/), [AddGaussianSNR](../waveform_transforms/add_gaussian_snr/), [GainTransition](../waveform_transforms/gain_transition/), [LoudnessNormalization](../waveform_transforms/loudness_normalization/) and [AddShortNoises](../waveform_transforms/add_short_noises/). Those args were deprecated since v0.31.0, and now they are gone. For details, check the documentation page of each transform.
+* Remove deprecated *_in_db args
+  in [Gain](../waveform_transforms/gain/), [AddBackgroundNoise](../waveform_transforms/add_background_noise/), [AddGaussianSNR](../waveform_transforms/add_gaussian_snr/), [GainTransition](../waveform_transforms/gain_transition/), [LoudnessNormalization](../waveform_transforms/loudness_normalization/)
+  and [AddShortNoises](../waveform_transforms/add_short_noises/). Those args were deprecated since v0.31.0, and now they
+  are gone. For details, check the documentation page of each transform.
 
 For example:
 
@@ -76,22 +113,30 @@ For example:
 
 * Fix a bug where `AirAbsorption` often chose the wrong humidity bucket
 * Fix wrong logic in validation check of relation between `crossfade_duration` and `min_part_duration` in `RepeatPart`
-* Fix default value of `max_absolute_rms_db` in `AddBackgroundNoises`. It was incorrectly set to -45.0, but is now -15.0. This bug was introduced in v0.31.0.
+* Fix default value of `max_absolute_rms_db` in `AddBackgroundNoises`. It was incorrectly set to -45.0, but is now
+  -15.0. This bug was introduced in v0.31.0.
 * Fix various errors in the documentation of `AddShortNoises` and `AirAbsorption`
-* Fix a bug where `AddShortNoises` sometimes raised a `ValueError` because of an empty array. This bug was introduced in v0.36.1.
+* Fix a bug where `AddShortNoises` sometimes raised a `ValueError` because of an empty array. This bug was introduced in
+  v0.36.1.
 
 ## [0.37.0] - 2024-09-03
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this change removes support for macOS running on Intel. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations, C) submit a patch to numpy-minmax, D) run Linux or Windows.
+* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed
+  improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this change
+  removes support for macOS running on Intel. Intel Mac users have the following options: A) use audiomentations 0.36.1,
+  B) Create a fork of audiomentations, C) submit a patch to numpy-minmax, D) run Linux or Windows.
 * Limit numpy dependency to >=1.21,<2 for now, since numpy v2 is not officially supported yet.
 
 ## [0.36.1] - 2024-08-20
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-rms](https://github.com/nomonosound/numpy-rms) package for significant speed improvements. These transforms are faster now: `AddBackgroundNoise`, `AddColorNoise`, `AddGaussianSNR`, `AddShortNoises`, `Mp3Compression` and `TanhDistortion`. Unfortunately, this change removes support for Windows running on ARM.
+* Leverage the SIMD-accelerated [numpy-rms](https://github.com/nomonosound/numpy-rms) package for significant speed
+  improvements. These transforms are faster now: `AddBackgroundNoise`, `AddColorNoise`, `AddGaussianSNR`,
+  `AddShortNoises`, `Mp3Compression` and `TanhDistortion`. Unfortunately, this change removes support for Windows
+  running on ARM.
 
 ## [0.36.0] - 2024-06-10
 
@@ -105,7 +150,7 @@ For example:
 * Make `RoomSimulator` faster by avoiding unneeded calculations when the transform is not going to be applied (p<1)
 * Limit scipy dependency to <1.13 because 1.13 is not compatible for now.
 
-## [0.35.0] - 2024-03-15 
+## [0.35.0] - 2024-03-15
 
 ### Added
 
@@ -117,7 +162,8 @@ For example:
 
 * Bump min numpy version from 1.18 to 1.21
 * Use numpy.typing in type hints
-* Optimize max abs calculations in terms of memory and speed. This makes `Normalize`, `Mp3Compression` and `Limiter` slightly faster.
+* Optimize max abs calculations in terms of memory and speed. This makes `Normalize`, `Mp3Compression` and `Limiter`
+  slightly faster.
 
 ## [0.33.0] - 2023-08-30
 
@@ -136,12 +182,13 @@ For example:
 * Fading is enabled by default
 * Smoother fade curve
 
-These are **breaking changes**. The following example shows how you can adapt your code when upgrading from <=v0.32.0 to >=v0.33.0:
+These are **breaking changes**. The following examples show how you can adapt your code when upgrading from <=v0.32.0
+to >=v0.33.0:
 
-| <= 0.32.0 | >= 0.33.0                                                                         |
-| --------- |-----------------------------------------------------------------------------------|
+| <= 0.32.0                                                                   | >= 0.33.0                                                                         |
+|-----------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
 | `Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, fade_duration=0.01)` | `Shift(min_shift=-0.5, max_shift=0.5, shift_unit="fraction", fade_duration=0.01)` |
-| `Shift()` | `Shift(fade_duration=0.0)` |
+| `Shift()`                                                                   | `Shift(fade_duration=0.0)`                                                        |
 
 ### Fixed
 
@@ -156,8 +203,10 @@ These are **breaking changes**. The following example shows how you can adapt yo
 ### Changed
 
 * Bump min version of numpy dependency from 1.13 to 1.16
-* If a transform is in "frozen parameters" mode, but has no parameters yet, the transform will randomize/set parameters when it gets called for the first time
-* Increase the threshold for raising `WrongMultichannelAudioShape`. This allows some rare use cases where the number of channels slightly exceeds the number of samples.
+* If a transform is in "frozen parameters" mode, but has no parameters yet, the transform will randomize/set parameters
+  when it gets called for the first time
+* Increase the threshold for raising `WrongMultichannelAudioShape`. This allows some rare use cases where the number of
+  channels slightly exceeds the number of samples.
 
 ### Fixed
 
@@ -169,9 +218,11 @@ These are **breaking changes**. The following example shows how you can adapt yo
 
 * Raise exception instead of warning when the given multichannel ndarray has wrong shape
 * Add support for the latest librosa 0.10 version
-* Switch to a faster default resampler internally in `PitchShift`, leading to much faster execution. This requires `soxr`.
+* Switch to a faster default resampler internally in `PitchShift`, leading to much faster execution. This requires
+  `soxr`.
 * Bump min `scipy` requirement from 1.0 to 1.3
-* Rename "_in_db" to "_db" in args and parameters. Passing args with the old names still works, but is deprecated and will stop working in a future version.
+* Rename "_in_db" to "_db" in args and parameters. Passing args with the old names still works, but is deprecated and
+  will stop working in a future version.
 
 ## [0.30.0] - 2023-05-02
 
@@ -192,7 +243,9 @@ These are **breaking changes**. The following example shows how you can adapt yo
 ### Changed
 
 * Change default value of `noise_rms` from `"relative"` to `"relative_to_whole_input"` in `AddShortNoises`
-* Change default values of `min_snr_in_db` (from `0.0` to `-6.0`), `max_snr_in_db` (from `24.0` to `18.0`), `min_time_between_sounds` (from `4.0` to `2.0`) and `max_time_between_sounds` (from `16.0` to `8.0`) in `AddShortNoises`
+* Change default values of `min_snr_in_db` (from `0.0` to `-6.0`), `max_snr_in_db` (from `24.0` to `18.0`),
+  `min_time_between_sounds` (from `4.0` to `2.0`) and `max_time_between_sounds` (from `16.0` to `8.0`) in
+  `AddShortNoises`
 
 ### Fixed
 
@@ -220,8 +273,8 @@ These are **breaking changes**. The following example shows how you can adapt yo
 * Speed up `Limiter` by ~8x
 * Fix/improve some docstrings and type hints
 * Change default values in `Trim` and `ApplyImpulseResponse` according to the warnings that were added in v0.23.0
-* Emit a FutureWarning when `noise_rms` in `AddShortNoises` is not specified - the 
- default value will change from "relative" to "relative_to_whole_input" in a future version. 
+* Emit a FutureWarning when `noise_rms` in `AddShortNoises` is not specified - the
+  default value will change from "relative" to "relative_to_whole_input" in a future version.
 
 ## [0.26.0] - 2022-08-19
 
@@ -329,7 +382,8 @@ These are **breaking changes**. The following example shows how you can adapt yo
 ### Added
 
 * Add support for multichannel audio in `ApplyImpulseResponse`, `BandPassFilter`, `HighPassFilter` and `LowPassFilter`
-* Add `BandStopFilter` (similar to FrequencyMask, but with overhauled defaults and parameter randomization behavior), `PeakingFilter`, `LowShelfFilter` and `HighShelfFilter`
+* Add `BandStopFilter` (similar to FrequencyMask, but with overhauled defaults and parameter randomization behavior),
+  `PeakingFilter`, `LowShelfFilter` and `HighShelfFilter`
 * Add parameter `add_all_noises_with_same_level` in `AddShortNoises`
 
 ### Changed
@@ -463,7 +517,8 @@ These are **breaking changes**. The following example shows how you can adapt yo
 
 ### Changed
 
-* Speed up `AddBackgroundNoise`, `AddShortNoises` and `AddImpulseResponse` by loading wav files with scipy or wavio instead of librosa.
+* Speed up `AddBackgroundNoise`, `AddShortNoises` and `AddImpulseResponse` by loading wav files with scipy or wavio
+  instead of librosa.
 
 ## [0.12.0] - 2020-09-23
 
@@ -479,7 +534,8 @@ These are **breaking changes**. The following example shows how you can adapt yo
 
 ### Removed
 
-* Python <= 3.5 is no longer officially supported, since [Python 3.5 has reached end-of-life](https://devguide.python.org/#status-of-python-branches)
+* Python <= 3.5 is no longer officially supported,
+  since [Python 3.5 has reached end-of-life](https://devguide.python.org/#status-of-python-branches)
 * Breaking change: Internal util functions are no longer exposed directly. If you were doing
   e.g. `from audiomentations import calculate_rms`, now you have to do
   `from audiomentations.core.utils import calculate_rms`
@@ -494,7 +550,8 @@ These are **breaking changes**. The following example shows how you can adapt yo
 
 ### Changed
 
-* Improve the performance of `AddBackgroundNoise` and `AddShortNoises` by optimizing the implementation of `calculate_rms`.
+* Improve the performance of `AddBackgroundNoise` and `AddShortNoises` by optimizing the implementation of
+  `calculate_rms`.
 
 ### Fixed
 
@@ -505,11 +562,13 @@ These are **breaking changes**. The following example shows how you can adapt yo
 
 ### Added
 
-* `AddImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises` now support aiff files in addition to flac, mp3, ogg and wav
+* `AddImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises` now support aiff files in addition to flac, mp3, ogg
+  and wav
 
 ### Changed
 
-* Breaking change: `AddImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises` now include subfolders when searching for files. This is useful when your sound files are organized in subfolders.
+* Breaking change: `AddImpulseResponse`, `AddBackgroundNoise` and `AddShortNoises` now include subfolders when searching
+  for files. This is useful when your sound files are organized in subfolders.
 
 ### Fixed
 
@@ -519,11 +578,13 @@ These are **breaking changes**. The following example shows how you can adapt yo
 
 ### Added
 
-* Remember randomized/chosen effect parameters. This allows for freezing the parameters and applying the same effect to multiple sounds. Use transform.freeze_parameters() and transform.unfreeze_parameters() for this.
+* Remember randomized/chosen effect parameters. This allows for freezing the parameters and applying the same effect to
+  multiple sounds. Use transform.freeze_parameters() and transform.unfreeze_parameters() for this.
 * Implement transform.serialize_parameters(). Useful for when you want to store metadata on how a sound was perturbed.
 * Add a rollover parameter to `Shift`. This allows for introducing silence instead of a wrapped part of the sound.
 * Add support for flac in `AddImpulseResponse`
-* Implement `AddBackgroundNoise` transform. Useful for when you want to add background noise to all of your sound. You need to give it a folder of background noises to choose from.
+* Implement `AddBackgroundNoise` transform. Useful for when you want to add background noise to all of your sound. You
+  need to give it a folder of background noises to choose from.
 * Implement `AddShortNoises`. Useful for when you want to add (bursts of) short noise sounds to your input audio.
 
 ### Changed
@@ -605,47 +666,92 @@ Thanks to karpnv
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
 
+[0.41.0]: https://github.com/iver56/audiomentations/compare/v0.40.0...v0.41.0
+
 [0.40.0]: https://github.com/iver56/audiomentations/compare/v0.39.0...v0.40.0
+
 [0.39.0]: https://github.com/iver56/audiomentations/compare/v0.38.0...v0.39.0
+
 [0.38.0]: https://github.com/iver56/audiomentations/compare/v0.37.0...v0.38.0
+
 [0.37.0]: https://github.com/iver56/audiomentations/compare/v0.36.1...v0.37.0
+
 [0.36.1]: https://github.com/iver56/audiomentations/compare/v0.36.0...v0.36.1
+
 [0.36.0]: https://github.com/iver56/audiomentations/compare/v0.35.0...v0.36.0
+
 [0.35.0]: https://github.com/iver56/audiomentations/compare/v0.34.1...v0.35.0
+
 [0.34.1]: https://github.com/iver56/audiomentations/compare/v0.33.0...v0.34.1
+
 [0.33.0]: https://github.com/iver56/audiomentations/compare/v0.32.0...v0.33.0
+
 [0.32.0]: https://github.com/iver56/audiomentations/compare/v0.31.0...v0.32.0
+
 [0.31.0]: https://github.com/iver56/audiomentations/compare/v0.30.0...v0.31.0
+
 [0.30.0]: https://github.com/iver56/audiomentations/compare/v0.29.0...v0.30.0
+
 [0.29.0]: https://github.com/iver56/audiomentations/compare/v0.28.0...v0.29.0
+
 [0.28.0]: https://github.com/iver56/audiomentations/compare/v0.27.0...v0.28.0
+
 [0.27.0]: https://github.com/iver56/audiomentations/compare/v0.26.0...v0.27.0
+
 [0.26.0]: https://github.com/iver56/audiomentations/compare/v0.25.1...v0.26.0
+
 [0.25.1]: https://github.com/iver56/audiomentations/compare/v0.25.0...v0.25.1
+
 [0.25.0]: https://github.com/iver56/audiomentations/compare/v0.24.0...v0.25.0
+
 [0.24.0]: https://github.com/iver56/audiomentations/compare/v0.23.0...v0.24.0
+
 [0.23.0]: https://github.com/iver56/audiomentations/compare/v0.22.0...v0.23.0
+
 [0.22.0]: https://github.com/iver56/audiomentations/compare/v0.21.0...v0.22.0
+
 [0.21.0]: https://github.com/iver56/audiomentations/compare/v0.20.0...v0.21.0
+
 [0.20.0]: https://github.com/iver56/audiomentations/compare/v0.19.0...v0.20.0
+
 [0.19.0]: https://github.com/iver56/audiomentations/compare/v0.18.0...v0.19.0
+
 [0.18.0]: https://github.com/iver56/audiomentations/compare/v0.17.0...v0.18.0
+
 [0.17.0]: https://github.com/iver56/audiomentations/compare/v0.16.0...v0.17.0
+
 [0.16.0]: https://github.com/iver56/audiomentations/compare/v0.15.0...v0.16.0
+
 [0.15.0]: https://github.com/iver56/audiomentations/compare/v0.14.0...v0.15.0
+
 [0.14.0]: https://github.com/iver56/audiomentations/compare/v0.13.0...v0.14.0
+
 [0.13.0]: https://github.com/iver56/audiomentations/compare/v0.12.1...v0.13.0
+
 [0.12.1]: https://github.com/iver56/audiomentations/compare/v0.12.0...v0.12.1
+
 [0.12.0]: https://github.com/iver56/audiomentations/compare/v0.11.0...v0.12.0
+
 [0.11.0]: https://github.com/iver56/audiomentations/compare/v0.10.1...v0.11.0
+
 [0.10.1]: https://github.com/iver56/audiomentations/compare/v0.10.0...v0.10.1
+
 [0.10.0]: https://github.com/iver56/audiomentations/compare/v0.9.0...v0.10.0
+
 [0.9.0]: https://github.com/iver56/audiomentations/compare/v0.8.0...v0.9.0
+
 [0.8.0]: https://github.com/iver56/audiomentations/compare/v0.7.0...v0.8.0
+
 [0.7.0]: https://github.com/iver56/audiomentations/compare/v0.6.0...v0.7.0
+
 [0.6.0]: https://github.com/iver56/audiomentations/compare/v0.5.0...v0.6.0
+
 [0.5.0]: https://github.com/iver56/audiomentations/compare/v0.4.0...v0.5.0
+
 [0.4.0]: https://github.com/iver56/audiomentations/compare/v0.3.0...v0.4.0
+
 [0.3.0]: https://github.com/iver56/audiomentations/compare/v0.2.0...v0.3.0
+
 [0.2.0]: https://github.com/iver56/audiomentations/compare/v0.1.0...v0.2.0
+
 [0.1.0]: https://github.com/iver56/audiomentations/releases/tag/v0.1.0

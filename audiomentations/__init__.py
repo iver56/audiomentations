@@ -39,4 +39,4 @@ from .augmentations.time_stretch import TimeStretch
 from .augmentations.trim import Trim
 from .core.composition import Compose, OneOf, SomeOf
 
-__version__ = "0.40.0"
+__version__ = "0.41.0"

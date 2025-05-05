@@ -91,30 +91,37 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.40.0] - 2025-03-20
+## [0.41.0] - 2025-05-05
 
 ### Added
 
-* Add support for scipy>=1.13
+* Add support for NumPy 2.x
+* Add `weights` parameter to `OneOf`. This lets you guide the probability of each transform being chosen.
 
 ### Changed
 
-* Lay the groundwork for NumPy 2.x support (version constraint update coming in the next release)
-* Speed up `LoudnessNormalization` by ~20%
-* Improve test coverage and documentation
-* Bump min `python-stretch` version and remove the limitation on the number of channels in `PitchShift`
-* Bump min numpy version to 1.22
-* Bump min pyroomacoustics version to 0.7.4
+* Improve type hints
 
-### Fixed
+#### :warning: The `TimeMask` transform has been changed significantly:
 
-* Fix a bug where `TimeMask` could raise an exception if the fade length became 0
-* Disallow `min_cutoff_freq` <= 0 in `HighPassFilter`
-* Make `AdjustDuration` picklable (useful for multiprocessing)
+* **Breaking change**: Remove `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
+* Enable fading by default
+* Apply a smooth fade curve instead of a linear one
+* Add `mask_location` parameter
+* Change the default value of `min_band_part` from 0.0 to 0.01
+* Change the default value of `max_band_part` from 0.5 to 0.2
+* ~50% faster
+
+The following examples show how you can adapt your code when upgrading from <=v0.40.0 to >=v0.41.0:
+
+| <= 0.40.0                                                    | >= 0.41.0                                                             |
+|--------------------------------------------------------------|-----------------------------------------------------------------------|
+| `TimeMask(min_band_part=0.1, max_band_part=0.15, fade=True)` | `TimeMask(min_band_part=0.1, max_band_part=0.15, fade_duration=0.01)` |
+| `TimeMask()`                                                 | `TimeMask(min_band_part=0.0, max_band_part=0.5, fade_duration=0.0)`   |
 
 ### Removed
 
-* Remove support for Python 3.8
+* `SpecCompose`, `SpecChannelShuffle` and `SpecFrequencyMask` have been removed. You can read more about this here: [#391](https://github.com/iver56/audiomentations/pull/391)
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

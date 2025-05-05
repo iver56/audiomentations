@@ -60,7 +60,7 @@ class WeightedChoiceSampler:
             self._uniform = False
             self.num_items = weights.size
 
-    def sample(self, size: int = 1) -> NDArray[np.int_]:
+    def sample(self, size: int = 1) -> Union[NDArray[np.int32], NDArray[np.int64]]:
         """
         Draw `size` indices according to the stored weight distribution.
         """

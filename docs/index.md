@@ -77,6 +77,20 @@ OneOf randomly picks one of the given transforms when called, and applies that t
 
 An optional `weights` list of floats may be given to guide the probability of each transform for being chosen. If not specified, a transform is chosen uniformly at random.
 
+Code example:
+
+```
+from audiomentations import OneOf, PitchShift
+
+pitch_shift = OneOf(
+    transforms=[
+        PitchShift(method="librosa_phase_vocoder"),
+        PitchShift(method="signalsmith_stretch"),
+    ],
+    weights=[0.1, 0.9],
+)
+```
+
 ## `SomeOf`
 
 SomeOf randomly picks several of the given transforms when called, and applies those transforms.

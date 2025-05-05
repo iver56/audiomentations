@@ -79,7 +79,7 @@ An optional `weights` list of floats may be given to guide the probability of ea
 
 Code example:
 
-```
+```python
 from audiomentations import OneOf, PitchShift
 
 pitch_shift = OneOf(

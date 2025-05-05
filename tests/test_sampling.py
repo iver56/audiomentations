@@ -9,34 +9,31 @@ class TestWeightedChoiceSampler:
     def test_init_valid_weights(self):
         weights = [0.2, 0.8]
         sampler = WeightedChoiceSampler(weights=weights)
-        assert sampler.num_transforms == 2
+        assert sampler.num_items == 2
         assert_allclose(sampler.cdf, [0.2, 1.0])
         assert sampler.cdf[-1] == 1.0  # Ensure last element is exactly 1.0
 
     def test_init_valid_weights_needs_normalization(self):
         weights = [1, 4] # Sums to 5
         sampler = WeightedChoiceSampler(weights=weights)
-        assert sampler.num_transforms == 2
+        assert sampler.num_items == 2
         assert_allclose(sampler.cdf, [0.2, 1.0])
         assert sampler.cdf[-1] == 1.0
 
     def test_init_invalid_weights_none(self):
-        with pytest.raises(AssertionError, match="Weights must be provided"):
+        with pytest.raises(ValueError, match="If 'weights' is None you must supply a positive 'num_items'."):
             WeightedChoiceSampler(weights=None)
 
     def test_init_invalid_weights_empty(self):
-        with pytest.raises(AssertionError, match="Weights must be provided"):
+        with pytest.raises(ValueError, match="Sum of weights must be > 0"):
             WeightedChoiceSampler(weights=[])
 
     def test_init_invalid_weights_negative(self):
-        # WeightedChoiceSampler uses numpy's assert_all which raises AssertionError
-        with pytest.raises(AssertionError, match="Weights must be non-negative"):
+        with pytest.raises(ValueError, match="weights must be non-negative"):
             WeightedChoiceSampler(weights=[0.5, -0.1])
 
     def test_init_weights_all_zero(self):
-        # WeightedChoiceSampler checks for sum > 0 via division, leading to RuntimeWarning
-        # and then NaN values, which fail the non-negative check.
-        with pytest.raises(AssertionError, match="Weights must be non-negative"):
+        with pytest.raises(ValueError, match="Sum of weights must be > 0"):
             WeightedChoiceSampler(weights=[0.0, 0.0])
 
     def test_sample_single(self):
@@ -100,7 +97,7 @@ class TestWeightedChoiceSampler:
         num_samples = 10000
         sample_indices = sampler.sample(size=num_samples)
         
-        counts = np.bincount(sample_indices, minlength=sampler.num_transforms)
+        counts = np.bincount(sample_indices, minlength=sampler.num_items)
         observed_proportions = counts / num_samples
         
         assert_allclose(observed_proportions, weights, atol=0.05)
@@ -112,7 +109,7 @@ class TestWeightedChoiceSampler:
         num_samples = 20000
         sample_indices = sampler.sample(size=num_samples)
 
-        counts = np.bincount(sample_indices, minlength=sampler.num_transforms)
+        counts = np.bincount(sample_indices, minlength=sampler.num_items)
         observed_proportions = counts / num_samples
         
         assert_allclose(observed_proportions, weights, atol=0.05)
@@ -124,7 +121,7 @@ class TestWeightedChoiceSampler:
         num_samples = 10000
         sample_indices = sampler.sample(size=num_samples)
 
-        counts = np.bincount(sample_indices, minlength=sampler.num_transforms)
+        counts = np.bincount(sample_indices, minlength=sampler.num_items)
         observed_proportions = counts / num_samples
         
         assert counts[1] == 0 # Index 1 should never be chosen

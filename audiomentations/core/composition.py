@@ -1,5 +1,5 @@
 import random
-from typing import Any, Optional
+from typing import Any, Optional, Union, Sequence
 
 import numpy as np
 from numpy.typing import NDArray
@@ -245,7 +245,7 @@ class OneOf(BaseCompose):
         self,
         transforms,
         p: float = 1.0,
-        weights: Optional[list[float]] = None,
+        weights: Optional[Union[Sequence[float], NDArray]] = None,
     ):
         super().__init__(transforms, p)
         self.transform_index = 0
@@ -254,17 +254,10 @@ class OneOf(BaseCompose):
         if weights is not None:
             if len(weights) != len(transforms):
                 raise ValueError("Length of weights must match length of transforms")
-            if any(w < 0 for w in weights):
-                raise ValueError("All weights must be non-negative")
-            if sum(weights) == 0:
-                raise ValueError("Sum of weights must be greater than 0")
 
-            self.weights = np.asarray(weights, dtype=float)
-            self.weights /= self.weights.sum()
+            self.sampler = WeightedChoiceSampler(weights=weights)
         else:
-            self.weights = np.ones(len(transforms), dtype=float) / len(transforms)
-
-        self.sampler = WeightedChoiceSampler(self.weights)
+            self.sampler = WeightedChoiceSampler(num_items=len(transforms))
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)

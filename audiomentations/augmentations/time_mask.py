@@ -29,6 +29,7 @@ class TimeMask(BaseWaveformTransform):
         fade_duration: float = 0.005,
         mask_location: Literal["start", "end", "random"] = "random",
         p: float = 0.5,
+        **kwargs,
     ):
         """
         :param min_band_part: Minimum length of the silent part as a fraction of the
@@ -46,6 +47,15 @@ class TimeMask(BaseWaveformTransform):
             * "random" (default): silence starts at a random position
         :param p: The probability of applying this transform
         """
+        if "fade" in kwargs:
+            raise TypeError(
+                "The 'fade' parameter was removed in v0.41.0 and is no longer supported."
+                " Please use the 'fade_duration' parameter (float, seconds) instead."
+                " To disable fading (equivalent to fade=False), set fade_duration=0.0."
+                " To enable fading (equivalent to fade=True), set fade_duration to a"
+                " positive value (e.g., the default 0.005 seconds)."
+            )
+
         super().__init__(p)
 
         if not (0.0 <= min_band_part <= 1.0):

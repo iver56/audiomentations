@@ -63,6 +63,9 @@ def test_invalid_params():
     with pytest.raises(ValueError):
         TimeMask(mask_location="beyond_infinity")
 
+    with pytest.raises(TypeError):
+        TimeMask(fade=True)
+
 
 def test_apply_time_mask_multichannel():
     sample_len = 1024

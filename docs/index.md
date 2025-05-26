@@ -87,6 +87,7 @@ pitch_shift = OneOf(
         PitchShift(method="librosa_phase_vocoder"),
         PitchShift(method="signalsmith_stretch"),
     ],
+    p=1.0,
     weights=[0.1, 0.9],
 )
 ```

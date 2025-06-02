@@ -16,7 +16,7 @@ def mse(signal1, signal2):
 
 @pytest.mark.parametrize(
     "backend",
-    ["pydub", "lameenc"],
+    ["ffmpeg", "lameenc"],
 )
 @pytest.mark.parametrize(
     "shape",
@@ -38,7 +38,7 @@ def test_apply_mp3_compression(backend: str, shape: tuple):
 
 @pytest.mark.parametrize(
     "backend",
-    ["pydub", "lameenc"],
+    ["ffmpeg", "lameenc"],
 )
 @pytest.mark.parametrize(
     "shape",

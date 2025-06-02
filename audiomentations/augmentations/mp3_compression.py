@@ -9,6 +9,10 @@ import numpy as np
 import sys
 from numpy.typing import NDArray
 
+# Added imports for soundfile and subprocess
+import soundfile as sf
+import subprocess
+
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations.core.utils import (
     convert_float_samples_to_int16,
@@ -20,7 +24,7 @@ class Mp3Compression(BaseWaveformTransform):
     """Compress the audio using an MP3 encoder to lower the audio quality.
     This may help machine learning models deal with compressed, low-quality audio.
 
-    This transform depends on either lameenc or pydub/ffmpeg.
+    This transform depends on lameenc or pydub/ffmpeg.
 
     Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 Hz).
 
@@ -64,8 +68,8 @@ class Mp3Compression(BaseWaveformTransform):
         """
         :param min_bitrate: Minimum bitrate in kbps
         :param max_bitrate: Maximum bitrate in kbps
-        :param backend: "pydub" or "lameenc".
-            Pydub may use ffmpeg under the hood.
+        :param backend: "ffmpeg" or "lameenc".
+            ffmeg:
                 Pros: Seems to avoid introducing latency in the output.
                 Cons: Slower than lameenc.
             lameenc:
@@ -120,7 +124,7 @@ class Mp3Compression(BaseWaveformTransform):
         if self.backend == "lameenc":
             return self.apply_lameenc(samples, sample_rate)
         elif self.backend == "pydub":
-            return self.apply_pydub(samples, sample_rate)
+            return self.apply_ffmpeg_mp3_compression(samples, sample_rate)
         else:
             raise Exception("Backend {} not recognized".format(self.backend))
 
@@ -200,48 +204,40 @@ class Mp3Compression(BaseWaveformTransform):
 
         return degraded_samples
 
-    def apply_pydub(
+    def apply_ffmpeg_mp3_compression(
         self, samples: NDArray[np.float32], sample_rate: int
     ) -> NDArray[np.float32]:
-        try:
-            import pydub
-        except ImportError:
-            print(
-                (
-                    "Failed to import pydub. Maybe it is not installed? "
-                    "To install the optional pydub dependency of audiomentations,"
-                    " do `pip install audiomentations[extras]` or simply"
-                    " `pip install pydub`"
-                ),
-                file=sys.stderr,
-            )
-            raise
-
         assert samples.dtype == np.float32
 
         samples = self.maybe_pre_gain(samples)
 
-        int_samples = convert_float_samples_to_int16(samples).T
+        int_samples = convert_float_samples_to_int16(samples)
         num_channels = 1 if samples.ndim == 1 else samples.shape[0]
-        audio_segment = pydub.AudioSegment(
-            int_samples.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=int_samples.dtype.itemsize,
-            channels=num_channels,
-        )
+        if num_channels > 1:
+            int_samples = int_samples.T  # Shape: (num_samples, num_channels)
 
+        # Write WAV to temp file
         tmp_dir = tempfile.gettempdir()
-        tmp_file_path = os.path.join(
-            tmp_dir, "tmp_compressed_{}.mp3".format(str(uuid.uuid4())[0:12])
-        )
+        wav_path = os.path.join(tmp_dir, f"tmp_input_{uuid.uuid4().hex[:12]}.wav")
+        mp3_path = os.path.join(tmp_dir, f"tmp_output_{uuid.uuid4().hex[:12]}.mp3")
 
-        bitrate_string = "{}k".format(self.parameters["bitrate"])
-        file_handle = audio_segment.export(tmp_file_path, bitrate=bitrate_string)
-        file_handle.close()
+        sf.write(wav_path, int_samples, sample_rate)
 
-        degraded_samples, _ = librosa.load(tmp_file_path, sr=sample_rate, mono=False)
+        # Encode to MP3 using ffmpeg
+        bitrate_string = f"{self.parameters['bitrate']}k"
+        subprocess.run([
+            "ffmpeg", "-y", "-loglevel", "error",
+            "-i", wav_path,
+            "-b:a", bitrate_string,
+            mp3_path
+        ], check=True)
 
-        os.unlink(tmp_file_path)
+        # Load MP3 using librosa (degraded version)
+        degraded_samples, _ = librosa.load(mp3_path, sr=sample_rate, mono=False)
+
+        # Cleanup
+        os.unlink(wav_path)
+        os.unlink(mp3_path)
 
         degraded_samples = self.maybe_post_gain(degraded_samples)
 

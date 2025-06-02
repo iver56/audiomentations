@@ -10,7 +10,6 @@ numba==0.58.0
 numpy==1.24.4
 numpy-minmax>=0.3.0,<1
 numpy-rms>=0.4.2,<1
-pydub==0.25.1
 pyloudnorm==0.1.1
 pyroomacoustics==0.7.4
 pytest==7.4.4
@@ -20,3 +19,4 @@ scipy==1.13.1
 soxr==0.3.5
 tqdm==4.66.3
 twine
+soundfile>=0.12.1

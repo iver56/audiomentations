@@ -44,12 +44,12 @@ setup(
         "python-stretch>=0.3.1,<1",
         "scipy>=1.4,<2",
         "soxr>=0.3.2,<1.0.0",
+        "soundfile>=0.12.1,<1",
     ],
     extras_require={
         "extras": [
             "cylimiter==0.3.0",
             "lameenc>=1.2.0,<2",
-            "pydub>=0.22.0,<1",
             "pyloudnorm>=0.1.0",
             "pyroomacoustics>=0.7.4",
         ]

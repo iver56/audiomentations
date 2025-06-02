@@ -5,7 +5,7 @@ _Added in v0.12.0_
 Compress the audio using an MP3 encoder to lower the audio quality. This may help machine
 learning models deal with compressed, low-quality audio.
 
-This transform depends on either lameenc or pydub/ffmpeg.
+This transform depends on either lameenc or ffmpeg.
 
 Note that bitrates below 32 kbps are only supported for low sample rates (up to 24000 Hz).
 
@@ -22,10 +22,10 @@ Warning: This transform writes to disk, so it may be slow.
 [`max_bitrate`](#max_bitrate){ #max_bitrate }: `int` • unit: kbps • range: [`min_bitrate`, 320]
 :   :octicons-milestone-24: Default: `64`. Maximum bitrate in kbps
 
-[`backend`](#backend){ #backend }: `str` • choices: `"pydub"`, `"lameenc"`
-:   :octicons-milestone-24: Default: `"pydub"`.
+[`backend`](#backend){ #backend }: `str` • choices: `"ffmpeg"`, `"lameenc"`
+:   :octicons-milestone-24: Default: `"ffmpeg"`.
 
-    * `"pydub"`: May use ffmpeg under the hood. Pro: Seems to avoid introducing latency in
+    * `"ffmpeg"`: Pro: Seems to avoid introducing latency in
         the output. Con: Slightly slower than `"lameenc"`.
     * `"lameenc"`: Pro: With this backend you can set the quality parameter in addition
         to the bitrate (although this parameter is not exposed in the audiomentations API

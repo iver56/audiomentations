@@ -17,7 +17,9 @@ jobs:
             coverage: "false"
           - python: "3.11"
             req: dev_requirements_np2x.txt
-            coverage: "true"
+          - python: "3.12"
+            coverage: "false"
+            req: dev_requirements_np2x.txt
 
     steps:
       - uses: actions/checkout@v4

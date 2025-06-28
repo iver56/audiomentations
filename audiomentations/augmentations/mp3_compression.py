@@ -2,6 +2,7 @@ import os
 import random
 import tempfile
 import uuid
+import warnings
 from typing import Literal
 
 import librosa
@@ -58,19 +59,38 @@ class Mp3Compression(BaseWaveformTransform):
         self,
         min_bitrate: int = 8,
         max_bitrate: int = 64,
-        backend: Literal["pydub", "lameenc"] = "pydub",
+        backend: Literal["pydub", "lameenc", "fast-mp3-augment"] = "fast-mp3-augment",
+        preserve_delay: bool = False,
+        quality: int = 7,
         p: float = 0.5,
     ):
         """
         :param min_bitrate: Minimum bitrate in kbps
         :param max_bitrate: Maximum bitrate in kbps
-        :param backend: "pydub" or "lameenc".
-            Pydub may use ffmpeg under the hood.
-                Pros: Seems to avoid introducing latency in the output.
-                Cons: Slower than lameenc.
-            lameenc:
-                Pros: You can set the quality parameter in addition to bitrate.
-                Cons: Seems to introduce some silence at the start of the audio.
+        :param backend: "fast-mp3-augment", "pydub" or "lameenc".
+            "fast-mp3-augment":
+                * Fast (in-memory compute, encoder and decoder in separate threads working concurrently)
+                * LAME encoder and minimp3 decoder
+            "pydub":
+                * Uses ffmpeg under the hood
+                * Slower than lameenc and fast-mp3-augment
+                * Writes temporary files to disk, which makes it comparatively slow
+            "lameenc":
+                * Slightly delays and pads the audio due to the way MP3 encoding and decoding normally works
+                * Writes a temporary file to disk, which makes is comparatively slow
+        :param preserve_delay:
+            If False (default), the output length and timing will match the input.
+            If True, include LAME encoder delay + filter delay (a few tens of milliseconds) and padding in the output.
+            This makes the output
+            1) longer than the input
+            2) delayed (out of sync) relative to the input
+            Normally, it makes sense to set preserve_delay to False, but if you want outputs that include the
+            short, almost silent part in the beginning, you here have the option to get that.
+        :param quality: LAME-specific parameter that controls a trade-off between audio quality and speed.
+            quality is an int in range [0, 9]:
+            0: higher quality audio at the cost of slower processing
+            9: fast processing at the cost of lower quality audio
+            Note: If using backend=="pydub", this parameter gets silently ignored.
         :param p: The probability of applying this transform
         """
         super().__init__(p)
@@ -97,10 +117,31 @@ class Mp3Compression(BaseWaveformTransform):
                 f" {self.SUPPORTED_BITRATES}"
             )
 
+        if backend == "pydub":
+            if preserve_delay:
+                raise ValueError(
+                    'The "pydub" backend does not support preserve_delay=True. Switch to the'
+                    ' "fast-mp3-augment" backend (recommended) or pass preserve_delay=False.'
+                )
+        elif backend == "lameenc":
+            warnings.warn(
+                'The "lameenc" backend is deprecated. Use backend="fast-mp3-augment" instead. It also uses'
+                " the LAME encoder under the hood, but is faster.",
+                DeprecationWarning,
+            )
+            if not preserve_delay:
+                raise ValueError(
+                    'The "lameenc" backend does not support preserve_delay=False. Switch to the'
+                    ' "fast-mp3-augment" backend (recommended) or pass preserve_delay=True.'
+                )
+        self.preserve_delay = preserve_delay
+        self.quality = quality
         self.min_bitrate = min_bitrate
         self.max_bitrate = max_bitrate
-        if backend not in ("pydub", "lameenc"):
-            raise ValueError('backend must be set to either "pydub" or "lameenc"')
+        if backend not in ("fast-mp3-augment", "pydub", "lameenc"):
+            raise ValueError(
+                'backend must be set to either "fast-mp3-augment", "pydub" or "lameenc"'
+            )
         self.backend = backend
         self.post_gain_factor = None
 
@@ -117,6 +158,8 @@ class Mp3Compression(BaseWaveformTransform):
     def apply(
         self, samples: NDArray[np.float32], sample_rate: int
     ) -> NDArray[np.float32]:
+        if self.backend == "fast-mp3-augment":
+            return self.apply_fast_mp3_augment(samples, sample_rate)
         if self.backend == "lameenc":
             return self.apply_lameenc(samples, sample_rate)
         elif self.backend == "pydub":
@@ -172,7 +215,7 @@ class Mp3Compression(BaseWaveformTransform):
         encoder.set_bit_rate(self.parameters["bitrate"])
         encoder.set_in_sample_rate(sample_rate)
         encoder.set_channels(num_channels)
-        encoder.set_quality(7)  # 2 = highest, 7 = fastest
+        encoder.set_quality(self.quality)
         encoder.silence()
 
         mp3_data = encoder.encode(int_samples.tobytes())
@@ -198,6 +241,37 @@ class Mp3Compression(BaseWaveformTransform):
             elif int_samples.ndim == 2 and degraded_samples.ndim == 1:
                 degraded_samples = degraded_samples.reshape((1, -1))
 
+        return degraded_samples
+
+    def apply_fast_mp3_augment(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
+        try:
+            import fast_mp3_augment
+        except ImportError:
+            print(
+                (
+                    "Failed to import fast_mp3_augment. Maybe it is not installed? "
+                    "To install the optional fast_mp3_augment dependency of audiomentations,"
+                    " do `pip install audiomentations[extras]` or simply"
+                    " `pip install fast_mp3_augment`"
+                ),
+                file=sys.stderr,
+            )
+            raise
+
+        assert samples.dtype == np.float32
+
+        if samples.ndim == 2 and not samples.flags.c_contiguous:
+            samples = np.ascontiguousarray(samples)
+
+        degraded_samples = fast_mp3_augment.compress_roundtrip(
+            samples,
+            sample_rate=sample_rate,
+            bitrate_kbps=self.parameters["bitrate"],
+            preserve_delay=self.preserve_delay,
+            quality=self.quality,
+        )
         return degraded_samples
 
     def apply_pydub(

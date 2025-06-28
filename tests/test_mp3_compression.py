@@ -15,17 +15,27 @@ def mse(signal1, signal2):
 
 
 @pytest.mark.parametrize(
-    "backend",
-    ["pydub", "lameenc"],
+    "params",
+    [
+        {"backend": "fast-mp3-augment", "preserve_delay": False},
+        {"backend": "pydub", "preserve_delay": False},
+        {"backend": "lameenc", "preserve_delay": True},
+    ],
 )
 @pytest.mark.parametrize(
     "shape",
     [(44100,), (1, 22049), (2, 10000)],
 )
-def test_apply_mp3_compression(backend: str, shape: tuple):
+def test_apply_mp3_compression(params: dict, shape: tuple):
     samples_in = np.random.normal(0, 1, size=shape).astype(np.float32)
     sample_rate = 44100
-    augmenter = Mp3Compression(p=1.0, min_bitrate=48, max_bitrate=48, backend=backend)
+    augmenter = Mp3Compression(
+        p=1.0,
+        min_bitrate=48,
+        max_bitrate=48,
+        backend=params["backend"],
+        preserve_delay=params["preserve_delay"],
+    )
 
     samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
     assert len(shape) == len(samples_out.shape)
@@ -37,17 +47,27 @@ def test_apply_mp3_compression(backend: str, shape: tuple):
 
 
 @pytest.mark.parametrize(
-    "backend",
-    ["pydub", "lameenc"],
+    "params",
+    [
+        {"backend": "fast-mp3-augment", "preserve_delay": False},
+        {"backend": "pydub", "preserve_delay": False},
+        {"backend": "lameenc", "preserve_delay": True},
+    ],
 )
 @pytest.mark.parametrize(
     "shape",
     [(16000,), (1, 12049), (2, 5000)],
 )
-def test_apply_mp3_compression_low_bitrate(backend: str, shape: tuple):
+def test_apply_mp3_compression_low_bitrate(params: dict, shape: tuple):
     samples_in = np.random.normal(0, 1, size=shape).astype(np.float32)
     sample_rate = 16000
-    augmenter = Mp3Compression(p=1.0, min_bitrate=8, max_bitrate=8, backend=backend)
+    augmenter = Mp3Compression(
+        p=1.0,
+        min_bitrate=8,
+        max_bitrate=8,
+        backend=params["backend"],
+        preserve_delay=params["preserve_delay"],
+    )
 
     samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)
     assert len(shape) == len(samples_out.shape)
@@ -56,6 +76,14 @@ def test_apply_mp3_compression_low_bitrate(backend: str, shape: tuple):
     assert samples_out.shape[-1] < shape[-1] + 3100
     if len(shape) == 2:
         assert samples_out.shape[0] == shape[0]
+
+
+def test_non_contiguous_2d_array():
+    samples_in = np.random.normal(0, 1, size=(5000, 2)).astype(np.float32).T
+    augmenter = Mp3Compression(p=1.0)
+    samples_out = augmenter(samples=samples_in, sample_rate=44100)
+    assert samples_out.shape == samples_in.shape
+    assert samples_out.dtype == np.float32
 
 
 def test_invalid_argument_combination():
@@ -74,8 +102,22 @@ def test_invalid_argument_combination():
     with pytest.raises(ValueError):
         _ = Mp3Compression(backend="both")
 
+    with pytest.raises(ValueError):
+        _ = Mp3Compression(backend="pydub", preserve_delay=True)
 
-def test_too_loud_input():
+    with pytest.raises(ValueError):
+        _ = Mp3Compression(backend="lameenc", preserve_delay=False)
+
+
+@pytest.mark.parametrize(
+    "params",
+    [
+        {"backend": "fast-mp3-augment", "preserve_delay": False},
+        {"backend": "pydub", "preserve_delay": False},
+        {"backend": "lameenc", "preserve_delay": True},
+    ],
+)
+def test_too_loud_input(params):
     """Check that we avoid wrap distortion if input is too loud"""
     samples_in, sample_rate = load_sound_file(
         os.path.join(DEMO_DIR, "perfect-alley1.ogg"),
@@ -85,7 +127,11 @@ def test_too_loud_input():
     samples_in = samples_in[..., 0:196000]
     samples_in *= 10
     augmenter = Mp3Compression(
-        min_bitrate=320, max_bitrate=320, backend="lameenc", p=1.0
+        min_bitrate=320,
+        max_bitrate=320,
+        backend=params["backend"],
+        preserve_delay=params["preserve_delay"],
+        p=1.0,
     )
 
     samples_out = augmenter(samples=samples_in, sample_rate=sample_rate)

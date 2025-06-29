@@ -19,7 +19,9 @@ class TimeStretch(BaseWaveformTransform):
         min_rate: float = 0.8,
         max_rate: float = 1.25,
         leave_length_unchanged: bool = True,
-        method: Literal["librosa_phase_vocoder", "signalsmith_stretch"] = "signalsmith_stretch",
+        method: Literal[
+            "librosa_phase_vocoder", "signalsmith_stretch"
+        ] = "signalsmith_stretch",
         p: float = 0.5,
     ):
         """
@@ -57,12 +59,21 @@ class TimeStretch(BaseWaveformTransform):
             """
             self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         original_shape = samples.shape
         if self.method == "signalsmith_stretch":
             original_ndim = samples.ndim
             if original_ndim == 1:
                 samples = samples[np.newaxis, :]
+
+            if (
+                original_ndim == 2
+                and samples.shape[0] > 1
+                and not samples.flags.c_contiguous
+            ):
+                samples = np.ascontiguousarray(samples)
 
             stretch = python_stretch.Signalsmith.Stretch()
             stretch.preset(samples.shape[0], sample_rate)

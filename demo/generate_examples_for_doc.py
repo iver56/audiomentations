@@ -468,6 +468,28 @@ class HighPassFilterExample(TransformUsageExample):
 
         return sound, transformed_sound, sample_rate
 
+@register
+class Mp3CompressionExample(TransformUsageExample):
+    transform_class = Mp3Compression
+
+    def generate_example(self):
+        random.seed(42)
+        np.random.seed(42)
+        transform = Mp3Compression(
+            min_bitrate=32,
+            max_bitrate=32,
+            p=1.0,
+        )
+
+        sound, sample_rate = load_sound_file(
+            os.path.join(DEMO_DIR, "p286_011.wav"), sample_rate=None
+        )
+        sound = sound[..., int(0.5 * sample_rate) : int(2.9 * sample_rate)]
+
+        transformed_sound = transform(sound, sample_rate)
+
+        return sound, transformed_sound, sample_rate
+
 
 @register
 class PitchShiftExample(TransformUsageExample):

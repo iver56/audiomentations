@@ -14,6 +14,34 @@ that ran 3 short audio snippets (~7-9s) through each backend:
 
 ![Mp3Compression backend performance benchmark results](mp3_compression_backend_benchmark.png)
 
+Note: When using `"fast-mp3-augment"` or `"lameenc"`, these are the only supported sample rates: 8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000
+
+## Input-output example
+
+Here we input a high-quality speech recording and apply `Mp3Compression` with a bitrate of 32 kbps:
+
+![Input-output waveforms and spectrograms](Mp3Compression.webp)
+
+| Input sound                                                                           | Transformed sound                                                                           |
+|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| <audio controls><source src="../Mp3Compression_input.flac" type="audio/flac"></audio> | <audio controls><source src="../Mp3Compression_transformed.flac" type="audio/flac"></audio> | 
+
+## Usage example
+
+```python
+from audiomentations import Mp3Compression
+
+transform = Mp3Compression(
+    min_bitrate=16,
+    max_bitrate=96,
+    backend="fast-mp3-augment",
+    preserve_delay=False,
+    p=1.0
+)
+
+augmented_sound = transform(my_waveform_ndarray, sample_rate=48000)
+```
+
 # Mp3Compression API
 
 [`min_bitrate`](#min_bitrate){ #min_bitrate }: `int` • unit: kbps • range: [8, `max_bitrate`]

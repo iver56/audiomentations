@@ -48,6 +48,7 @@ setup(
     extras_require={
         "extras": [
             "cylimiter==0.3.0",
+            "fast_mp3_augment",
             "lameenc>=1.2.0,<2",
             "pydub>=0.22.0,<1",
             "pyloudnorm>=0.1.0",

@@ -64,6 +64,13 @@ class PitchShift(BaseWaveformTransform):
             if original_ndim == 1:
                 samples = samples[np.newaxis, :]
 
+            if (
+                original_ndim == 2
+                and samples.shape[0] > 1
+                and not samples.flags.c_contiguous
+            ):
+                samples = np.ascontiguousarray(samples)
+
             stretch = python_stretch.Signalsmith.Stretch()
             stretch.preset(samples.shape[0], sample_rate)
             stretch.setTransposeSemitones(self.parameters["num_semitones"])

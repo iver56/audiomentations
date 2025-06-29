@@ -50,7 +50,8 @@ jobs:
         run: |
           python -m venv .venv
           . .venv/bin/activate
-          pip install --upgrade pip wheel
+          pip install --upgrade pip wheel cython
+          export CYTHONIZE=1
           pip install -r ${{ matrix.req }}
 
       - name: Run pytest

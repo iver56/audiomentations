@@ -89,7 +89,7 @@ class Mp3Compression(BaseWaveformTransform):
         :param quality: LAME-specific parameter that controls a trade-off between audio quality and speed.
             quality is an int in range [0, 9]:
             0: higher quality audio at the cost of slower processing
-            9: fast processing at the cost of lower quality audio
+            9: faster processing at the cost of lower quality audio
             Note: If using backend=="pydub", this parameter gets silently ignored.
         :param p: The probability of applying this transform
         """

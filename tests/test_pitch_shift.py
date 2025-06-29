@@ -8,7 +8,7 @@ from audiomentations import PitchShift
 
 
 @pytest.mark.parametrize("method", ["librosa_phase_vocoder", "signalsmith_stretch"])
-def test_apply_pitch_shift_1dim(method):
+def test_1dim(method):
     samples = np.zeros((2048,), dtype=np.float32)
     sample_rate = 16000
     augmenter = PitchShift(min_semitones=-2, max_semitones=-1, method=method, p=1.0)
@@ -19,7 +19,7 @@ def test_apply_pitch_shift_1dim(method):
 
 
 @pytest.mark.parametrize("method", ["librosa_phase_vocoder", "signalsmith_stretch"])
-def test_apply_pitch_shift_multichannel(method):
+def test_multichannel(method):
     num_channels = 3
     samples = np.random.normal(0, 0.1, size=(num_channels, 5555)).astype(np.float32)
     sample_rate = 16000
@@ -30,6 +30,19 @@ def test_apply_pitch_shift_multichannel(method):
     assert samples_out.shape == samples.shape
     for i in range(num_channels):
         assert not np.allclose(samples[i], samples_out[i])
+
+
+def test_stereo_non_contiguous_ndarray():
+    num_channels = 2
+    samples = np.random.normal(0, 0.1, size=(5555, num_channels)).astype(np.float32)
+    sample_rate = 16000
+    augmenter = PitchShift(
+        min_semitones=1, max_semitones=2, method="signalsmith_stretch", p=1.0
+    )
+    samples_out = augmenter(samples=samples.T, sample_rate=sample_rate)
+
+    assert samples_out.dtype == np.float32
+    assert samples_out.shape == samples.T.shape
 
 
 def test_freeze_parameters():

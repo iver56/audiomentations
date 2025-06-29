@@ -51,6 +51,24 @@ def test_multichannel(method):
         assert not np.allclose(samples[i], samples_out[i])
 
 
+def test_stereo_non_contiguous_ndarray():
+    num_channels = 2
+    samples = np.random.normal(0, 0.1, size=(5555, num_channels)).astype(np.float32)
+    sample_rate = 16000
+    augmenter = TimeStretch(
+        min_rate=0.8,
+        max_rate=0.9,
+        leave_length_unchanged=True,
+        method="signalsmith_stretch",
+        p=1.0,
+    )
+
+    samples_out = augmenter(samples=samples.T, sample_rate=sample_rate)
+
+    assert samples.dtype == samples_out.dtype
+    assert samples.T.shape == samples_out.shape
+
+
 def test_invalid_params():
     with pytest.raises(ValueError):
         TimeStretch(min_rate=0.0)

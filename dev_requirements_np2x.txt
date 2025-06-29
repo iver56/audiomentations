@@ -1,4 +1,4 @@
-audioread==2.1.9
+audioread==3.0.1
 black
 coverage==7.4.4
 fast-align-audio==0.4.0

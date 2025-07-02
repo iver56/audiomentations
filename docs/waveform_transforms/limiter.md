@@ -2,7 +2,7 @@
 
 _Added in v0.26.0_
 
-The `Limiter`, based on [cylimiter :octicons-link-external-16:](https://github.com/pzelasko/cylimiter){target=_blank}, is a straightforward audio transform that applies dynamic range compression.
+The `Limiter`, based on [numpy-audio-limiter :octicons-link-external-16:](https://github.com/iver56/numpy-audio-limiter){target=_blank}, is a straightforward audio transform that applies dynamic range compression.
 It is capable of limiting the audio signal based on certain parameters.
 
 * The _threshold_ determines the audio level above which the limiter kicks in.
@@ -10,6 +10,8 @@ It is capable of limiting the audio signal based on certain parameters.
 * The _release_ time determines how quickly the limiter stops working after the signal drops below the threshold.
 
 :warning: In audiomentations v0.35.0 and earlier, this transform introduced a delay in the signal, equivalent to a ~60% of the attack time. Starting from v0.36.0, the output is aligned with the input, i.e. no delay.
+
+:information_source: Note: In audiomentations v0.42.0, the dependency for this transform changed from [cylimiter :octicons-link-external-16:](https://github.com/pzelasko/cylimiter/){target=_blank} to [numpy-audio-limiter :octicons-link-external-16:](https://github.com/iver56/numpy-audio-limiter){target=_blank}, which is ~30% faster and easier to install for newer Python versions. The behavior stays the same, although there are minor numerical differences between the two.
 
 ## Input-output example
 

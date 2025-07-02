@@ -1,7 +1,6 @@
 audioread==2.1.9
 black
 coverage==7.4.4
-cylimiter==0.3.0
 fast-align-audio==0.4.0
 fast-mp3-augment==0.1.0
 lameenc==1.8.1
@@ -9,6 +8,7 @@ librosa==0.10.2
 matplotlib>=3.0.0,<4
 numba==0.61.0
 numpy==2.1
+numpy-audio-limiter
 numpy-minmax>=0.4.0,<1
 numpy-rms>=0.5.0,<1
 pydub==0.25.1

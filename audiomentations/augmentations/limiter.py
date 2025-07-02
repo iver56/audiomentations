@@ -133,6 +133,9 @@ class Limiter(BaseWaveformTransform):
         original_ndim = samples.ndim
         if original_ndim == 1:
             samples = samples.reshape((1, -1))
+        else:
+            if samples.shape[0] > 1 and not samples.flags.c_contiguous:
+                samples = np.ascontiguousarray(samples)
         processed_samples = numpy_audio_limiter.limit(
             signal=samples,
             attack_coeff=self.parameters["attack"],

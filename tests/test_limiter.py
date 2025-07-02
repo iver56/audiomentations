@@ -44,6 +44,18 @@ def test_limiter(samples_in):
     assert std_out < std_in
 
 
+def test_stereo_non_contiguous_ndarray():
+    num_channels = 2
+    samples = np.random.normal(0, 0.1, size=(5555, num_channels)).astype(np.float32)
+    sample_rate = 16000
+    augmenter = Limiter(p=1.0)
+
+    samples_out = augmenter(samples=samples.T, sample_rate=sample_rate)
+
+    assert samples.dtype == samples_out.dtype
+    assert samples.T.shape == samples_out.shape
+
+
 def test_limiter_validation():
     with pytest.raises(AssertionError):
         Limiter(min_attack=-0.5)

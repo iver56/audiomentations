@@ -4,7 +4,7 @@ coverage==7.4.4
 fast-align-audio>=0.4.0
 fast-mp3-augment==0.1.0
 lameenc==1.8.1
-librosa==0.10.2
+librosa==0.11.0
 matplotlib>=3.0.0,<4
 numba==0.61.0
 numpy==2.1

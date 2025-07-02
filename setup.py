@@ -47,9 +47,9 @@ setup(
     ],
     extras_require={
         "extras": [
-            "fast_mp3_augment",
+            "fast_mp3_augment<1",
             "lameenc>=1.2.0,<2",
-            "numpy-audio-limiter",
+            "numpy-audio-limiter<1",
             "pydub>=0.22.0,<1",
             "pyloudnorm>=0.1.0",
             "pyroomacoustics>=0.7.4",

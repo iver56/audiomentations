@@ -20,6 +20,9 @@ jobs:
           - python: "3.12"
             coverage: "false"
             req: dev_requirements_np2x.txt
+          - python: "3.13"
+            coverage: "false"
+            req: dev_requirements_np2x.txt
 
     steps:
       - uses: actions/checkout@v4

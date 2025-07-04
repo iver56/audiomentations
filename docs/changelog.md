@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Make `Mp3Compression` **25-300% faster** (depending on hardware, audio properties like duration and number of channels and various params, like bitrate) with the new `backend="fast-mp3-augment"` (now default). The extra dependency for this is [fast-mp3-augment](https://github.com/iver56/fast-mp3-augment), which pulls a few useful tricks for faster execution. 
-* Make `Limiter` **30% faster** and easier to install (extra dependency is now [numpy-audio-limiter](https://github.com/iver56/numpy-audio-limiter) instead of [cylimiter](https://github.com/pzelasko/cylimiter/)). The `Limiter` behavior has not changed, although there are minor numerical differences.
+* Make `Mp3Compression` **25-300% faster** (depending on hardware, audio properties like duration and number of channels and various params, like bitrate) with the new `backend="fast-mp3-augment"` (now default). The extra dependency for this is [fast-mp3-augment :octicons-link-external-16:](https://github.com/iver56/fast-mp3-augment){target=_blank}, which pulls a few useful tricks for faster execution. 
+* Make `Limiter` **30% faster** and easier to install (extra dependency is now [numpy-audio-limiter :octicons-link-external-16:](https://github.com/iver56/numpy-audio-limiter){target=_blank} instead of [cylimiter :octicons-link-external-16:](https://github.com/pzelasko/cylimiter/){target=_blank}). The `Limiter` behavior has not changed, although there are minor numerical differences.
 
 ### Fixed
 

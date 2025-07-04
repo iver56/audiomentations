@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.42.0] - 2025-07-04
+
+### Added
+
+* Add support for Python 3.13
+* Add support for librosa 0.11.0
+
+### Changed
+
+* Make `Mp3Compression` **25-300% faster** (depending on hardware, audio properties like duration and number of channels and various params, like bitrate) with the new `backend="fast-mp3-augment"` (now default). The extra dependency for this is [fast-mp3-augment](https://github.com/iver56/fast-mp3-augment), which pulls a few useful tricks for faster execution. 
+* Make `Limiter` **30% faster** and easier to install (extra dependency is now [numpy-audio-limiter](https://github.com/iver56/numpy-audio-limiter) instead of [cylimiter](https://github.com/pzelasko/cylimiter/)). The `Limiter` behavior has not changed, although there are minor numerical differences.
+
+### Fixed
+
+* Handle non-contiguous audio ndarray input to `PitchShift` and `TimeStretch` properly
+
 ## [0.41.0] - 2025-05-05
 
 ### Added

@@ -91,37 +91,21 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.41.0] - 2025-05-05
+## [0.42.0] - 2025-07-04
 
 ### Added
 
-* Add support for NumPy 2.x
-* Add `weights` parameter to `OneOf`. This lets you guide the probability of each transform being chosen.
+* Add support for Python 3.13
+* Add support for librosa 0.11.0
 
 ### Changed
 
-* Improve type hints
+* Make `Mp3Compression` **25-300% faster** (depending on hardware, audio properties like duration and number of channels and various params, like bitrate) with the new `backend="fast-mp3-augment"` (now default). The extra dependency for this is [fast-mp3-augment](https://github.com/iver56/fast-mp3-augment), which pulls a few useful tricks for faster execution.
+* Make `Limiter` **30% faster** and easier to install (extra dependency is now [numpy-audio-limiter](https://github.com/iver56/numpy-audio-limiter) instead of [cylimiter](https://github.com/pzelasko/cylimiter/)). The `Limiter` behavior has not changed, although there are minor numerical differences.
 
-#### :warning: The `TimeMask` transform has been changed significantly:
+### Fixed
 
-* **Breaking change**: Remove `fade` parameter. `fade_duration=0.0` now denotes disabled fading.
-* Enable fading by default
-* Apply a smooth fade curve instead of a linear one
-* Add `mask_location` parameter
-* Change the default value of `min_band_part` from 0.0 to 0.01
-* Change the default value of `max_band_part` from 0.5 to 0.2
-* ~50% faster
-
-The following examples show how you can adapt your code when upgrading from <=v0.40.0 to >=v0.41.0:
-
-| <= 0.40.0                                                    | >= 0.41.0                                                             |
-|--------------------------------------------------------------|-----------------------------------------------------------------------|
-| `TimeMask(min_band_part=0.1, max_band_part=0.15, fade=True)` | `TimeMask(min_band_part=0.1, max_band_part=0.15, fade_duration=0.01)` |
-| `TimeMask()`                                                 | `TimeMask(min_band_part=0.0, max_band_part=0.5, fade_duration=0.0)`   |
-
-### Removed
-
-* `SpecCompose`, `SpecChannelShuffle` and `SpecFrequencyMask` have been removed. You can read more about this here: [#391](https://github.com/iver56/audiomentations/pull/391)
+* Handle non-contiguous audio ndarray input to `PitchShift` and `TimeStretch` properly
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

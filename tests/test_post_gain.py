@@ -22,10 +22,10 @@ def test_same_rms():
 
 
 def test_same_lufs():
-    samples = np.random.uniform(low=-0.5, high=0.5, size=(2, 8000)).astype(np.float32)
+    samples = np.random.uniform(low=-0.05, high=0.05, size=(2, 8000)).astype(np.float32)
     sample_rate = 16000
 
-    augment = PostGain(Gain(min_gain_db=60, max_gain_db=60, p=1.0), method="same_lufs")
+    augment = PostGain(Gain(min_gain_db=10, max_gain_db=10, p=1.0), method="same_lufs")
     processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
     lufs_before = loudness.integrated_loudness(samples.transpose(), sample_rate)

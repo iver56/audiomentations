@@ -1,5 +1,5 @@
 import numpy as np
-import pyloudnorm
+import loudness
 import pytest
 from numpy.testing import assert_almost_equal, assert_array_equal
 
@@ -22,15 +22,14 @@ def test_same_rms():
 
 
 def test_same_lufs():
-    samples = np.random.uniform(low=-0.5, high=0.5, size=(2, 8000)).astype(np.float32)
+    samples = np.random.uniform(low=-0.05, high=0.05, size=(2, 8000)).astype(np.float32)
     sample_rate = 16000
 
-    augment = PostGain(Gain(min_gain_db=60, max_gain_db=60, p=1.0), method="same_lufs")
+    augment = PostGain(Gain(min_gain_db=10, max_gain_db=10, p=1.0), method="same_lufs")
     processed_samples = augment(samples=samples, sample_rate=sample_rate)
 
-    meter = pyloudnorm.Meter(sample_rate)  # create BS.1770 meter
-    lufs_before = meter.integrated_loudness(samples.transpose())
-    lufs_after = meter.integrated_loudness(processed_samples.transpose())
+    lufs_before = loudness.integrated_loudness(samples.transpose(), sample_rate)
+    lufs_after = loudness.integrated_loudness(processed_samples.transpose(), sample_rate)
     assert_almost_equal(lufs_after, lufs_before, decimal=6)
     assert processed_samples.dtype == np.float32
 

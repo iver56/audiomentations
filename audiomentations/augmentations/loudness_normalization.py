@@ -14,8 +14,7 @@ class LoudnessNormalization(BaseWaveformTransform):
 
     For an explanation on LUFS, see https://en.wikipedia.org/wiki/LUFS
 
-    See also the following web pages for more info on audio loudness normalization:
-        https://github.com/csteinmetz1/pyloudnorm
+    See also the following web page for more info on audio loudness normalization:
         https://en.wikipedia.org/wiki/Audio_normalization
 
     Warning: This transform can return samples outside the [-1, 1] range, which may lead to
@@ -41,14 +40,14 @@ class LoudnessNormalization(BaseWaveformTransform):
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         try:
-            import pyloudnorm
+            import loudness
         except ImportError:
             print(
                 (
-                    "Failed to import pyloudnorm. Maybe it is not installed? "
-                    "To install the optional pyloudnorm dependency of audiomentations,"
+                    "Failed to import loudness. Maybe it is not installed? "
+                    "To install the optional loudness dependency of audiomentations,"
                     " do `pip install audiomentations[extras]` or simply "
-                    " `pip install pyloudnorm`"
+                    " `pip install loudness`"
                 ),
                 file=sys.stderr,
             )
@@ -56,10 +55,8 @@ class LoudnessNormalization(BaseWaveformTransform):
 
         super().randomize_parameters(samples, sample_rate)
         if self.parameters["should_apply"]:
-            meter = pyloudnorm.Meter(sample_rate)  # create BS.1770 meter
-            # Transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
-            self.parameters["loudness"] = float(
-                meter.integrated_loudness(samples.transpose())
+            self.parameters["loudness"] = loudness.integrated_loudness(
+                samples.transpose(), sample_rate
             )
             self.parameters["lufs"] = float(
                 random.uniform(self.min_lufs, self.max_lufs)
@@ -68,20 +65,6 @@ class LoudnessNormalization(BaseWaveformTransform):
     def apply(
         self, samples: NDArray[np.float32], sample_rate: int
     ) -> NDArray[np.float32]:
-        try:
-            import pyloudnorm
-        except ImportError:
-            print(
-                (
-                    "Failed to import pyloudnorm. Maybe it is not installed? "
-                    "To install the optional pyloudnorm dependency of audiomentations,"
-                    " do `pip install audiomentations[extras]` or simply "
-                    " `pip install pyloudnorm`"
-                ),
-                file=sys.stderr,
-            )
-            raise
-
         # Guard against digital silence
         if self.parameters["loudness"] > float("-inf"):
             # Normalize loudness

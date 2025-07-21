@@ -28,12 +28,12 @@ Some features have extra dependencies. Extra python package dependencies can be 
 
 `pip install audiomentations[extras]`
 
-| Feature                 | Extra dependencies                  |
-|-------------------------|-------------------------------------|
-| `Limiter`               | `cylimiter`                         |
-| `LoudnessNormalization` | `pyloudnorm`                        |
-| `Mp3Compression`        | `ffmpeg` and [`pydub` or `lameenc`] |
-| `RoomSimulator`         | `pyroomacoustics`                   |
+| Feature                 | Extra dependencies    |
+|-------------------------|-----------------------|
+| `Limiter`               | `numpy-audio-limiter` |
+| `LoudnessNormalization` | `loudness`            |
+| `Mp3Compression`        | `fast-mp3-augment`    |
+| `RoomSimulator`         | `pyroomacoustics`     |
 
 Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
 

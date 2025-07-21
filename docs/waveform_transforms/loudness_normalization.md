@@ -7,9 +7,8 @@ implementation of ITU-R BS.1770-4.
 
 For an explanation on LUFS, see [https://en.wikipedia.org/wiki/LUFS :octicons-link-external-16:](https://en.wikipedia.org/wiki/LUFS){target=_blank}
 
-See also the following web pages for more info on audio loudness normalization:
+See also the following web page for more info on audio loudness normalization:
 
-* [https://github.com/csteinmetz1/pyloudnorm :octicons-link-external-16:](https://github.com/csteinmetz1/pyloudnorm){target=_blank}
 * [https://en.wikipedia.org/wiki/Audio_normalization :octicons-link-external-16:](https://en.wikipedia.org/wiki/Audio_normalization){target=_blank}
 
 Warning: This transform can return samples outside the [-1, 1] range, which may lead to

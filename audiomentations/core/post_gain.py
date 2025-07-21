@@ -63,24 +63,22 @@ class PostGain:
         self, samples: NDArray[np.float32], sample_rate: int
     ) -> NDArray[np.float32]:
         try:
-            import pyloudnorm
+            import loudness
         except ImportError:
             print(
                 (
-                    "Failed to import pyloudnorm. Maybe it is not installed? "
-                    "To install the optional pyloudnorm dependency of audiomentations,"
+                    "Failed to import loudness. Maybe it is not installed? "
+                    "To install the optional loudness dependency of audiomentations,"
                     " do `pip install audiomentations[extras]` or simply "
-                    " `pip install pyloudnorm`"
+                    " `pip install loudness`"
                 ),
                 file=sys.stderr,
             )
             raise
 
-        meter = pyloudnorm.Meter(sample_rate)  # create BS.1770 meter
-        # transpose because pyloudnorm expects shape like (smp, chn), not (chn, smp)
-        lufs_before = meter.integrated_loudness(samples.transpose())
+        lufs_before = loudness.integrated_loudness(samples.transpose(), sample_rate)
         samples = self.transform(samples, sample_rate)
-        lufs_after = meter.integrated_loudness(samples.transpose())
+        lufs_after = loudness.integrated_loudness(samples.transpose(), sample_rate)
         gain_db = lufs_before - lufs_after
         samples *= convert_decibels_to_amplitude_ratio(gain_db)
         return samples

@@ -44,9 +44,11 @@ class AddGaussianSNR(BaseWaveformTransform):
             noise_rms = calculate_desired_noise_rms(clean_rms=clean_rms, snr=snr)
 
             # In gaussian noise, the RMS gets roughly equal to the std
-            self.parameters["noise_std"] = noise_rms
+            self.parameters["noise_std"] = float(noise_rms)
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         noise = np.random.normal(
             0.0, self.parameters["noise_std"], size=samples.shape
         ).astype(np.float32)

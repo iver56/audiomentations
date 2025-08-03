@@ -34,6 +34,10 @@ class HighPassFilter(BaseButterworthFilter):
             drum track), set this to `True`.
         :param p: The probability of applying this transform
         """
+        if min_cutoff_freq <= 0:
+            raise ValueError(
+                f"HighPassFilter requires min_cutoff_freq > 0. Got {min_cutoff_freq}."
+            )
         super().__init__(
             min_cutoff_freq=min_cutoff_freq,
             max_cutoff_freq=max_cutoff_freq,

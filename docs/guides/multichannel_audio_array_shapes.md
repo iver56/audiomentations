@@ -52,3 +52,9 @@ y_transposed = y.T
 ```
 
 Now, `y_transposed` will be in channels-first format and can be used with `audiomentations`.
+
+However, there is a gotcha. Transposing the array as shown above does not change the underlying layout of the data in memory. Some audio processing libraries, especially ones that are written in C, C++ or Rust, might assume that the given NDArray is C-contiguous. If it is not C-contiguous, the code might still run without errors (depending on implementation), but your processed stereo audio might sound like it is played back at half speed, and there is a discrepancy between the left and the right channel. If you are passing audio to a function that assumes a C-contiguous data layout, you can use `np.ascontiguousarray` to make it C-contiguous:
+
+```
+y_transposed_contiguous = np.ascontiguousarray(y_transposed)
+```

@@ -1,3 +1,5 @@
+from typing import Literal
+
 import numpy as np
 from numpy.typing import NDArray
 
@@ -18,8 +20,8 @@ class AdjustDuration(BaseWaveformTransform):
         self,
         duration_samples: int = None,
         duration_seconds: float = None,
-        padding_mode: str = "silence",
-        padding_position: str = "end",
+        padding_mode: Literal["silence", "wrap", "reflect"] = "silence",
+        padding_position: Literal["start", "end"] = "end",
         p: float = 0.5,
     ):
         """
@@ -43,17 +45,30 @@ class AdjustDuration(BaseWaveformTransform):
         assert duration_samples is not None or duration_seconds is not None
         if duration_samples is not None and duration_seconds is not None:
             raise ValueError(
-                "should have duration_samples or duration_seconds, but not both"
+                "You must specify either duration_samples or duration_seconds, but not both."
             )
-        elif duration_seconds:
-            assert duration_seconds > 0
-            self.get_target_samples = lambda sr: int(duration_seconds * sr)
-        elif duration_samples:
-            assert duration_samples > 0
-            self.get_target_samples = lambda sr: duration_samples
+        elif duration_seconds is not None:
+            if duration_seconds <= 0:
+                raise ValueError("duration_seconds must be a positive float")
+            self._get_target_samples_func = self._get_target_samples_from_seconds
+        elif duration_samples is not None:
+            if duration_samples <= 0:
+                raise ValueError("duration_samples must be a positive int")
+            self._get_target_samples_func = self._get_target_samples_from_samples
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
-        target_samples = self.get_target_samples(sample_rate)
+        self.duration_samples = duration_samples
+        self.duration_seconds = duration_seconds
+
+    def _get_target_samples_from_seconds(self, sr: int) -> int:
+        return int(self.duration_seconds * sr)
+
+    def _get_target_samples_from_samples(self, sr: int) -> int:
+        return self.duration_samples
+
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
+        target_samples = self._get_target_samples_func(sample_rate)
         sample_length = samples.shape[-1]
 
         if sample_length == target_samples:
@@ -63,7 +78,7 @@ class AdjustDuration(BaseWaveformTransform):
             start = np.random.randint(0, sample_length - target_samples)
             return samples[..., start : start + target_samples]
 
-        elif sample_length < target_samples:
+        else:  # sample_length < target_samples
             padding_length = target_samples - sample_length
             if samples.ndim == 1:
                 if self.padding_position == "start":

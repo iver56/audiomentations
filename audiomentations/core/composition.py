@@ -1,9 +1,14 @@
 import random
+from typing import Any, Optional, Union, Sequence
 
 import numpy as np
 from numpy.typing import NDArray
 
-from audiomentations.core.transforms_interface import BaseSpectrogramTransform
+from audiomentations.core.serialization import get_shortest_class_fullname
+from audiomentations.core.utils import format_args
+from audiomentations.core.sampling import WeightedChoiceSampler
+
+REPR_INDENT_STEP = 2
 
 
 class BaseCompose:
@@ -20,6 +25,9 @@ class BaseCompose:
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return self.indented_repr()
 
     def randomize_parameters(self, *args, **kwargs):
         """
@@ -51,6 +59,37 @@ class BaseCompose:
         if apply_to_children:
             for transform in self.transforms:
                 transform.unfreeze_parameters()
+
+    def indented_repr(self, indent: int = REPR_INDENT_STEP) -> str:
+        args = {
+            k: v
+            for k, v in self.to_dict_private().items()
+            if not (k.startswith("__") or k == "transforms")
+        }
+        repr_string = self.__class__.__name__ + "(["
+        for t in self.transforms:
+            repr_string += "\n"
+            t_repr = (
+                t.indented_repr(indent + REPR_INDENT_STEP)
+                if hasattr(t, "indented_repr")
+                else repr(t)
+            )
+            repr_string += " " * indent + t_repr + ","
+        repr_string += (
+            "\n" + " " * (indent - REPR_INDENT_STEP) + f"], {format_args(args)})"
+        )
+        return repr_string
+
+    @classmethod
+    def get_class_fullname(cls) -> str:
+        return get_shortest_class_fullname(cls)
+
+    def to_dict_private(self) -> dict[str, Any]:
+        return {
+            "__class_fullname__": self.get_class_fullname(),
+            "p": self.p,
+            "transforms": [t.to_dict_private() for t in self.transforms],
+        }
 
 
 class Compose(BaseCompose):
@@ -91,24 +130,6 @@ class Compose(BaseCompose):
                 samples = transform(samples, sample_rate)
 
         return samples
-
-
-class SpecCompose(BaseCompose):
-    def __init__(self, transforms, p=1.0, shuffle=False):
-        super().__init__(transforms, p, shuffle)
-
-    def __call__(self, magnitude_spectrogram):
-        transforms = self.transforms.copy()
-        should_apply = random.random() < self.p
-        # TODO: Adhere to self.are_parameters_frozen
-        # https://github.com/iver56/audiomentations/issues/135
-        if should_apply:
-            if self.shuffle:
-                random.shuffle(transforms)
-            for transform in transforms:
-                magnitude_spectrogram = transform(magnitude_spectrogram)
-
-        return magnitude_spectrogram
 
 
 class SomeOf(BaseCompose):
@@ -184,35 +205,20 @@ class SomeOf(BaseCompose):
             if "apply_to_children" in kwargs:
                 del kwargs["apply_to_children"]
 
-            if issubclass(type(self.transforms[0]), BaseSpectrogramTransform):
-                if "magnitude_spectrogram" in kwargs:
-                    magnitude_spectrogram = kwargs["magnitude_spectrogram"]
-                else:
-                    magnitude_spectrogram = args[0]
+            if "sample_rate" in kwargs:
+                samples = kwargs["samples"] if "samples" in kwargs else args[0]
+                sample_rate = kwargs["sample_rate"]
+            else:
+                samples = args[0]
+                sample_rate = args[1]
 
-                for transform_index in self.transform_indexes:
-                    magnitude_spectrogram = self.transforms[transform_index](
-                        magnitude_spectrogram
-                    )
+            for transform_index in self.transform_indexes:
+                samples = self.transforms[transform_index](samples, sample_rate)
 
-                return magnitude_spectrogram
-            else:  # The transforms are subclasses of BaseWaveformTransform
-                if "sample_rate" in kwargs:
-                    samples = kwargs["samples"] if "samples" in kwargs else args[0]
-                    sample_rate = kwargs["sample_rate"]
-                else:
-                    samples = args[0]
-                    sample_rate = args[1]
-
-                for transform_index in self.transform_indexes:
-                    samples = self.transforms[transform_index](samples, sample_rate)
-
-                return samples
+            return samples
 
         if "samples" in kwargs:
             return kwargs["samples"]
-        elif "magnitude_spectrogram" in kwargs:
-            return kwargs["magnitude_spectrogram"]
         else:
             return args[0]
 
@@ -220,31 +226,44 @@ class SomeOf(BaseCompose):
 class OneOf(BaseCompose):
     """
     OneOf randomly picks one of the given transforms when called, and applies that
-    transform.
+    transform. Optional `weights` can be supplied to guide the probability of each transform being chosen.
     Usage example:
     ```
     augment = OneOf([
         TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0),
         PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
-    ])
+    ], weights=[0.2, 0.8])
     # Generate 2 seconds of dummy audio for the sake of example
     samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32)
     # Augment/transform/perturb the audio data
     augmented_samples = augment(samples=samples, sample_rate=16000)
-    # Result: The audio was either time-stretched or pitch-shifted, but not both
+    # Result: The audio was either time-stretched (less likely) or pitch-shifted (4x more likely), but not both
     ```
     """
 
-    def __init__(self, transforms, p: float = 1.0):
+    def __init__(
+        self,
+        transforms,
+        p: float = 1.0,
+        weights: Optional[Union[Sequence[float], NDArray]] = None,
+    ):
         super().__init__(transforms, p)
         self.transform_index = 0
         self.should_apply = True
+
+        if weights is not None:
+            if len(weights) != len(transforms):
+                raise ValueError("Length of weights must match length of transforms")
+
+            self.sampler = WeightedChoiceSampler(weights=weights)
+        else:
+            self.sampler = WeightedChoiceSampler(num_items=len(transforms))
 
     def randomize_parameters(self, *args, **kwargs):
         super().randomize_parameters(*args, **kwargs)
         self.should_apply = random.random() < self.p
         if self.should_apply:
-            self.transform_index = random.randint(0, len(self.transforms) - 1)
+            self.transform_index = self.sampler.sample(size=1)[0]
 
     def __call__(self, *args, **kwargs):
         if not self.are_parameters_frozen:
@@ -258,7 +277,5 @@ class OneOf(BaseCompose):
 
         if "samples" in kwargs:
             return kwargs["samples"]
-        elif "magnitude_spectrogram" in kwargs:
-            return kwargs["magnitude_spectrogram"]
         else:
             return args[0]

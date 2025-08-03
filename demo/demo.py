@@ -362,8 +362,24 @@ if __name__ == "__main__":
         {"instance": LowPassFilter(p=1.0), "num_runs": 5},
         {"instance": LowShelfFilter(p=1.0), "num_runs": 5},
         {
-            "instance": PitchShift(min_semitones=-4, max_semitones=4, p=1.0),
+            "instance": PitchShift(
+                min_semitones=-4,
+                max_semitones=4,
+                method="librosa_phase_vocoder",
+                p=1.0,
+            ),
             "num_runs": 5,
+            "name": "PitchShiftLibrosaPhaseVocoder",
+        },
+        {
+            "instance": PitchShift(
+                min_semitones=-4,
+                max_semitones=4,
+                method="signalsmith_stretch",
+                p=1.0,
+            ),
+            "num_runs": 5,
+            "name": "PitchShiftSignalsmithStretch",
         },
         {
             "instance": Lambda(
@@ -375,7 +391,12 @@ if __name__ == "__main__":
         {"instance": Limiter(p=1.0), "num_runs": 5},
         {"instance": LoudnessNormalization(p=1.0), "num_runs": 5},
         {
-            "instance": Mp3Compression(backend="lameenc", p=1.0),
+            "instance": Mp3Compression(backend="fast-mp3-augment", p=1.0),
+            "num_runs": 5,
+            "name": "Mp3CompressionFastMp3Augment",
+        },
+        {
+            "instance": Mp3Compression(backend="lameenc", preserve_delay=True, p=1.0),
             "num_runs": 5,
             "name": "Mp3CompressionLameenc",
         },
@@ -473,8 +494,40 @@ if __name__ == "__main__":
             "name": "ShiftSeconds",
         },
         {"instance": TanhDistortion(p=1.0), "num_runs": 5},
-        {"instance": TimeMask(p=1.0), "num_runs": 5},
-        {"instance": TimeStretch(min_rate=0.8, max_rate=1.25, p=1.0), "num_runs": 5},
+        {
+            "instance": TimeMask(fade_duration=0.05, p=1.0),
+            "num_runs": 5,
+            "name": "TimeMaskWithFade",
+        },
+        {
+            "instance": TimeMask(fade_duration=0, p=1.0),
+            "num_runs": 5,
+            "name": "TimeMaskWithoutFade",
+        },
+        {
+            "instance": TimeMask(mask_location="start", p=1.0),
+            "num_runs": 5,
+            "name": "TimeMaskStart",
+        },
+        {
+            "instance": TimeMask(mask_location="end", p=1.0),
+            "num_runs": 5,
+            "name": "TimeMaskEnd",
+        },
+        {
+            "instance": TimeStretch(
+                min_rate=0.8, max_rate=1.25, method="signalsmith_stretch", p=1.0
+            ),
+            "num_runs": 5,
+            "name": "TimeStretchSignalsmithStretch",
+        },
+        {
+            "instance": TimeStretch(
+                min_rate=0.8, max_rate=1.25, method="librosa_phase_vocoder", p=1.0
+            ),
+            "num_runs": 5,
+            "name": "TimeStretchLibrosaPhaseVocoder",
+        },
         {"instance": Trim(p=1.0), "num_runs": 1},
         {
             "instance": Compose(
@@ -497,6 +550,8 @@ if __name__ == "__main__":
         {"instance": AirAbsorption(p=1.0), "num_runs": 5},
     ]
 
+    execution_times = {}
+
     for sound_file_path in sound_file_paths:
         samples, sample_rate = load_sound_file(
             sound_file_path, sample_rate=None, mono=False
@@ -509,7 +564,6 @@ if __name__ == "__main__":
                 sound_file_path.name, str(samples.shape)
             )
         )
-        execution_times = {}
 
         for transform in tqdm(transforms):
             augmenter = transform["instance"]
@@ -518,7 +572,8 @@ if __name__ == "__main__":
                 if transform.get("name")
                 else transform["instance"].__class__.__name__
             )
-            execution_times[run_name] = []
+            if run_name not in execution_times:
+                execution_times[run_name] = []
             for i in range(transform["num_runs"]):
                 output_file_path = os.path.join(
                     output_dir,
@@ -540,18 +595,18 @@ if __name__ == "__main__":
                 except MultichannelAudioNotSupportedException as e:
                     print(e)
 
-        for run_name in execution_times:
-            if len(execution_times[run_name]) > 1:
-                print(
-                    "{:<32} {:.3f} s (std: {:.3f} s)".format(
-                        run_name,
-                        np.mean(execution_times[run_name]),
-                        np.std(execution_times[run_name]),
-                    )
+    for run_name in execution_times:
+        if len(execution_times[run_name]) > 1:
+            print(
+                "{:<32} {:.3f} s (std: {:.3f} s)".format(
+                    run_name,
+                    np.mean(execution_times[run_name]),
+                    np.std(execution_times[run_name]),
                 )
-            else:
-                print(
-                    "{:<32} {:.3f} s".format(
-                        run_name, np.mean(execution_times[run_name])
-                    )
+            )
+        else:
+            print(
+                "{:<32} {:.3f} s".format(
+                    run_name, np.mean(execution_times[run_name])
                 )
+            )

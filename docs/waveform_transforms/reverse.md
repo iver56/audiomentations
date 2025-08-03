@@ -7,6 +7,15 @@ analogous to the random flip of an image, an augmentation technique widely used 
 This can be relevant in the context of audio classification. It was successfully applied in the paper
 [AudioCLIP: Extending CLIP to Image, Text and Audio :octicons-link-external-16:](https://arxiv.org/pdf/2106.13043.pdf){target=_blank}.
 
+> **Note for PyTorch users**  
+> This transform returns a negative-stride array for efficiency. If you intend to convert the reversed
+> waveform to a PyTorch tensor via `torch.from_numpy()`, you must make the array contiguous first:
+> ```python
+> reversed_waveform = transform(my_waveform_ndarray, sample_rate=44100)
+> reversed_waveform = reversed_waveform.copy()  # or use np.ascontiguousarray
+> tensor = torch.from_numpy(reversed_waveform)
+> ```
+
 ## Input-output example
 
 In this example, we reverse a speech recording

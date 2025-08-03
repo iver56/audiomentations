@@ -2,7 +2,7 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, List, Union, Callable
+from typing import Optional, List, Union, Callable, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -20,9 +20,9 @@ from audiomentations.core.utils import (
 
 class AddShortNoises(BaseWaveformTransform):
     """Mix in various (bursts of overlapping) sounds with random pauses between. Useful if your
-    original sound is clean and you want to simulate an environment where short noises sometimes
+    original sound is clean, and you want to simulate an environment where short noises sometimes
     occur.
-    A folder of (noise) sounds to be mixed in must be specified.
+    A file or folder of (noise) sound(s) to be mixed in must be specified.
     """
 
     def __init__(
@@ -32,7 +32,7 @@ class AddShortNoises(BaseWaveformTransform):
         max_snr_db: float = 18.0,
         min_time_between_sounds: float = 2.0,
         max_time_between_sounds: float = 8.0,
-        noise_rms: str = "relative_to_whole_input",
+        noise_rms: Literal["absolute", "relative", "relative_to_whole_input"] = "relative_to_whole_input",
         min_absolute_noise_rms_db: float = -50.0,
         max_absolute_noise_rms_db: float = -20.0,
         add_all_noises_with_same_level: bool = False,
@@ -116,7 +116,8 @@ class AddShortNoises(BaseWaveformTransform):
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
         super().__init__(p)
-        self.sound_file_paths = find_audio_files_in_paths(sounds_path)
+        self.sounds_path = sounds_path
+        self.sound_file_paths = find_audio_files_in_paths(self.sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
         assert len(self.sound_file_paths) > 0
 
@@ -144,6 +145,7 @@ class AddShortNoises(BaseWaveformTransform):
             raise ValueError("min_snr_db must not be greater than max_snr_db")
         self.min_snr_db = min_snr_db
         self.max_snr_db = max_snr_db
+        self.signal_gain_in_db_during_noise = signal_gain_in_db_during_noise
 
         if (
             signal_gain_db_during_noise is not None
@@ -185,6 +187,7 @@ class AddShortNoises(BaseWaveformTransform):
         )
         self.add_all_noises_with_same_level = add_all_noises_with_same_level
         self.noise_transform = noise_transform
+        self.lru_cache_size = lru_cache_size
         self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
             AddShortNoises.__load_sound
         )
@@ -332,7 +335,7 @@ class AddShortNoises(BaseWaveformTransform):
             )
 
             start_sample_index = int(sound_params["start"] * sample_rate)
-            end_sample_index = start_sample_index + len(noise_samples)
+            end_sample_index = start_sample_index + noise_samples.shape[-1]
 
             if start_sample_index < 0:
                 # crop noise_samples: shave off a chunk in the beginning
@@ -344,46 +347,47 @@ class AddShortNoises(BaseWaveformTransform):
             if end_sample_index > num_samples:
                 # crop noise_samples: shave off a chunk in the end
                 num_samples_to_shave_off = end_sample_index - num_samples
-                end_index = len(noise_samples) - num_samples_to_shave_off
+                end_index = noise_samples.shape[-1] - num_samples_to_shave_off
                 noise_samples = noise_samples[:end_index]
                 noise_gain = noise_gain[:end_index]
                 end_sample_index = num_samples
-
-            # Gain here describes just the gain from the fade in and fade out.
-            noise_samples = noise_samples * noise_gain
 
             if self.noise_rms == "relative_to_whole_input":
                 clean_rms = calculate_rms(samples)
             else:
                 clean_rms = calculate_rms(samples[start_sample_index:end_sample_index])
 
-            if self.include_silence_in_noise_rms_estimation:
-                noise_rms = calculate_rms(noise_samples)
-            else:
-                noise_rms = calculate_rms_without_silence(noise_samples, sample_rate)
+            if noise_samples.shape[-1] > 0:
+                # Gain here describes just the gain from the fade in and fade out.
+                noise_samples = noise_samples * noise_gain
 
-            if noise_rms > 0:
-                if self.noise_rms in ["relative", "relative_to_whole_input"]:
-                    desired_noise_rms = calculate_desired_noise_rms(
-                        clean_rms, sound_params["snr_db"]
-                    )
+                if self.include_silence_in_noise_rms_estimation:
+                    noise_rms = calculate_rms(noise_samples)
+                else:
+                    noise_rms = calculate_rms_without_silence(noise_samples, sample_rate)
 
-                    # Adjust the noise to match the desired noise RMS
-                    noise_samples = noise_samples * (desired_noise_rms / noise_rms)
-                elif self.noise_rms == "absolute":
-                    desired_noise_rms_db = sound_params["rms_db"]
-                    desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
-                        desired_noise_rms_db
-                    )
-                    gain = desired_noise_rms_amp / noise_rms
-                    noise_samples = noise_samples * gain
+                if noise_rms > 0:
+                    if self.noise_rms in ["relative", "relative_to_whole_input"]:
+                        desired_noise_rms = calculate_desired_noise_rms(
+                            clean_rms, sound_params["snr_db"]
+                        )
 
-                noise_placeholder[start_sample_index:end_sample_index] += noise_samples
-                if gain_signal:
-                    signal_mask[start_sample_index:end_sample_index] = np.maximum(
-                        signal_mask[start_sample_index:end_sample_index],
-                        noise_gain,
-                    )
+                        # Adjust the noise to match the desired noise RMS
+                        noise_samples = noise_samples * (desired_noise_rms / noise_rms)
+                    elif self.noise_rms == "absolute":
+                        desired_noise_rms_db = sound_params["rms_db"]
+                        desired_noise_rms_amp = convert_decibels_to_amplitude_ratio(
+                            desired_noise_rms_db
+                        )
+                        gain = desired_noise_rms_amp / noise_rms
+                        noise_samples = noise_samples * gain
+
+                    noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+                    if gain_signal:
+                        signal_mask[start_sample_index:end_sample_index] = np.maximum(
+                            signal_mask[start_sample_index:end_sample_index],
+                            noise_gain,
+                        )
 
         if gain_signal:
             # Gain the original signal before mixing in the noises

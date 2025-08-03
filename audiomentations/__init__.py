@@ -37,8 +37,6 @@ from .augmentations.tanh_distortion import TanhDistortion
 from .augmentations.time_mask import TimeMask
 from .augmentations.time_stretch import TimeStretch
 from .augmentations.trim import Trim
-from .core.composition import Compose, SpecCompose, OneOf, SomeOf
-from .spec_augmentations.spec_channel_shuffle import SpecChannelShuffle
-from .spec_augmentations.spec_frequency_mask import SpecFrequencyMask
+from .core.composition import Compose, OneOf, SomeOf
 
-__version__ = "0.37.0"
+__version__ = "0.42.0"

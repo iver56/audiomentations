@@ -1,8 +1,9 @@
 import math
 import os
+import warnings
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Any
 
 import numpy as np
 import numpy_minmax
@@ -21,6 +22,14 @@ SUPPORTED_EXTENSIONS = (
     ".opus",
     ".wav",
 )
+
+
+def format_args(args_dict: dict[str, Any]) -> str:
+    formatted_args = []
+    for k, v in args_dict.items():
+        v_formatted = f"'{v}'" if isinstance(v, str) else str(v)
+        formatted_args.append(f"{k}={v_formatted}")
+    return ", ".join(formatted_args)
 
 
 def find_audio_files(
@@ -85,7 +94,7 @@ def calculate_rms(samples):
     return np.mean(numpy_rms.rms(samples))
 
 
-def calculate_rms_without_silence(samples, sample_rate):
+def calculate_rms_without_silence(samples: NDArray[np.float32], sample_rate: int):
     """
     This function returns the rms of a given noise whose silent periods have been removed. This ensures
     that the rms of the noise is not underestimated. Is most useful for short non-stationary noises.
@@ -109,8 +118,12 @@ def calculate_rms_without_silence(samples, sample_rate):
 
     # The segments with a too low rms are identified and discarded
     rms_all_windows = rms_all_windows[rms_all_windows > rms_threshold]
-    # Beware that each window must have the same number of samples so that this calculation of the rms is valid.
-    return calculate_rms(rms_all_windows)
+    if rms_all_windows.shape[-1] > 0:
+        # Beware that each window must have the same number of samples so that this calculation of the rms is valid.
+        return calculate_rms(rms_all_windows)
+    else:
+        # Handle edge case: No windows remain. This can happen if there was just one window before discarding.
+        return calculate_rms(samples)
 
 
 def calculate_desired_noise_rms(clean_rms, snr):
@@ -138,16 +151,6 @@ def is_waveform_multichannel(samples):
     :return:
     """
     return len(samples.shape) > 1
-
-
-def is_spectrogram_multichannel(spectrogram):
-    """
-    Return bool that answers the question: Is the given ndarray a multichannel spectrogram?
-    :param samples: numpy ndarray
-    :return:
-    """
-    return len(spectrogram.shape) > 2 and spectrogram.shape[-1] > 1
-
 
 def convert_float_samples_to_int16(y):
     """Convert floating-point numpy array of audio samples to int16."""
@@ -211,6 +214,21 @@ def get_crossfade_mask_pair(
     fade_in = c * c
     fade_out = d * d
     return fade_in, fade_out
+
+
+def get_crossfade_length(sample_rate: int, crossfade_duration: float) -> int:
+    if crossfade_duration == 0.0:
+        return 0
+    crossfade_length = int(crossfade_duration * sample_rate)
+    if crossfade_length < 2:
+        warnings.warn(
+            "crossfade_duration is too small for the given sample rate. Using a"
+            " crossfade length of 2 samples."
+        )
+        crossfade_length = 2
+    elif crossfade_length % 2 == 1:
+        crossfade_length += 1
+    return crossfade_length
 
 
 def get_max_abs_amplitude(samples: NDArray):

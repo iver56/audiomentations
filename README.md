@@ -2,16 +2,15 @@
 
 [![Build status](https://img.shields.io/circleci/project/github/iver56/audiomentations/main.svg)](https://circleci.com/gh/iver56/audiomentations)
 [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/main.svg)](https://codecov.io/gh/iver56/audiomentations)
-[![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/psf/black)
 [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/main/LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13639627.svg)](https://doi.org/10.5281/zenodo.13639627)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15806235.svg)](https://doi.org/10.5281/zenodo.15806235)
 
-A Python library for audio data augmentation. Inspired by
-[albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
-CPU. Supports mono audio and multichannel audio. Can be
-integrated in training pipelines in e.g. Tensorflow/Keras or Pytorch. Has helped people get
-world-class results in Kaggle competitions. Is used by companies making next-generation audio
-products.
+Audiomentations is a Python library for audio data augmentation, built to be fast and easy to use - its API is inspired by
+[albumentations](https://github.com/albu/albumentations). It's useful for making audio deep learning models work well in the real world, not just in the lab.
+Audiomentations runs on CPU, supports mono audio and multichannel audio and integrates well in training pipelines,
+such as those built with TensorFlow/Keras or PyTorch. It has helped users achieve
+world-class results in Kaggle competitions and is trusted by companies building next-generation audio products with AI.
 
 Need a Pytorch-specific alternative with GPU support? Check out [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)!
 
@@ -85,8 +84,6 @@ The API documentation, along with guides, example code, illustrations and exampl
 * [RoomSimulator](https://iver56.github.io/audiomentations/waveform_transforms/room_simulator/): Simulates the effect of a room on an audio source
 * [SevenBandParametricEQ](https://iver56.github.io/audiomentations/waveform_transforms/seven_band_parametric_eq/): Adjusts the volume of 7 frequency bands
 * [Shift](https://iver56.github.io/audiomentations/waveform_transforms/shift/): Shifts the samples forwards or backwards
-* [SpecChannelShuffle](https://iver56.github.io/audiomentations/spectrogram_transforms/): Shuffles channels in the spectrogram
-* [SpecFrequencyMask](https://iver56.github.io/audiomentations/spectrogram_transforms/): Applies a frequency mask to the spectrogram
 * [TanhDistortion](https://iver56.github.io/audiomentations/waveform_transforms/tanh_distortion/): Applies tanh distortion to distort the signal
 * [TimeMask](https://iver56.github.io/audiomentations/waveform_transforms/time_mask/): Makes a random part of the audio silent
 * [TimeStretch](https://iver56.github.io/audiomentations/waveform_transforms/time_stretch/): Changes the speed without changing the pitch
@@ -94,12 +91,21 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.37.0] - 2024-09-03
+## [0.42.0] - 2025-07-04
+
+### Added
+
+* Add support for Python 3.13
+* Add support for librosa 0.11.0
 
 ### Changed
 
-* Leverage the SIMD-accelerated [numpy-minmax](https://github.com/nomonosound/numpy-minmax) package for speed improvements. These transforms are faster now: `Limiter`, `Mp3Compression` and `Normalize`. Unfortunately, this change removes support for macOS running on Intel. Intel Mac users have the following options: A) use audiomentations 0.36.1, B) Create a fork of audiomentations, C) submit a patch to numpy-minmax, D) run Linux or Windows.
-* Limit numpy dependency to >=1.21,<2 for now, since numpy v2 is not officially supported yet.
+* Make `Mp3Compression` **25-300% faster** (depending on hardware, audio properties like duration and number of channels and various params, like bitrate) with the new `backend="fast-mp3-augment"` (now default). The extra dependency for this is [fast-mp3-augment](https://github.com/iver56/fast-mp3-augment), which pulls a few useful tricks for faster execution.
+* Make `Limiter` **30% faster** and easier to install (extra dependency is now [numpy-audio-limiter](https://github.com/iver56/numpy-audio-limiter) instead of [cylimiter](https://github.com/pzelasko/cylimiter/)). The `Limiter` behavior has not changed, although there are minor numerical differences.
+
+### Fixed
+
+* Handle non-contiguous audio ndarray input to `PitchShift` and `TimeStretch` properly
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

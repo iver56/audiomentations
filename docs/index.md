@@ -4,14 +4,13 @@
 [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/main.svg)](https://codecov.io/gh/iver56/audiomentations)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
 [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/main/LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13349246.svg)](https://doi.org/10.5281/zenodo.13349246)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15806235.svg)](https://doi.org/10.5281/zenodo.15806235)
 
-A Python library for audio data augmentation. Inspired by
-[albumentations](https://github.com/albu/albumentations). Useful for deep learning. Runs on
-CPU. Supports mono audio and [multichannel audio](#multichannel-audio). Can be
-integrated in training pipelines in e.g. Tensorflow/Keras or Pytorch. Has helped people get
-world-class results in Kaggle competitions. Is used by companies making next-generation audio
-products.
+Audiomentations is a Python library for audio data augmentation, built to be fast and easy to use - its API is inspired by
+[albumentations](https://github.com/albu/albumentations). It's useful for making audio deep learning models work well in the real world, not just in the lab.
+Audiomentations runs on CPU, supports mono audio and [multichannel audio](#multichannel-audio) and integrates well in training pipelines,
+such as those built with TensorFlow/Keras or PyTorch. It has helped users achieve
+world-class results in Kaggle competitions and is trusted by companies building next-generation audio products with AI.
 
 Need a Pytorch-specific alternative with GPU support? Check out [torch-audiomentations](https://github.com/asteroid-team/torch-audiomentations)!
 
@@ -29,12 +28,12 @@ Some features have extra dependencies. Extra python package dependencies can be 
 
 `pip install audiomentations[extras]`
 
-| Feature                 | Extra dependencies                  |
-|-------------------------|-------------------------------------|
-| `Limiter`               | `cylimiter`                         |
-| `LoudnessNormalization` | `pyloudnorm`                        |
-| `Mp3Compression`        | `ffmpeg` and [`pydub` or `lameenc`] |
-| `RoomSimulator`         | `pyroomacoustics`                   |
+| Feature                 | Extra dependencies    |
+|-------------------------|-----------------------|
+| `Limiter`               | `numpy-audio-limiter` |
+| `LoudnessNormalization` | `loudness`            |
+| `Mp3Compression`        | `fast-mp3-augment`    |
+| `RoomSimulator`         | `pyroomacoustics`     |
 
 Note: `ffmpeg` can be installed via e.g. conda or from [the official ffmpeg download page](http://ffmpeg.org/download.html).
 
@@ -60,35 +59,11 @@ samples = np.random.uniform(low=-0.2, high=0.2, size=(32000,)).astype(np.float32
 augmented_samples = augment(samples=samples, sample_rate=16000)
 ```
 
-## Spectrogram
-
-```python
-from audiomentations import SpecCompose, SpecChannelShuffle, SpecFrequencyMask
-import numpy as np
-
-augment = SpecCompose(
-    [
-        SpecChannelShuffle(p=0.5),
-        SpecFrequencyMask(p=0.5),
-    ]
-)
-
-# Example spectrogram with 1025 frequency bins, 256 time steps and 2 audio channels
-spectrogram = np.random.random((1025, 256, 2))
-
-# Augment/transform/perturb the spectrogram
-augmented_spectrogram = augment(spectrogram)
-```
-
 # Waveform transforms
 
 For a list and explanation of all waveform transforms, see Waveform transforms in the menu.
 
 Waveform transforms can be visualized (for understanding) by the [audio-transformation-visualization GUI](https://share.streamlit.io/phrasenmaeher/audio-transformation-visualization/main/visualize_transformation.py) (made by [phrasenmaeher](https://github.com/phrasenmaeher)), where you can upload your own input wav file
-
-# Spectrogram transforms
-
-For a list and brief explanation of all spectrogram transforms, see [Spectrogram transforms](spectrogram_transforms.md)
 
 # Composition classes
 
@@ -96,13 +71,26 @@ For a list and brief explanation of all spectrogram transforms, see [Spectrogram
 
 Compose applies the given sequence of transforms when called, optionally shuffling the sequence for every call.
 
-## `SpecCompose`
-
-Same as Compose, but for spectrogram transforms
-
 ## `OneOf`
 
-OneOf randomly picks one of the given transforms when called, and applies that transform.
+OneOf randomly picks one of the given transforms when called, and applies that transform. 
+
+An optional `weights` list of floats may be given to guide the probability of each transform for being chosen. If not specified, a transform is chosen uniformly at random.
+
+Code example:
+
+```python
+from audiomentations import OneOf, PitchShift
+
+pitch_shift = OneOf(
+    transforms=[
+        PitchShift(method="librosa_phase_vocoder"),
+        PitchShift(method="signalsmith_stretch"),
+    ],
+    p=1.0,
+    weights=[0.1, 0.9],
+)
+```
 
 ## `SomeOf`
 

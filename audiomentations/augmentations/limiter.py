@@ -1,6 +1,7 @@
 import math
 import random
 import sys
+from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -27,7 +28,9 @@ class Limiter(BaseWaveformTransform):
         max_attack: float = 0.025,
         min_release: float = 0.05,
         max_release: float = 0.7,
-        threshold_mode: str = "relative_to_signal_peak",
+        threshold_mode: Literal[
+            "relative_to_signal_peak", "absolute"
+        ] = "relative_to_signal_peak",
         p: float = 0.5,
     ):
         """
@@ -106,49 +109,41 @@ class Limiter(BaseWaveformTransform):
             )
             threshold_db = random.uniform(self.min_threshold_db, self.max_threshold_db)
 
-            self.parameters[
-                "threshold"
-            ] = threshold_factor * convert_decibels_to_amplitude_ratio(threshold_db)
+            self.parameters["threshold"] = float(
+                threshold_factor * convert_decibels_to_amplitude_ratio(threshold_db)
+            )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         if self.parameters["threshold"] == 0.0:
             # Digital silence input can cause this to happen
             return samples
         try:
-            from cylimiter import Limiter as CyLimiter
+            import numpy_audio_limiter
         except ImportError:
             print(
-                "Failed to import cylimiter. Maybe it is not installed? "
-                "To install the optional cylimiter dependency of audiomentations,"
-                " run `pip install cylimiter` or `pip install audiomentations[extras]`",
+                "Failed to import numpy_audio_limiter. Maybe it is not installed? "
+                "To install the optional numpy-audio-limiter dependency of audiomentations,"
+                " run `pip install numpy-audio-limiter` or `pip install audiomentations[extras]`",
                 file=sys.stderr,
             )
             raise
 
-        limiter = CyLimiter(
-            attack=self.parameters["attack"],
-            release=self.parameters["release"],
+        original_ndim = samples.ndim
+        if original_ndim == 1:
+            samples = samples.reshape((1, -1))
+        else:
+            if samples.shape[0] > 1 and not samples.flags.c_contiguous:
+                samples = np.ascontiguousarray(samples)
+        processed_samples = numpy_audio_limiter.limit(
+            signal=samples,
+            attack_coeff=self.parameters["attack"],
+            release_coeff=self.parameters["release"],
             delay=self.parameters["delay"],
             threshold=self.parameters["threshold"],
         )
-
-        if samples.ndim == 1:
-            processed_samples = np.pad(samples, (0, self.parameters["delay"]))
-            limiter.limit_inplace(processed_samples)
-            processed_samples = processed_samples[self.parameters["delay"] - 1 : -1]
-        else:
-            # By default, there is no interchannel linking. The channels are processed
-            # independently. Support for linking may be added in the future:
-            # https://github.com/pzelasko/cylimiter/issues/4
-            processed_samples = np.copy(samples)
-            for chn_idx in range(samples.shape[0]):
-                limiter.reset()
-                channel = np.ascontiguousarray(
-                    np.pad(processed_samples[chn_idx, :], (0, self.parameters["delay"]))
-                )
-                limiter.limit_inplace(channel)
-                processed_samples[chn_idx, :] = channel[
-                    self.parameters["delay"] - 1 : -1
-                ]
+        if original_ndim == 1:
+            processed_samples = processed_samples[0]
 
         return processed_samples

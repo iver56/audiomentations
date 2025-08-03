@@ -95,19 +95,27 @@ class AirAbsorption(BaseWaveformTransform):
         :param max_distance: Maximum microphone-source distance in meters.
         :param p: The probability of applying this transform
         """
-        assert float(min_temperature) in [
-            10.0,
-            20.0,
-        ], "Sorry, the only supported temperatures are either 10 or 20 degrees Celsius"
-        assert float(max_temperature) in [
-            10.0,
-            20.0,
-        ], "Sorry, the only supported temperatures are either 10 or 20 degrees Celsius"
-        assert min_temperature <= max_temperature
-        assert 30 <= min_humidity <= max_humidity <= 90
-        assert min_distance > 0.0
-        assert max_distance > 0.0
-        assert min_distance <= max_distance
+        if float(min_temperature) not in [10.0, 20.0]:
+            raise ValueError("min_temperature must be either 10.0 or 20.0")
+        if float(max_temperature) not in [10.0, 20.0]:
+            raise ValueError("max_temperature must be either 10.0 or 20.0")
+        if min_temperature > max_temperature:
+            raise ValueError("min_temperature must not be greater than max_temperature")
+        if not (30 <= min_humidity <= max_humidity <= 90):
+            raise ValueError(
+                "min_humidity and max_humidity must be in range [30, 90], and"
+                " min_humidity must not be greater than max_humidity"
+            )
+        if min_distance <= 0.0:
+            raise ValueError("min_distance must be > 0.0")
+        if min_distance > 2500.0:
+            raise ValueError("min_distance must be <= 2500.0")
+        if max_distance <= 0.0:
+            raise ValueError("max_distance must be > 0.0")
+        if max_distance > 2500.0:
+            raise ValueError("max_distance must be <= 2500.0")
+        if min_distance > max_distance:
+            raise ValueError("min_distance must not be greater than max_distance")
 
         super().__init__(p)
 

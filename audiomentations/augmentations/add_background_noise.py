@@ -2,7 +2,7 @@ import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, List, Callable, Union
+from typing import Optional, List, Callable, Union, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -37,7 +37,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
         sounds_path: Union[List[Path], List[str], Path, str],
         min_snr_db: float = 3.0,
         max_snr_db: float = 30.0,
-        noise_rms: str = "relative",
+        noise_rms: Literal["relative", "absolute"] = "relative",
         min_absolute_rms_db: float = -45.0,
         max_absolute_rms_db: float = -15.0,
         noise_transform: Optional[
@@ -70,7 +70,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
         """
         
         super().__init__(p)
-        self.sound_file_paths = find_audio_files_in_paths(sounds_path)
+        self.sounds_path = sounds_path
+        self.sound_file_paths = find_audio_files_in_paths(self.sounds_path)
         self.sound_file_paths = [str(p) for p in self.sound_file_paths]
 
         assert len(self.sound_file_paths) > 0
@@ -90,7 +91,8 @@ class AddBackgroundNoise(BaseWaveformTransform):
         self.max_absolute_rms_db = max_absolute_rms_db
 
         self.noise_rms = noise_rms
-        self._load_sound = functools.lru_cache(maxsize=lru_cache_size)(
+        self.lru_cache_size = lru_cache_size
+        self._load_sound = functools.lru_cache(maxsize=self.lru_cache_size)(
             AddBackgroundNoise._load_sound
         )
         self.noise_transform = noise_transform

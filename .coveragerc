@@ -1,3 +1,10 @@
+[run]
+source = audiomentations
+omit =
+    demo/*
+    tests/*
+    setup.py
+
 [report]
 exclude_lines =
     pragma: no cover

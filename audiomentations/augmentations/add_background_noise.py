@@ -6,6 +6,7 @@ from typing import Optional, List, Callable, Union, Literal
 
 import numpy as np
 from numpy.typing import NDArray
+import librosa
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -67,6 +68,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
         :param p: The probability of applying this transform
         :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
         """
+        
         super().__init__(p)
         self.sounds_path = sounds_path
         self.sound_file_paths = find_audio_files_in_paths(self.sounds_path)
@@ -94,44 +96,42 @@ class AddBackgroundNoise(BaseWaveformTransform):
             AddBackgroundNoise._load_sound
         )
         self.noise_transform = noise_transform
+        self.time_info_arr = np.zeros(shape = (len(self.sound_file_paths,)),dtype=np.float32)
+        self.time_info_arr.fill(-1.0)
 
     @staticmethod
-    def _load_sound(file_path, sample_rate):
-        return load_sound_file(file_path, sample_rate)
+    def _load_sound(file_path, sample_rate, offset = 0.0, duration = None):
+        return load_sound_file(file_path, sample_rate,offset=offset,duration=duration)
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
+        
         if self.parameters["should_apply"]:
             self.parameters["snr_db"] = random.uniform(self.min_snr_db, self.max_snr_db)
             self.parameters["rms_db"] = random.uniform(
                 self.min_absolute_rms_db, self.max_absolute_rms_db
             )
-            self.parameters["noise_file_path"] = random.choice(self.sound_file_paths)
+            file_idx = random.randint(0,len(self.sound_file_paths)-1)
+            self.parameters["noise_file_path"] = self.sound_file_paths[file_idx]
 
-            num_samples = len(samples)
-            noise_sound, _ = self._load_sound(
-                self.parameters["noise_file_path"], sample_rate
-            )
+            if self.time_info_arr[file_idx] != -1.0:
+                self.time_info_arr[file_idx] = librosa.get_duration(path = self.parameters['noise_file_path'])
+            
+            noise_files_seconds = self.time_info_arr[file_idx]
+            
+            signal_file_seconds = len(samples)/sample_rate
 
-            num_noise_samples = len(noise_sound)
-            min_noise_offset = 0
-            max_noise_offset = max(0, num_noise_samples - num_samples - 1)
-            self.parameters["noise_start_index"] = random.randint(
-                min_noise_offset, max_noise_offset
-            )
-            self.parameters["noise_end_index"] = (
-                self.parameters["noise_start_index"] + num_samples
-            )
+            min_noise_offset = 0.0
+            max_noise_offset = max(0.0,noise_files_seconds - signal_file_seconds)
 
-    def apply(
-        self, samples: NDArray[np.float32], sample_rate: int
-    ) -> NDArray[np.float32]:
-        noise_sound, _ = self._load_sound(
-            self.parameters["noise_file_path"], sample_rate
+            self.parameters['offset'] = random.uniform(min_noise_offset,max_noise_offset)
+            self.parameters['duration'] = signal_file_seconds
+
+    def apply(self, samples: NDArray[np.float32], sample_rate: int):
+
+        noise_sound,_ = self._load_sound(
+            self.parameters["noise_file_path"], sample_rate,offset=self.parameters['offset'],duration=self.parameters['duration']
         )
-        noise_sound = noise_sound[
-            self.parameters["noise_start_index"] : self.parameters["noise_end_index"]
-        ]
 
         if self.noise_transform:
             noise_sound = self.noise_transform(noise_sound, sample_rate)

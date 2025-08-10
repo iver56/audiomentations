@@ -51,9 +51,9 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=16000)
 [`mask_location`](#mask_location){ #mask_location }: `str` • choices: `"start"`, `"end"`, `"random"`
 : :octicons-milestone-24: Default: `random`. Where to place the silent region.
     
-    * `"start"`: silence begins at index 0
-    * `"end"`: silence ends at the last sample
-    * `"random"`: silence starts at a random position
+    * **`"start"`**: silence begins at index 0
+    * **`"end"`**: silence ends at the last sample
+    * **`"random"`**: silence starts at a random position
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

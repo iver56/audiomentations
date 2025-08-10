@@ -79,10 +79,10 @@ In this speech example, the audio was transformed with
 [`mode`](#mode){ #mode }: `str` • choices: `"insert"`, `"replace"`
 :   :octicons-milestone-24: Default: `"insert"`. This parameter has two options:
 
-    * `"insert"`: Insert the repeat(s), making the array longer. After the last
+    * **`"insert"`**: Insert the repeat(s), making the array longer. After the last
       repeat there will be the last part of the original audio, offset in time
       compared to the input array.
-    * `"replace"`: Have the repeats replace (as in overwrite) the original audio.
+    * **`"replace"`**: Have the repeats replace (as in overwrite) the original audio.
       Any remaining part at the end (if not overwritten by repeats) will be
       left untouched without offset. The length of the output array is the
       same as the input array.

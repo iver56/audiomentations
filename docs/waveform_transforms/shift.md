@@ -22,9 +22,9 @@ version, you can check the ["Old Shift API (<=v0.32.0)" section](#old-shift-api-
 :   :octicons-milestone-24: Default: `"fraction"` Defines the unit of the value of
     [`min_shift`](#min_shift) and [`max_shift`](#max_shift).
 
-    * `"fraction"`: Fraction of the total sound length
-    * `"samples"`: Number of audio samples
-    * `"seconds"`: Number of seconds
+    * **`"fraction"`**: Fraction of the total sound length
+    * **`"samples"`**: Number of audio samples
+    * **`"seconds"`**: Number of seconds
 
 [`rollover`](#rollover){ #rollover }: `bool`
 :   :octicons-milestone-24: Default: `True`. When set to `True`, samples that roll

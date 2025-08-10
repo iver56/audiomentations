@@ -78,8 +78,8 @@ In this example we apply the limiter with a threshold that is 10 dB lower than t
 [`threshold_mode`](#threshold_mode){ #threshold_mode }: `str` • choices: `"relative_to_signal_peak"`, `"absolute"`
 :   :octicons-milestone-24: Default: `relative_to_signal_peak`. Specifies the mode for determining the threshold.
 
-    * `"relative_to_signal_peak"` means the threshold is relative to peak of the signal.
-    * `"absolute"` means the threshold is relative to 0 dBFS, so it doesn't depend
+    * **`"relative_to_signal_peak"`** means the threshold is relative to peak of the signal.
+    * **`"absolute"`** means the threshold is relative to 0 dBFS, so it doesn't depend
      on the peak of the signal.
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]

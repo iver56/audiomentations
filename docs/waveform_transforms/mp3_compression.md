@@ -53,16 +53,16 @@ augmented_sound = transform(my_waveform_ndarray, sample_rate=48000)
 [`backend`](#backend){ #backend }: `str` • choices: `"fast-mp3-augment"`, `"pydub"`, `"lameenc"`
 :   :octicons-milestone-24: Default: `"fast-mp3-augment"`.
 
-    * `"fast-mp3-augment"`: In-memory computation with parallel threads for encoding and decoding. Uses LAME encoder
+    * **`"fast-mp3-augment"`**: In-memory computation with parallel threads for encoding and decoding. Uses LAME encoder
         and minimp3 decoder under the hood. This is the recommended option.
     
-    * `"pydub"`: Uses pydub + ffmpeg under the hood. Does not delay the output compared to the input.
+    * **`"pydub"`**: Uses pydub + ffmpeg under the hood. Does not delay the output compared to the input.
         It is comparatively slow (writes temporary files to disk). Does not support `preserve_delay=True`.
         
         :warning: The `"pydub"` backend is deprecated as of v0.43.0, because pydub appears to have been unmaintained for
         several years, and depends on audioop, which was deprecated in Python 3.11 and removed in 3.13.
     
-    * `"lameenc"`: Slow (writes a temporary file to disk). Introduces encoder + decoder delay, so the output is not in sync
+    * **`"lameenc"`**: Slow (writes a temporary file to disk). Introduces encoder + decoder delay, so the output is not in sync
         with the input. Does not support `preserve_delay=False`. Note that bitrates below 32 kbps are only supported for
         low sample rates (up to 24000 Hz).
         

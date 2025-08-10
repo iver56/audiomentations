@@ -56,9 +56,9 @@ Here we input an audio clip and remove a part of the start and the end, so the l
 
 [`padding_mode`](#padding_mode){ #padding_mode }: `str` • choices: `"silence"`, `"wrap"`, `"reflect"`
 :   :octicons-milestone-24: Default: `"silence"`. Padding mode. Only used when audio input is shorter than the target duration.
-    * `"silence"`: Pads with zeros (silence).
-    * `"wrap"`: Pads by wrapping the existing audio content.
-    * `"reflect"`: Pads by reflecting the audio at the boundaries.
+    * **`"silence"`**: Pads with zeros (silence).
+    * **`"wrap"`**: Pads by wrapping the existing audio content.
+    * **`"reflect"`**: Pads by reflecting the audio at the boundaries.
 
 [`padding_position`](#padding_position){ #padding_position }: `str` • choices: `"start"`, `"end"`
 :   :octicons-milestone-24: Default: `"end"`. The position of the inserted/added padding. Only used when audio input is shorter than the target duration.

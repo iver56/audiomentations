@@ -37,9 +37,9 @@ end of the sound.
 [`duration_unit`](#duration_unit){ #duration_unit }: `str` • choices: `"fraction"`, `"samples"`, `"seconds"`
 :   :octicons-milestone-24: Default: `"seconds"`. Defines the unit of the value of `min_duration` and `max_duration`.
 
-    * `"fraction"`: Fraction of the total sound length
-    * `"samples"`: Number of audio samples
-    * `"seconds"`: Number of seconds
+    * **`"fraction"`**: Fraction of the total sound length
+    * **`"samples"`**: Number of audio samples
+    * **`"seconds"`**: Number of seconds
 
 [`p`](#p){ #p }: `float` • range: [0.0, 1.0]
 :   :octicons-milestone-24: Default: `0.5`. The probability of applying this transform.

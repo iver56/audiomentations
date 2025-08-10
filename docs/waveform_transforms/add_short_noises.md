@@ -96,11 +96,11 @@ Here we add some short noise sounds to a voice recording.
 
     This parameter defines how the noises will be added to the audio input.
 
-    * `"relative"`: the RMS value of the added noise will be proportional to the RMS value of
+    * **`"relative"`**: the RMS value of the added noise will be proportional to the RMS value of
         the input sound calculated only for the region where the noise is added.
-    * `"absolute"`: the added noises will have an RMS independent of the RMS of the input audio
+    * **`"absolute"`**: the added noises will have an RMS independent of the RMS of the input audio
         file.
-    * `"relative_to_whole_input"`: the RMS of the added noises will be
+    * **`"relative_to_whole_input"`**: the RMS of the added noises will be
         proportional to the RMS of the whole input sound.
 
 [`min_absolute_noise_rms_db`](#min_absolute_noise_rms_db){ #min_absolute_noise_rms_db }: `float` • unit: Decibel

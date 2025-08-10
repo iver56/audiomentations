@@ -48,10 +48,8 @@ setup(
     extras_require={
         "extras": [
             "fast-mp3-augment<1",
-            "lameenc>=1.2.0,<2",
             "loudness<1",
             "numpy-audio-limiter<1",
-            "pydub>=0.22.0,<1",
             "pyroomacoustics>=0.7.4",
         ]
     },

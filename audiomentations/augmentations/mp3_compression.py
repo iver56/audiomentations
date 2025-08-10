@@ -118,6 +118,12 @@ class Mp3Compression(BaseWaveformTransform):
             )
 
         if backend == "pydub":
+            warnings.warn(
+                'The "pydub" backend is deprecated, because pydub seems to be have been unmaintained for'
+                ' several years, and depends on audioop, which was deprecated in Python 3.11 and removed in 3.13.'
+                ' Recommendation: Use backend="fast-mp3-augment" instead. It is faster.',
+                DeprecationWarning,
+            )
             if preserve_delay:
                 raise ValueError(
                     'The "pydub" backend does not support preserve_delay=True. Switch to the'
@@ -196,8 +202,7 @@ class Mp3Compression(BaseWaveformTransform):
                 (
                     "Failed to import the lame encoder. Maybe it is not installed? "
                     "To install the optional lameenc dependency of audiomentations,"
-                    " do `pip install audiomentations[extras]` or simply"
-                    " `pip install lameenc`"
+                    " run `pip install lameenc`"
                 ),
                 file=sys.stderr,
             )
@@ -253,7 +258,7 @@ class Mp3Compression(BaseWaveformTransform):
                 (
                     "Failed to import fast_mp3_augment. Maybe it is not installed? "
                     "To install the optional fast_mp3_augment dependency of audiomentations,"
-                    " do `pip install audiomentations[extras]` or simply"
+                    " run `pip install audiomentations[extras]` or simply"
                     " `pip install fast_mp3_augment`"
                 ),
                 file=sys.stderr,
@@ -284,8 +289,7 @@ class Mp3Compression(BaseWaveformTransform):
                 (
                     "Failed to import pydub. Maybe it is not installed? "
                     "To install the optional pydub dependency of audiomentations,"
-                    " do `pip install audiomentations[extras]` or simply"
-                    " `pip install pydub`"
+                    " run `pip install pydub`"
                 ),
                 file=sys.stderr,
             )

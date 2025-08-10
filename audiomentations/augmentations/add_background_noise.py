@@ -1,12 +1,11 @@
-import functools
 import random
 import warnings
 from pathlib import Path
-from typing import Optional, List, Callable, Union, Literal
+from typing import Callable, List, Literal, Optional, Union
 
+import librosa
 import numpy as np
 from numpy.typing import NDArray
-import librosa
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -44,7 +43,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
             Callable[[NDArray[np.float32], int], NDArray[np.float32]]
         ] = None,
         p: float = 0.5,
-        lru_cache_size: int = 2,
+        lru_cache_size: Optional[int] = None,
     ):
         """
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
@@ -66,9 +65,10 @@ class AddBackgroundNoise(BaseWaveformTransform):
             gets applied to the noise before it gets mixed in. The callable is expected
             to input audio waveform (numpy array) and sample rate (int).
         :param p: The probability of applying this transform
-        :param lru_cache_size: Maximum size of the LRU cache for storing noise files in memory
+        :param lru_cache_size: No longer supported as of audiomentations v0.43.0, because the cache has been removed.
+            If this is set to any value other than None, a ValueError will be raised.
         """
-        
+
         super().__init__(p)
         self.sounds_path = sounds_path
         self.sound_file_paths = find_audio_files_in_paths(self.sounds_path)
@@ -91,46 +91,50 @@ class AddBackgroundNoise(BaseWaveformTransform):
         self.max_absolute_rms_db = max_absolute_rms_db
 
         self.noise_rms = noise_rms
-        self.lru_cache_size = lru_cache_size
-        self._load_sound = functools.lru_cache(maxsize=self.lru_cache_size)(
-            AddBackgroundNoise._load_sound
-        )
+        if lru_cache_size is not None:
+            raise ValueError(
+                "Passing lru_cache_size is no longer supported, as the cache has been removed (since v0.43.0)."
+            )
         self.noise_transform = noise_transform
-        self.time_info_arr = np.zeros(shape = (len(self.sound_file_paths,)),dtype=np.float32)
+        self.time_info_arr = np.zeros(
+            shape=(len(self.sound_file_paths),),
+            dtype=np.float32,
+        )
         self.time_info_arr.fill(-1.0)
-
-    @staticmethod
-    def _load_sound(file_path, sample_rate, offset = 0.0, duration = None):
-        return load_sound_file(file_path, sample_rate,offset=offset,duration=duration)
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
-        
+
         if self.parameters["should_apply"]:
             self.parameters["snr_db"] = random.uniform(self.min_snr_db, self.max_snr_db)
             self.parameters["rms_db"] = random.uniform(
                 self.min_absolute_rms_db, self.max_absolute_rms_db
             )
-            file_idx = random.randint(0,len(self.sound_file_paths)-1)
+            file_idx = random.randint(0, len(self.sound_file_paths) - 1)
             self.parameters["noise_file_path"] = self.sound_file_paths[file_idx]
 
             if self.time_info_arr[file_idx] != -1.0:
-                self.time_info_arr[file_idx] = librosa.get_duration(path = self.parameters['noise_file_path'])
-            
-            noise_files_seconds = self.time_info_arr[file_idx]
-            
-            signal_file_seconds = len(samples)/sample_rate
+                self.time_info_arr[file_idx] = librosa.get_duration(
+                    path=self.parameters["noise_file_path"]
+                )
+
+            noise_duration = self.time_info_arr[file_idx]
+            signal_duration = len(samples) / sample_rate
 
             min_noise_offset = 0.0
-            max_noise_offset = max(0.0,noise_files_seconds - signal_file_seconds)
+            max_noise_offset = max(0.0, noise_duration - signal_duration)
 
-            self.parameters['offset'] = random.uniform(min_noise_offset,max_noise_offset)
-            self.parameters['duration'] = signal_file_seconds
+            self.parameters["offset"] = random.uniform(
+                min_noise_offset, max_noise_offset
+            )
+            self.parameters["duration"] = signal_duration
 
     def apply(self, samples: NDArray[np.float32], sample_rate: int):
-
-        noise_sound,_ = self._load_sound(
-            self.parameters["noise_file_path"], sample_rate,offset=self.parameters['offset'],duration=self.parameters['duration']
+        noise_sound, _ = load_sound_file(
+            self.parameters["noise_file_path"],
+            sample_rate,
+            offset=self.parameters["offset"],
+            duration=self.parameters["duration"],
         )
 
         if self.noise_transform:
@@ -172,13 +176,3 @@ class AddBackgroundNoise(BaseWaveformTransform):
 
         # Return a mix of the input sound and the background noise sound
         return samples + noise_sound
-
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        warnings.warn(
-            "Warning: the LRU cache of AddBackgroundNoise gets discarded when pickling"
-            " it. E.g. this means the cache will not be used when using"
-            " AddBackgroundNoise together with multiprocessing on Windows"
-        )
-        del state["_load_sound"]
-        return state

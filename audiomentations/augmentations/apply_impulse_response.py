@@ -59,7 +59,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         # Determine if the impulse response should be loaded as mono
         load_mono_ir = samples.ndim == 1
         # Load the impulse response file and cut the tail if necessary
-        rir_duration = None if self.leave_length_unchanged else len(samples) / sample_rate
+        rir_duration = len(samples) / sample_rate if self.leave_length_unchanged else None
         ir, sample_rate2 = load_sound_file(self.parameters["ir_file_path"], 
                                            sample_rate, 
                                            mono=load_mono_ir, 

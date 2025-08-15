@@ -23,9 +23,11 @@ from .augmentations.low_pass_filter import LowPassFilter
 from .augmentations.low_shelf_filter import LowShelfFilter
 from .augmentations.mp3_compression import Mp3Compression
 from .augmentations.normalize import Normalize
+from .augmentations.overdrive import Overdrive
 from .augmentations.padding import Padding
 from .augmentations.peaking_filter import PeakingFilter
 from .augmentations.pitch_shift import PitchShift
+from .augmentations.phaser import Phaser
 from .augmentations.polarity_inversion import PolarityInversion
 from .augmentations.repeat_part import RepeatPart
 from .augmentations.resample import Resample

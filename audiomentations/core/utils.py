@@ -1,8 +1,10 @@
 import math
+import io
 import os
 import warnings
 from functools import lru_cache
 from pathlib import Path
+from subprocess import Popen, PIPE
 from typing import List, Union, Tuple, Any
 
 import numpy as np
@@ -235,3 +237,52 @@ def get_max_abs_amplitude(samples: NDArray):
     min_amplitude, max_amplitude = numpy_minmax.minmax(samples)
     max_abs_amplitude = max(abs(min_amplitude), abs(max_amplitude))
     return max_abs_amplitude
+
+def apply_ffmpeg_commands(samples, sample_rate, commands):
+    """
+    Apply a list of ffmpeg commands to the given audio samples.
+    Everything is done in memory avoiding the need to write to disk.
+    The input samples are assumed to be in the range [-1, 1].
+    Currently only 16 bit PCM WAV files are supported as input, 
+    othervise, the input samples are converted to 16 bit PCM WAV.
+    :param samples: numpy array. Audio samples.
+    :param sample_rate: int. Sampling rate of the audio samples.
+    :param commands: list of strings. List of ffmpeg commands.
+        For example to apply simple compressor with threshold 15dB: ["-af", "acompressor=threshold=-15dB"]
+    :return: numpy array. Audio samples after applying the ffmpeg commands.
+    """
+    import soundfile as sf
+    
+    if len(samples.shape) == 2:
+        samples = samples.T
+
+    cmd = [
+        "ffmpeg", 
+        "-i", 'pipe:0',
+        *commands,
+        "-f", "wav",
+        "-"
+    ]
+
+    p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+
+    b = io.BytesIO()
+    b.name = "toffmpeg.wav"
+    sf.write(b, samples, samplerate=sample_rate, format='WAV')
+    b.seek(0)
+
+    data, out = p.communicate(b.read())
+
+    if b"Error" in out:
+        raise Exception(out)
+
+    reconstructed = np.fromstring(data[data.find(b"data")+8:], np.int16)
+    reconstructed = reconstructed / 32767
+    
+    if samples.dtype == np.float32:
+        reconstructed = reconstructed.astype(np.float32)
+
+    if len(samples.shape) == 2:
+        reconstructed = reconstructed.reshape((reconstructed.shape[0] // 2, 2)).T
+
+    return reconstructed

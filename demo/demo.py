@@ -87,11 +87,11 @@ class timer(object):
         self.execution_time = None
 
     def __enter__(self):
-        self.t = time.time()
+        self.t = time.perf_counter()
         return self
 
     def __exit__(self, type, value, traceback):
-        self.execution_time = time.time() - self.t
+        self.execution_time = time.perf_counter() - self.t
         if self.verbose:
             print("{}: {:.3f} s".format(self.description, self.execution_time))
 

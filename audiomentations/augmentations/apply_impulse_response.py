@@ -1,13 +1,13 @@
 import functools
+import itertools
 import random
 import warnings
+from collections.abc import Sequence
 from pathlib import Path
-from typing import List, Union
 
 import numpy as np
 from numpy.typing import NDArray
 from scipy.signal import convolve
-import itertools
 
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.transforms_interface import BaseWaveformTransform
@@ -24,7 +24,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
 
     def __init__(
         self,
-        ir_path: Union[List[Path], List[str], str, Path],
+        ir_path: Sequence[Path] | Sequence[str] | Path | str,
         p=0.5,
         lru_cache_size=128,
         leave_length_unchanged: bool = True,

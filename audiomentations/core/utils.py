@@ -1,9 +1,10 @@
 import math
 import os
 import warnings
+from collections.abc import Sequence
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Union, Tuple, Any
+from typing import Any
 
 import numpy as np
 import numpy_minmax
@@ -59,7 +60,7 @@ def find_audio_files(
 
 
 def find_audio_files_in_paths(
-    paths: Union[List[Path], List[str], Path, str],
+    paths: Sequence[Path] | Sequence[str] | Path | str,
     filename_endings=SUPPORTED_EXTENSIONS,
     traverse_subdirectories=True,
     follow_symlinks=True,
@@ -152,6 +153,7 @@ def is_waveform_multichannel(samples):
     """
     return len(samples.shape) > 1
 
+
 def convert_float_samples_to_int16(y):
     """Convert floating-point numpy array of audio samples to int16."""
     if not issubclass(y.dtype.type, np.floating):
@@ -167,7 +169,7 @@ def convert_frequency_to_mel(f: float) -> float:
     return 2595.0 * math.log10(1.0 + f / 700.0)
 
 
-def convert_mel_to_frequency(m: Union[float, np.array]) -> Union[float, np.array]:
+def convert_mel_to_frequency(m: float | NDArray) -> float | NDArray:
     """
     Convert m mels to hertz
     https://en.wikipedia.org/wiki/Mel_scale#History_and_other_formulas
@@ -197,8 +199,8 @@ def a_weighting_frequency_envelope(n_fft, sample_rate):
 
 @lru_cache(maxsize=8)
 def get_crossfade_mask_pair(
-    length: int, equal_energy=True
-) -> Tuple[np.array, np.array]:
+    length: int, equal_energy: bool = True
+) -> tuple[NDArray, NDArray]:
     """
     Equal-gain or equal-energy (within ~1%) cross-fade mask pair with
     smooth start and end.

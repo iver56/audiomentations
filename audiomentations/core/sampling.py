@@ -1,4 +1,4 @@
-from typing import Optional, Union, Sequence
+from typing import Sequence
 
 import numpy as np
 from numpy.typing import NDArray
@@ -31,9 +31,9 @@ class WeightedChoiceSampler:
 
     def __init__(
         self,
-        weights: Optional[Union[Sequence[float], NDArray]] = None,
+        weights: Sequence[float] | NDArray | None = None,
         *,
-        num_items: Optional[int] = None,
+        num_items: int | None = None,
     ):
         if weights is None:
             if num_items is None or num_items <= 0:
@@ -60,7 +60,7 @@ class WeightedChoiceSampler:
             self._uniform = False
             self.num_items = weights.size
 
-    def sample(self, size: int = 1) -> Union[NDArray[np.int32], NDArray[np.int64]]:
+    def sample(self, size: int = 1) -> NDArray[np.int32] | NDArray[np.int64]:
         """
         Draw `size` indices according to the stored weight distribution.
         """

@@ -2,41 +2,33 @@ import argparse
 import os
 import random
 from pathlib import Path
-from typing import Tuple
 
 import librosa
 import numpy as np
 import soundfile
-from PIL import Image
 from librosa.display import specshow
 from matplotlib import pyplot as plt
 from numpy.typing import NDArray
+from PIL import Image
 
 from audiomentations import (
     AddBackgroundNoise,
     AddGaussianNoise,
+    AddGaussianSNR,
     AddShortNoises,
+    AdjustDuration,
     AirAbsorption,
+    Aliasing,
     ApplyImpulseResponse,
     BandPassFilter,
     BandStopFilter,
-    Clip,
-    ClippingDistortion,
+    BitCrush,
     Gain,
-    GainTransition,
     HighPassFilter,
-    HighShelfFilter,
-    LoudnessNormalization,
-    LowPassFilter,
-    LowShelfFilter,
+    Limiter,
     Mp3Compression,
-    Normalize,
-    Padding,
-    PeakingFilter,
     PitchShift,
-    PolarityInversion,
     RepeatPart,
-    Resample,
     Reverse,
     RoomSimulator,
     SevenBandParametricEQ,
@@ -45,11 +37,6 @@ from audiomentations import (
     TimeMask,
     TimeStretch,
     Trim,
-    AdjustDuration,
-    Limiter,
-    AddGaussianSNR,
-    BitCrush,
-    Aliasing,
 )
 from audiomentations.core.audio_loading_utils import load_sound_file
 from audiomentations.core.utils import get_max_abs_amplitude
@@ -143,7 +130,7 @@ def plot_waveforms_and_spectrograms(
 class TransformUsageExample:
     transform_class = None
 
-    def generate_example(self) -> Tuple[NDArray, NDArray, int]:
+    def generate_example(self) -> tuple[NDArray, NDArray, int]:
         pass
 
 

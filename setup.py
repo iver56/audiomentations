@@ -53,9 +53,8 @@ setup(
             "pyroomacoustics>=0.7.4",
         ]
     },
-    python_requires=">=3.9,<3.14",
+    python_requires=">=3.10",
     classifiers=[
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",

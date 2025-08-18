@@ -1,8 +1,9 @@
 import functools
 import random
 import warnings
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Optional, List, Union, Callable, Literal
+from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -27,12 +28,14 @@ class AddShortNoises(BaseWaveformTransform):
 
     def __init__(
         self,
-        sounds_path: Union[List[Path], List[str], Path, str],
+        sounds_path: Sequence[Path] | Sequence[str] | Path | str,
         min_snr_db: float = -6.0,
         max_snr_db: float = 18.0,
         min_time_between_sounds: float = 2.0,
         max_time_between_sounds: float = 8.0,
-        noise_rms: Literal["absolute", "relative", "relative_to_whole_input"] = "relative_to_whole_input",
+        noise_rms: Literal[
+            "absolute", "relative", "relative_to_whole_input"
+        ] = "relative_to_whole_input",
         min_absolute_noise_rms_db: float = -50.0,
         max_absolute_noise_rms_db: float = -20.0,
         add_all_noises_with_same_level: bool = False,
@@ -46,11 +49,10 @@ class AddShortNoises(BaseWaveformTransform):
         max_fade_out_time: float = 0.1,
         signal_gain_in_db_during_noise: float = None,
         signal_gain_db_during_noise: float = None,
-        noise_transform: Optional[
-            Callable[[NDArray[np.float32], int], NDArray[np.float32]]
-        ] = None,
+        noise_transform: Callable[[NDArray[np.float32], int], NDArray[np.float32]]
+        | None = None,
         p: float = 0.5,
-        lru_cache_size: Optional[int] = 64,
+        lru_cache_size: int | None = 64,
     ):
         """
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with
@@ -304,7 +306,9 @@ class AddShortNoises(BaseWaveformTransform):
 
             self.parameters["sounds"] = sounds
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         num_samples = samples.shape[-1]
         noise_placeholder = np.zeros_like(samples)
 
@@ -364,7 +368,9 @@ class AddShortNoises(BaseWaveformTransform):
                 if self.include_silence_in_noise_rms_estimation:
                     noise_rms = calculate_rms(noise_samples)
                 else:
-                    noise_rms = calculate_rms_without_silence(noise_samples, sample_rate)
+                    noise_rms = calculate_rms_without_silence(
+                        noise_samples, sample_rate
+                    )
 
                 if noise_rms > 0:
                     if self.noise_rms in ["relative", "relative_to_whole_input"]:
@@ -382,7 +388,9 @@ class AddShortNoises(BaseWaveformTransform):
                         gain = desired_noise_rms_amp / noise_rms
                         noise_samples = noise_samples * gain
 
-                    noise_placeholder[start_sample_index:end_sample_index] += noise_samples
+                    noise_placeholder[start_sample_index:end_sample_index] += (
+                        noise_samples
+                    )
                     if gain_signal:
                         signal_mask[start_sample_index:end_sample_index] = np.maximum(
                             signal_mask[start_sample_index:end_sample_index],

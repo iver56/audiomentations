@@ -1,5 +1,5 @@
 import random
-from typing import Union, Literal
+from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -50,8 +50,8 @@ class GainTransition(BaseWaveformTransform):
         self,
         min_gain_db: float = -24.0,
         max_gain_db: float = 6.0,
-        min_duration: Union[float, int] = 0.2,
-        max_duration: Union[float, int] = 6.0,
+        min_duration: float | int = 0.2,
+        max_duration: float | int = 6.0,
         duration_unit: Literal["fraction", "samples", "seconds"] = "seconds",
         p: float = 0.5,
     ):

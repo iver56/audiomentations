@@ -1,7 +1,7 @@
-from typing import Callable
+import sys
+from collections.abc import Callable
 
 import numpy as np
-import sys
 from numpy.typing import NDArray
 
 from audiomentations import Normalize

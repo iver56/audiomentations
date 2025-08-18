@@ -1,5 +1,5 @@
 import random
-from typing import Union, Literal
+from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -20,8 +20,8 @@ class Shift(BaseWaveformTransform):
 
     def __init__(
         self,
-        min_shift: Union[float, int] = -0.5,
-        max_shift: Union[float, int] = 0.5,
+        min_shift: float | int = -0.5,
+        max_shift: float | int = 0.5,
         shift_unit: Literal["fraction", "samples", "seconds"] = "fraction",
         rollover: bool = True,
         fade_duration: float = 0.005,

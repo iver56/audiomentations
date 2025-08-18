@@ -1,8 +1,8 @@
 import random
-from typing import Optional, Dict, Literal
+import sys
+from typing import Literal
 
 import numpy as np
-import sys
 from numpy.typing import NDArray
 from scipy.signal import convolve
 
@@ -65,7 +65,7 @@ class RoomSimulator(BaseWaveformTransform):
         leave_length_unchanged: bool = False,
         padding: float = 0.1,
         p: float = 0.5,
-        ray_tracing_options: Optional[Dict] = None,
+        ray_tracing_options: dict | None = None,
     ):
         """
 

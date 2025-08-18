@@ -1,12 +1,13 @@
 import random
-from typing import Any, Optional, Union, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 
+from audiomentations.core.sampling import WeightedChoiceSampler
 from audiomentations.core.serialization import get_shortest_class_fullname
 from audiomentations.core.utils import format_args
-from audiomentations.core.sampling import WeightedChoiceSampler
 
 REPR_INDENT_STEP = 2
 
@@ -245,7 +246,7 @@ class OneOf(BaseCompose):
         self,
         transforms,
         p: float = 1.0,
-        weights: Optional[Union[Sequence[float], NDArray]] = None,
+        weights: Sequence[float] | NDArray | None = None,
     ):
         super().__init__(transforms, p)
         self.transform_index = 0

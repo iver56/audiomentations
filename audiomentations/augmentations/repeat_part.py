@@ -1,12 +1,13 @@
 import random
 import warnings
-from typing import Optional, Callable, Literal
+from collections.abc import Callable
+from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
 
 from audiomentations.core.transforms_interface import BaseWaveformTransform
-from audiomentations.core.utils import get_crossfade_mask_pair, get_crossfade_length
+from audiomentations.core.utils import get_crossfade_length, get_crossfade_mask_pair
 
 # 0.00025 seconds corresponds to 2 samples at 8000 Hz
 DURATION_EPSILON = 0.00025
@@ -43,9 +44,8 @@ class RepeatPart(BaseWaveformTransform):
         max_part_duration: float = 1.2,
         mode: Literal["insert", "replace"] = "insert",
         crossfade_duration: float = 0.005,
-        part_transform: Optional[
-            Callable[[NDArray[np.float32], int], NDArray[np.float32]]
-        ] = None,
+        part_transform: Callable[[NDArray[np.float32], int], NDArray[np.float32]]
+        | None = None,
         p: float = 0.5,
     ):
         """

@@ -1,7 +1,8 @@
 import random
 import warnings
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Callable, List, Literal, Optional, Union
+from typing import Literal
 
 import librosa
 import numpy as np
@@ -33,17 +34,16 @@ class AddBackgroundNoise(BaseWaveformTransform):
 
     def __init__(
         self,
-        sounds_path: Union[List[Path], List[str], Path, str],
+        sounds_path: Sequence[Path] | Sequence[str] | Path | str,
         min_snr_db: float = 3.0,
         max_snr_db: float = 30.0,
         noise_rms: Literal["relative", "absolute"] = "relative",
         min_absolute_rms_db: float = -45.0,
         max_absolute_rms_db: float = -15.0,
-        noise_transform: Optional[
-            Callable[[NDArray[np.float32], int], NDArray[np.float32]]
-        ] = None,
+        noise_transform: Callable[[NDArray[np.float32], int], NDArray[np.float32]]
+        | None = None,
         p: float = 0.5,
-        lru_cache_size: Optional[int] = None,
+        lru_cache_size: int | None = None,
     ):
         """
         :param sounds_path: A path or list of paths to audio file(s) and/or folder(s) with

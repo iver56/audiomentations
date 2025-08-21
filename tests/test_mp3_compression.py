@@ -1,12 +1,12 @@
 import os
 
-import fast_align_audio
 import numpy as np
 import pytest
 
 from audiomentations import Mp3Compression
 from audiomentations.core.audio_loading_utils import load_sound_file
 from demo.demo import DEMO_DIR
+from tests.utils import find_best_alignment_offset_with_corr_coef
 
 
 def mse(signal1, signal2):
@@ -139,12 +139,11 @@ def test_too_loud_input(params):
     assert samples_out.dtype == np.float32
 
     # Apply delay compensation, so we can compare output with input sample by sample
-    offset, _ = fast_align_audio.find_best_alignment_offset(
+    offset, _ = find_best_alignment_offset_with_corr_coef(
         reference_signal=samples_in,
         delayed_signal=samples_out,
+        min_offset_samples=-3100,
         max_offset_samples=3100,
-        lookahead_samples=10_000,
-        method="corr",
     )
 
     snippet_length = 42000

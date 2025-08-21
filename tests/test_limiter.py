@@ -1,11 +1,11 @@
 import json
 import random
 
-import fast_align_audio
 import numpy as np
 import pytest
 
 from audiomentations import Limiter
+from tests.utils import find_best_alignment_offset_with_corr_coef
 
 
 @pytest.mark.parametrize(
@@ -29,12 +29,12 @@ def test_limiter(samples_in):
     if samples_in_mono.ndim > 1:
         samples_in_mono = samples_in_mono[0]
         samples_out_mono = samples_out_mono[0]
-    offset, _ = fast_align_audio.find_best_alignment_offset(
+
+    offset, _ = find_best_alignment_offset_with_corr_coef(
         reference_signal=samples_in_mono,
         delayed_signal=samples_out_mono,
+        min_offset_samples=-length // 2,
         max_offset_samples=length // 2,
-        lookahead_samples=length // 2,
-        method="corr",
     )
     # Check that the output is aligned with the input, i.e. no delay was introduced
     assert offset == 0

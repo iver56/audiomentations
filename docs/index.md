@@ -4,7 +4,7 @@
 [![Code coverage](https://img.shields.io/codecov/c/github/iver56/audiomentations/main.svg)](https://codecov.io/gh/iver56/audiomentations)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
 [![Licence: MIT](https://img.shields.io/pypi/l/audiomentations)](https://github.com/iver56/audiomentations/blob/main/LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15806235.svg)](https://doi.org/10.5281/zenodo.15806235)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17088180.svg)](https://doi.org/10.5281/zenodo.17088180)
 
 Audiomentations is a Python library for audio data augmentation, built to be fast and easy to use - its API is inspired by
 [albumentations](https://github.com/albu/albumentations). It's useful for making audio deep learning models work well in the real world, not just in the lab.

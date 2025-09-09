@@ -16,10 +16,10 @@ Need a Pytorch-specific alternative with GPU support? Check out [torch-audioment
 
 # Setup
 
-![Python version support](https://img.shields.io/pypi/pyversions/audiomentations)
+[![Python version support](https://img.shields.io/pypi/pyversions/audiomentations)](https://pypi.org/project/audiomentations/)
 [![PyPI version](https://img.shields.io/pypi/v/audiomentations.svg?style=flat)](https://pypi.org/project/audiomentations/)
-[![Number of downloads from PyPI per month](https://img.shields.io/pypi/dm/audiomentations.svg?style=flat)](https://pypi.org/project/audiomentations/)
-![os: Linux, macOS, Windows](https://img.shields.io/badge/OS-Linux%20%28arm%20%26%20x86%29%20|%20macOS%20%28arm%29%20|%20Windows%20%28x86%29-blue)
+[![Number of downloads from PyPI per month](https://img.shields.io/pypi/dm/audiomentations.svg?style=flat)](https://pypistats.org/packages/audiomentations)
+[![os: Linux, macOS, Windows](https://img.shields.io/badge/OS-Linux%20%28arm%20%26%20x86%29%20|%20macOS%20%28arm%29%20|%20Windows%20%28x86%29-blue)](https://pypi.org/project/audiomentations/)
 
 `pip install audiomentations`
 

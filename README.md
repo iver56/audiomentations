@@ -91,21 +91,23 @@ The API documentation, along with guides, example code, illustrations and exampl
 
 # Changelog
 
-## [0.42.0] - 2025-07-04
-
-### Added
-
-* Add support for Python 3.13
-* Add support for librosa 0.11.0
+## [0.43.0] - 2025-09-09
 
 ### Changed
 
-* Make `Mp3Compression` **25-300% faster** (depending on hardware, audio properties like duration and number of channels and various params, like bitrate) with the new `backend="fast-mp3-augment"` (now default). The extra dependency for this is [fast-mp3-augment](https://github.com/iver56/fast-mp3-augment), which pulls a few useful tricks for faster execution.
-* Make `Limiter` **30% faster** and easier to install (extra dependency is now [numpy-audio-limiter](https://github.com/iver56/numpy-audio-limiter) instead of [cylimiter](https://github.com/pzelasko/cylimiter/)). The `Limiter` behavior has not changed, although there are minor numerical differences.
+* Make `LoudnessNormalization` **400% faster** by switching from pyloudnorm to the new and faster alternative [loudness](https://github.com/iver56/loudness)
+* Improve `AddBackgroundNoise` performance: Only load/decode the part of the noise file that is needed, instead of the entire file.
+* Bump min Python version to 3.10
+* Switch to a more modern type hint style
 
-### Fixed
+### Deprecated
 
-* Handle non-contiguous audio ndarray input to `PitchShift` and `TimeStretch` properly
+* Deprecate `"pydub"` backend in `Mp3Compression`, because pydub isn't maintained anymore, and depends on audioop, which got removed in Python 3.13. The recommended alternative is `"fast-mp3-augment"`
+
+### Removed
+
+* Remove upper Python version limit to avoid hindering early adopters
+* Remove LRU cache in `AddBackgroundNoise`, due to the changed way of loading audio, and because such audio datasets are commonly larger than RAM anyway
 
 For the full changelog, including older versions, see [https://iver56.github.io/audiomentations/changelog/](https://iver56.github.io/audiomentations/changelog/)
 

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.43.0] - 2025-09-09
+
+### Changed
+
+* Make `LoudnessNormalization` **400% faster** by switching from pyloudnorm to the new and faster alternative [loudness](https://github.com/iver56/loudness) 
+* Improve `AddBackgroundNoise` performance: Only load/decode the part of the noise file that is needed, instead of the entire file.
+* Bump min Python version to 3.10
+* Switch to a more modern type hint style
+
+### Deprecated
+
+* Deprecate `"pydub"` backend in `Mp3Compression`, because pydub isn't maintained anymore, and depends on audioop, which got removed in Python 3.13. The recommended alternative is `"fast-mp3-augment"`
+
+### Removed
+
+* Remove upper Python version limit to avoid hindering early adopters
+* Remove LRU cache in `AddBackgroundNoise`
+
 ## [0.42.0] - 2025-07-04
 
 ### Added
@@ -681,6 +699,8 @@ Thanks to karpnv
 ### Added
 
 * Initial release. Includes only one transform: `AddGaussianNoise`
+
+[0.43.0]: https://github.com/iver56/audiomentations/compare/v0.42.0...v0.43.0
 
 [0.42.0]: https://github.com/iver56/audiomentations/compare/v0.41.0...v0.42.0
 

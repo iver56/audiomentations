@@ -1,6 +1,6 @@
 # `LoudnessNormalization`
 
-_Added in v0.14.0_
+_Added in v0.14.0, updated in v0.43.0_
 
 Apply a constant amount of gain to match a specific loudness (in LUFS). This is an
 implementation of ITU-R BS.1770-4.

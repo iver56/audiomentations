@@ -1,6 +1,6 @@
 # `Mp3Compression`
 
-_Added in v0.12.0, updated in v0.42.0_
+_Added in v0.12.0, updated in v0.43.0_
 
 Compress the audio using an MP3 encoder to lower the audio quality. This may help machine
 learning models deal with compressed, low-quality audio.

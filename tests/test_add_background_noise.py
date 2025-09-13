@@ -2,11 +2,13 @@ import os
 import random
 import warnings
 
+import librosa
 import numpy as np
 import pytest
 
 from audiomentations import AddBackgroundNoise, Reverse
 from demo.demo import DEMO_DIR
+from tests.utils import fast_autocorr
 
 
 def test_add_background_noise():
@@ -21,6 +23,64 @@ def test_add_background_noise():
     samples_out = augmenter(samples=samples, sample_rate=sample_rate)
     assert not np.allclose(samples, samples_out)
     assert samples_out.dtype == np.float32
+
+
+def test_background_noise_offset_variation():
+    # Check variation in chosen offsets when noise is longer than signal
+    np.random.seed(123)
+    random.seed(456)
+    samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 500)).astype(np.float32)
+    sample_rate = 44100
+    noise_path = os.path.join(DEMO_DIR, "background_noises", "hens.ogg")
+    augmenter = AddBackgroundNoise(sounds_path=noise_path, p=1.0)
+
+    offsets = set()
+    for i in range(5):
+        augmenter(samples=samples, sample_rate=sample_rate)
+        offsets.add(augmenter.parameters["offset"])
+
+    assert len(offsets) >= 4  # we have many different values
+
+
+def test_background_noise_offset_and_duration():
+    # Check the correctness of noise duration and offset
+    np.random.seed(44)
+    random.seed(55)
+    samples = np.sin(np.linspace(0, 440 * 2 * np.pi, 500)).astype(np.float32)
+    sample_rate = 2000
+    noise_path = os.path.join(DEMO_DIR, "background_noises", "hens.ogg")
+    noise, _ = librosa.load(path=noise_path, sr=sample_rate, mono=True)
+    noise_duration = noise.shape[-1] / sample_rate
+    augmenter = AddBackgroundNoise(
+        sounds_path=noise_path,
+        min_snr_db=20.0,
+        max_snr_db=20.0,
+        p=1.0,
+    )
+    samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+
+    assert augmenter.time_info_arr[0] == pytest.approx(
+        noise_duration, abs=1 / sample_rate
+    )
+
+    added_noise = samples_out - samples
+
+    best_offset_int = -1
+    max_corr_coef = 0.0
+    for candidate_offset_int in range(0, noise.shape[-1] - samples.shape[-1]):
+        candidate_noise_slice = noise[
+            candidate_offset_int : candidate_offset_int + samples.shape[-1]
+        ]
+        corr_coef = fast_autocorr(added_noise, candidate_noise_slice)
+        if corr_coef > max_corr_coef:
+            max_corr_coef = corr_coef
+            best_offset_int = candidate_offset_int
+
+    assert max_corr_coef > 0.95
+    actual_offset = best_offset_int / sample_rate
+    assert augmenter.parameters["offset"] == pytest.approx(
+        actual_offset, abs=1 / sample_rate
+    )
 
 
 def test_add_background_noise_when_noise_sound_is_too_short():

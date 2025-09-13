@@ -113,7 +113,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
             file_idx = random.randint(0, len(self.sound_file_paths) - 1)
             self.parameters["noise_file_path"] = self.sound_file_paths[file_idx]
 
-            if self.time_info_arr[file_idx] != -1.0:
+            if self.time_info_arr[file_idx] == -1.0:
                 self.time_info_arr[file_idx] = librosa.get_duration(
                     path=self.parameters["noise_file_path"]
                 )

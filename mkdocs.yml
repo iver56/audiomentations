@@ -78,6 +78,6 @@ markdown_extensions:
   - codehilite
 extra:
   static_templates:
-    - google874768f12a0e923e.html
+    - google70ce23c71b0b15b2.html
   analytics:
     provider: custom

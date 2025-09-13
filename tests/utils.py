@@ -60,7 +60,7 @@ def get_randn_test(sample_rate, duration):
     return samples.astype(np.float32)
 
 
-def fast_autocorr(original: NDArray, delayed: NDArray, t: int = 1):
+def fast_autocorr(original: NDArray, delayed: NDArray, t: int = 0):
     """Only every 4th sample is considered in order to improve execution time"""
     if t == 0:
         return np.corrcoef([original[::4], delayed[::4]])[1, 0]

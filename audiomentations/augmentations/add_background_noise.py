@@ -118,7 +118,7 @@ class AddBackgroundNoise(BaseWaveformTransform):
                     path=self.parameters["noise_file_path"]
                 )
 
-            noise_duration = self.time_info_arr[file_idx]
+            noise_duration = float(self.time_info_arr[file_idx])
             signal_duration = len(samples) / sample_rate
 
             min_noise_offset = 0.0

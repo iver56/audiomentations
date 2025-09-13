@@ -1,0 +1,4720 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Iver Jordal">
+      
+      
+        <link rel="canonical" href="https://iver56.github.io/audiomentations/changelog/">
+      
+      
+        <link rel="prev" href="../guides/transform_parameters/">
+      
+      
+        <link rel="next" href="../alternatives/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.2">
+    
+    
+      
+        <title>Changelog - audiomentations documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.30068a00.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="audiomentations documentation" class="md-header__button md-logo" aria-label="audiomentations documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            audiomentations documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/iver56/audiomentations" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iver56/audiomentations
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="audiomentations documentation" class="md-nav__button md-logo" aria-label="audiomentations documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    audiomentations documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/iver56/audiomentations" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iver56/audiomentations
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Waveform transforms
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Waveform transforms
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/add_background_noise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AddBackgroundNoise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/add_color_noise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AddColorNoise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/add_gaussian_noise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AddGaussianNoise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/add_gaussian_snr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AddGaussianSNR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/add_short_noises/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AddShortNoises
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/adjust_duration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AdjustDuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/air_absorption/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AirAbsorption
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/aliasing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Aliasing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/apply_impulse_response/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ApplyImpulseResponse
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/bit_crush/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    BitCrush
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/band_pass_filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    BandPassFilter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/band_stop_filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    BandStopFilter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/clip/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Clip
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/clipping_distortion/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ClippingDistortion
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/gain/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Gain
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/gain_transition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GainTransition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/high_pass_filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HighPassFilter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/high_shelf_filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HighShelfFilter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/lambda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lambda
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/limiter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Limiter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/loudness_normalization/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LoudnessNormalization
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/low_pass_filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LowPassFilter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/low_shelf_filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LowShelfFilter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/mp3_compression/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mp3Compression
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/normalize/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Normalize
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/padding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Padding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/peaking_filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PeakingFilter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/pitch_shift/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PitchShift
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/polarity_inversion/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PolarityInversion
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/repeat_part/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RepeatPart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/resample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resample
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/reverse/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reverse
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/room_simulator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RoomSimulator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/seven_band_parametric_eq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SevenBandParametricEQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/shift/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shift
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/tanh_distortion/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TanhDistortion
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/time_mask/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TimeMask
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/time_stretch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TimeStretch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../waveform_transforms/trim/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Trim
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guides
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/cpu_vs_gpu/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CPU vs. GPU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/multichannel_audio_array_shapes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Multichannel audio array shapes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/transform_parameters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Transform parameters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0431-2025-09-13" class="md-nav__link">
+    [0.43.1] - 2025-09-13
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.43.1] - 2025-09-13">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0430-2025-09-09" class="md-nav__link">
+    0.43.0 - 2025-09-09
+  </a>
+  
+    <nav class="md-nav" aria-label="0.43.0 - 2025-09-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deprecated" class="md-nav__link">
+    Deprecated
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0420-2025-07-04" class="md-nav__link">
+    0.42.0 - 2025-07-04
+  </a>
+  
+    <nav class="md-nav" aria-label="0.42.0 - 2025-07-04">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0410-2025-05-05" class="md-nav__link">
+    0.41.0 - 2025-05-05
+  </a>
+  
+    <nav class="md-nav" aria-label="0.41.0 - 2025-05-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    Changed
+  </a>
+  
+    <nav class="md-nav" aria-label="Changed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-timemask-transform-has-been-changed-significantly" class="md-nav__link">
+    The TimeMask transform has been changed significantly:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_1" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0400-2025-03-20" class="md-nav__link">
+    0.40.0 - 2025-03-20
+  </a>
+  
+    <nav class="md-nav" aria-label="0.40.0 - 2025-03-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_2" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0390-2025-02-12" class="md-nav__link">
+    0.39.0 - 2025-02-12
+  </a>
+  
+    <nav class="md-nav" aria-label="0.39.0 - 2025-02-12">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0380-2024-12-06" class="md-nav__link">
+    0.38.0 - 2024-12-06
+  </a>
+  
+    <nav class="md-nav" aria-label="0.38.0 - 2024-12-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_3" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370-2024-09-03" class="md-nav__link">
+    0.37.0 - 2024-09-03
+  </a>
+  
+    <nav class="md-nav" aria-label="0.37.0 - 2024-09-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0361-2024-08-20" class="md-nav__link">
+    0.36.1 - 2024-08-20
+  </a>
+  
+    <nav class="md-nav" aria-label="0.36.1 - 2024-08-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0360-2024-06-10" class="md-nav__link">
+    0.36.0 - 2024-06-10
+  </a>
+  
+    <nav class="md-nav" aria-label="0.36.0 - 2024-06-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_8" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0350-2024-03-15" class="md-nav__link">
+    0.35.0 - 2024-03-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.35.0 - 2024-03-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0341-2023-11-24" class="md-nav__link">
+    0.34.1 - 2023-11-24
+  </a>
+  
+    <nav class="md-nav" aria-label="0.34.1 - 2023-11-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_9" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0330-2023-08-30" class="md-nav__link">
+    0.33.0 - 2023-08-30
+  </a>
+  
+    <nav class="md-nav" aria-label="0.33.0 - 2023-08-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_10" class="md-nav__link">
+    Changed
+  </a>
+  
+    <nav class="md-nav" aria-label="Changed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-shift-transform-has-been-changed" class="md-nav__link">
+    The Shift transform has been changed:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0320-2023-08-15" class="md-nav__link">
+    0.32.0 - 2023-08-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.32.0 - 2023-08-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_11" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0310-2023-06-21" class="md-nav__link">
+    0.31.0 - 2023-06-21
+  </a>
+  
+    <nav class="md-nav" aria-label="0.31.0 - 2023-06-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_12" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0300-2023-05-02" class="md-nav__link">
+    0.30.0 - 2023-05-02
+  </a>
+  
+    <nav class="md-nav" aria-label="0.30.0 - 2023-05-02">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0290-2023-03-15" class="md-nav__link">
+    0.29.0 - 2023-03-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.29.0 - 2023-03-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_13" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0280-2023-01-12" class="md-nav__link">
+    0.28.0 - 2023-01-12
+  </a>
+  
+    <nav class="md-nav" aria-label="0.28.0 - 2023-01-12">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_4" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0270-2022-09-13" class="md-nav__link">
+    0.27.0 - 2022-09-13
+  </a>
+  
+    <nav class="md-nav" aria-label="0.27.0 - 2022-09-13">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_14" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0260-2022-08-19" class="md-nav__link">
+    0.26.0 - 2022-08-19
+  </a>
+  
+    <nav class="md-nav" aria-label="0.26.0 - 2022-08-19">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0251-2022-06-15" class="md-nav__link">
+    0.25.1 - 2022-06-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.25.1 - 2022-06-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0250-2022-05-30" class="md-nav__link">
+    0.25.0 - 2022-05-30
+  </a>
+  
+    <nav class="md-nav" aria-label="0.25.0 - 2022-05-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_15" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_5" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0240-2022-03-18" class="md-nav__link">
+    0.24.0 - 2022-03-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.24.0 - 2022-03-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_12" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_16" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_13" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0230-2022-03-07" class="md-nav__link">
+    0.23.0 - 2022-03-07
+  </a>
+  
+    <nav class="md-nav" aria-label="0.23.0 - 2022-03-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_13" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_17" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_6" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0220-2022-02-18" class="md-nav__link">
+    0.22.0 - 2022-02-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.22.0 - 2022-02-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_14" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_18" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deprecated_1" class="md-nav__link">
+    Deprecated
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_7" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0210-2022-02-10" class="md-nav__link">
+    0.21.0 - 2022-02-10
+  </a>
+  
+    <nav class="md-nav" aria-label="0.21.0 - 2022-02-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_15" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_19" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_8" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0200-2021-11-18" class="md-nav__link">
+    0.20.0 - 2021-11-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.20.0 - 2021-11-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_16" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_20" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_14" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0190-2021-10-18" class="md-nav__link">
+    0.19.0 - 2021-10-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.19.0 - 2021-10-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_17" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0180-2021-08-05" class="md-nav__link">
+    0.18.0 - 2021-08-05
+  </a>
+  
+    <nav class="md-nav" aria-label="0.18.0 - 2021-08-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_18" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0170-2021-06-25" class="md-nav__link">
+    0.17.0 - 2021-06-25
+  </a>
+  
+    <nav class="md-nav" aria-label="0.17.0 - 2021-06-25">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_19" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_21" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_15" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0160-2021-02-11" class="md-nav__link">
+    0.16.0 - 2021-02-11
+  </a>
+  
+    <nav class="md-nav" aria-label="0.16.0 - 2021-02-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_20" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_16" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0150-2020-12-10" class="md-nav__link">
+    0.15.0 - 2020-12-10
+  </a>
+  
+    <nav class="md-nav" aria-label="0.15.0 - 2020-12-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_21" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_17" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0140-2020-12-06" class="md-nav__link">
+    0.14.0 - 2020-12-06
+  </a>
+  
+    <nav class="md-nav" aria-label="0.14.0 - 2020-12-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_22" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0130-2020-11-10" class="md-nav__link">
+    0.13.0 - 2020-11-10
+  </a>
+  
+    <nav class="md-nav" aria-label="0.13.0 - 2020-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_23" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_22" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_18" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0121-2020-09-28" class="md-nav__link">
+    0.12.1 - 2020-09-28
+  </a>
+  
+    <nav class="md-nav" aria-label="0.12.1 - 2020-09-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_23" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0120-2020-09-23" class="md-nav__link">
+    0.12.0 - 2020-09-23
+  </a>
+  
+    <nav class="md-nav" aria-label="0.12.0 - 2020-09-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_24" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_24" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_9" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0110-2020-08-27" class="md-nav__link">
+    0.11.0 - 2020-08-27
+  </a>
+  
+    <nav class="md-nav" aria-label="0.11.0 - 2020-08-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_25" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0101-2020-07-27" class="md-nav__link">
+    0.10.1 - 2020-07-27
+  </a>
+  
+    <nav class="md-nav" aria-label="0.10.1 - 2020-07-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_25" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_19" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0100-2020-05-05" class="md-nav__link">
+    0.10.0 - 2020-05-05
+  </a>
+  
+    <nav class="md-nav" aria-label="0.10.0 - 2020-05-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_26" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_26" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_20" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#090-2020-02-20" class="md-nav__link">
+    0.9.0 - 2020-02-20
+  </a>
+  
+    <nav class="md-nav" aria-label="0.9.0 - 2020-02-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_27" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_27" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_21" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#080-2020-01-28" class="md-nav__link">
+    0.8.0 - 2020-01-28
+  </a>
+  
+    <nav class="md-nav" aria-label="0.8.0 - 2020-01-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_28" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#070-2020-01-14" class="md-nav__link">
+    0.7.0 - 2020-01-14
+  </a>
+  
+    <nav class="md-nav" aria-label="0.7.0 - 2020-01-14">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_29" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#060-2019-05-27" class="md-nav__link">
+    0.6.0 - 2019-05-27
+  </a>
+  
+    <nav class="md-nav" aria-label="0.6.0 - 2019-05-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_30" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#050-2019-02-23" class="md-nav__link">
+    0.5.0 - 2019-02-23
+  </a>
+  
+    <nav class="md-nav" aria-label="0.5.0 - 2019-02-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_31" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_28" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#040-2019-02-19" class="md-nav__link">
+    0.4.0 - 2019-02-19
+  </a>
+  
+    <nav class="md-nav" aria-label="0.4.0 - 2019-02-19">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_32" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_22" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#030-2019-02-19" class="md-nav__link">
+    0.3.0 - 2019-02-19
+  </a>
+  
+    <nav class="md-nav" aria-label="0.3.0 - 2019-02-19">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_33" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#020-2019-02-18" class="md-nav__link">
+    0.2.0 - 2019-02-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.2.0 - 2019-02-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_34" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#010-2019-02-15" class="md-nav__link">
+    0.1.0 - 2019-02-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.1.0 - 2019-02-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_35" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alternatives/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alternatives
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0431-2025-09-13" class="md-nav__link">
+    [0.43.1] - 2025-09-13
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.43.1] - 2025-09-13">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0430-2025-09-09" class="md-nav__link">
+    0.43.0 - 2025-09-09
+  </a>
+  
+    <nav class="md-nav" aria-label="0.43.0 - 2025-09-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deprecated" class="md-nav__link">
+    Deprecated
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0420-2025-07-04" class="md-nav__link">
+    0.42.0 - 2025-07-04
+  </a>
+  
+    <nav class="md-nav" aria-label="0.42.0 - 2025-07-04">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0410-2025-05-05" class="md-nav__link">
+    0.41.0 - 2025-05-05
+  </a>
+  
+    <nav class="md-nav" aria-label="0.41.0 - 2025-05-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    Changed
+  </a>
+  
+    <nav class="md-nav" aria-label="Changed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-timemask-transform-has-been-changed-significantly" class="md-nav__link">
+    The TimeMask transform has been changed significantly:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_1" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0400-2025-03-20" class="md-nav__link">
+    0.40.0 - 2025-03-20
+  </a>
+  
+    <nav class="md-nav" aria-label="0.40.0 - 2025-03-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_2" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0390-2025-02-12" class="md-nav__link">
+    0.39.0 - 2025-02-12
+  </a>
+  
+    <nav class="md-nav" aria-label="0.39.0 - 2025-02-12">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0380-2024-12-06" class="md-nav__link">
+    0.38.0 - 2024-12-06
+  </a>
+  
+    <nav class="md-nav" aria-label="0.38.0 - 2024-12-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_3" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370-2024-09-03" class="md-nav__link">
+    0.37.0 - 2024-09-03
+  </a>
+  
+    <nav class="md-nav" aria-label="0.37.0 - 2024-09-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0361-2024-08-20" class="md-nav__link">
+    0.36.1 - 2024-08-20
+  </a>
+  
+    <nav class="md-nav" aria-label="0.36.1 - 2024-08-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0360-2024-06-10" class="md-nav__link">
+    0.36.0 - 2024-06-10
+  </a>
+  
+    <nav class="md-nav" aria-label="0.36.0 - 2024-06-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_8" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0350-2024-03-15" class="md-nav__link">
+    0.35.0 - 2024-03-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.35.0 - 2024-03-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0341-2023-11-24" class="md-nav__link">
+    0.34.1 - 2023-11-24
+  </a>
+  
+    <nav class="md-nav" aria-label="0.34.1 - 2023-11-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_9" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0330-2023-08-30" class="md-nav__link">
+    0.33.0 - 2023-08-30
+  </a>
+  
+    <nav class="md-nav" aria-label="0.33.0 - 2023-08-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_10" class="md-nav__link">
+    Changed
+  </a>
+  
+    <nav class="md-nav" aria-label="Changed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-shift-transform-has-been-changed" class="md-nav__link">
+    The Shift transform has been changed:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0320-2023-08-15" class="md-nav__link">
+    0.32.0 - 2023-08-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.32.0 - 2023-08-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_11" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0310-2023-06-21" class="md-nav__link">
+    0.31.0 - 2023-06-21
+  </a>
+  
+    <nav class="md-nav" aria-label="0.31.0 - 2023-06-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_12" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0300-2023-05-02" class="md-nav__link">
+    0.30.0 - 2023-05-02
+  </a>
+  
+    <nav class="md-nav" aria-label="0.30.0 - 2023-05-02">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0290-2023-03-15" class="md-nav__link">
+    0.29.0 - 2023-03-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.29.0 - 2023-03-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_13" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0280-2023-01-12" class="md-nav__link">
+    0.28.0 - 2023-01-12
+  </a>
+  
+    <nav class="md-nav" aria-label="0.28.0 - 2023-01-12">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_4" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0270-2022-09-13" class="md-nav__link">
+    0.27.0 - 2022-09-13
+  </a>
+  
+    <nav class="md-nav" aria-label="0.27.0 - 2022-09-13">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_14" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0260-2022-08-19" class="md-nav__link">
+    0.26.0 - 2022-08-19
+  </a>
+  
+    <nav class="md-nav" aria-label="0.26.0 - 2022-08-19">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0251-2022-06-15" class="md-nav__link">
+    0.25.1 - 2022-06-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.25.1 - 2022-06-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0250-2022-05-30" class="md-nav__link">
+    0.25.0 - 2022-05-30
+  </a>
+  
+    <nav class="md-nav" aria-label="0.25.0 - 2022-05-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_15" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_5" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0240-2022-03-18" class="md-nav__link">
+    0.24.0 - 2022-03-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.24.0 - 2022-03-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_12" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_16" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_13" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0230-2022-03-07" class="md-nav__link">
+    0.23.0 - 2022-03-07
+  </a>
+  
+    <nav class="md-nav" aria-label="0.23.0 - 2022-03-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_13" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_17" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_6" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0220-2022-02-18" class="md-nav__link">
+    0.22.0 - 2022-02-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.22.0 - 2022-02-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_14" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_18" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deprecated_1" class="md-nav__link">
+    Deprecated
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_7" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0210-2022-02-10" class="md-nav__link">
+    0.21.0 - 2022-02-10
+  </a>
+  
+    <nav class="md-nav" aria-label="0.21.0 - 2022-02-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_15" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_19" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_8" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0200-2021-11-18" class="md-nav__link">
+    0.20.0 - 2021-11-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.20.0 - 2021-11-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_16" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_20" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_14" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0190-2021-10-18" class="md-nav__link">
+    0.19.0 - 2021-10-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.19.0 - 2021-10-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_17" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0180-2021-08-05" class="md-nav__link">
+    0.18.0 - 2021-08-05
+  </a>
+  
+    <nav class="md-nav" aria-label="0.18.0 - 2021-08-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_18" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0170-2021-06-25" class="md-nav__link">
+    0.17.0 - 2021-06-25
+  </a>
+  
+    <nav class="md-nav" aria-label="0.17.0 - 2021-06-25">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_19" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_21" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_15" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0160-2021-02-11" class="md-nav__link">
+    0.16.0 - 2021-02-11
+  </a>
+  
+    <nav class="md-nav" aria-label="0.16.0 - 2021-02-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_20" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_16" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0150-2020-12-10" class="md-nav__link">
+    0.15.0 - 2020-12-10
+  </a>
+  
+    <nav class="md-nav" aria-label="0.15.0 - 2020-12-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_21" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_17" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0140-2020-12-06" class="md-nav__link">
+    0.14.0 - 2020-12-06
+  </a>
+  
+    <nav class="md-nav" aria-label="0.14.0 - 2020-12-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_22" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0130-2020-11-10" class="md-nav__link">
+    0.13.0 - 2020-11-10
+  </a>
+  
+    <nav class="md-nav" aria-label="0.13.0 - 2020-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_23" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_22" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_18" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0121-2020-09-28" class="md-nav__link">
+    0.12.1 - 2020-09-28
+  </a>
+  
+    <nav class="md-nav" aria-label="0.12.1 - 2020-09-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_23" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0120-2020-09-23" class="md-nav__link">
+    0.12.0 - 2020-09-23
+  </a>
+  
+    <nav class="md-nav" aria-label="0.12.0 - 2020-09-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_24" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_24" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_9" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0110-2020-08-27" class="md-nav__link">
+    0.11.0 - 2020-08-27
+  </a>
+  
+    <nav class="md-nav" aria-label="0.11.0 - 2020-08-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_25" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0101-2020-07-27" class="md-nav__link">
+    0.10.1 - 2020-07-27
+  </a>
+  
+    <nav class="md-nav" aria-label="0.10.1 - 2020-07-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_25" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_19" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0100-2020-05-05" class="md-nav__link">
+    0.10.0 - 2020-05-05
+  </a>
+  
+    <nav class="md-nav" aria-label="0.10.0 - 2020-05-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_26" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_26" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_20" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#090-2020-02-20" class="md-nav__link">
+    0.9.0 - 2020-02-20
+  </a>
+  
+    <nav class="md-nav" aria-label="0.9.0 - 2020-02-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_27" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_27" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_21" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#080-2020-01-28" class="md-nav__link">
+    0.8.0 - 2020-01-28
+  </a>
+  
+    <nav class="md-nav" aria-label="0.8.0 - 2020-01-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_28" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#070-2020-01-14" class="md-nav__link">
+    0.7.0 - 2020-01-14
+  </a>
+  
+    <nav class="md-nav" aria-label="0.7.0 - 2020-01-14">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_29" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#060-2019-05-27" class="md-nav__link">
+    0.6.0 - 2019-05-27
+  </a>
+  
+    <nav class="md-nav" aria-label="0.6.0 - 2019-05-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_30" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#050-2019-02-23" class="md-nav__link">
+    0.5.0 - 2019-02-23
+  </a>
+  
+    <nav class="md-nav" aria-label="0.5.0 - 2019-02-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_31" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_28" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#040-2019-02-19" class="md-nav__link">
+    0.4.0 - 2019-02-19
+  </a>
+  
+    <nav class="md-nav" aria-label="0.4.0 - 2019-02-19">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_32" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_22" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#030-2019-02-19" class="md-nav__link">
+    0.3.0 - 2019-02-19
+  </a>
+  
+    <nav class="md-nav" aria-label="0.3.0 - 2019-02-19">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_33" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#020-2019-02-18" class="md-nav__link">
+    0.2.0 - 2019-02-18
+  </a>
+  
+    <nav class="md-nav" aria-label="0.2.0 - 2019-02-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_34" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#010-2019-02-15" class="md-nav__link">
+    0.1.0 - 2019-02-15
+  </a>
+  
+    <nav class="md-nav" aria-label="0.1.0 - 2019-02-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_35" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="changelog">Changelog</h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
+and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h2 id="0431-2025-09-13">[0.43.1] - 2025-09-13</h2>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Fix a bug introduced in 0.43.0 where the noise added by <code>AddBackgroundNoise</code> had wrong offset if the noise was longer than the given signal.</li>
+</ul>
+<h2 id="0430-2025-09-09"><a href="https://github.com/iver56/audiomentations/compare/v0.42.0...v0.43.0">0.43.0</a> - 2025-09-09</h2>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Make <code>LoudnessNormalization</code> <strong>400% faster</strong> by switching from pyloudnorm to the new and faster alternative <a href="https://github.com/iver56/loudness">loudness</a> </li>
+<li>Improve <code>AddBackgroundNoise</code> performance: Only load/decode the part of the noise file that is needed, instead of the entire file.</li>
+<li>Bump min Python version to 3.10</li>
+<li>Switch to a more modern type hint style</li>
+</ul>
+<h3 id="deprecated">Deprecated</h3>
+<ul>
+<li>Deprecate <code>"pydub"</code> backend in <code>Mp3Compression</code>, because pydub isn't maintained anymore, and depends on audioop, which got removed in Python 3.13. The recommended alternative is <code>"fast-mp3-augment"</code></li>
+</ul>
+<h3 id="removed">Removed</h3>
+<ul>
+<li>Remove upper Python version limit to avoid hindering early adopters</li>
+<li>Remove LRU cache in <code>AddBackgroundNoise</code></li>
+</ul>
+<h2 id="0420-2025-07-04"><a href="https://github.com/iver56/audiomentations/compare/v0.41.0...v0.42.0">0.42.0</a> - 2025-07-04</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>Add support for Python 3.13</li>
+<li>Add support for librosa 0.11.0</li>
+</ul>
+<h3 id="changed_1">Changed</h3>
+<ul>
+<li>Make <code>Mp3Compression</code> <strong>25-300% faster</strong> (depending on hardware, audio properties like duration and number of channels and various params, like bitrate) with the new <code>backend="fast-mp3-augment"</code> (now default). The extra dependency for this is <a href="https://github.com/iver56/fast-mp3-augment" target="_blank">fast-mp3-augment <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.854-1h4.146a.25.25 0 0 1 .25.25v4.146a.25.25 0 0 1-.427.177L13.03 4.03 9.28 7.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.75-3.75-1.543-1.543A.25.25 0 0 1 10.604 1Z"/></svg></span></a>, which pulls a few useful tricks for faster execution. </li>
+<li>Make <code>Limiter</code> <strong>30% faster</strong> and easier to install (extra dependency is now <a href="https://github.com/iver56/numpy-audio-limiter" target="_blank">numpy-audio-limiter <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.854-1h4.146a.25.25 0 0 1 .25.25v4.146a.25.25 0 0 1-.427.177L13.03 4.03 9.28 7.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.75-3.75-1.543-1.543A.25.25 0 0 1 10.604 1Z"/></svg></span></a> instead of <a href="https://github.com/pzelasko/cylimiter/" target="_blank">cylimiter <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.854-1h4.146a.25.25 0 0 1 .25.25v4.146a.25.25 0 0 1-.427.177L13.03 4.03 9.28 7.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.75-3.75-1.543-1.543A.25.25 0 0 1 10.604 1Z"/></svg></span></a>). The <code>Limiter</code> behavior has not changed, although there are minor numerical differences.</li>
+</ul>
+<h3 id="fixed_1">Fixed</h3>
+<ul>
+<li>Handle non-contiguous audio ndarray input to <code>PitchShift</code> and <code>TimeStretch</code> properly</li>
+</ul>
+<h2 id="0410-2025-05-05"><a href="https://github.com/iver56/audiomentations/compare/v0.40.0...v0.41.0">0.41.0</a> - 2025-05-05</h2>
+<h3 id="added_1">Added</h3>
+<ul>
+<li>Add support for NumPy 2.x</li>
+<li>Add <code>weights</code> parameter to <code>OneOf</code>. This lets you guide the probability of each transform being chosen.</li>
+</ul>
+<h3 id="changed_2">Changed</h3>
+<ul>
+<li>Improve type hints</li>
+</ul>
+<h4 id="the-timemask-transform-has-been-changed-significantly"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/26a0.svg" title=":warning:" /> The <code>TimeMask</code> transform has been changed significantly:</h4>
+<ul>
+<li><strong>Breaking change</strong>: Remove <code>fade</code> parameter. <code>fade_duration=0.0</code> now denotes disabled fading.</li>
+<li>Enable fading by default</li>
+<li>Apply a smooth fade curve instead of a linear one</li>
+<li>Add <code>mask_location</code> parameter</li>
+<li>Change the default value of <code>min_band_part</code> from 0.0 to 0.01</li>
+<li>Change the default value of <code>max_band_part</code> from 0.5 to 0.2</li>
+<li>~50% faster</li>
+</ul>
+<p>The following examples show how you can adapt your code when upgrading from &lt;=v0.40.0 to &gt;=v0.41.0:</p>
+<table>
+<thead>
+<tr>
+<th>&lt;= 0.40.0</th>
+<th>&gt;= 0.41.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TimeMask(min_band_part=0.1, max_band_part=0.15, fade=True)</code></td>
+<td><code>TimeMask(min_band_part=0.1, max_band_part=0.15, fade_duration=0.01)</code></td>
+</tr>
+<tr>
+<td><code>TimeMask()</code></td>
+<td><code>TimeMask(min_band_part=0.0, max_band_part=0.5, fade_duration=0.0)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="removed_1">Removed</h3>
+<ul>
+<li><code>SpecCompose</code>, <code>SpecChannelShuffle</code> and <code>SpecFrequencyMask</code> have been removed. You can read more about this here: <a href="https://github.com/iver56/audiomentations/pull/391">#391</a></li>
+</ul>
+<h2 id="0400-2025-03-20"><a href="https://github.com/iver56/audiomentations/compare/v0.39.0...v0.40.0">0.40.0</a> - 2025-03-20</h2>
+<h3 id="added_2">Added</h3>
+<ul>
+<li>Add support for scipy&gt;=1.13</li>
+</ul>
+<h3 id="changed_3">Changed</h3>
+<ul>
+<li>Lay the groundwork for NumPy 2.x support (version constraint update coming in the next release)</li>
+<li>Speed up <code>LoudnessNormalization</code> by ~20%</li>
+<li>Improve test coverage and documentation</li>
+<li>Bump min <code>python-stretch</code> version and remove the limitation on the number of channels in <code>PitchShift</code></li>
+<li>Bump min numpy version to 1.22</li>
+<li>Bump min pyroomacoustics version to 0.7.4</li>
+</ul>
+<h3 id="fixed_2">Fixed</h3>
+<ul>
+<li>Fix a bug where <code>TimeMask</code> could raise an exception if the fade length became 0</li>
+<li>Disallow <code>min_cutoff_freq</code> &lt;= 0 in <code>HighPassFilter</code></li>
+<li>Make <code>AdjustDuration</code> picklable (useful for multiprocessing)</li>
+</ul>
+<h3 id="removed_2">Removed</h3>
+<ul>
+<li>Remove support for Python 3.8</li>
+</ul>
+<h2 id="0390-2025-02-12"><a href="https://github.com/iver56/audiomentations/compare/v0.38.0...v0.39.0">0.39.0</a> - 2025-02-12</h2>
+<h3 id="changed_4">Changed</h3>
+<ul>
+<li>Place an upper distance limit of 2500 meters in <code>AirAbsorption</code> in order to avoid numerical issues</li>
+<li>Expand the allowed shift range in <code>PitchShift</code> from [-12, 12] to [-24, 24]</li>
+<li>Switch to a higher quality method, <code>"signalsmith_stretch"</code>, in <code>PitchShift</code> and <code>TimeStretch</code>. It sounds significantly
+  better (e.g. less smearing) and is 50-100% faster than <code>"librosa_phase_vocoder"</code></li>
+</ul>
+<p>If you want to keep using the old method, <code>"librosa_phase_vocoder"</code>, it can be done like this:</p>
+<div class="highlight"><pre><span></span><code>PitchShift(method=&quot;librosa_phase_vocoder&quot;)
+TimeStretch(method=&quot;librosa_phase_vocoder&quot;)
+</code></pre></div>
+<h3 id="fixed_3">Fixed</h3>
+<ul>
+<li>Fix a bug where <code>AddShortNoises(include_silence_in_noise_rms_estimation=False)</code> sometimes raised a <code>ValueError</code> due to
+  digital silence in a portion of a short noise. This bug was introduced in v0.36.1.</li>
+</ul>
+<h2 id="0380-2024-12-06"><a href="https://github.com/iver56/audiomentations/compare/v0.37.0...v0.38.0">0.38.0</a> - 2024-12-06</h2>
+<h3 id="added_3">Added</h3>
+<ul>
+<li>Add/improve parameter validation in <code>AddGaussianSNR</code>, <code>GainTransition</code>, <code>LoudnessNormalization</code> and <code>AddShortNoises</code></li>
+<li>Add/update type hints for consistency</li>
+<li>Add human-readable string representation of audiomentations class instances</li>
+</ul>
+<h3 id="changed_5">Changed</h3>
+<ul>
+<li>Improve documentation with respect to consistency, clarity and grammar</li>
+<li>Adjust Python version compatibility range, so all patches of Python 3.12 are supported</li>
+</ul>
+<h3 id="removed_3">Removed</h3>
+<ul>
+<li>Remove deprecated *_in_db args
+  in <a href="../waveform_transforms/gain/">Gain</a>, <a href="../waveform_transforms/add_background_noise/">AddBackgroundNoise</a>, <a href="../waveform_transforms/add_gaussian_snr/">AddGaussianSNR</a>, <a href="../waveform_transforms/gain_transition/">GainTransition</a>, <a href="../waveform_transforms/loudness_normalization/">LoudnessNormalization</a>
+  and <a href="../waveform_transforms/add_short_noises/">AddShortNoises</a>. Those args were deprecated since v0.31.0, and now they
+  are gone. For details, check the documentation page of each transform.</li>
+</ul>
+<p>For example:</p>
+<table>
+<thead>
+<tr>
+<th>Old (deprecated since v0.31.0)</th>
+<th>New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Gain(min_gain_in_db=-12.0)</code></td>
+<td><code>Gain(min_gain_db=-12.0)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="fixed_4">Fixed</h3>
+<ul>
+<li>Fix a bug where <code>AirAbsorption</code> often chose the wrong humidity bucket</li>
+<li>Fix wrong logic in validation check of relation between <code>crossfade_duration</code> and <code>min_part_duration</code> in <code>RepeatPart</code></li>
+<li>Fix default value of <code>max_absolute_rms_db</code> in <code>AddBackgroundNoises</code>. It was incorrectly set to -45.0, but is now
+  -15.0. This bug was introduced in v0.31.0.</li>
+<li>Fix various errors in the documentation of <code>AddShortNoises</code> and <code>AirAbsorption</code></li>
+<li>Fix a bug where <code>AddShortNoises</code> sometimes raised a <code>ValueError</code> because of an empty array. This bug was introduced in
+  v0.36.1.</li>
+</ul>
+<h2 id="0370-2024-09-03"><a href="https://github.com/iver56/audiomentations/compare/v0.36.1...v0.37.0">0.37.0</a> - 2024-09-03</h2>
+<h3 id="changed_6">Changed</h3>
+<ul>
+<li>Leverage the SIMD-accelerated <a href="https://github.com/nomonosound/numpy-minmax">numpy-minmax</a> package for speed
+  improvements. These transforms are faster now: <code>Limiter</code>, <code>Mp3Compression</code> and <code>Normalize</code>. Unfortunately, this change
+  removes support for macOS running on Intel. Intel Mac users have the following options: A) use audiomentations 0.36.1,
+  B) Create a fork of audiomentations, C) submit a patch to numpy-minmax, D) run Linux or Windows.</li>
+<li>Limit numpy dependency to &gt;=1.21,&lt;2 for now, since numpy v2 is not officially supported yet.</li>
+</ul>
+<h2 id="0361-2024-08-20"><a href="https://github.com/iver56/audiomentations/compare/v0.36.0...v0.36.1">0.36.1</a> - 2024-08-20</h2>
+<h3 id="changed_7">Changed</h3>
+<ul>
+<li>Leverage the SIMD-accelerated <a href="https://github.com/nomonosound/numpy-rms">numpy-rms</a> package for significant speed
+  improvements. These transforms are faster now: <code>AddBackgroundNoise</code>, <code>AddColorNoise</code>, <code>AddGaussianSNR</code>,
+  <code>AddShortNoises</code>, <code>Mp3Compression</code> and <code>TanhDistortion</code>. Unfortunately, this change removes support for Windows
+  running on ARM.</li>
+</ul>
+<h2 id="0360-2024-06-10"><a href="https://github.com/iver56/audiomentations/compare/v0.35.0...v0.36.0">0.36.0</a> - 2024-06-10</h2>
+<h3 id="added_4">Added</h3>
+<ul>
+<li>Add support for multichannel impulse responses in <code>ApplyImpulseResponse</code></li>
+</ul>
+<h3 id="changed_8">Changed</h3>
+<ul>
+<li><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/26a0.svg" title=":warning:" /> <code>Limiter</code> no longer introduces delay. This is a backwards-incompatible change.</li>
+<li>Make <code>RoomSimulator</code> faster by avoiding unneeded calculations when the transform is not going to be applied (p&lt;1)</li>
+<li>Limit scipy dependency to &lt;1.13 because 1.13 is not compatible for now.</li>
+</ul>
+<h2 id="0350-2024-03-15"><a href="https://github.com/iver56/audiomentations/compare/v0.34.1...v0.35.0">0.35.0</a> - 2024-03-15</h2>
+<h3 id="added_5">Added</h3>
+<ul>
+<li>Add new transforms: <code>AddColorNoise</code>, <code>Aliasing</code> and <code>BitCrush</code></li>
+</ul>
+<h2 id="0341-2023-11-24"><a href="https://github.com/iver56/audiomentations/compare/v0.33.0...v0.34.1">0.34.1</a> - 2023-11-24</h2>
+<h3 id="changed_9">Changed</h3>
+<ul>
+<li>Bump min numpy version from 1.18 to 1.21</li>
+<li>Use numpy.typing in type hints</li>
+<li>Optimize max abs calculations in terms of memory and speed. This makes <code>Normalize</code>, <code>Mp3Compression</code> and <code>Limiter</code>
+  slightly faster.</li>
+</ul>
+<h2 id="0330-2023-08-30"><a href="https://github.com/iver56/audiomentations/compare/v0.32.0...v0.33.0">0.33.0</a> - 2023-08-30</h2>
+<h3 id="changed_10">Changed</h3>
+<ul>
+<li>Bump min numpy version from 1.16 to 1.18</li>
+<li>Bump min scipy version from 1.3 to 1.4</li>
+<li>Bump min python version from 3.7 to 3.8, because 3.7 is beyond end-of-life already</li>
+<li>Change some <code>AssertionError</code> exceptions to <code>ValueError</code></li>
+</ul>
+<h4 id="the-shift-transform-has-been-changed"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/26a0.svg" title=":warning:" /> The <code>Shift</code> transform has been changed:</h4>
+<ul>
+<li>Removed <code>fade</code> parameter. <code>fade_duration=0.0</code> now denotes disabled fading.</li>
+<li>Rename <code>min_fraction</code> to <code>min_shift</code> and <code>max_fraction</code> to <code>max_shift</code></li>
+<li>Add <code>shift_unit</code> parameter</li>
+<li>Fading is enabled by default</li>
+<li>Smoother fade curve</li>
+</ul>
+<p>These are <strong>breaking changes</strong>. The following examples show how you can adapt your code when upgrading from &lt;=v0.32.0
+to &gt;=v0.33.0:</p>
+<table>
+<thead>
+<tr>
+<th>&lt;= 0.32.0</th>
+<th>&gt;= 0.33.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Shift(min_fraction=-0.5, max_fraction=0.5, fade=True, fade_duration=0.01)</code></td>
+<td><code>Shift(min_shift=-0.5, max_shift=0.5, shift_unit="fraction", fade_duration=0.01)</code></td>
+</tr>
+<tr>
+<td><code>Shift()</code></td>
+<td><code>Shift(fade_duration=0.0)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="fixed_5">Fixed</h3>
+<ul>
+<li>Correct some wrong type hints</li>
+</ul>
+<h2 id="0320-2023-08-15"><a href="https://github.com/iver56/audiomentations/compare/v0.31.0...v0.32.0">0.32.0</a> - 2023-08-15</h2>
+<h3 id="added_6">Added</h3>
+<ul>
+<li>Add new <code>RepeatPart</code> transform</li>
+</ul>
+<h3 id="changed_11">Changed</h3>
+<ul>
+<li>Bump min version of numpy dependency from 1.13 to 1.16</li>
+<li>If a transform is in "frozen parameters" mode, but has no parameters yet, the transform will randomize/set parameters
+  when it gets called for the first time</li>
+<li>Increase the threshold for raising <code>WrongMultichannelAudioShape</code>. This allows some rare use cases where the number of
+  channels slightly exceeds the number of samples.</li>
+</ul>
+<h3 id="fixed_6">Fixed</h3>
+<ul>
+<li>Fix some type hints that were <code>np.array</code> instead of <code>np.ndarray</code></li>
+</ul>
+<h2 id="0310-2023-06-21"><a href="https://github.com/iver56/audiomentations/compare/v0.30.0...v0.31.0">0.31.0</a> - 2023-06-21</h2>
+<h3 id="changed_12">Changed</h3>
+<ul>
+<li>Raise exception instead of warning when the given multichannel ndarray has wrong shape</li>
+<li>Add support for the latest librosa 0.10 version</li>
+<li>Switch to a faster default resampler internally in <code>PitchShift</code>, leading to much faster execution. This requires
+  <code>soxr</code>.</li>
+<li>Bump min <code>scipy</code> requirement from 1.0 to 1.3</li>
+<li>Rename "_in_db" to "_db" in args and parameters. Passing args with the old names still works, but is deprecated and
+  will stop working in a future version.</li>
+</ul>
+<h2 id="0300-2023-05-02"><a href="https://github.com/iver56/audiomentations/compare/v0.29.0...v0.30.0">0.30.0</a> - 2023-05-02</h2>
+<h3 id="added_7">Added</h3>
+<ul>
+<li>Add new <code>AdjustDuration</code> transform</li>
+</ul>
+<h3 id="fixed_7">Fixed</h3>
+<ul>
+<li>Fix a bug where too loud inputs got wrap distortion when running them through <code>Mp3Compression</code></li>
+</ul>
+<h2 id="0290-2023-03-15"><a href="https://github.com/iver56/audiomentations/compare/v0.28.0...v0.29.0">0.29.0</a> - 2023-03-15</h2>
+<h3 id="added_8">Added</h3>
+<ul>
+<li>Add <code>apply_to</code> parameter that can be set to <code>"only_too_loud_sounds"</code> in <code>Normalize</code></li>
+</ul>
+<h3 id="changed_13">Changed</h3>
+<ul>
+<li>Change default value of <code>noise_rms</code> from <code>"relative"</code> to <code>"relative_to_whole_input"</code> in <code>AddShortNoises</code></li>
+<li>Change default values of <code>min_snr_in_db</code> (from <code>0.0</code> to <code>-6.0</code>), <code>max_snr_in_db</code> (from <code>24.0</code> to <code>18.0</code>),
+  <code>min_time_between_sounds</code> (from <code>4.0</code> to <code>2.0</code>) and <code>max_time_between_sounds</code> (from <code>16.0</code> to <code>8.0</code>) in
+  <code>AddShortNoises</code></li>
+</ul>
+<h3 id="fixed_8">Fixed</h3>
+<ul>
+<li>Fix a bug where <code>Limiter</code> raised an exception when it got digital silence as input</li>
+</ul>
+<h2 id="0280-2023-01-12"><a href="https://github.com/iver56/audiomentations/compare/v0.27.0...v0.28.0">0.28.0</a> - 2023-01-12</h2>
+<h3 id="added_9">Added</h3>
+<ul>
+<li>Add/improve type hints</li>
+<li>Add/improve documentation</li>
+</ul>
+<h3 id="fixed_9">Fixed</h3>
+<ul>
+<li>Fix a bug in <code>RoomSimulator</code> where the value of <code>max_order</code> was not respected</li>
+</ul>
+<h3 id="removed_4">Removed</h3>
+<ul>
+<li>Remove <code>FrequencyMask</code> that had been deprecated since version 0.22.0. <code>BandStopFilter</code> is a good alternative.</li>
+</ul>
+<h2 id="0270-2022-09-13"><a href="https://github.com/iver56/audiomentations/compare/v0.26.0...v0.27.0">0.27.0</a> - 2022-09-13</h2>
+<h3 id="changed_14">Changed</h3>
+<ul>
+<li>Speed up <code>Limiter</code> by ~8x</li>
+<li>Fix/improve some docstrings and type hints</li>
+<li>Change default values in <code>Trim</code> and <code>ApplyImpulseResponse</code> according to the warnings that were added in v0.23.0</li>
+<li>Emit a FutureWarning when <code>noise_rms</code> in <code>AddShortNoises</code> is not specified - the
+  default value will change from "relative" to "relative_to_whole_input" in a future version.</li>
+</ul>
+<h2 id="0260-2022-08-19"><a href="https://github.com/iver56/audiomentations/compare/v0.25.1...v0.26.0">0.26.0</a> - 2022-08-19</h2>
+<h3 id="added_10">Added</h3>
+<ul>
+<li>Add new transform <code>Lambda</code>. Thanks to Thanatoz-1.</li>
+<li>Add new transform <code>Limiter</code>. Thanks to pzelasko.</li>
+</ul>
+<h3 id="fixed_10">Fixed</h3>
+<ul>
+<li>Fix incorrect type hints in <code>RoomSimulator</code></li>
+<li>Make <code>Shift</code> robust to different sample rate inputs when parameters are frozen</li>
+</ul>
+<h2 id="0251-2022-06-15"><a href="https://github.com/iver56/audiomentations/compare/v0.25.0...v0.25.1">0.25.1</a> - 2022-06-15</h2>
+<h3 id="fixed_11">Fixed</h3>
+<ul>
+<li>Fix a bug where <code>RoomSimulator</code> would treat an x value as if it was y, and vice versa</li>
+</ul>
+<h2 id="0250-2022-05-30"><a href="https://github.com/iver56/audiomentations/compare/v0.24.0...v0.25.0">0.25.0</a> - 2022-05-30</h2>
+<h3 id="added_11">Added</h3>
+<ul>
+<li>Add <code>AirAbsorption</code> transform</li>
+<li>Add mp4 to the list of recognized audio filename extensions</li>
+</ul>
+<h3 id="changed_15">Changed</h3>
+<ul>
+<li>Guard against invalid params in <code>TimeMask</code></li>
+<li>Emit <code>FutureWarning</code> instead of <code>UserWarning</code> in <code>Trim</code> and <code>ApplyImpulseResponse</code></li>
+<li>Allow specifying a file path, a folder path, a list of files or a list of folders to
+  <code>ApplyImpulseResponse</code>, <code>AddBackgroundNoise</code> and <code>AddShortNoises</code>. Previously only a path to a folder was allowed.</li>
+</ul>
+<h3 id="fixed_12">Fixed</h3>
+<ul>
+<li>Fix a bug with <code>noise_transform</code> in <code>AddBackgroundNoise</code> where some
+  SNR calculations were done before the <code>noise_transform</code> was applied. This has sometimes
+  led to incorrect SNR in the output. <strong>This changes the behavior</strong> of
+  <code>AddBackgroundNoise</code> (when noise_transform is used).</li>
+</ul>
+<h3 id="removed_5">Removed</h3>
+<ul>
+<li>Remove support for Python 3.6, as it is past its end of life already. RIP.</li>
+</ul>
+<h2 id="0240-2022-03-18"><a href="https://github.com/iver56/audiomentations/compare/v0.23.0...v0.24.0">0.24.0</a> - 2022-03-18</h2>
+<h3 id="added_12">Added</h3>
+<ul>
+<li>Add <code>SevenBandParametricEQ</code> transform</li>
+<li>Add optional <code>noise_transform</code> in <code>AddShortNoises</code></li>
+<li>Add .aac and .aif to the list of recognized audio filename endings</li>
+</ul>
+<h3 id="changed_16">Changed</h3>
+<ul>
+<li>Show warning if <code>top_db</code> and/or <code>p</code> in <code>Trim</code> are not specified because their default
+  values will change in a future version</li>
+</ul>
+<h3 id="fixed_13">Fixed</h3>
+<ul>
+<li>Fix filter instability bug related to center freq above Nyquist freq in <code>LowShelfFilter</code> and <code>HighShelfFilter</code></li>
+</ul>
+<h2 id="0230-2022-03-07"><a href="https://github.com/iver56/audiomentations/compare/v0.22.0...v0.23.0">0.23.0</a> - 2022-03-07</h2>
+<h3 id="added_13">Added</h3>
+<ul>
+<li>Add <code>Padding</code> transform</li>
+<li>Add <code>RoomSimulator</code> transform for simulating shoebox rooms using <code>pyroomacoustics</code></li>
+<li>Add parameter <code>signal_gain_in_db_during_noise</code> in <code>AddShortNoises</code></li>
+</ul>
+<h3 id="changed_17">Changed</h3>
+<ul>
+<li>Not specifying a value for <code>leave_length_unchanged</code> in <code>AddImpulseResponse</code> now emits
+  a warning, as the default value will change from <code>False</code> to <code>True</code> in a future version.</li>
+</ul>
+<h3 id="removed_6">Removed</h3>
+<ul>
+<li>Remove the deprecated <code>AddImpulseResponse</code> alias. Use <code>ApplyImpulseResponse</code> instead.</li>
+<li>Remove support for the legacy parameters <code>min_SNR</code> and <code>max_SNR</code> in <code>AddGaussianSNR</code></li>
+<li>Remove useless default path value in <code>AddBackgroundNoise</code>, <code>AddShortNoises</code> and <code>ApplyImpulseResponse</code></li>
+</ul>
+<h2 id="0220-2022-02-18"><a href="https://github.com/iver56/audiomentations/compare/v0.21.0...v0.22.0">0.22.0</a> - 2022-02-18</h2>
+<h3 id="added_14">Added</h3>
+<ul>
+<li>Implement <code>GainTransition</code></li>
+<li>Add support for librosa 0.9</li>
+<li>Add support for stereo audio in <code>Mp3Compression</code>, <code>Resample</code> and <code>Trim</code></li>
+<li>Add <code>"relative_to_whole_input"</code> option for <code>noise_rms</code> parameter in <code>AddShortNoises</code></li>
+<li>Add optional <code>noise_transform</code> in <code>AddBackgroundNoise</code></li>
+</ul>
+<h3 id="changed_18">Changed</h3>
+<ul>
+<li>Improve speed of <code>PitchShift</code> by 6-18% when the input audio is stereo</li>
+</ul>
+<h3 id="deprecated_1">Deprecated</h3>
+<ul>
+<li>Deprecate <code>FrequencyMask</code> in favor of <code>BandStopFilter</code></li>
+</ul>
+<h3 id="removed_7">Removed</h3>
+<ul>
+<li>Remove support for librosa&lt;=0.7.2</li>
+</ul>
+<h2 id="0210-2022-02-10"><a href="https://github.com/iver56/audiomentations/compare/v0.20.0...v0.21.0">0.21.0</a> - 2022-02-10</h2>
+<h3 id="added_15">Added</h3>
+<ul>
+<li>Add support for multichannel audio in <code>ApplyImpulseResponse</code>, <code>BandPassFilter</code>, <code>HighPassFilter</code> and <code>LowPassFilter</code></li>
+<li>Add <code>BandStopFilter</code> (similar to FrequencyMask, but with overhauled defaults and parameter randomization behavior),
+  <code>PeakingFilter</code>, <code>LowShelfFilter</code> and <code>HighShelfFilter</code></li>
+<li>Add parameter <code>add_all_noises_with_same_level</code> in <code>AddShortNoises</code></li>
+</ul>
+<h3 id="changed_19">Changed</h3>
+<ul>
+<li>Change <code>BandPassFilter</code>, <code>LowPassFilter</code>, <code>HighPassFilter</code>, to use scipy's butterworth
+  filters instead of pydub. Now they have parametrized roll-off. Filters are now steeper
+  than before by default - set <code>min_rolloff=6, max_rolloff=6</code> to get the old behavior.
+  They also support zero-phase filtering now. And they're at least ~25x times faster than before!</li>
+</ul>
+<h3 id="removed_8">Removed</h3>
+<ul>
+<li>Remove optional <code>wavio</code> dependency for audio loading</li>
+</ul>
+<h2 id="0200-2021-11-18"><a href="https://github.com/iver56/audiomentations/compare/v0.19.0...v0.20.0">0.20.0</a> - 2021-11-18</h2>
+<h3 id="added_16">Added</h3>
+<ul>
+<li>Implement <code>OneOf</code> and <code>SomeOf</code> for applying one of or some of many transforms. Transforms are randomly
+  chosen every call. Inspired by augly. Thanks to Cangonin and iver56.</li>
+<li>Add a new argument <code>apply_to_children</code> (bool) in <code>randomize_parameters</code>,
+  <code>freeze_parameters</code> and <code>unfreeze_parameters</code> in <code>Compose</code> and <code>SpecCompose</code>.</li>
+</ul>
+<h3 id="changed_20">Changed</h3>
+<ul>
+<li>Insert three new parameters in <code>AddBackgroundNoise</code>: <code>noise_rms</code> (defaults to "relative", which is
+  the old behavior), <code>min_absolute_rms_in_db</code> and <code>max_absolute_rms_in_db</code>. This <strong>may be a breaking
+  change</strong> if you used <code>AddBackgroundNoise</code> with positional arguments in earlier versions of audiomentations!
+  Please use keyword arguments to be on the safe side - it should be backwards compatible then.</li>
+</ul>
+<h3 id="fixed_14">Fixed</h3>
+<ul>
+<li>Remove global <code>pydub</code> import which was accidentally introduced in v0.18.0. <code>pydub</code> is
+  considered an optional dependency and is imported only on demand now.</li>
+</ul>
+<h2 id="0190-2021-10-18"><a href="https://github.com/iver56/audiomentations/compare/v0.18.0...v0.19.0">0.19.0</a> - 2021-10-18</h2>
+<h3 id="added_17">Added</h3>
+<ul>
+<li>Implement <code>TanhDistortion</code>. Thanks to atamazian and iver56.</li>
+<li>Add a <code>noise_rms</code> parameter to <code>AddShortNoises</code>. It defaults to <code>relative</code>, which
+  is the old behavior. <code>absolute</code> allows for adding loud noises to parts that are
+  relatively silent in the input.</li>
+</ul>
+<h2 id="0180-2021-08-05"><a href="https://github.com/iver56/audiomentations/compare/v0.17.0...v0.18.0">0.18.0</a> - 2021-08-05</h2>
+<h3 id="added_18">Added</h3>
+<ul>
+<li>Implement <code>BandPassFilter</code>, <code>HighPassFilter</code>, <code>LowPassFilter</code> and <code>Reverse</code>. Thanks to atamazian.</li>
+</ul>
+<h2 id="0170-2021-06-25"><a href="https://github.com/iver56/audiomentations/compare/v0.16.0...v0.17.0">0.17.0</a> - 2021-06-25</h2>
+<h3 id="added_19">Added</h3>
+<ul>
+<li>Add a <code>fade</code> option in <code>Shift</code> for eliminating unwanted clicks</li>
+<li>Add support for 32-bit int wav loading with scipy&gt;=1.6</li>
+<li>Add support for float64 wav files. However, the use of this format is discouraged,
+  since float32 is more than enough for audio in most cases.</li>
+<li>Implement <code>Clip</code>. Thanks to atamazian.</li>
+<li>Add some parameter sanity checks in <code>AddGaussianNoise</code></li>
+<li>Officially support librosa 0.8.1</li>
+</ul>
+<h3 id="changed_21">Changed</h3>
+<ul>
+<li>Rename <code>AddImpulseResponse</code> to <code>ApplyImpulseResponse</code>. The former will still work for
+  now, but give a warning.</li>
+<li>When looking for audio files in <code>AddImpulseResponse</code>, <code>AddBackgroundNoise</code>
+  and <code>AddShortNoises</code>, follow symlinks by default.</li>
+<li>When using the new parameters <code>min_snr_in_db</code> and <code>max_snr_in_db</code> in <code>AddGaussianSNR</code>,
+  SNRs will be picked uniformly in <em>the Decibel scale</em> instead of in the linear amplitude
+  ratio scale. The new behavior aligns more with human hearing, which is not linear.</li>
+</ul>
+<h3 id="fixed_15">Fixed</h3>
+<ul>
+<li>Avoid division by zero in <code>AddImpulseResponse</code> when input is digital silence (all zeros)</li>
+<li>Fix inverse SNR characteristics in <code>AddGaussianSNR</code>. It will continue working as before
+  unless you switch to the new parameters <code>min_snr_in_db</code> and <code>max_snr_in_db</code>. If you
+  use the old parameters, you'll get a warning.</li>
+</ul>
+<h2 id="0160-2021-02-11"><a href="https://github.com/iver56/audiomentations/compare/v0.15.0...v0.16.0">0.16.0</a> - 2021-02-11</h2>
+<h3 id="added_20">Added</h3>
+<ul>
+<li>Implement <code>SpecCompose</code> for applying a pipeline of spectrogram transforms. Thanks to omerferhatt.</li>
+</ul>
+<h3 id="fixed_16">Fixed</h3>
+<ul>
+<li>Fix a bug in <code>SpecChannelShuffle</code> where it did not support more than 3 audio channels. Thanks to omerferhatt.</li>
+<li>Limit scipy version range to &gt;=1.0,&lt;1.6 to avoid issues with loading 24-bit wav files.
+  Support for scipy&gt;=1.6 will be added later.</li>
+</ul>
+<h2 id="0150-2020-12-10"><a href="https://github.com/iver56/audiomentations/compare/v0.14.0...v0.15.0">0.15.0</a> - 2020-12-10</h2>
+<h3 id="added_21">Added</h3>
+<ul>
+<li>Add an option <code>leave_length_unchanged</code> to <code>AddImpulseResponse</code></li>
+</ul>
+<h3 id="fixed_17">Fixed</h3>
+<ul>
+<li>Fix picklability of instances of <code>AddImpulseResponse</code>, <code>AddBackgroundNoise</code>
+  and <code>AddShortNoises</code></li>
+</ul>
+<h2 id="0140-2020-12-06"><a href="https://github.com/iver56/audiomentations/compare/v0.13.0...v0.14.0">0.14.0</a> - 2020-12-06</h2>
+<h3 id="added_22">Added</h3>
+<ul>
+<li>Implement <code>LoudnessNormalization</code></li>
+<li>Implement <code>randomize_parameters</code> in <code>Compose</code>. Thanks to SolomidHero.</li>
+<li>Add multichannel support to <code>AddGaussianNoise</code>, <code>AddGaussianSNR</code>, <code>ClippingDistortion</code>,
+  <code>FrequencyMask</code>, <code>PitchShift</code>, <code>Shift</code>, <code>TimeMask</code> and <code>TimeStretch</code></li>
+</ul>
+<h2 id="0130-2020-11-10"><a href="https://github.com/iver56/audiomentations/compare/v0.12.1...v0.13.0">0.13.0</a> - 2020-11-10</h2>
+<h3 id="added_23">Added</h3>
+<ul>
+<li>Lay the foundation for spectrogram transforms. Implement <code>SpecChannelShuffle</code> and
+  <code>SpecFrequencyMask</code>.</li>
+<li>Configurable LRU cache for transforms that use external sound files. Thanks to alumae.</li>
+<li>Officially add multichannel support to <code>Normalize</code></li>
+</ul>
+<h3 id="changed_22">Changed</h3>
+<ul>
+<li>Show a warning if a waveform had to be resampled after loading it. This is because resampling
+  is slow. Ideally, files on disk should already have the desired sample rate.</li>
+</ul>
+<h3 id="fixed_18">Fixed</h3>
+<ul>
+<li>Correctly find audio files with upper case filename extensions.</li>
+<li>Fix a bug where AddBackgroundNoise crashed when trying to add digital silence to an input. Thanks to juheeuu.</li>
+</ul>
+<h2 id="0121-2020-09-28"><a href="https://github.com/iver56/audiomentations/compare/v0.12.0...v0.12.1">0.12.1</a> - 2020-09-28</h2>
+<h3 id="changed_23">Changed</h3>
+<ul>
+<li>Speed up <code>AddBackgroundNoise</code>, <code>AddShortNoises</code> and <code>AddImpulseResponse</code> by loading wav files with scipy or wavio
+  instead of librosa.</li>
+</ul>
+<h2 id="0120-2020-09-23"><a href="https://github.com/iver56/audiomentations/compare/v0.11.0...v0.12.0">0.12.0</a> - 2020-09-23</h2>
+<h3 id="added_24">Added</h3>
+<ul>
+<li>Implement <code>Mp3Compression</code></li>
+<li>Officially support multichannel audio in <code>Gain</code> and <code>PolarityInversion</code></li>
+<li>Add m4a and opus to the list of recognized audio filename extensions</li>
+</ul>
+<h3 id="changed_24">Changed</h3>
+<ul>
+<li>Expand range of supported <code>librosa</code> versions</li>
+</ul>
+<h3 id="removed_9">Removed</h3>
+<ul>
+<li>Python &lt;= 3.5 is no longer officially supported,
+  since <a href="https://devguide.python.org/#status-of-python-branches">Python 3.5 has reached end-of-life</a></li>
+<li>Breaking change: Internal util functions are no longer exposed directly. If you were doing
+  e.g. <code>from audiomentations import calculate_rms</code>, now you have to do
+  <code>from audiomentations.core.utils import calculate_rms</code></li>
+</ul>
+<h2 id="0110-2020-08-27"><a href="https://github.com/iver56/audiomentations/compare/v0.10.1...v0.11.0">0.11.0</a> - 2020-08-27</h2>
+<h3 id="added_25">Added</h3>
+<ul>
+<li>Implement <code>Gain</code> and <code>PolarityInversion</code>. Thanks to Spijkervet for the inspiration.</li>
+</ul>
+<h2 id="0101-2020-07-27"><a href="https://github.com/iver56/audiomentations/compare/v0.10.0...v0.10.1">0.10.1</a> - 2020-07-27</h2>
+<h3 id="changed_25">Changed</h3>
+<ul>
+<li>Improve the performance of <code>AddBackgroundNoise</code> and <code>AddShortNoises</code> by optimizing the implementation of
+  <code>calculate_rms</code>.</li>
+</ul>
+<h3 id="fixed_19">Fixed</h3>
+<ul>
+<li>Improve compatibility of output files written by the demo script. Thanks to xwJohn.</li>
+<li>Fix division by zero bug in <code>Normalize</code>. Thanks to ZFTurbo.</li>
+</ul>
+<h2 id="0100-2020-05-05"><a href="https://github.com/iver56/audiomentations/compare/v0.9.0...v0.10.0">0.10.0</a> - 2020-05-05</h2>
+<h3 id="added_26">Added</h3>
+<ul>
+<li><code>AddImpulseResponse</code>, <code>AddBackgroundNoise</code> and <code>AddShortNoises</code> now support aiff files in addition to flac, mp3, ogg
+  and wav</li>
+</ul>
+<h3 id="changed_26">Changed</h3>
+<ul>
+<li>Breaking change: <code>AddImpulseResponse</code>, <code>AddBackgroundNoise</code> and <code>AddShortNoises</code> now include subfolders when searching
+  for files. This is useful when your sound files are organized in subfolders.</li>
+</ul>
+<h3 id="fixed_20">Fixed</h3>
+<ul>
+<li>Fix filter instability bug in <code>FrequencyMask</code>. Thanks to kvilouras.</li>
+</ul>
+<h2 id="090-2020-02-20"><a href="https://github.com/iver56/audiomentations/compare/v0.8.0...v0.9.0">0.9.0</a> - 2020-02-20</h2>
+<h3 id="added_27">Added</h3>
+<ul>
+<li>Remember randomized/chosen effect parameters. This allows for freezing the parameters and applying the same effect to
+  multiple sounds. Use transform.freeze_parameters() and transform.unfreeze_parameters() for this.</li>
+<li>Implement transform.serialize_parameters(). Useful for when you want to store metadata on how a sound was perturbed.</li>
+<li>Add a rollover parameter to <code>Shift</code>. This allows for introducing silence instead of a wrapped part of the sound.</li>
+<li>Add support for flac in <code>AddImpulseResponse</code></li>
+<li>Implement <code>AddBackgroundNoise</code> transform. Useful for when you want to add background noise to all of your sound. You
+  need to give it a folder of background noises to choose from.</li>
+<li>Implement <code>AddShortNoises</code>. Useful for when you want to add (bursts of) short noise sounds to your input audio.</li>
+</ul>
+<h3 id="changed_27">Changed</h3>
+<ul>
+<li>Disregard non-audio files when looking for impulse response files</li>
+<li>Switch to a faster convolve implementation. This makes <code>AddImpulseResponse</code> significantly faster.</li>
+<li>Expand supported range of librosa versions</li>
+</ul>
+<h3 id="fixed_21">Fixed</h3>
+<ul>
+<li>Fix a bug in <code>ClippingDistortion</code> where the min_percentile_threshold was not respected as expected.</li>
+<li>Improve handling of empty input</li>
+</ul>
+<h2 id="080-2020-01-28"><a href="https://github.com/iver56/audiomentations/compare/v0.7.0...v0.8.0">0.8.0</a> - 2020-01-28</h2>
+<h3 id="added_28">Added</h3>
+<ul>
+<li>Add shuffle parameter in <code>Composer</code></li>
+<li>Add <code>Resample</code> transformation</li>
+<li>Add <code>ClippingDistortion</code> transformation</li>
+<li>Add <code>fade</code> parameter to <code>TimeMask</code></li>
+</ul>
+<p>Thanks to askskro</p>
+<h2 id="070-2020-01-14"><a href="https://github.com/iver56/audiomentations/compare/v0.6.0...v0.7.0">0.7.0</a> - 2020-01-14</h2>
+<h3 id="added_29">Added</h3>
+<ul>
+<li><code>AddGaussianSNR</code></li>
+<li><code>AddImpulseResponse</code></li>
+<li><code>FrequencyMask</code></li>
+<li><code>TimeMask</code></li>
+<li><code>Trim</code></li>
+</ul>
+<p>Thanks to karpnv</p>
+<h2 id="060-2019-05-27"><a href="https://github.com/iver56/audiomentations/compare/v0.5.0...v0.6.0">0.6.0</a> - 2019-05-27</h2>
+<h3 id="added_30">Added</h3>
+<ul>
+<li>Implement peak normalization</li>
+</ul>
+<h2 id="050-2019-02-23"><a href="https://github.com/iver56/audiomentations/compare/v0.4.0...v0.5.0">0.5.0</a> - 2019-02-23</h2>
+<h3 id="added_31">Added</h3>
+<ul>
+<li>Implement <code>Shift</code> transform</li>
+</ul>
+<h3 id="changed_28">Changed</h3>
+<ul>
+<li>Ensure p is within bounds</li>
+</ul>
+<h2 id="040-2019-02-19"><a href="https://github.com/iver56/audiomentations/compare/v0.3.0...v0.4.0">0.4.0</a> - 2019-02-19</h2>
+<h3 id="added_32">Added</h3>
+<ul>
+<li>Implement <code>PitchShift</code> transform</li>
+</ul>
+<h3 id="fixed_22">Fixed</h3>
+<ul>
+<li>Fix output dtype of <code>AddGaussianNoise</code></li>
+</ul>
+<h2 id="030-2019-02-19"><a href="https://github.com/iver56/audiomentations/compare/v0.2.0...v0.3.0">0.3.0</a> - 2019-02-19</h2>
+<h3 id="added_33">Added</h3>
+<ul>
+<li>Implement <code>leave_length_unchanged</code> in <code>TimeStretch</code></li>
+</ul>
+<h2 id="020-2019-02-18"><a href="https://github.com/iver56/audiomentations/compare/v0.1.0...v0.2.0">0.2.0</a> - 2019-02-18</h2>
+<h3 id="added_34">Added</h3>
+<ul>
+<li>Add <code>TimeStretch</code> transform</li>
+<li>Parametrize <code>AddGaussianNoise</code></li>
+</ul>
+<h2 id="010-2019-02-15"><a href="https://github.com/iver56/audiomentations/releases/tag/v0.1.0">0.1.0</a> - 2019-02-15</h2>
+<h3 id="added_35">Added</h3>
+<ul>
+<li>Initial release. Includes only one transform: <code>AddGaussianNoise</code></li>
+</ul>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+    
+  </body>
+</html>

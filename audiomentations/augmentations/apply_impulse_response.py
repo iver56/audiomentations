@@ -26,7 +26,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         self,
         ir_path: Sequence[Path] | Sequence[str] | Path | str,
         p=0.5,
-        lru_cache_size=128,
+        lru_cache_size=None,
         leave_length_unchanged: bool = True,
     ):
         """
@@ -44,13 +44,11 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         self.ir_path = ir_path
         self.ir_files = [str(p) for p in find_audio_files_in_paths(self.ir_path)]
         assert self.ir_files, "No impulse response files found at the specified path."
-        self.lru_cache_size = lru_cache_size
-        self.__load_ir = functools.lru_cache(maxsize=self.lru_cache_size)(self.__load_ir)
+        if lru_cache_size is not None:
+            raise ValueError(
+                "Passing lru_cache_size is no longer supported, as the cache has been removed (since v0.43.0)."
+            )
         self.leave_length_unchanged = leave_length_unchanged
-
-    @staticmethod
-    def __load_ir(file_path, sample_rate, mono):
-        return load_sound_file(file_path, sample_rate, mono=mono)
 
     def randomize_parameters(self, samples: NDArray[np.float32], sample_rate: int):
         super().randomize_parameters(samples, sample_rate)
@@ -60,7 +58,13 @@ class ApplyImpulseResponse(BaseWaveformTransform):
     def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
         # Determine if the impulse response should be loaded as mono
         load_mono_ir = samples.ndim == 1
-        ir, sample_rate2 = self.__load_ir(self.parameters["ir_file_path"], sample_rate, mono=load_mono_ir)
+        # Load the impulse response file and cut the tail if necessary
+        rir_duration = len(samples) / sample_rate if self.leave_length_unchanged else None
+        ir, sample_rate2 = load_sound_file(self.parameters["ir_file_path"], 
+                                           sample_rate, 
+                                           mono=load_mono_ir, 
+                                           offset=0.0, # always start at the beginning
+                                           duration=rir_duration)
         if sample_rate != sample_rate2:
             # This will typically not happen, as librosa should automatically resample the
             # impulse response sound to the desired sample rate
@@ -93,13 +97,3 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             signal_ir = signal_ir[0]
 
         return signal_ir
-
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        warnings.warn(
-            "Warning: the LRU cache of ApplyImpulseResponse gets discarded when pickling it."
-            " E.g. this means the cache will be not be used when using ApplyImpulseResponse"
-            " together with multiprocessing on Windows"
-        )
-        del state["_ApplyImpulseResponse__load_ir"]
-        return state

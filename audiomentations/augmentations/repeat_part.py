@@ -143,7 +143,7 @@ class RepeatPart(BaseWaveformTransform):
 
             self.parameters["part_start_index"] = random.randint(
                 half_crossfade_length,
-                samples.shape[-1] - self.parameters["part_num_samples"],
+                samples.shape[-1] - self.parameters["part_num_samples"] - half_crossfade_length,
             )
             self.parameters["repeats"] = random.randint(
                 self.min_repeats, self.max_repeats

@@ -38,5 +38,10 @@ from .augmentations.time_mask import TimeMask
 from .augmentations.time_stretch import TimeStretch
 from .augmentations.trim import Trim
 from .core.composition import Compose, OneOf, SomeOf
+from .core.audio_loading_utils import (
+    set_audio_cache_backend,
+    get_audio_cache_backend,
+    clear_audio_cache_backend,
+)
 
 __version__ = "0.43.1"

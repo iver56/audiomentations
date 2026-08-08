@@ -33,6 +33,7 @@ from .augmentations.reverse import Reverse
 from .augmentations.room_simulator import RoomSimulator
 from .augmentations.seven_band_parametric_eq import SevenBandParametricEQ
 from .augmentations.shift import Shift
+from .augmentations.spectral_gating import SpectralGating
 from .augmentations.tanh_distortion import TanhDistortion
 from .augmentations.time_mask import TimeMask
 from .augmentations.time_stretch import TimeStretch

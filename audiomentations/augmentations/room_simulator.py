@@ -11,7 +11,7 @@ from audiomentations.core.transforms_interface import BaseWaveformTransform
 
 class RoomSimulator(BaseWaveformTransform):
     """
-    A ShoeBox Room Simulator. Simulates a cuboid of parametrized size and 
+    A ShoeBox Room Simulator. Simulates a cuboid of parametrized size and
     average surface absorption coefficient. It also includes a source
     and microphones in parametrized locations.
 
@@ -30,7 +30,7 @@ class RoomSimulator(BaseWaveformTransform):
     Augment with a RIR captured by all positions of the microphone on a sphere, centred around the source at 1m
 
     > augment = RoomSimulator(min_mic_distance=1.0, max_mic_distance=1.0, min_mic_elevation=0.0, max_mic_elevation=0.0)
-    Augment with a RIR captured by all positions of the microphone on a circle, centred around the source at 1m    
+    Augment with a RIR captured by all positions of the microphone on a circle, centred around the source at 1m
     """
 
     supports_multichannel = True
@@ -229,9 +229,9 @@ class RoomSimulator(BaseWaveformTransform):
             self.parameters["absorption_coefficient"], max_order = pra.inverse_sabine(
                 self.parameters["target_rt60"], room_dim
             )
-            
+
             # When `rt60` is specified, use max_order from sabine's formula
-            self.parameters["max_order"] = min(max_order,self.max_order)
+            self.parameters["max_order"] = min(max_order, self.max_order)
         else:
             self.parameters["absorption_coefficient"] = random.uniform(
                 self.min_absorption_value, self.max_absorption_value
@@ -337,11 +337,21 @@ class RoomSimulator(BaseWaveformTransform):
         )
         # Do the simulation
         self.room.compute_rir()
+        # Keep the computed response independently of the unpicklable native room.
+        # Recomputing it would change the random reverberation tail with ray tracing.
+        self._rir = self.room.rir[0][0]
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state.pop("room", None)
+        return state
+
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         assert samples.dtype == np.float32
 
-        rir = self.room.rir[0][0]
+        rir = self._rir
 
         # This is the same as ApplyImpulseResponse transform
         if samples.ndim > 1:

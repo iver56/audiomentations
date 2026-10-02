@@ -8,6 +8,11 @@ and microphones in parametrized locations.
 Use it when you need a large number of synthetic room impulse responses with specific configuration
 characteristics or simply to quickly add reverb for augmentation purposes.
 
+Instances can be pickled before or after augmentation. Pickling preserves the
+sampled parameters and computed room impulse response, so frozen instances produce
+the same output after a pickle round trip. The native `pyroomacoustics` `room`
+object is not included; it is created again the next time parameters are randomized.
+
 ## RoomSimulator API
 
 [`min_size_x`](#min_size_x){ #min_size_x }: `float` • unit: meters

@@ -86,7 +86,7 @@ from demo.demo import DEMO_DIR
         RepeatPart(p=1.0),
         Resample(p=1.0),
         Reverse(p=1.0),
-        # RoomSimulator(p=1.0),  # TODO: Fix TypeError: cannot pickle 'pyroomacoustics.libroom.Wall' object
+        RoomSimulator(p=1.0),
         SevenBandParametricEQ(p=1.0),
         Shift(p=1.0),
         TanhDistortion(p=1.0),

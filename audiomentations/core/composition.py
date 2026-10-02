@@ -118,15 +118,23 @@ class Compose(BaseCompose):
 
     def __init__(self, transforms, p=1.0, shuffle=False):
         super().__init__(transforms, p, shuffle)
+        self.parameters = {"should_apply": None}
+
+    def randomize_parameters(self, *args, **kwargs):
+        super().randomize_parameters(*args, **kwargs)
+        self.parameters["should_apply"] = random.random() < self.p
+        self.parameters["transform_indexes"] = list(range(len(self.transforms)))
+        if self.parameters["should_apply"] and self.shuffle:
+            random.shuffle(self.parameters["transform_indexes"])
 
     def __call__(self, samples: NDArray[np.float32], sample_rate: int):
-        transforms = self.transforms.copy()
-        should_apply = random.random() < self.p
-        # TODO: Adhere to self.are_parameters_frozen
-        # https://github.com/iver56/audiomentations/issues/135
-        if should_apply:
-            if self.shuffle:
-                random.shuffle(transforms)
+        if not self.are_parameters_frozen or self.parameters["should_apply"] is None:
+            self.randomize_parameters(samples, sample_rate, apply_to_children=False)
+
+        if self.parameters["should_apply"]:
+            transforms = [
+                self.transforms[i] for i in self.parameters["transform_indexes"]
+            ]
             for transform in transforms:
                 samples = transform(samples, sample_rate)
 

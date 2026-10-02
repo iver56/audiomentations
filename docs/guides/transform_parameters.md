@@ -62,3 +62,22 @@ When running the example code above, it may print something like this:
 ```
 
 In other words, this means that both sounds (`samples` and `samples2`) were gained by the same amount
+
+### Freezing a composition
+
+`Compose.freeze_parameters()` preserves the composition's decision to apply or skip
+the transforms (based on `p`) and their order when `shuffle=True`. By default, it also
+freezes the child transforms, including nested compositions. Calling
+`unfreeze_parameters()` allows these parameters to be randomized again on the next call.
+
+If a `Compose` is frozen before its first call, that call chooses its parameters once
+and subsequent calls reuse them, just like individual waveform transforms.
+
+Use `apply_to_children=False` with `freeze_parameters()` or `unfreeze_parameters()` to
+change only the composition's frozen state. For example, freezing only a `Compose`
+preserves its execution decision and order while its unfrozen children continue to
+choose their own parameters.
+
+An explicit call to `randomize_parameters(samples, sample_rate)` chooses new parameters
+even while frozen, including for the children by default. Pass `apply_to_children=False`
+to randomize only the composition's decision and order.

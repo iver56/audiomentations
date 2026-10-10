@@ -32,6 +32,10 @@ version, you can check the ["Old Shift API (<=v0.32.0)" section](#old-shift-api-
     to `False`, samples that roll beyond the first or last position are discarded. In
     other words, `rollover=False` results in an empty space (with zeroes).
 
+    With rollover, shifts longer than the clip wrap around, including the fade
+    position. A shift by a whole number of clip lengths leaves the audio unchanged.
+    Without rollover, a shift at least as long as the clip produces silence.
+
 [`fade_duration`](#fade_duration){ #fade_duration }: `float` • unit: seconds • range: 0.0 or [0.00025, ∞)
 :   :octicons-milestone-24: Default: `0.005`. If you set this to a positive number,
     there will be a fade in and/or out at the "stitch" (that was the start or the end

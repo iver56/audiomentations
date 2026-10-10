@@ -283,3 +283,44 @@ def test_invalid_parameters():
         Shift(fade_duration=-1337)
     with pytest.raises(ValueError):
         Shift(shift_unit="lightyears")
+
+
+@pytest.mark.parametrize("shift", [-19, -16, -9, -8, 8, 9, 16, 19])
+@pytest.mark.parametrize("rollover", [False, True])
+@pytest.mark.parametrize("multichannel", [False, True])
+@pytest.mark.parametrize("unit", ["samples", "seconds"])
+def test_shift_at_or_beyond_clip_length(shift, rollover, multichannel, unit):
+    samples = np.linspace(-0.5, 0.5, 8, dtype=np.float32)
+    if multichannel:
+        samples = np.stack([samples, -samples])
+    original = samples.copy()
+    sample_rate = 8000
+    amount = shift if unit == "samples" else shift / sample_rate
+    augmenter = Shift(
+        min_shift=amount,
+        max_shift=amount,
+        shift_unit=unit,
+        rollover=rollover,
+        fade_duration=0.0005,
+        p=1.0,
+    )
+    actual = augmenter(samples, sample_rate)
+
+    if not rollover:
+        expected = np.zeros_like(samples)
+    elif shift % samples.shape[-1] == 0:
+        expected = samples
+    else:
+        # Whole circular traversals do not change the samples or the stitch.
+        remainder = shift % samples.shape[-1]
+        expected = Shift(
+            min_shift=remainder,
+            max_shift=remainder,
+            shift_unit="samples",
+            fade_duration=0.0005,
+            p=1.0,
+        )(samples, sample_rate)
+
+    np.testing.assert_array_equal(actual, expected)
+    np.testing.assert_array_equal(samples, original)
+    assert actual.dtype == samples.dtype

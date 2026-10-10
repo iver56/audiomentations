@@ -91,7 +91,9 @@ class Shift(BaseWaveformTransform):
                     self.min_shift, self.max_shift
                 )
 
-    def apply(self, samples: NDArray[np.float32], sample_rate: int) -> NDArray[np.float32]:
+    def apply(
+        self, samples: NDArray[np.float32], sample_rate: int
+    ) -> NDArray[np.float32]:
         if self.shift_unit == "samples":
             num_places_to_shift = self.parameters["shift_amount"]
         elif self.shift_unit == "fraction":
@@ -104,6 +106,11 @@ class Shift(BaseWaveformTransform):
             )
         else:
             raise ValueError("invalid shift_unit")
+
+        if self.rollover:
+            num_places_to_shift %= samples.shape[-1]
+        elif abs(num_places_to_shift) >= samples.shape[-1]:
+            return np.zeros_like(samples)
 
         shifted_samples = np.roll(samples, num_places_to_shift, axis=-1)
 

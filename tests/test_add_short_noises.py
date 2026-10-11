@@ -5,6 +5,7 @@ import random
 
 import numpy as np
 import pytest
+from scipy.io.wavfile import write
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 from audiomentations import AddShortNoises, PolarityInversion
@@ -13,6 +14,45 @@ from audiomentations.core.transforms_interface import (
 )
 from audiomentations.core.utils import calculate_rms
 from demo.demo import DEMO_DIR
+
+
+@pytest.mark.parametrize("fade_out_time", [0.0, 0.5 / 16000])
+@pytest.mark.parametrize("signal_gain_db", [0.0, -20.0])
+def test_zero_sample_fade_out(tmp_path, fade_out_time, signal_gain_db):
+    sample_rate = 16000
+    noise = np.tile(np.array([0.5, -0.5], dtype=np.float32), 80)
+    noise_path = tmp_path / "noise.wav"
+    write(noise_path, sample_rate, noise)
+    samples = np.full(2 * len(noise), 0.1, dtype=np.float32)
+    original = samples.copy()
+    augmenter = AddShortNoises(
+        sounds_path=noise_path,
+        min_time_between_sounds=0.0,
+        max_time_between_sounds=0.0,
+        min_fade_in_time=0.0,
+        max_fade_in_time=0.0,
+        min_fade_out_time=fade_out_time,
+        max_fade_out_time=fade_out_time,
+        noise_rms="absolute",
+        min_absolute_noise_rms_db=-20.0,
+        max_absolute_noise_rms_db=-20.0,
+        signal_gain_db_during_noise=signal_gain_db,
+        p=1.0,
+    )
+    augmenter.randomize_parameters(samples, sample_rate)
+    # Keep the first noise, whose randomized offset is exactly zero.
+    augmenter.parameters["sounds"] = augmenter.parameters["sounds"][:1]
+    augmenter.freeze_parameters()
+
+    actual = augmenter(samples, sample_rate)
+
+    expected = original.copy()
+    expected[: len(noise)] *= 10 ** (signal_gain_db / 20)
+    expected[: len(noise)] += noise * 0.2
+    np.testing.assert_allclose(actual, expected, atol=1e-7)
+    assert actual.dtype == np.float32
+    assert_array_equal(samples, original)
+    assert_array_equal(augmenter(samples, sample_rate), actual)
 
 
 def test_add_short_noises():

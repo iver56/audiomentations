@@ -332,11 +332,12 @@ class AddShortNoises(BaseWaveformTransform):
             fade_in_time_in_samples = int(sound_params["fade_in_time"] * sample_rate)
             fade_in_mask = np.linspace(0.0, 1.0, num=fade_in_time_in_samples)
             fade_out_time_in_samples = int(sound_params["fade_out_time"] * sample_rate)
-            fade_out_mask = np.linspace(1.0, 0.0, num=fade_out_time_in_samples)
             noise_gain[: fade_in_mask.shape[0]] = fade_in_mask
-            noise_gain[-fade_out_mask.shape[0] :] = np.minimum(
-                noise_gain[-fade_out_mask.shape[0] :], fade_out_mask
-            )
+            if fade_out_time_in_samples > 0:
+                fade_out_mask = np.linspace(1.0, 0.0, num=fade_out_time_in_samples)
+                noise_gain[-fade_out_mask.shape[0] :] = np.minimum(
+                    noise_gain[-fade_out_mask.shape[0] :], fade_out_mask
+                )
 
             start_sample_index = int(sound_params["start"] * sample_rate)
             end_sample_index = start_sample_index + noise_samples.shape[-1]

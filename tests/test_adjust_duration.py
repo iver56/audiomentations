@@ -78,3 +78,34 @@ def test_adjust_duration_raises_with_non_positive_samples():
     with pytest.raises(ValueError) as exc_info:
         _ = AdjustDuration(duration_samples=-1)
     assert "duration_samples must be a positive int" in str(exc_info.value)
+
+
+@pytest.mark.parametrize("duration_unit", ["samples", "seconds"])
+@pytest.mark.parametrize("num_channels", [None, 1, 2])
+@pytest.mark.parametrize("seed, expected_start", [(0, 0), (1, 1)])
+def test_cropping_includes_first_and_last_offset(
+    duration_unit, num_channels, seed, expected_start
+):
+    samples = np.linspace(-0.5, 0.5, 5, dtype=np.float32)
+    if num_channels is not None:
+        samples = np.tile(samples, (num_channels, 1))
+    original_samples = samples.copy()
+    duration = (
+        {"duration_samples": 4}
+        if duration_unit == "samples"
+        else {"duration_seconds": 0.04}
+    )
+    augmenter = AdjustDuration(**duration, p=1.0)
+
+    random_state = np.random.get_state()
+    try:
+        np.random.seed(seed)
+        actual = augmenter(samples=samples, sample_rate=100)
+    finally:
+        np.random.set_state(random_state)
+
+    np.testing.assert_array_equal(
+        actual, samples[..., expected_start : expected_start + 4]
+    )
+    np.testing.assert_array_equal(samples, original_samples)
+    assert actual.dtype == samples.dtype

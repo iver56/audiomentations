@@ -75,7 +75,7 @@ class AdjustDuration(BaseWaveformTransform):
             return samples
 
         elif sample_length > target_samples:
-            start = np.random.randint(0, sample_length - target_samples)
+            start = np.random.randint(0, sample_length - target_samples + 1)
             return samples[..., start : start + target_samples]
 
         else:  # sample_length < target_samples

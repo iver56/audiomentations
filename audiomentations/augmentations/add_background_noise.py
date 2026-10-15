@@ -40,8 +40,9 @@ class AddBackgroundNoise(BaseWaveformTransform):
         noise_rms: Literal["relative", "absolute"] = "relative",
         min_absolute_rms_db: float = -45.0,
         max_absolute_rms_db: float = -15.0,
-        noise_transform: Callable[[NDArray[np.float32], int], NDArray[np.float32]]
-        | None = None,
+        noise_transform: (
+            Callable[[NDArray[np.float32], int], NDArray[np.float32]] | None
+        ) = None,
         p: float = 0.5,
         lru_cache_size: int | None = None,
     ):
@@ -139,6 +140,13 @@ class AddBackgroundNoise(BaseWaveformTransform):
 
         if self.noise_transform:
             noise_sound = self.noise_transform(noise_sound, sample_rate)
+
+        if len(noise_sound) == 0:
+            warnings.warn(
+                "No usable noise was found in {}. Returning the input"
+                " unchanged.".format(self.parameters["noise_file_path"])
+            )
+            return samples
 
         noise_rms = calculate_rms(noise_sound)
         if noise_rms < 1e-9:

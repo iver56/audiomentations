@@ -5,6 +5,7 @@ import warnings
 import librosa
 import numpy as np
 import pytest
+import soundfile as sf
 
 from audiomentations import AddBackgroundNoise, Reverse
 from demo.demo import DEMO_DIR
@@ -132,6 +133,40 @@ def test_try_add_digital_silence():
 
     assert np.allclose(samples, samples_out)
     assert samples_out.dtype == np.float32
+
+
+@pytest.mark.parametrize("noise_rms", ["relative", "absolute"])
+@pytest.mark.parametrize("use_empty_callback", [False, True])
+def test_empty_background_noise_is_skipped(tmp_path, noise_rms, use_empty_callback):
+    sample_rate = 16000
+    samples = np.linspace(-0.5, 0.5, 128, dtype=np.float32)
+    samples_before = samples.copy()
+    noise_path = tmp_path / "noise.wav"
+
+    if use_empty_callback:
+        sf.write(noise_path, np.array([0.1, -0.1], dtype=np.float32), sample_rate)
+
+        def noise_transform(noise, _sample_rate):
+            return noise[:0]
+
+    else:
+        sf.write(noise_path, np.empty(0, dtype=np.float32), sample_rate)
+        noise_transform = None
+
+    augmenter = AddBackgroundNoise(
+        sounds_path=noise_path,
+        noise_rms=noise_rms,
+        noise_transform=noise_transform,
+        p=1.0,
+    )
+
+    with pytest.warns(UserWarning, match="No usable noise"):
+        samples_out = augmenter(samples=samples, sample_rate=sample_rate)
+
+    np.testing.assert_array_equal(samples, samples_before)
+    np.testing.assert_array_equal(samples_out, samples_before)
+    assert samples_out.dtype == samples.dtype
+    assert samples_out.shape == samples.shape
 
 
 def test_absolute_option():
